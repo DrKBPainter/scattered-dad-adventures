@@ -1,0 +1,27 @@
+name,category,rarity,atk_mod,def_mod,per_mod,wis_mod,dadism_power_mod,display_message
+of Misplaced Confidence,UPGRADES,common,1,,,,,"It is not earned, but it counts."
+Ergonomic,UPGRADES,common,1,,,,,The grip says so on the sticker.
+Reinforced w/ Duct Tape,UPGRADES,uncommon,,2,,,,Holds the universe together.
+Extended Warranty,UPGRADES,common,,1,,,,For once in your life.
+Pre-Owned,UPGRADES,uncommon,1,1,,,,"Someone else's problem, now yours to enjoy."
+Contractor Grade,UPGRADES,uncommon,1,1,,,,"Costs forty percent more for reasons no one can articulate. Worth it, allegedly."
+New In Box,UPGRADES,uncommon,,1,1,,,Still has the twist-ties. He will keep the box. He will keep all the boxes.
+As Seen On TV,UPGRADES,uncommon,2,,,,,"But wait — there is no second one, the shipping consumed the savings, and it works exactly as advertised, which is alarming."
+Recalled,LEARNING EXPERIENCES,common,-1,,,,,The lawsuit is still pending.
+Batteries Not Included,LEARNING EXPERIENCES,common,-1,,,,,You knew. You bought it anyway.
+Assembly Required,LEARNING EXPERIENCES,common,,-1,,,,Three pieces are left over. Probably unimportant.
+Stripped Screw,LEARNING EXPERIENCES,common,,-1,,,,Stripped. Eternal.
+Dented,LEARNING EXPERIENCES,uncommon,-1,-1,,,,It was like this when you found it.
+of the HOA,LEARNING EXPERIENCES,uncommon,-2,,,,,Technically violates several covenants.
+Counterfeit,LEARNING EXPERIENCES,rare,-2,-1,,,,Not from the manufacturer. You knew this in the parking lot.
+Expired (Best Before 2019),LEARNING EXPERIENCES,uncommon,,-2,,,,It is not 2019. It has never been 2019 since 2019.
+Flickering,LEARNING EXPERIENCES,uncommon,,-1,-1,,,Unstable. Unreliable. The description said 'vibrant.'
+Wrong Size (Close Enough),LEARNING EXPERIENCES,uncommon,-1,,-1,,,You told yourself it would be fine. It is not fine.
+Stripped Beyond Salvation,LEARNING EXPERIENCES,rare,-1,-2,,,,The screw was a warning. You did not heed the warning.
+Warranty Voided,LEARNING EXPERIENCES,uncommon,-1,,,,-1,You opened the casing. That was the end of the warranty and also of a small piece of your dignity.
+Final Clearance,LEARNING EXPERIENCES,uncommon,,-1,-1,,,All sales final. The endcap claimed it. He could not resist the endcap.
+Open Box (Some Wear),LEARNING EXPERIENCES,common,-1,,,,,Someone returned it for a reason they did not write down. The reason reveals itself in combat.
+"Fine, I Guess",NO EFFECT,common,,,,,,Does nothing. Perfectly adequate. A metaphor.
+4-Star Rated,NO EFFECT,common,,,,,,One reviewer called it 'adequate.' They were right.
+Store Brand,NO EFFECT,common,,,,,,Same thing as the name brand. He insists otherwise.
+Sold As-Is,NO EFFECT,common,,,,,,"Does nothing, but with finality. No returns, no refunds, no opinions. A purchas"

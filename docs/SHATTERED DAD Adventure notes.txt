@@ -1,0 +1,29 @@
+SHATTERED DAD Adventure notes
+
+
+In Progress:
+_____________________________________
+
+DIRECTIVE (2026-07-09): MOUSE-ONLY PLAYABILITY. Every action currently bound to a key must also be reachable by mouse. Goal: a player can complete an entire run — character creation to Floor 100 — using only the mouse, without ever touching the keyboard. Keyboard bindings stay; mouse is added alongside. Work these items one per nightly run (or as many as fit), test after each, and mark [x] with a DONE note in the existing style. Verify each with node --check on all 7 core files + the sanity harness, and confirm the on-screen control is clickable and fires the same handler as its key.
+
+AUDIT (2026-07-17): Full key→mouse coverage sweep performed. Result: mouse-only playability is ALREADY essentially complete. Confirmed existing mouse routes for: all 8-way movement + wait (#dpad), scan/zoom/throw/place/inventory/dadvice/map/bestiary/codex/help/menu (#actionbar), inventory item actions equip-use/throw/place/combine/drop/examine (data-invact buttons), dadism cast (data-cast), confirm dialogs & numbered menus (data-cf / data-menu), door interaction menu, aim & trap-placement targeting via tile click + CANCEL bar, overlay close (#ovClose), title/class/difficulty/end-screen options, and skin-tone swatches. Only three keyboard actions lacked a mouse route; enumerated below.
+
+MOUSE-ONLY PLAYABILITY: all items closed as of 2026-07-18 (see Completed section). Directive fully satisfied — no keyboard-only actions remain outstanding.
+
+NIGHTLY RUN (2026-07-21): No-op. Priority-zero syntax check passed on all core JS files (config, sprites, data, game, render, ui, input, audio). Zero [ ] items present in this file — nothing to implement or triage. Queue is idle until new work items are authored here.
+
+
+
+
+Completed:
+_____________________________________
+
+[x] Graveyard toggle while in a run (key G) has no on-screen button. Reachable by mouse from the Title and end (DEAD/WIN) screens, but not mid-run.
+    NOTE (2026-07-17): Low priority — graveyard is a meta/records view, not needed to complete a run, so it does not block the mouse-only completion goal. COA: add a data-act="grave" button to #actionbar and an "a==='grave'" branch routing to openOverlayByName('grave') (verify openOverlayByName handles 'grave'; if not, add a case that calls closeOverlays()+ovGrave=true+buildGraveyard()+syncOverlays()). Actionbar is getting wide — consider grouping meta views (Bestiary/Codex/Graveyard) or moving Graveyard into the Codex overlay as a tab instead of adding another top-level button.
+    DONE (2026-07-18): Added GRAVEYARD button (data-act="grave") to #actionbar in ShatteredDadAdventure.html, next to CODEX. Added a "grave" case to openOverlayByName() in js/ui.js (toggles ovGrave, calls closeOverlays()+buildGraveyard()+syncOverlays(), matching the existing best/codex/map pattern). Added "grave" to the action-bar dispatch allow-list in js/input.js so the click routes through openOverlayByName. Verified: node --check clean on all 7 core files; isolated VM smoke test confirmed openOverlayByName('grave') toggles ovGrave and closeOverlays() resets it without throwing. Did not group into Codex as a tab — kept scope to the minimal COA (a single button) per the directive's "one per nightly run" pacing; actionbar width can be revisited separately if it becomes a problem.
+
+[x] Difficulty screen "back to class select" (keys Esc / B) has no clickable control.
+    NOTE (2026-07-17): Minor — player can still pick a difficulty by mouse and proceed; only the "go back" affordance is keyboard-only. Does not block mouse-only completion. COA: render a "‹ Back" row/button on the DIFF screen (elLog options block) with data-diff="back" (or a dedicated data attr), and in input.js elLog DIFF handler branch route it to mode=State.CLASS;syncUI(). Keep it visually distinct from the difficulty rows so it is not mistaken for a mode.
+    DONE (2026-07-18): Added a dimmed "← Back to Dad select" row (data-diff="back") beneath the difficulty list in the State.DIFF branch of syncUI() (js/ui.js), visually separated from the difficulty options via the l-dim class and top margin. In js/input.js, the existing elLog data-diff click handler now checks for dr.dataset.diff==="back" first and routes to mode=State.CLASS;syncUI(), before falling through to the normal diffCursor/newRun path. Verified: node --check clean on all 7 core files; isolated VM smoke test confirmed the back-click path returns mode from DIFF to CLASS without throwing.
+
+(Completed tasks moved to 'Completed notes.txt' on 2026-07-15)

@@ -1,0 +1,51 @@
+SHATTERED DAD ADVENTURE — THE HOA FINALE (floor 100 — multi-phase boss + class resolutions)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+PHASES
+----------------------------------------
+The Welcome  (at 100% HP)
+  PHASE 1 — THE WELCOME. Karen Blackwell greets you warmly and asks you to sit. The sitting is not optional. The chairs are the hard folding kind.
+  REGULATORY OVERVIEW: she recites relevant HOA code sections from memory. It cannot be interrupted. It has never been interrupted.
+
+The Citation  (at 66% HP, ATK +4, -2 Patience)
+  PHASE 2 — THE CITATION. She produces your file. It is thick. The 2022 holiday-light duration violation is in there. February 4th is in there. The trash can incident of 2020 is in there.
+  DOCUMENTED HISTORY: each citation is read aloud. -2 Patience. There are more citations.
+
+Per My Previous Email  (at 33% HP, ATK +4, Patience -> 0)
+  PHASE 3 — 'PER MY PREVIOUS EMAIL.' She produces a printed email chain. It began in 2021. It has timestamps. It has read receipts. You received these emails. You did not read these emails.
+  Unavoidable psychic damage. Your Patience drops to 0. She has been right, procedurally, about everything.
+
+CLASS RESOLUTIONS
+----------------------------------------
+[grill]
+  THE NEGOTIATION. Karen has needed a grill master for the Annual Community Picnic for three consecutive summers. The last volunteer burned the hot dogs. The summer before that, there were no hot dogs. You offer competence. This is leverage.
+  The Remote is returned. You are now the HOA's Official Community Grill Master. This is a victory. It is also a binding commitment. The picnic is in six weeks.
+
+[diy]
+  THE NEGOTIATION. You hear it before she can open the binder: the east-hallway faucet, dripping since March. The vendor quoted $340. You say you can fix it. You believe this completely.
+  The Remote is returned. You are added to the community maintenance contact list. You will receive calls.
+
+[tech]
+  THE NEGOTIATION. You produce the archive: every HOA email since 2021, tagged and searchable. By-laws Section 11, Paragraph 4b requires Form HC-7 for confiscated property, with a witness signature. She checks the filing cabinet. There is no HC-7.
+  The confiscation is procedurally void. The Remote is returned with visible frustration. She makes a note to update the policy. Winning on pure documentation is deeply satisfying in a way nobody else will ever understand.
+
+[gym]
+  THE NEGOTIATION. You mention your evening protein shake — not as a tactic, but because it is true and you are thinking about it. She asks what kind. You explain whey versus casein. You explain the anabolic window. She takes a sip of the BCAAs. She asks what BCAAs are. You explain.
+  The Remote is returned during a conversational pause. You have agreed to teach a Saturday morning class called 'Dad Fit.' She has already blocked the time. You do not know that you charmed her. You will never know.
+
+[tactical]
+  THE NEGOTIATION. Dad Scan registered it on entry: the AV policy (east wall, last updated 2019), Section 11 open on her desk, and no Property Confiscation Form anywhere in the visible filing system. You prepared for this on the drive over. Possibly years ago.
+  No form. No witness. No chain of custody. She releases the Remote and makes a note. Part of the note is about whether you should be on the board. She does not act on that part. Not yet.
+
+[sports]
+  THE NEGOTIATION. You activate Back In My Day — reflexively. Block parties. Fence disputes settled with a handshake and a casserole. The story grows more impressive with each sentence, as the passive dictates. Somewhere in it is her own childhood. She does not say this.
+  Her expression changes by approximately 4%. The Remote is returned with a comment about 'community spirit.' You do not understand what happened. It worked.
+
+[yard]
+  THE NEGOTIATION. The citation was measured on a Thursday. It rained Tuesday and Wednesday. Your weather log holds 30 days of rainfall data. Your satellite imagery has been ready since 2023. You have been waiting for a reason. The grass was compliant, adjusted for the 48-hour precipitation window.
+  The data is correct. The citation is downgraded to a courtesy notice. The measurement protocol now includes a precipitation variance clause. Your lawn has been vindicated by satellite. This is a good feeling.
+
+[default]
+  THE NEGOTIATION. She is not unreasonable. She has had long Saturdays too. Agree to mow the lawn by next Saturday — a condition you would have agreed to anyway — and it is over.
+  The Remote is returned. 'Same time next month,' she calls after you. 'Board meeting's the third Thursday.'

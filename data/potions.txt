@@ -1,0 +1,1 @@
+Renamed in v0.5 — see remedies.txt (Potions -> Remedies).

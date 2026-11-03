@@ -1,0 +1,12 @@
+name,rarity,atk_mod,def_mod,per_mod,wis_mod,maxhp_mod,maxmoxie_mod,special_effect,display_message
+Dad Strength,common,2,,,,,,,+2 ATK. Decades of stuck jar lids have prepared him for open warfare.
+Thick Skin,common,,2,,,,,,+2 DEF. Unsolicited feedback now bounces off entirely. He didn't even flinch.
+Reads the Fine Print,common,,,2,,,,,"+2 Perception. The warranty, the trap, the suspicious wall — nothing escapes the reading glasses."
+Back-In-My-Day Wisdom,common,,,,2,,,,+2 WIS. The stories were load-bearing the whole time.
+Second Wind,rare,,,,,14,,,"+14 max HP, fully topped off. He found another gear. It was in the garage, behind the gear."
+Deep Cleansing Breaths,uncommon,,,,,,4,,"+4 max Patience. Four counts in, four counts out. It is not working. It is almost certainly working."
+Suspiciously Good Knees,uncommon,,,,,,,knee buckle x0.5,Knee pain chance halved. The knees have no explanation. He has stopped asking. Some gifts you simply accept.
+Lifts With the Legs,uncommon,,,,,,,back-out x0.5,"Back pain chance halved. He heard this advice at 22 and ignored it for decades. It is, regrettably, correct."
+Camel Mode,uncommon,,,,,,,"thirst slows x2, +40 Thirst cap",Thirst fills more slowly and the threshold is higher. Years of forgetting water bottles have forged this man into something the desert would respect.
+Snack Logistics,uncommon,,,,,,,+50 Hunger cap,Hunger fills more slowly; food finds you more often. The cargo shorts were load-bearing the whole time. There was a system. There has always been a system.
+Note From Your Kid,uncommon,,,,,8,4,,"+8 max HP, +4 max Patience. You step lighter through the dungeon. The note was in his back pocket since Tuesday. He does not cry. He does not."

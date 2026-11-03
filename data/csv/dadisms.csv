@@ -1,0 +1,28 @@
+name,classes,patience_cost,effect_type,description
+Char It,grill,3,dmg,Scorch an adjacent foe for big fire damage.
+Stand Near the Meat,grill,2,buff,Everything is under control. Regenerate HP for a while.
+Improvised Solution,diy,2,random,"60% great, 35% worse, 5% structural. Outcome unknown."
+Good Enough,diy,2,heal,Patch yourself up. +10 HP. Close enough.
+Turn It Off and On Again,tech,3,stun,Stun an adjacent foe. Works on everything but printers.
+Mandatory Firmware Update,tech,5,rootall,All enemies pause for an update they did not request.
+One More Rep,gym,3,buff,+3 ATK. Health is a mindset.
+Scoop of Pre-Workout,gym,2,heal,+8 HP and a tingling face.
+Dad Scan,tactical,3,scan,Reveal the whole floor and every foe's health.
+Tactical Flashlight,tactical,2,blind,Blind adjacent foes. And yourself a little.
+Back In My Day,"grill, diy, tech, gym, tactical, sports, yard",2,aoe,Nostalgia damage to all nearby. Effects increase yearly.
+Assume Tactical Stance,"tactical, gym",2,buff,+2 DEF. You saw this coming.
+Sideline Tirade,sports,3,stun,Question the officiating at a volume that stuns an adjacent foe. The call does not change. They never do.
+Halftime Orange Slices,sports,2,buff,"Citrus, quartered, distributed at the half. Regenerate HP for a while."
+Mow It Down,yard,3,dmg,The mower meets an adjacent foe. Two-cycle justice. Bag sold separately.
+Activate The Sprinklers,yard,4,rootall,The in-ground system engages on schedule. Everything nearby stops to get out of water it did not expect.
+The Dad Sneeze,"grill, diy, tech, gym, tactical, sports, yard",2,knockback,"An involuntary, full-body detonation that launches an adjacent foe backward. No warning. No apology. No encore. Bless you."
+The Nod,Cost: 2 Patience,2,buff,"+2 DEF. A single downward head movement communicating respect, acknowledgment, and quiet authority. No words. They were not needed."
+Walk It Off,Cost: 3 Patience,3,heal,+12 HP. He has been walking it off since 1987. It has never once not eventually worked.
+The Disappointed Look,Cost: 3 Patience,3,stun,"A look that has silenced rooms, ended arguments, and once stopped a ceiling fan mid-spin. Stuns an adjacent foe for 3 turns."
+Firm Handshake,Cost: 3 Patience,3,dmg,He learned it from his father. His father learned it from his. The lineage delivers 8 damage and expects eye contact.
+I Watched A Video,Cost: 2 Patience,2,random,He watched a video. A whole one. It may or may not apply. Outcome: unpredictable. Confidence: maximum.
+I'll Fix It Later,Cost: 1 Patience,1,heal,+6 HP. A temporary measure. He is aware it is temporary. This awareness has not changed the approach.
+Dad Joke (Deployed),Cost: 4 Patience,4,aoe,He tells it. The whole floor hears it. The groan travels 3 tiles and deals 5 damage to all nearby enemies. The joke was poor. The damage is real.
+It's Fine,Cost: 2 Patience,2,buff,Everything is fine. He is regenerating HP. This is fine. It is all fine. The situation is fine and he is fine.
+Count Heads,Cost: 3 Patience,3,scan,"He counts. Then counts again. Then counts the exits, the threats, and the ceiling tiles. Everything on this floor: revealed."
+Found A Shortcut,Cost: 4 Patience,4,rootall,This is not a shortcut. It has never been a shortcut. The announcement of it has confused all nearby enemies for 2 turns while they process the claim.

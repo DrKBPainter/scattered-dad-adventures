@@ -1,0 +1,79 @@
+SHATTERED DAD ADVENTURE — CHARMS (worn neck/ring/hair; max 2)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Membership Lanyard  [worn: neck]
+  +1 per
+  +1 PER. Worn on the neck. Opens doors and resentment.
+
+Wedding Ring  [worn: ring]
+  +1 wis
+  +1 Dadism power. A ring. A reminder. A power source.
+
+Class Ring  [worn: ring]
+  +1 atk
+  +1 ATK. Go Wildcats. (1987)
+
+Reading Glasses on a Chain  [worn: neck]
+  +1 per, +1 wis
+  On your face. ON YOUR FACE.
+
+Lucky Pencil Behind the Ear  [worn: hair]
+  +1 per
+  Half-chewed, all business.
+
+Foam Trucker Visor  [worn: hair]
+  +1 def
+  Mesh back, maximum airflow.
+
+The Studfinder of Prophecy  [worn: neck]
+  +1 per
+  +1 PER. Vibrates when hidden things are nearby — traps, secrets, structural dishonesty. Feared by drywall demons. Do not confuse with the weapon.
+
+Digital Watch (Still Has Time)  [worn: ring]
+  +1 wis, +1 atk
+  +1 ATK, +1 WIS. Set in 2009. Still correct twice daily. He never reset it for daylight savings. He is at peace with this.
+
+Keychain (45 Keys)  [worn: ring]
+  +1 per
+  +1 PER, +1 slot. He knows what four of them go to. Possibly five. The rest are load-bearing.
+
+Fortune Cookie (Unread)  [worn: hair]
+  +2 wis
+  +2 Dadism power. Carried since the restaurant in 2019. He will read it when the moment is right.
+
+Lucky Penny (Heads Up)  [worn: ring]
+  +1 atk, +1 def
+  +1 DEF, +1 ATK. Found in a 2014 parking lot. Never spent. A good omen. The statistics support this.
+
+Clip-On Suspenders  [worn: neck]
+  +2 def
+  +2 DEF. Structural redundancy. Belt AND suspenders. Only one is necessary. He uses both. He will not apologize.
+
+Motivational Wristband  [worn: ring]
+  +1 wis, +1 atk
+  +1 ATK, +1 Dadism power. Says 'PUSH HARDER' in all caps. He agrees with this sentiment.
+
+Lucky Fishing Lure  [worn: hair]
+  +2 per
+  +2 PER. Attached to the hat band. Has never caught a fish. The intent has always been there.
+
+Expired Conference Badge  [worn: neck]
+  +1 per, +1 wis
+  +1 WIS, +1 PER. From TechConnect 2017. He still knows someone there. Probably.
+
+Ever-Present Toothpick  [worn: hair]
+  +1 per, +1 atk
+  +1 ATK, +1 PER. Migrates from corner to corner of the mouth. Sees all. Says little. Has been the same toothpick for a concerning duration.
+
+Old Dog Tags (Not Military)  [worn: neck]
+  +1 wis, +1 def
+  +1 DEF, +1 Dadism power. From a 5K in 2011. He kept them. They confer no rank. They confer resolve.
+
+Bottle-Opener Ring  [worn: ring]
+  +1 atk, +1 def
+  +1 ATK, +1 DEF. Solves exactly one problem, perfectly, forever. The most reliable tool he owns.
+
+One Working Earbud  [worn: neck]
+  +1 per, +1 wis
+  +1 WIS, +1 PER. The left one died in 2020. The right one carries the entire podcast. He hears half the world and judges all of it.

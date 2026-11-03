@@ -1,0 +1,87 @@
+SHATTERED DAD ADVENTURE — OBJECTS / crafting materials & throwables
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Half Roll of Duct Tape
+  For when it moves and shouldn't. Repairs anything, temporarily permanent.
+
+Mystery Screws x14
+  For a project that no longer exists.
+
+Scrap Plywood
+  Structurally optimistic.
+
+Bag of Zip Ties
+  The dad adhesive of last resort.
+
+Can of WG-40 Spray Lube
+  For when it doesn't move and should.
+
+Tangled HDMI Cables
+  At least one works. Nobody knows which.
+
+9-Volt Battery
+  Tested by tongue. Verdict: yes.
+
+Half-Full Propane Tank
+  Or is it half-empty. He has opinions.
+
+Loose AA Battery
+  throwable(3)  Throwable (3 dmg). The TV remote misses it.
+
+The Owner's Manual
+  You actually read it. All gear in inventory and equipped is immediately identified. Nobody does this voluntarily.
+
+The Original Receipt
+  Proof of purchase, wielded against the supernatural. Removes all hindering enchantments from equipped gear. The item sighs in resignation.
+
+Goop-Gone (Curse Remover)
+  Industrial-strength enchantment solvent. Dissolves hindering affixes on contact. Also removes grease from ceramic tile. The directions warned against this use.
+
+Sticky Note of Identification
+  A yellow sticky note with an arrow on it. Applied to any unidentified gear to immediately reveal its true nature. Did not come with the gear. Nothing comes with the gear.
+
+YallTube DIY Video
+  A printout of a four-minute video titled 'How To Do That One Thing.' Reveals one crafting recipe permanently. Comments are disabled. Correctly.
+
+The Book of REAL Men
+  A thick paperback about how a man should stand, walk, and feel emotions incorrectly. No mechanical effect. I guess someone might find this useful.
+
+The Sigma Grindset (Audiobook)
+  7 CDs. Covers 'winning' and 'not losing.' Mutually exclusive with reading. No mechanical effect. I guess someone might find this useful.
+
+Mindfulness Journal for Gentle Men
+  Prompts include 'What did I apologize for today?' No mechanical effect. I guess someone might find this useful.
+
+ALPHA MASS SUPPLEMENT
+  97% maltodextrin. Comes with a poster of a man who also takes this. No mechanical effect. I guess someone might find this useful.
+
+'I Feel Things' Button
+  Enamel pin. He does feel things. Mostly his back. No mechanical effect. I guess someone might find this useful.
+
+Free Gym Trial Membership (30 Days)
+  ATTR BOOST: +2 permanent ATK. The 30 days is real. The gains are permanent. The membership is not renewed.
+
+A History of Rome (Unabridged)
+  ATTR BOOST: +1 permanent Dadism power. 847 pages. He read 400. That was enough. He has opinions now.
+
+Crossword Book (Pen, Not Pencil)
+  ATTR BOOST: +1 permanent PER. Ink only. No erasing. He commits to his guesses. Several of them are wrong. He knows.
+
+Complete Toolbox (Labeled)
+  ATTR BOOST: +2 permanent DEF. Every tool in its place. All labeled. He knows exactly where the 10mm socket is. He is not sharing this information.
+
+Garage Bowling Ball (One Of A Pair)
+  throwable(8)  Throwable (8 dmg). Its twin is lost forever. This one carries the grief, and the momentum.
+
+Rusted Horseshoe
+  throwable(6)  Throwable (6 dmg). Lucky for you. Considerably less so for whatever it lands on.
+
+Frozen Burger Patty (Single)
+  throwable(5)  Throwable (5 dmg). A discus of regret. Thaws on impact, mostly onto the target.
+
+Range Bucket Golf Ball
+  throwable(4)  Throwable (4 dmg, long range). He has a whole bucket of these. Nobody knows why. He knows why.
+
+Wrinkled Dadism Scroll
+  A laminated printout discovered in a coat pocket, dated 1998. Teaches a random Dadism you don't already know. He made seventeen copies. Each is slightly different. He does not know which one this is.

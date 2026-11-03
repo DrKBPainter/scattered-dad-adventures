@@ -1,0 +1,139 @@
+SHATTERED DAD ADVENTURE — ARMOR (slots: head/torso/arms/legs/feet)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Construction Hard Hat  [head]
+  +2 def
+  Borrowed from a job site in 2003.
+
+Dad Cap  [head]
+  +1 per
+  Faded logo. High perception bonus from years of suspicious squinting.
+
+Chest Pad (Catcher's)  [torso]
+  +3 def
+  From youth baseball. Still fits. Barely.
+
+Fleece Vest  [torso]
+  +1 def, +1 wis
+  +1 DEF, +1 Dadism power. Multiple pockets. One function.
+
+Work Gloves  [arms]
+  +1 def, +1 atk
+  Grip improved. Knuckles protected. Confidence irrelevant.
+
+Tape Measure (Belt Clip)  [arms]
+  +1 per
+  +1 PER. Always visible. Never used correctly.
+
+Cargo Shorts  [legs]
+  +2 cap
+  +2 inventory slots. Standard issue Dad equipment.
+
+Khaki Dad Pants  [legs]
+  +1 wis
+  +1 Dadism power. Pleated. Ironed. Non-negotiable.
+
+Tube Socks (Pulled Up)  [feet]
+  +1 def
+  +1 DEF. They come up to the knee. He is aware.
+
+Steel-Toe Boots  [feet]
+  +2 def, +1 atk
+  +2 DEF, +1 ATK. Safety certified. Impact tested on a Wednesday.
+
+Steel-Toe Boot (The Single One)  [feet]
+  +1 def, +2 atk
+  +1 DEF, +2 ATK. OSHA approved. OSHA impressed. The other one is somewhere in the garage. It is footwear; it has always been footwear.
+
+Wraparound Sunglasses  [head]
+  +2 per
+  +2 PER. He can see everything. He is judging everything. SPF: unlimited.
+
+Hearing Protection Muffs  [head]
+  +1 def, +1 wis
+  Blocks sound. Deepens wisdom through selective deafness.
+
+Dad Bandana (Forehead)  [head]
+  +1 atk
+  +1 ATK. He means business. The business is unclear.
+
+High-Vis Safety Vest  [torso]
+  +2 def, +1 per
+  Seen from space. Enemies see him coming and somehow still lose.
+
+Denim Shirt (Buttoned Wrong)  [torso]
+  +2 def, +1 wis
+  +DEF, +WIS. The top button is incorrect. He knows. He stays the course.
+
+Windbreaker (Circa 2001)  [torso]
+  +1 def, +1 per
+  Makes a sound with every movement. Enemies hear him approach. Somehow still effective.
+
+Grilling Apron  [torso]
+  +2 def, +1 atk
+  +DEF, +ATK. 'Kiss the Cook.' Nobody is kissing the cook. He presses on.
+
+Knee Brace (Right Knee)  [legs]
+  +2 def
+  +2 DEF. Braced. Reinforced. The right knee will outlast the man who wears it. The left knee is on its own.
+
+Elastic-Waist Sweatpants  [legs]
+  +1 wis, +1 cap
+  +1 slot, +1 Dadism power. Comfort is a tactical advantage.
+
+Relaxed-Fit Jeans  [legs]
+  +1 def, +1 cap
+  Relaxed fit. Dad approved. Structurally sound at exactly one wash temperature.
+
+Sandals with Socks  [feet]
+  +1 per, +1 wis
+  Maximum comfort. Minimum dignity. He has made his peace.
+
+Garage Flip-Flops  [feet]
+  +1 per
+  +1 PER. Slaps on every surface. The sound announces him. His enemies prepare. Somehow still.
+
+Work Boots (Broken-In)  [feet]
+  +3 def
+  +3 DEF. 20 years of wear. Resoled twice. His sons will inherit them.
+
+Rubber Dishwashing Gloves  [arms]
+  +2 def
+  +2 DEF. Waterproof. Designed for dishes. Repurposed for combat.
+
+Utility Belt (Dad-Configured)  [arms]
+  +1 per, +2 cap
+  +2 slots, +1 PER. Contains one of everything needed for almost any situation. Weight: heroic.
+
+Compression Knee Sleeves  [legs]
+  +1 def
+  +1 DEF. While worn, the knees do not crack and do not buckle. He bought them for 'working out.' He wears them on stairs.
+
+Safety Glasses (Scratched)  [head]
+  +1 per
+  +1 PER. Mandatory eye protection. Worn on the forehead 90% of the time. "You can't hear boobies." Wise advice from countless dads before.
+
+Winter Beanie (Worn Indoors)  [head]
+  +1 def, +1 wis
+  +1 DEF, +1 Dadism power. The thermostat is at 64. He has made his choice. The beanie is the consequence and the comfort.
+
+Lumberjack Flannel (Unbuttoned)  [torso]
+  +2 def, +1 atk
+  +2 DEF, +1 ATK. He has never felled a tree. The flannel does not know this. The flannel believes in him.
+
+Elbow Pads (Just In Case)  [arms]
+  +2 def
+  +2 DEF. Purchased for a hobby that never started. Deployed for a war that never ended.
+
+Painter's Overalls (Three Projects Old)  [legs]
+  +1 def, +1 cap
+  +1 DEF, +1 slot. Every stain is a memory. Every pocket holds a forgotten brush. Structurally: mostly dried paint.
+
+Crocs (Sport Mode Engaged)  [feet]
+  +1 def, +1 per
+  +1 DEF, +1 PER. The strap is back. He means business. The ventilation is a tactical liability he accepts.
+
+Emergency Rain Poncho (From the Glovebox)  [torso]
+  +1 def, +1 per
+  +1 DEF, +1 PER. Folded since the 2018 game that got rained out. Smells of the glovebox. Deploys with a defiant crinkle.

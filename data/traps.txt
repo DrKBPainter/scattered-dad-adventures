@@ -1,0 +1,35 @@
+SHATTERED DAD ADVENTURE — TRAPS (detection scales with Perception; throw to disarm)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+HOA Violation Notice
+  Detect>=PER 2   Damage 0   Inflicts: hangry
+  Psychic damage only. But it lingers.
+
+Scattered Building Bricks
+  Detect>=PER 3   Damage 4   Inflicts: knee
+  The ancient enemy of bare feet and peace of mind.
+
+Tangle of Extension Cords
+  Detect>=PER 2   Damage 3   Inflicts: none
+  Trip hazard. The surge protector is somewhere in there.
+
+Unmarked Wet Floor
+  Detect>=PER 3   Damage 2   Inflicts: soaked
+  No sign. Of course there's no sign.
+
+Product Recall Notice
+  Detect>=PER 1   Damage 0   Inflicts: jitters
+  The thing you use every day. Always has been recalled.
+
+Unskippable Ad
+  Detect>=PER 1   Damage 0   Inflicts: rooted
+  Fifteen seconds. Cannot be dismissed. Will not be dismissed.
+
+Unknown Brown Substance (Floor)
+  Detect>=PER 1   Damage 2   Inflicts: soaked
+  The floor is wet. In a way that implies a specific kind of source. You know. We both know. Step around it next time.
+
+Dog Walker Special
+  Detect>=PER 2   Damage 3   Inflicts: soaked
+  The dog has been here. The evidence is comprehensive, fragrant, and centered exactly where you needed to step. The walker has already rounded the corner and cannot hear you.

@@ -1,0 +1,115 @@
+# SHATTERED DAD ADVENTURE — FOLDER STRUCTURE
+
+Last updated: 2026-06-17 | Game version: v0.6.3
+
+---
+
+## Root
+
+| File / Folder | Purpose |
+|---|---|
+| `ShatteredDadAdventure.html` | **Main game file.** Open in browser to play. All game logic, rendering, and UI loaded from here. |
+| `Creatures.xlsx` | Excel snapshot of creature data. Companion to `data/creatures.txt`. (Cannot move — OneDrive lock.) |
+| `FOLDER_STRUCTURE.md` | This file. |
+| `Hero Classes/` | Empty legacy folder (OneDrive sync artifact). Contents moved to `lore/Hero Classes/`. |
+| `Levels/` | Empty legacy folder (OneDrive sync artifact). Reserved for future level export files. |
+
+---
+
+## `/data/` — Game Data (source of truth for all content)
+
+All files are plain-text mirrors of the arrays in `js/data.js`. Edit `js/data.js` to change game behavior; these `.txt` files are the human-readable reference.
+
+| File | Contents |
+|---|---|
+| `armor.txt` | All equippable armor by slot (head, torso, arms, legs, feet). Stats: DEF and secondary effects. |
+| `buffs.txt` | Affixes applied to items: Upgrades (+stats), Learning Experiences (−stats/curses), and No Effect (flavor). |
+| `charms.txt` | Wearable accessories (neck, ring, hair slots). Max 2 equipped. |
+| `classes.txt` | All 5 hero classes with base stats (HP, STR, DEF, PER, WIS, Patience) and starting Dadisms. |
+| `creatures.txt` | All enemies and bosses. See `CREATURES_TABLE.md` for the full structured reference. |
+| `dadisms.txt` | Class abilities cast with Patience. Includes cost, type, and which classes can use each. |
+| `illnesses.txt` | Status effects: debuffs (red), buffs (green), and their cures. |
+| `objects.txt` | Crafting materials, throwables, and utility items. |
+| `potions.txt` | Deprecated. Renamed to `remedies.txt` in v0.5. File retained as redirect notice. |
+| `protips.txt` | Permanent upgrade scrolls (formerly "scrolls"). Grant persistent stat boosts. |
+| `recipes.txt` | Crafting combinations (Item A + Item B → Result). Class-restricted recipes noted. |
+| `remedies.txt` | Consumable food, drink, and cure items. Hunger (nourish) and Thirst (hydrate) values included. |
+| `traps.txt` | Floor hazards with Perception detection threshold, damage, and inflicted status. |
+| `vendors.txt` | Shop NPCs that appear every 15 floors. Stock lists included. |
+| `weapons.txt` | All melee weapons with base ATK values. |
+| `Creatures.xlsx` | Excel version of creature data (moved here conceptually; physically at root due to OneDrive lock). |
+| `CREATURES_TABLE.md` | **Master creature reference.** Full table with stats, spawn chance, floors, and lore. |
+
+---
+
+## `/js/` — Game Engine (do not edit without testing)
+
+| File | Purpose |
+|---|---|
+| `config.js` | Global constants: map dimensions, floor count, save key, balance tuning. |
+| `data.js` | All game content arrays (creatures, weapons, armor, etc.). Source of truth for game behavior. |
+| `game.js` | Core game logic: floor generation, combat, creature spawning, turn management, save/load. |
+| `input.js` | Keyboard and mouse input handlers. |
+| `render.js` | Tile-based canvas renderer. Handles map drawing, fog of war, and visual effects. |
+| `sprites.js` | Sprite definitions and ASCII/tile character mappings. |
+| `ui.js` | HUD, inventory panel, log display, and modal dialogs. |
+
+---
+
+## `/docs/` — Design & Planning Documents
+
+| File | Purpose |
+|---|---|
+| `GAME_DESIGN_REFERENCE.md` | Master GDD. Classes, mechanics, tone, world rules, and design philosophy. Start here. |
+| `BUILD_PLAN.md` | Phased development roadmap with acceptance criteria per phase. |
+| `NIGHTLY_BUILD_ROADMAP.md` | Sprint-level task tracking and nightly build targets. |
+| `LEVEL_DESIGN.md` | Floor biome layout, boss placement, vendor floors, and encounter scaling notes. |
+| `LEVEL_DESIGN.html` | Visual/interactive version of the level design document. |
+| `SHATTERED DAD Adventure notes.txt` | Freeform design notes, brainstorming, and ideas not yet formalized. |
+
+---
+
+## `/lore/` — Narrative & World Content
+
+| File | Purpose |
+|---|---|
+| `Shattered_Dad_Dungeon_Creature_Bestiary_Expansion.txt` | Extended bestiary lore: additional creature entries beyond the base game roster. |
+| `Shattered_Dad_Dungeon_Creature_Bestiary_Expansion_Vol3.txt` | Volume 3 bestiary expansion. Additional creatures and lore entries. |
+| `Hero Classes/Shattered_Dad_Adventure_Expanded_Classes.txt` | Extended class lore, alternate starting loadouts, and class-specific flavor text. |
+
+---
+
+## `/archive/` — Legacy Backups
+
+| File | Notes |
+|---|---|
+| `ShatteredDadAdventure_v0.3.0_backup.html` | Single-file build snapshot from v0.3.0 (pre-modular JS split). |
+| `ShatteredDadAdventure_v0.4.0_backup.html` | Single-file build snapshot from v0.4.0. |
+
+---
+
+## `/tools/` — Developer Utilities
+
+| File | Purpose |
+|---|---|
+| `tools_export_data.js` | Export script: reads `js/data.js` arrays and writes the mirrored `.txt` files in `/data/`. Run via Node.js when data arrays change. |
+
+---
+
+## Floor → Biome → Creature Mapping (Quick Reference)
+
+| Floors | Biome | Creatures Spawn |
+|---|---|---|
+| 1 – 4 | The House | Morning Obligation, Unread Text, Rogue Roomba, Laundry Pile, Permission Slip, Thermostat Phantom, Mystery Leftovers |
+| 5 | **Boss Floor** | The Garage (As Entity) + The House creatures |
+| 6 – 9 | Lowe & Behold | Shopping Cart Ambush, Weekend Warrior, Self-Checkout Sentinel, Unfindable Associate, Paint Swatch Swarm, Aisle 12 Forklift |
+| 10 | **Boss Floor** | The Floor Manager + Lowe & Behold creatures |
+| 11 – 14 | The Park | Youth Soccer Coach, Off-Leash Dog, Jogger (Headphones In), Event Coordinator |
+| 15 | **Vendor Floor** | The Lowe & Behold Returns Desk (no boss) |
+| 16 – 19 | Vastco | Extended Warranty Wraith, Sale Sign Golem, Sample Station, Vastco Flatbed, Membership Card Inspector, Spirit of Bulk Savings |
+| 20 | **Boss Floor** | The Floor Manager (repeat) + Vastco creatures |
+| 21 – 24 | Vastco | (same pool as 16–19) |
+| 25 | **Boss Floor** | The Floor Manager (final) + Vastco creatures |
+| Any | Water Floor (random) | Hungry Goldfish (Mrs. Kowalski's Rm. 14) — aquatic only |
+
+*Note: Vendor floor at 15 and 30 (from `vendors.txt`). Floors beyond 25 not currently in scope.*

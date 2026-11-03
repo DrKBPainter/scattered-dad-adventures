@@ -1,0 +1,105 @@
+SHATTERED DAD ADVENTURE — CRAFTING RECIPES (combine two items)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Duct Tape + Plunger.  ->  Reinforced Plunger
+  Result: weapon — Duct tape makes it a weapon of consequence.
+
+Duct Tape + Rake.  ->  Taped-Up Rake
+  Result: weapon — It holds. Barely. Enough.
+
+Propane + Spatula (Grillmaster only).  ->  The Flame Spatula  [grill ONLY]
+  Result: weapon — OSHA has questions. The burgers do not.
+
+Meatball + Propane.  ->  Charred Mega-Meatball  [bonus: grill]
+  Result: consumable — +18 HP or a 9-dmg projectile of glory.
+
+Coffee + Energy Drink.  ->  Double-Fisted Coffee
+  Result: consumable — +6 HP, +8 Patience. Heart rate: academic.
+
+Gatorade + Pedialyte.  ->  Daderade
+  Result: consumable — Maximum electrolytes. The science is real.
+
+Zip Ties + Battery.  ->  Zip-Tied Battery Bundle
+  Result: object — Throwable (7 dmg). 100% safe. 0% warranty.
+
+WD-40 + Blowtorch.  ->  WD-40 Torch
+  Result: weapon — Not intended for this. Definitely for this.
+
+Acetaminophen + Ibuprofen (do not take on an empty stomach).  ->  Maximum Dad Relief Protocol
+  Result: consumable — +5 HP. DEF +8 for 8 turns. Briefly immune to regret. The directions said not to combine these. He combined them.
+
+Zip Ties + HDMI Cable.  ->  Tangled HDMI Flail
+  Result: object — Throwable (9 dmg). The cable works now that it has been weaponized.
+
+Duct Tape + AA Battery.  ->  Improvised Flashlight
+  Result: consumable — +4 Patience. Actually works. He is unreasonably proud of this.
+
+Coffee + Blue Gatorade.  ->  The Dad Boost
+  Result: consumable — +8HP, +5 Patience, hydrate 30. Also: The Jitters. You cannot have everything.
+
+Propane + WD-40 (DIY / Tactical only).  ->  The Regrettable Flamethrower Rig
+  Result: object — Throwable (12 dmg). Warranty: absolutely void. OSHA: unaware.
+
+Screws + Plywood (Handy classes only).  ->  Plywood Barricade
+  Result: object — Placeable. Blocks a tile. Enemies must go around. Structurally questionable. Tactically sound.
+
+Acetaminophen + Whiskey.  ->  Unlabeled Fizzing Concoction
+  Result: consumable — It fizzed when it shouldn't have. The label told me not to do this.
+
+Acetaminophen + Light Beer.  ->  Unlabeled Fizzing Concoction
+  Result: consumable — It fizzed when it shouldn't have. The label told me not to do this.
+
+Acetaminophen + Warm Beer.  ->  Unlabeled Fizzing Concoction
+  Result: consumable — It fizzed when it shouldn't have. The label told me not to do this.
+
+Duct Tape + Horseshoe.  ->  Duct-Taped Horseshoe Mace
+  Result: weapon — Luck, taped to a handle. The handle is also tape. It connects with authority.
+
+Coffee + Protein Bar.  ->  Pre-Run Fuel
+  Result: consumable — +6 HP, +6 Patience. The breakfast of men who say they will 'just do a quick loop.'
+
+WD-40 + Horseshoe.  ->  Lubricated Throwing Shoe
+  Result: object — Throwable (9 dmg, long range). Frictionless. Flies further than physics strictly permits.
+
+Propane + Frozen Burger Patty.  ->  Properly Grilled Burger  [bonus: grill]
+  Result: consumable — +22 HP. Cooked to a temperature he refuses to disclose. It is perfect. It is always perfect.
+
+Propane + Golf Ball (Grillmaster only).  ->  Flaming Tee Shot  [grill ONLY]
+  Result: object — Throwable (11 dmg, long range). A golf ball, but on fire, and somehow personally offended. Fore.
+
+Screws + Bowling Ball (DIY / Tactical only).  ->  Screw-Studded Bowling Ball
+  Result: object — Throwable (13 dmg). Fourteen mystery screws, finally employed. The project was always this.
+
+Compression Knee Sleeves + Cargo Shorts.  ->  Tactical Compression Cargo System
+  Result: armor — +2 DEF, +2 slots, knees fully insured. The sleeves go under the shorts. He will explain the layering system to anyone who slows down.
+
+Dad Cap + Wraparound Sunglasses.  ->  The Umpire Stare (Full Assembly)
+  Result: armor — +3 PER, +1 WIS. Cap over wraparounds. He can now disagree with a call from 200 feet, silently, in a way everyone feels.
+
+Tube Socks + Sandals. The prophecy fulfills itself.  ->  Socks and Sandals: Final Form
+  Result: armor — +2 DEF, +1 WIS, +1 PER. The fusion society feared. Comfort so complete it deflects blows and fashion criticism alike.
+
+Work Gloves + Rubber Dishwashing Gloves.  ->  The Double-Glove Guarantee
+  Result: armor — +3 DEF, +1 ATK. Rubber under leather. Waterproof, gripproof, excuse-proof. 'Two is one and one is none,' he says, incorrectly attributing it.
+
+Fleece Vest + High-Vis Safety Vest.  ->  High-Vis Fleece of Managed Expectations
+  Result: armor — +3 DEF, +1 WIS, +1 PER. Visible from space, insulated to 40 degrees, pockets fully redundant. Business casual for the apocalypse.
+
+Hard Hat + Hearing Protection Muffs.  ->  Full Compliance Helm
+  Result: armor — +3 DEF, +1 WIS. Head protected. Ears protected. Opinions unprotected and flowing freely, since he can no longer hear the responses.
+
+Lumberjack Flannel + Grilling Apron.  ->  Vestments of the Grillfather
+  Result: armor — +4 DEF, +2 ATK. Flannel beneath apron: the sacred layering. Someday, and that day may come at the cookout, it will ask a favor of you.
+
+Knee Brace + Elastic-Waist Sweatpants.  ->  Orthopedic Leisure Command Trousers
+  Result: armor — +2 DEF, +1 slot, +1 WIS. The brace goes over the sweatpants. Medically inadvisable. Spiritually correct.
+
+Steel-Toe Boots + The Single One. It was in the garage. It was always in the garage.  ->  The Reunited Pair
+  Result: armor — +3 DEF, +2 ATK. The single boot has found its family. Somewhere in the garage, a shelf grieves. The set is complete. Nothing else in his life is.
+
+Utility Belt + Tape Measure (Belt Clip).  ->  The Belt of Infinite Preparedness
+  Result: armor — +3 slots, +2 PER. Every clip occupied. Every scenario considered. Sits below the waistline at an angle physics has agreed not to discuss.
+
+Windbreaker + Winter Beanie. The thermostat is non-negotiable.  ->  The 64-Degree Doctrine Hood
+  Result: armor — +2 DEF, +1 WIS, +1 PER. A beanie reinforced with windbreaker lining. The thermostat stays at 64. This is the compromise. He is thriving. Ask him.

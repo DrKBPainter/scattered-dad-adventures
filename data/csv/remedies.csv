@@ -1,0 +1,35 @@
+name,rarity,hp,nourish,hydrate,patience_mod,throwable_dmg,cures,causes_status,alcohol,flavor
+Leftover Casserole,rare,12,40,,,,,,,Unidentifiable. Restorative. A whole meal.
+Sad Granola Bar,uncommon,6,25,,,,,,,From the bottom of a bag.
+Mystery Jerky,uncommon,8,22,,,,,,,So salty it dries you out for a few turns. Not The Thirst — just thirst.
+Lukewarm Meatball,uncommon,4,15,,,4,,,,Eat it or throw it.
+Gas Station Coffee,uncommon,4,,10,3,,,jitters,,+Patience. Heart: optional.
+Blue Electrolyte Drink,rare,5,,45,,,hangry/hangover,,,Replaces electrolytes and regret.
+Warm Water Bottle,rare,,,55,,,,,,Found in the car. Body temperature. Hydrating.
+Kids' Electrolyte Solution,rare,4,,40,,,hangover,,,"Cures hangover, eases The Thirst."
+Off-Brand Energy Drink,uncommon,,,10,6,,,jitters,,+Patience (ironically).
+Light Beer,uncommon,3,,12,1,,,,yes,"Eases The Thirst now, deepens it later."
+Warm Beer Can,uncommon,2,,8,,5,,,yes,Drink it or hurl it.
+Pocket Flask of Whiskey,uncommon,2,,,1,3,,,yes,"+ATK +DEF temporarily. Best enjoyed responsibly, alongside food and water."
+Laminated Rehab Pamphlet,uncommon,,,,,,thirst,,,The only true cure for The Thirst.
+Family Intervention Binder,common,,,,,,,,,"Prepared with love and mild desperation by his family. Contains a schedule, a phone list, and one handwritten note from his kid (page 12). Starts withdrawal: avoid alcohol for 15 turns, then The Thirst is permanently cured."
+Ibuprofen (Family Size),uncommon,3,,,,,knee/back,,,+3 HP. Cures Dad-body ailments.
+Acetaminophen (Store Brand),common,,,,,,,,,+2 DEF for 10 turns. Read the label: do not combine with alcohol. (Nobody reads the label.)
+Gas Station Hot Dog,rare,10,35,,,,,thirst,,On the roller since yesterday. Structurally confident.
+Chalky Protein Bar,uncommon,4,30,,,,,,,Flavor: 'Vanilla.' Contains neither.
+Red Sports Drink,rare,3,,50,,,hangry,,,Neon red. The lab report is outstanding.
+Experimental Kombucha,rare,6,,30,2,,hangover,,,+Patience. 14-day fermentation. 40% chance this one is fine.
+Cold Pizza (Breakfast),rare,14,45,,,,,,,A complete meal. A lifestyle. A statement.
+Restaurant Mints (Handful),common,1,5,,1,,,,,From the bowl by the door. Free. Technically.
+Glucosamine Chondroitin,uncommon,,,,,,knee/back,,,Taken daily since 2019. Results: the jury remains out. The knees remain problematic.
+Chalky Antacid Tablet,uncommon,4,,,,,hangry,,,Fruit-flavored. Chalky. Works instantly and publicly.
+Juice Pouch (Apple),uncommon,2,10,35,,,,,,The straw takes 4 attempts. Every time.
+Fruit Cup (Syrup-Packed),uncommon,6,20,15,,,,,,The fruit is optional. The syrup is the point.
+Lone Banana (Slightly Bruised),rare,5,18,,,,knee,,,Potassium. The official fruit of the man who is fine. The bruise is where the flavor lives.
+Garden Hose Water,uncommon,,,48,,,,,,"Warm, rubbery, faintly metallic. The way water was meant to be taken. Free, and it builds character."
+Roll of Antacids (Pocket Lint Included),uncommon,3,,,,,hangry/saltdry,,,"Chalk in three flavors, all of them chalk. Found in every coat he owns."
+Tube of Menthol Heat Rub,uncommon,,,,,,back/knee,,,Cures The Back and The Knee at once. The aroma announces you to a room before you enter it.
+Epsom Salt Soak (Travel Packet),rare,8,,,,,back,,,+8 HP. A grown man's bath bomb. He earned this and he will tell you why.
+Coconut Water (Impulse Buy),rare,4,,42,,,hangover,,,He read it was good for you. He did not enjoy it. He finished it on principle.
+Flat Ginger Ale,rare,5,,20,,,hangry/hangover,,,"The household cure for the flu, a bad mood, and existential dread. Carbonation: a memory."
+All-Day Slow Cooker Stew,rare,20,55,,,,,,,"In since 6 a.m. He told everyone about it. Repeatedly. It was, in fact, worth it."

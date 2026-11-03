@@ -1,0 +1,9 @@
+name,rarity,per_mod,str_mod,maxhp_mod,maxmoxie_mod,hydraslow_mod,display_message
+Pro Tip: Measure Twice,common,1,,,,,"+1 Perception, permanently. You'll actually remember this one."
+Pro Tip: Lift With Your Legs,common,,,6,,,"+6 max HP, permanently."
+Pro Tip: Count To Ten,common,,,,3,,"+3 max Patience, permanently."
+Pro Tip: Stay Hydrated,common,,,,,1,You get thirsty more slowly. Forever.
+Pro Tip: Always Stretch First,uncommon,,1,5,,,"+5 max HP and +1 ATK, permanently. He does not stretch. But he tells you to, firmly."
+Pro Tip: Read The Room,common,1,,,,,"+1 Perception, permanently. A skill he advises constantly and demonstrates never."
+Pro Tip: Firm Handshake,common,,1,,,,"+1 ATK, permanently. Eye contact included at no additional charge."
+Pro Tip: Pace Yourself,uncommon,,,,2,1,"+2 max Patience and slower thirst, permanently. The marathon, not the sprint. He says this from a couch."

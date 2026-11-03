@@ -1,0 +1,29 @@
+name,rarity,throwable_dmg,throwable_range,attr_boost,use_effect,display_message
+Half Roll of Duct Tape,common,,,,,"For when it moves and shouldn't. Repairs anything, temporarily permanent."
+Mystery Screws x14,common,,,,,For a project that no longer exists.
+Scrap Plywood,common,,,,,Structurally optimistic.
+Bag of Zip Ties,common,,,,,The dad adhesive of last resort.
+Can of WG-40 Spray Lube,common,,,,,For when it doesn't move and should.
+Tangled HDMI Cables,common,,,,,At least one works. Nobody knows which.
+9-Volt Battery,common,,,,,Tested by tongue. Verdict: yes.
+Half-Full Propane Tank,common,,,,,Or is it half-empty. He has opinions.
+Loose AA Battery,common,3,normal,,,throwable(3)  Throwable (3 dmg). The TV remote misses it.
+The Owner's Manual,rare,,,,identify_all,You actually read it. All gear in inventory and equipped is immediately identified. Nobody does this voluntarily.
+The Original Receipt,rare,,,,remove_curses,"Proof of purchase, wielded against the supernatural. Removes all hindering enchantments from equipped gear. The item sighs in resignation."
+Goop-Gone (Curse Remover),uncommon,,,,remove_one_curse,Industrial-strength enchantment solvent. Dissolves hindering affixes on contact. Also removes grease from ceramic tile. The directions warned against this use.
+Sticky Note of Identification,rare,,,,identify_all,A yellow sticky note with an arrow on it. Applied to any unidentified gear to immediately reveal its true nature. Did not come with the gear. Nothing comes with the gear.
+YallTube DIY Video,rare,,,,learn_recipe,A printout of a four-minute video titled 'How To Do That One Thing.' Reveals one crafting recipe permanently. Comments are disabled. Correctly.
+The Book of REAL Men,common,,,,no_effect,"A thick paperback about how a man should stand, walk, and feel emotions incorrectly. No mechanical effect. I guess someone might find this useful."
+The Sigma Grindset (Audiobook),common,,,,no_effect,7 CDs. Covers 'winning' and 'not losing.' Mutually exclusive with reading. No mechanical effect. I guess someone might find this useful.
+Mindfulness Journal for Gentle Men,common,,,,no_effect,Prompts include 'What did I apologize for today?' No mechanical effect. I guess someone might find this useful.
+ALPHA MASS SUPPLEMENT,common,,,,no_effect,97% maltodextrin. Comes with a poster of a man who also takes this. No mechanical effect. I guess someone might find this useful.
+'I Feel Things' Button,common,,,,no_effect,Enamel pin. He does feel things. Mostly his back. No mechanical effect. I guess someone might find this useful.
+Free Gym Trial Membership (30 Days),rare,,,+2 permanent ATK,,ATTR BOOST: +2 permanent ATK. The 30 days is real. The gains are permanent. The membership is not renewed.
+A History of Rome (Unabridged),rare,,,+1 permanent Dadism power,,ATTR BOOST: +1 permanent Dadism power. 847 pages. He read 400. That was enough. He has opinions now.
+"Crossword Book (Pen, Not Pencil)",rare,,,+1 permanent PER,,ATTR BOOST: +1 permanent PER. Ink only. No erasing. He commits to his guesses. Several of them are wrong. He knows.
+Complete Toolbox (Labeled),rare,,,+2 permanent DEF,,ATTR BOOST: +2 permanent DEF. Every tool in its place. All labeled. He knows exactly where the 10mm socket is. He is not sharing this information.
+Garage Bowling Ball (One Of A Pair),uncommon,8,normal,,,"throwable(8)  Throwable (8 dmg). Its twin is lost forever. This one carries the grief, and the momentum."
+Rusted Horseshoe,uncommon,6,normal,,,throwable(6)  Throwable (6 dmg). Lucky for you. Considerably less so for whatever it lands on.
+Frozen Burger Patty (Single),common,5,normal,,,"throwable(5)  Throwable (5 dmg). A discus of regret. Thaws on impact, mostly onto the target."
+Range Bucket Golf Ball,common,4,long,,,"throwable(4)  Throwable (4 dmg, long range). He has a whole bucket of these. Nobody knows why. He knows why."
+Wrinkled Dadism Scroll,rare,,,,learn_dadism,"A laminated printout discovered in a coat pocket, dated 1998. Teaches a random Dadism you don't already know. He made seventeen copies. Each is slightly different. He does not know which one this is."

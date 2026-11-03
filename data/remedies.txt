@@ -1,0 +1,139 @@
+SHATTERED DAD ADVENTURE — REMEDIES / food / drinks (Hunger=nourish, Thirst=hydrate)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Leftover Casserole
+  +12 HP, nourish 40
+  Unidentifiable. Restorative. A whole meal.
+
+Sad Granola Bar
+  +6 HP, nourish 25
+  From the bottom of a bag.
+
+Mystery Jerky
+  +8 HP, nourish 22
+  So salty it dries you out for a few turns. Not The Thirst — just thirst.
+
+Lukewarm Meatball
+  +4 HP, nourish 15, throwable(4)
+  Eat it or throw it.
+
+Gas Station Coffee
+  +4 HP, hydrate 10, +3 Patience, causes jitters
+  +Patience. Heart: optional.
+
+Blue Electrolyte Drink
+  +5 HP, hydrate 45, cures hangry/hangover
+  Replaces electrolytes and regret.
+
+Warm Water Bottle
+  hydrate 55
+  Found in the car. Body temperature. Hydrating.
+
+Kids' Electrolyte Solution
+  +4 HP, hydrate 40, cures hangover
+  Cures hangover, eases The Thirst.
+
+Off-Brand Energy Drink
+  hydrate 10, +6 Patience, causes jitters
+  +Patience (ironically).
+
+Light Beer
+  +3 HP, hydrate 12, +1 Patience, ALCOHOL
+  Eases The Thirst now, deepens it later.
+
+Warm Beer Can
+  +2 HP, hydrate 8, ALCOHOL, throwable(5)
+  Drink it or hurl it.
+
+Pocket Flask of Whiskey
+  +2 HP, +1 Patience, ALCOHOL, throwable(3)
+  +ATK +DEF temporarily. Best enjoyed responsibly, alongside food and water.
+
+Laminated Rehab Pamphlet
+  cures thirst
+  The only true cure for The Thirst.
+
+Family Intervention Binder
+  no effect
+  Prepared with love and mild desperation by his family. Contains a schedule, a phone list, and one handwritten note from his kid (page 12). Starts withdrawal: avoid alcohol for 15 turns, then The Thirst is permanently cured.
+
+Ibuprofen (Family Size)
+  +3 HP, cures knee/back
+  +3 HP. Cures Dad-body ailments.
+
+Acetaminophen (Store Brand)
+  no effect
+  +2 DEF for 10 turns. Read the label: do not combine with alcohol. (Nobody reads the label.)
+
+Gas Station Hot Dog
+  +10 HP, nourish 35, causes thirst
+  On the roller since yesterday. Structurally confident.
+
+Chalky Protein Bar
+  +4 HP, nourish 30
+  Flavor: 'Vanilla.' Contains neither.
+
+Red Sports Drink
+  +3 HP, hydrate 50, cures hangry
+  Neon red. The lab report is outstanding.
+
+Experimental Kombucha
+  +6 HP, hydrate 30, +2 Patience, cures hangover
+  +Patience. 14-day fermentation. 40% chance this one is fine.
+
+Cold Pizza (Breakfast)
+  +14 HP, nourish 45
+  A complete meal. A lifestyle. A statement.
+
+Restaurant Mints (Handful)
+  +1 HP, nourish 5, +1 Patience
+  From the bowl by the door. Free. Technically.
+
+Glucosamine Chondroitin
+  cures knee/back
+  Taken daily since 2019. Results: the jury remains out. The knees remain problematic.
+
+Chalky Antacid Tablet
+  +4 HP, cures hangry
+  Fruit-flavored. Chalky. Works instantly and publicly.
+
+Juice Pouch (Apple)
+  +2 HP, nourish 10, hydrate 35
+  The straw takes 4 attempts. Every time.
+
+Fruit Cup (Syrup-Packed)
+  +6 HP, nourish 20, hydrate 15
+  The fruit is optional. The syrup is the point.
+
+Lone Banana (Slightly Bruised)
+  +5 HP, nourish 18, cures knee
+  Potassium. The official fruit of the man who is fine. The bruise is where the flavor lives.
+
+Garden Hose Water
+  hydrate 48
+  Warm, rubbery, faintly metallic. The way water was meant to be taken. Free, and it builds character.
+
+Roll of Antacids (Pocket Lint Included)
+  +3 HP, cures hangry/saltdry
+  Chalk in three flavors, all of them chalk. Found in every coat he owns.
+
+Tube of Menthol Heat Rub
+  cures back/knee
+  Cures The Back and The Knee at once. The aroma announces you to a room before you enter it.
+
+Epsom Salt Soak (Travel Packet)
+  +8 HP, cures back
+  +8 HP. A grown man's bath bomb. He earned this and he will tell you why.
+
+Coconut Water (Impulse Buy)
+  +4 HP, hydrate 42, cures hangover
+  He read it was good for you. He did not enjoy it. He finished it on principle.
+
+Flat Ginger Ale
+  +5 HP, hydrate 20, cures hangry/hangover
+  The household cure for the flu, a bad mood, and existential dread. Carbonation: a memory.
+
+All-Day Slow Cooker Stew
+  +20 HP, nourish 55
+  In since 6 a.m. He told everyone about it. Repeatedly. It was, in fact, worth it.

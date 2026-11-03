@@ -1,0 +1,31 @@
+// Regenerates data/*.txt from the modular JS files (v0.5.1+).
+const fs=require("fs"),vm=require("vm");
+const ORDER=["js/config.js","js/sprites.js","js/data.js","js/game.js","js/render.js","js/ui.js","js/input.js"];
+for(const f of ORDER){if(!fs.existsSync(f)){console.error("MISSING FILE: "+f);process.exit(1);}}
+let js=ORDER.map(f=>fs.readFileSync(f,"utf8")).join("\n");
+js+=`;globalThis.__D={GAME_VERSION,CLASSES,CREATURES,BOSSES,DADISMS,RECIPES,WEAPONS,ARMORS,CHARMS,CONSUMABLES,OBJECTS,AFFIXES,TRAPS_DEF,STATUSES,PROTIPS,KEYS,VENDORS,TALENTS,FLOORBLURBS,HOA_PHASES,HOA_RESOLUTIONS};`;
+const localStorage={getItem:()=>null,setItem:()=>{},removeItem:()=>{}};
+function fc(){return{getContext:()=>new Proxy({},{get:()=>()=>{}}),style:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelectorAll:()=>[],width:320,height:240};}
+const el=()=>({classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelectorAll:()=>[],style:{},set innerHTML(v){},textContent:"",getContext:()=>new Proxy({},{get:()=>()=>{}}),width:320,height:240});
+const sandbox={localStorage,document:{getElementById:id=>id==="screen"||id==="mapcv"?fc():el(),addEventListener:()=>{},createElement:fc},window:{addEventListener:()=>{},innerWidth:1200,innerHeight:800},requestAnimationFrame:()=>{},Math,JSON,console,Array,Object,Proxy,globalThis:{}};
+vm.createContext(sandbox);vm.runInContext(js,sandbox);const D=sandbox.globalThis.__D;
+fs.mkdirSync("data",{recursive:true});
+const H=t=>"SHATTERED DAD ADVENTURE — "+t+"\nAuto-generated from the build (v"+D.GAME_VERSION+"). Edit the matching data array in js/data.js; this mirrors it.\n"+"=".repeat(64)+"\n\n";
+const w=(f,s)=>{fs.writeFileSync("data/"+f,s);console.log("wrote data/"+f);};
+w("creatures.txt",H("CREATURES (spawn by area/biome)")+D.CREATURES.map(c=>`${c.name}  [${c.biome}]\n  HP ${c.hp}  ATK ${c.atk}  DEF ${c.def}  XP ${c.xp}  Gold ${c.gold}\n  ${c.flavor}\n`).join("\n")+"\n\nBOSSES\n"+"-".repeat(40)+"\n"+D.BOSSES.map(b=>`${b.name}  (Floor ${b.floor})\n  HP ${b.hp}  ATK ${b.atk}  DEF ${b.def}\n  ${b.flavor}\n`).join("\n"));
+w("dadisms.txt",H("DADISMS (Book of Dadvice; cast with Patience)")+D.DADISMS.map(d=>`${d.name}\n  Classes: ${d.classes.join(", ")}   Cost: ${d.cost} Patience   Type: ${d.kind}\n  ${d.desc}\n`).join("\n"));
+w("weapons.txt",H("WEAPONS")+D.WEAPONS.map(x=>`${x.name}\n  Base ATK ${x.atk}\n  ${x.desc}\n`).join("\n"));
+w("armor.txt",H("ARMOR (slots: head/torso/arms/legs/feet)")+D.ARMORS.map(x=>`${x.name}  [${x.slot}]\n  ${["def","atk","per","wis","cap"].filter(k=>x[k]).map(k=>(x[k]>0?"+":"")+x[k]+" "+k).join(", ")}\n  ${x.desc}\n`).join("\n"));
+w("charms.txt",H("CHARMS (worn neck/ring/hair; max 2)")+D.CHARMS.map(x=>`${x.name}  [worn: ${x.wear}]\n  ${["per","wis","atk","def"].filter(k=>x[k]).map(k=>"+"+x[k]+" "+k).join(", ")}\n  ${x.desc}\n`).join("\n"));
+w("remedies.txt",H("REMEDIES / food / drinks (Hunger=nourish, Thirst=hydrate)")+D.CONSUMABLES.map(x=>{const e=[];if(x.heal)e.push("+"+x.heal+" HP");if(x.nourish)e.push("nourish "+x.nourish);if(x.hydrate)e.push("hydrate "+x.hydrate);if(x.moxie)e.push("+"+x.moxie+" Patience");if(x.cures)e.push("cures "+x.cures.join("/"));if(x.causes)e.push("causes "+x.causes);if(x.alcohol)e.push("ALCOHOL");if(x.throw)e.push("throwable("+(x.throw.dmg||"?")+")");return `${x.name}\n  ${e.join(", ")||"no effect"}\n  ${x.desc}\n`;}).join("\n"));
+w("objects.txt",H("OBJECTS / crafting materials & throwables")+D.OBJECTS.map(x=>`${x.name}\n  ${x.throw?("throwable("+x.throw.dmg+")  "):""}${x.desc}\n`).join("\n"));
+w("protips.txt",H("PRO TIPS (permanent upgrades; formerly 'scrolls')")+D.PROTIPS.map(x=>`${x.name}\n  ${Object.entries(x.perm).map(([k,v])=>"+"+v+" "+k).join(", ")}\n  ${x.desc}\n`).join("\n"));
+w("buffs.txt",H("AFFIXES — Upgrades / Learning Experiences / no effect")+[["help","UPGRADES"],["hinder","LEARNING EXPERIENCES"],["nothing","NO EFFECT"]].map(([t,lab])=>lab+"\n"+"-".repeat(30)+"\n"+D.AFFIXES.filter(a=>a.type===t).map(a=>`${a.name}\n  ${a.desc}\n`).join("\n")).join("\n\n"));
+w("illnesses.txt",H("STATUS EFFECTS / Learning Experiences & buffs")+Object.entries(D.STATUSES).map(([id,s])=>`${s.name}  [${s.bad?"DEBUFF":"BUFF"}]\n  ${s.desc}\n`).join("\n"));
+w("traps.txt",H("TRAPS (detection scales with Perception; throw to disarm)")+D.TRAPS_DEF.map(t=>`${t.name}\n  Detect>=PER ${t.detect}   Damage ${t.dmg}   Inflicts: ${t.status||"none"}\n  ${t.desc}\n`).join("\n"));
+w("recipes.txt",H("CRAFTING RECIPES (combine two items)")+D.RECIPES.map(r=>`${r.desc}  ->  ${r.out.name}${r.lock?("  ["+r.lock+" ONLY]"):r.bonus?("  [bonus: "+r.bonus+"]"):""}\n  Result: ${r.out.kind} — ${r.out.desc}\n`).join("\n"));
+w("classes.txt",H("HERO CLASSES")+D.CLASSES.map(c=>`${c.name}\n  HP ${c.hp}  STR ${c.str}  DEF ${c.def}  PER ${c.per}  WIS ${c.wis}  Patience ${c.moxie}\n  Dadisms: ${D.DADISMS.filter(d=>d.classes.includes(c.id)).map(d=>d.name).join(", ")}\n  ${c.blurb}\n`).join("\n"));
+w("talents.txt",H("DAD TALENTS (pick 1 of 3 on level-up)")+D.TALENTS.map(t=>{const e=t.eff||{};const p=[];if(e.str)p.push("+"+e.str+" ATK");if(e.def)p.push("+"+e.def+" DEF");if(e.per)p.push("+"+e.per+" PER");if(e.wis)p.push("+"+e.wis+" WIS");if(e.maxhp)p.push("+"+e.maxhp+" max HP");if(e.maxmoxie)p.push("+"+e.maxmoxie+" max Patience");if(e.hydraSlow)p.push("thirst slows x"+e.hydraSlow);if(e.hungerCap)p.push("+"+e.hungerCap+" Hunger cap");if(e.hydraCap)p.push("+"+e.hydraCap+" Thirst cap");if(e.kneeMul)p.push("knee buckle x"+e.kneeMul);if(e.backMul)p.push("back-out x"+e.backMul);return `${t.name}\n  ${p.join(", ")||"no effect"}\n  ${t.desc}\n`;}).join("\n"));
+w("floorblurbs.txt",H("PER-FLOOR NARRATIVE BLURBS (shown on descend)")+Object.keys(D.FLOORBLURBS).map(Number).sort((a,b)=>a-b).map(n=>`Floor ${n}\n  ${D.FLOORBLURBS[n]}\n`).join("\n"));
+w("hoa_finale.txt",H("THE HOA FINALE (floor 100 — multi-phase boss + class resolutions)")+"PHASES\n"+"-".repeat(40)+"\n"+D.HOA_PHASES.map(p=>`${p.name}  (at ${Math.round(p.at*100)}% HP${p.atkBonus?", ATK +"+p.atkBonus:""}${p.patienceCost?", -"+p.patienceCost+" Patience":""}${p.patienceZero?", Patience -> 0":""})\n  ${p.lines.join("\n  ")}\n`).join("\n")+"\nCLASS RESOLUTIONS\n"+"-".repeat(40)+"\n"+Object.entries(D.HOA_RESOLUTIONS).map(([k,v])=>`[${k}]\n  ${v.join("\n  ")}\n`).join("\n"));
+console.log("data catalogs synced.");

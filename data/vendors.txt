@@ -1,0 +1,54 @@
+SHATTERED DAD ADVENTURE — VENDORS (keyed by floor depth)
+Auto-generated mirror (v0.9.0). Edit the VENDORS array in js/data.js; this mirrors it.
+================================================================
+
+Floor 5: The Neighbor Who Happens to Have That
+  "Oh yeah, I got one of those." He has seventeen. He will lend you one.
+  Stock: water, gatorade, key, brick, pt_legs, steeltoe, manual, dadism_scroll
+
+Floor 15: The Lowe & Behold Returns Desk
+  "Did you keep your receipt?" Of course you didn't. He'll deal.
+  Stock: water, gatorade, pedialyte, casserole, key, steeltoe, pt_measure, pt_legs, brick, manual, receipt, goopgone
+
+Floor 25: The Park Concession Stand
+  "We're cash only." You have a card. He produces a card reader from 2013. The signal is weak but his resolve is not.
+  Stock: water, gatorade, casserole, key, pt_grip, pt_patience, manual, dadism_scroll
+
+Floor 30: The Estate Sale of a Man Who Had Everything
+  "Everything must go." The man is not present. The man, it is implied, has moved on to a place with less garage. His charms and his hard-won wisdom remain, priced to clear.
+  Fixed: water, key
+  Restock: 7 random of {toothpick, dogtags, signet, earbuds, lucky_coin, fortunecookie, keychain, fishing_lure, name_badge, suspenders, fistbump_band, measure_twice, lift_legs, count_ten, stay_hydrated, warm_up, read_room, firm_handshake, pace_yourself}
+
+Floor 35: The Vastco Membership Kiosk
+  "Card, please." You flash a library card. He respects the hustle.
+  Stock: casserole, gatorade, rehab, key, chestpad, pt_patience, pt_grip, propane, receipt, dadism_scroll
+
+Floor 45: The Soccer Complex Snack Shack
+  "We have orange slices." You need ammunition. He has orange slices and a truly extraordinary number of juice pouches.
+  Stock: water, gatorade, pedialyte, casserole, key, pt_legs, brick, manual, dadism_scroll
+
+Floor 55: The School Lost and Found
+  "If no one claims it by Friday, it's yours." It is Friday. Everything in here was left in 2018. Some of it is useful.
+  Stock: key, brick, pt_measure, steeltoe, casserole, rehab, manual, receipt, dadism_scroll
+
+Floor 60: The Conference Center Vendor Hall
+  "Free pens." There are no free pens. There is, however, a folding table of genuinely useful equipment and a man in a lanyard who has not eaten since the keynote. His stock changes by the hour; nobody knows who restocks it.
+  Fixed: water, gatorade, key
+  Restock: 8 random of {casserole, pedialyte, rehab, brick, steeltoe, chestpad, propane, manual, receipt, goopgone, dadism_scroll, pt_grip, pt_legs, pt_measure, pt_patience, lanyard, visor, watchband}
+
+Floor 65: The Family Restaurant Manager
+  "I can't do that, but I can do this." What he can do is unclear but the tray of bread he produces is undeniably real.
+  Stock: water, casserole, gatorade, pedialyte, key, pt_grip, pt_patience, manual, dadism_scroll
+
+Floor 75: The IDKEA As-Is Section
+  "No returns. No assembly instructions. No regrets." This last part is a lie.
+  Stock: key, brick, chestpad, steeltoe, pt_measure, pt_legs, propane, rehab, receipt, goopgone, dadism_scroll
+
+Floor 85: The Neighborhood Garage Sale
+  "Everything's a quarter." The item you need most is labeled $40. He will not negotiate. He has never negotiated. He will negotiate.
+  Stock: water, gatorade, key, brick, casserole, pt_patience, steeltoe, pt_grip, manual, dadism_scroll
+
+Floor 95: The HOA Emergency Dispensary
+  "This is highly irregular." He opens a filing cabinet. Everything inside is laminated. Some of it heals. All of it is permitted under Section 22(b).
+  Stock: rehab, casserole, gatorade, pedialyte, chestpad, pt_measure, pt_legs, propane, key, manual, receipt, goopgone, dadism_scroll
+

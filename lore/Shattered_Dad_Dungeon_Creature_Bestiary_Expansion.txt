@@ -1,0 +1,126 @@
+SHATTERED DAD DUNGEON - CREATURE BESTIARY (EXPANSION VOLUME II)
+100 Additional Cataloged Threats, sorted by Level Theme
+Emphasis: People-Type and Bug-Type Encounters
+
+LEVEL THEME REFERENCE
+1–10   The House                 | 11–20  Lowe & Behold Hardware
+21–30  The Park                  | 31–40  Vastco
+41–50  Soccer Complex           | 51–60  The School
+61–70  The Family Restaurant    | 71–80  IDKEA
+81–90  The Neighborhood         | 91–100 The HOA Dominion
+
+| Creature Type | Levels | Description |
+|--------------|--------|-------------|
+| Borrowed Tool Wraith | 1–10 The House | Took your ladder in 2019 and returns daily as a friendly neighbor with zero memory of the transaction. |
+| Cushion Fort Poltergeist | 1–10 The House | Rearranges the couch every evening so the remote is always one cushion deeper than you reach. |
+| Pantry Moth Brood | 1–10 The House | Hatched from a forgotten bag of flour. Now a generational war. Every grain product is a potential nest. |
+| Ant Reconnaissance Line | 1–10 The House | A single scout finds one crumb. By morning, a highway of thousands marches across the counter. |
+| Stink Bug Paratrooper | 1–10 The House | Descends from the ceiling onto the dinner table. Cannot be crushed. Retaliates with a smell of vengeance. |
+| Fruit Fly Cloud Elemental | 1–10 The House | Spawns from one overripe banana. Becomes an immortal hovering swarm immune to every household trap. |
+| Termite Siege Engine | 1–10 The House | Eats the structure silently for years. Reveals itself only on the inspection report before closing. |
+| Spider in the Garage Lurker | 1–10 The House | Owns the corner above the workbench. Has owned it for years. You have agreed not to discuss it. |
+| Cockroach Survivor Boss | 1–10 The House | Appears when the lights flick on. Outruns the shoe. Will outlive the dad, the house, and civilization. |
+| Silverfish Archivist | 1–10 The House | Dwells in the box of warranties and tax documents. Eats the one page you finally needed. |
+| Centipede Sprint Horror | 1–10 The House | Too many legs, moving too fast, in the worst possible room. Vanishes before the shoe lands. Now unaccounted for. |
+| Earwig Drain Lurker | 1–10 The House | Surfaces in the bathroom sink at 2 AM. Pincers raised. Establishes immediate psychological dominance. |
+| Dust Mite Sleeper Cell | 1–10 The House | Unseen occupant of every mattress and pillow. Cause of the mysterious sneeze. Can never be truly evicted. |
+| Cluster Fly Window Coven | 1–10 The House | Gathers on the inside of the upstairs window every cold morning. Sluggish, plentiful, grimly persistent. |
+| Houseplant Fungus Gnat Swarm | 1–10 The House | Breeds in the overwatered fern. Drifts up at every passerby. Survives every "this should fix it" remedy. |
+| Aisle Consultant Phantom | 11–20 Lowe & Behold Hardware | Materializes only when you do NOT need help. Vanishes the instant you have a question. |
+| Paint Chip Sorcerer | 11–20 Lowe & Behold Hardware | Offers four hundred shades of white, each subtly, maddeningly different. Choice paralysis incoming. |
+| Plumbing Aisle Sphinx | 11–20 Lowe & Behold Hardware | Guards a wall of fittings. None match the pipe you photographed. The photograph was insufficient. |
+| Rental Truck Cyclops | 11–20 Lowe & Behold Hardware | A single-eyed flatbed available for ninety minutes. The clock starts the moment you sign. |
+| Zip Tie Hydra | 11–20 Lowe & Behold Hardware | Sold in packs of one hundred. You need two. You now own four hundred from previous battles. |
+| Key-Cutting Artificer | 11–20 Lowe & Behold Hardware | Duplicates your key with 90% accuracy. The missing 10% is the part that turns the lock. |
+| Special Order Liaison | 11–20 Lowe & Behold Hardware | Promises the part in 3 to 5 business days. Defines neither "business" nor "day." |
+| Loyalty App Gremlin | 11–20 Lowe & Behold Hardware | Demands you scan a QR code for a discount. The code does not scan. The discount evaporates. |
+| Caulk Gun Berserker | 11–20 Lowe & Behold Hardware | Refuses to stop dispensing. Coats the project, the dad, and the dog in a single uncontrollable burst. |
+| Lumber Cart Minotaur | 11–20 Lowe & Behold Hardware | Drags a flatbed of plywood through the narrowest aisle and holds strong opinions about wood grain. |
+| Jogger Revenant | 21–30 The Park | Appears at dawn. Never tires. Causes guilt damage to any dad who drove past in his car. |
+| Stroller Cavalry | 21–30 The Park | Moves in coordinated formations three abreast. Occupies all available paths. Yields to no one. |
+| Playground Warlord | 21–30 The Park | A sugar-fueled child who has declared sovereignty over the slide and taxes all who climb. |
+| Goose Berserker | 21–30 The Park | Territorial feathered menace. Immune to diplomacy. Hisses at strollers, dogs, and self-esteem. |
+| Power-Walking Coven | 21–30 The Park | Three women in visors who move as one and discuss your landscaping as they pass. You are always in earshot. |
+| Off-Leash Dog Familiar | 21–30 The Park | "He's friendly!" shouts its distant owner as it gallops directly at your sandwich. |
+| Mosquito Assassin | 21–30 The Park | Strikes at dusk. Targets the one patch of skin outside the blanket. Whines before it bites. |
+| Tick Ambusher | 21–30 The Park | Lurks in tall grass. Latches on undetected. Triggers a full-family panic check after every hike. |
+| No-See-Um Phantom Biters | 21–30 The Park | Invisible. Numerous. The itch arrives after they have gone. Mocks every brand of repellent. |
+| Sugar Ant Picnic Battalion | 21–30 The Park | Detects a single drop of juice from across the lawn. Forms a perfect line. Cannot be negotiated with. |
+| Praying Mantis Sentinel | 21–30 The Park | Stares without blinking from the picnic table. Is technically beneficial. Is deeply, profoundly unsettling. |
+| Sample Cart Enchantress | 31–40 Vastco | Offers a tiny quesadilla. Charges you forty dollars two aisles later. Descended from the Sample Siren. |
+| Cart Wrangler Juggernaut | 31–40 Vastco | Pushes ninety carts as one mass. Has the right of way. Has always had the right of way. |
+| Self-Checkout Trickster | 31–40 Vastco | Demands you place the item in the bagging area. The item is already there. It does not believe you. |
+| Hot Dog Cleric | 31–40 Vastco | Heals all wounds with a $1.50 meal — the last truly fair price in the realm. Worshipped quietly by all dads. |
+| Returns Desk Gatekeeper | 31–40 Vastco | Examines your receipt and your character. Approves or denies based on ancient, unwritten law. |
+| Free Sample Toddler Swarm | 31–40 Vastco | Small, fast, faceless beneath snack-stained chins. Empties every sample tray within seconds. |
+| Big-Screen TV Tempter | 31–40 Vastco | Stands eight feet tall in the entryway. You do not need it. You will think about it for a month. |
+| Rotisserie Chicken Familiar | 31–40 Vastco | A loss leader summoned to lure dads deep into the warehouse. Strangely reliable. Strangely cheap. |
+| Bulk Paper Towel Titan | 31–40 Vastco | A thirty-roll monolith that fits in neither the cart, the car, nor the cabinet. You buy it anyway. |
+| Membership Renewal Imp | 31–40 Vastco | Appears at the register to inform you the fee has increased. Smiles. Processes it regardless. |
+| Recreational League Referee | 41–50 Soccer Complex | A teenager with a whistle and no fear. Makes the calls. The calls are final. The parents disagree. |
+| Sideline Tactician | 41–50 Soccer Complex | A father who has watched videos. Coaches from the parking lot. Has never played the sport. |
+| Tournament Bracket Sphinx | 41–50 Soccer Complex | Poses an unsolvable riddle: which field, what time, and why is it 40 minutes away. |
+| Field Reassignment Trickster | 41–50 Soccer Complex | Announces a new field at the far end of the complex four minutes before kickoff. Laughs in PA static. |
+| Team Mom Overlord | 41–50 Soccer Complex | Commands the spreadsheet, the snack rotation, and the group chat. Her authority is absolute and unelected. |
+| Concession Stand Golem | 41–50 Soccer Complex | Built from nacho cheese and exhaustion. Moves slowly. The line does not. |
+| Cooler Pack Mule Dad | 41–50 Soccer Complex | Carries seventeen waters, four chairs, and a canopy nobody asked him to bring. Strength build, no off switch. |
+| Highlight Reel Necromancer | 41–50 Soccer Complex | Reanimates a single good play their kid made in 2022 at every available opportunity. |
+| Travel Ball Recruiter | 41–50 Soccer Complex | Whispers of elite programs and showcase tournaments. Costs four thousand dollars and your weekends. |
+| Snack Schedule Enforcer | 41–50 Soccer Complex | Tracks whose turn it is to bring orange slices. Has never forgotten. Will not forget you. |
+| Substitute Teacher Specter | 51–60 The School | Has no lesson plan and no name the children will respect. Survival rate uncertain. |
+| Science Fair Judge Mind Flayer | 51–60 The School | Reads your child's poster. Reads your soul. Knows which parent did the project. |
+| Pickup Line Gorgon | 51–60 The School | A queue of idling SUVs that turns impatient dads to stone. Movement: one car length per ice age. |
+| Standardized Test Proctor | 51–60 The School | Speaks only in instructions read aloud verbatim. Number two pencils only. No exceptions exist. |
+| Booster Club Treasurer | 51–60 The School | Guards a budget no one is allowed to see. Sells raffle tickets. Always selling raffle tickets. |
+| Field Trip Chaperone Knight | 51–60 The School | Volunteered without understanding the assignment. Now responsible for nine children near water. |
+| Spelling Bee Arbiter | 51–60 The School | Pronounces words you have never heard. Provides a definition that does not help. |
+| Classroom Party Coordinator | 51–60 The School | Demands sign-ups for a Tuesday at 1:45 PM. You have a job. This is not her concern. |
+| Crossing Guard Paladin | 51–60 The School | Wields a handheld stop sign with holy authority. Halts traffic and the will of impatient men. |
+| Parent-Teacher Conference Twin | 51–60 The School | Two timed slots, fifteen minutes each, and smiles that contain a permanent record. |
+| Hallway Monitor Inquisitor | 51–60 The School | Enforces obscure regulations with absolute conviction. Demands to see your hall pass. |
+| Birthday Party Goblin Horde | 61–70 The Family Restaurant | Hyperactive swarm. Gains strength from cake consumption. Cannot be contained to one booth. |
+| Animatronic Oracle | 61–70 The Family Restaurant | Delivers cryptic wisdom and mild nightmares from a stage that should have been decommissioned. |
+| Booth Leviathan | 61–70 The Family Restaurant | A stranger who claims both sides of the booth through sheer ancestral confidence. Smells of mozzarella sticks. |
+| Singing Server Brigade | 61–70 The Family Restaurant | Surrounds your table with clapping and a branded birthday chant. Escape is socially impossible. |
+| Ticket Redemption Hydra | 61–70 The Family Restaurant | Trades a mountain of arcade tickets for one eraser. The math is deliberately incomprehensible. |
+| Endless Appetizer Mimic | 61–70 The Family Restaurant | Refills forever, free, until you physically cannot stand. Defeats dads through hospitality. |
+| Sticky Menu Ooze | 61–70 The Family Restaurant | A laminated relic coated in the syrup of a thousand previous families. Adheres to the forearm. |
+| Buzzer Pager Imp | 61–70 The Family Restaurant | Promises to vibrate when your table is ready. Goes off during a bathroom trip every single time. |
+| Kids-Eat-Free Siren | 61–70 The Family Restaurant | Lures the whole family in on a Tuesday. The drinks and the upsell are where it feeds. |
+| Coupon Necromancer | 61–70 The Family Restaurant | Reanimates expired discounts at the register and raises false hope in the line behind you. |
+| Assembly Instruction Trickster | 71–80 IDKEA | Speaks only in wordless pictograms. Step 6 contradicts Step 4. The smiling cartoon man lied. |
+| Showroom Labyrinth Minotaur | 71–80 IDKEA | Herds adventurers along a one-way path with no exits. Many enter the bedroom display. Few return. |
+| Meatball Cleric | 71–80 IDKEA | Restores 30 HP and your will to live at the exact midpoint of the maze. Pure of heart. |
+| Allen Wrench Goblin Pack | 71–80 IDKEA | A swarm of identical tiny tools. Twelve in the drawer. None fit the bolt in your hand right now. |
+| Cardboard Flat-Pack Golem | 71–80 IDKEA | Weighs ninety pounds in a deceptively flat box. Will not fit the sedan. The chart said it would. |
+| Lingonberry Merchant | 71–80 IDKEA | Sells a jam you did not come for and cannot resist. Lurks suspiciously near the exit. |
+| Bin Number Pencil Imp | 71–80 IDKEA | Hands you a tiny golf pencil and expects you to remember a six-digit warehouse code unaided. |
+| As-Is Section Bargain Wraith | 71–80 IDKEA | Haunts the clearance corner. Whispers that the scratched dresser is fine, actually, and only $19. |
+| Tea Light Swarm | 71–80 IDKEA | Sold in packs of one hundred. Multiply in drawers at home. Outlive their owner. Never fully accounted for. |
+| Bedbug Dread Stowaway | 71–80 IDKEA | Hides in the upholstery of the floor-model couch. The most feared whisper in all the furniture realms. |
+| Lost Spouse Specter | 71–80 IDKEA | Your partner walked ahead at the lamps and is now somewhere in the maze. The phones have no signal. |
+| Idle Cul-de-sac Sentinel | 81–90 The Neighborhood | A retired man holding a hose he will not use. Knows everyone's arrival and departure times. Cannot be flanked. |
+| Garage Sale Hagglemancer | 81–90 The Neighborhood | Offers a dollar for items marked twenty. Wins through sheer relentless patience. |
+| Leaf Blower Banshee | 81–90 The Neighborhood | Activates at 7:00 AM on the one Saturday you could have slept in. Immune to noise ordinances. |
+| Welcome Wagon Charmer | 81–90 The Neighborhood | Arrives with a casserole and an agenda. The casserole is a trap. The agenda is the HOA. |
+| Driveway Basketball Centaur | 81–90 The Neighborhood | Half man, half minivan. Lowers the hoop to 8 feet and challenges all passing dads to humiliation. |
+| Cicada Chorus Legion | 81–90 The Neighborhood | Emerges after seventeen years to scream in unison. Leaves crunchy husks on every surface. Then vanishes. |
+| Carpenter Bee Driller | 81–90 The Neighborhood | Bores perfect holes in the deck railing. Hovers menacingly. Stings nothing but your woodwork. |
+| Lanternfly Invader | 81–90 The Neighborhood | An invasive menace you are legally encouraged to stomp. Multiplies faster than you can comply. |
+| Japanese Beetle Skeletonizer | 81–90 The Neighborhood | Devours the rose bushes in a coordinated metallic swarm. Resists every spray in the garden aisle. |
+| Aphid Colony Blight | 81–90 The Neighborhood | Coats the tomato plants overnight. Summons ants as bodyguards. Undoes a season of gardening pride. |
+| Hornet Nest Apex Predator | 81–90 The Neighborhood | A basketball-sized fortress in the tree by the trampoline. Demands a professional and a large invoice. |
+| Yellowjacket Cookout Raider | 81–90 The Neighborhood | Crashes every backyard meal in late summer. Aggressive, organized, drawn to soda. Knows no surrender. |
+| June Bug Kamikaze | 81–90 The Neighborhood | Hurls itself at the porch light with no plan and no fear. Flips onto its back to recover, then resumes. |
+| Grub Lawn Saboteur | 81–90 The Neighborhood | Feeds beneath the turf and browns the grass in patches. Summons the HOA Compliance Dragon by proxy. |
+| Boxelder Bug Sunbather Horde | 81–90 The Neighborhood | Carpets the warm siding by the hundreds. Harmless. Eternal. A symbol of the changing seasons. |
+| Clubhouse Gate Hierophant | 91–100 The HOA Dominion | Demands credentials at the amenity gate. Judges your guest list. The amenity is a half-empty pool. |
+| Lost Form Carousel Wraith | 91–100 The HOA Dominion | Your architectural-request paperwork spins endlessly between departments and never arrives at a desk. |
+| Permit Counter Sphinx | 91–100 The HOA Dominion | Offers a variance you do not need and denies the one you do. The application fee is nonrefundable. |
+| Per My Previous Email Lich | 91–100 The HOA Dominion | Resurrects a thread from three months ago to deal unavoidable psychic damage. Always cc's the board. |
+| Bylaw Archivist Golem | 91–100 The HOA Dominion | Built from binders in the dungeon basement. Cites a 1987 amendment that contradicts the one you read. |
+| Annual Meeting Quorum Specter | 91–100 The HOA Dominion | Cannot vote without enough attendees, and ensures no one attends. The agenda never ends. |
+| Violation Notice Wisp | 91–100 The HOA Dominion | Drifts onto your door over a trash can left out one hour past collection. Photographic evidence attached. |
+| Dues Increase Revenant | 91–100 The HOA Dominion | Returns each fiscal year, larger than before, to fund a fountain no resident requested. |
+| Architectural Review Cerberus | 91–100 The HOA Dominion | Three heads guard the right to paint your shutters. Each head prefers a different, unavailable color. |
+| Basement Records Cockroach Brood | 91–100 The HOA Dominion | Thrives in the dark filing dungeon beneath the office, feeding on decades of unresolved complaints. |

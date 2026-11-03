@@ -1,0 +1,303 @@
+SHATTERED DAD ADVENTURE — PER-FLOOR NARRATIVE BLURBS (shown on descend)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Floor 1
+  The campaign begins with coffee and rising dread. The Remote is gone. The house is warming up.
+
+Floor 2
+  The hallway: every item left by every family member who is not home. The correct jacket is under all of it.
+
+Floor 3
+  Dad opened the door to the garage. He now deeply regrets opening the door to the garage.
+
+Floor 4
+  The garage depths. The emergency release cord is seventeen feet away. It might as well be in another country.
+
+Floor 5
+  The car is free. But the house must be secured first. This will take five minutes. It will not take five minutes.
+
+Floor 6
+  Dad is upstairs. He came up here for something. The reason has been lost to the stairs.
+
+Floor 7
+  The attic contains the answer to a question nobody remembers asking.
+
+Floor 8
+  The master bedroom. Everything Dad needs is in this room. None of it is where it should be.
+
+Floor 9
+  The car is out, the journey could begin. The neighbor has emerged.
+
+Floor 10
+  It was never just a room. It was a final exam. The Garage has awakened.
+
+Floor 11
+  The hardware store parking lot. There are no spots. There are never spots. Dad will find one.
+
+Floor 12
+  The cart return zone. The carts are not where they should be. One has escaped.
+
+Floor 13
+  The contractors have established dominion over the north lot. Their morning is going better than Dad's.
+
+Floor 14
+  The entrance gauntlet: a seasonal display, a donation bin, a flyer man, and a former coworker.
+
+Floor 15
+  The lumber aisle. Dad needs screws. The screws are near the lumber. The lumber is everywhere.
+
+Floor 16
+  The fastener aisle. There are 847 types of screw. Dad needs one. The system requires a degree.
+
+Floor 17
+  Appliance parts. The dryer needs a part. The aisle assumes Dad knows his model number.
+
+Floor 18
+  The tool display. Dad has all the tools. Dad is now holding a drill that feels different from his drill.
+
+Floor 19
+  Self-checkout. Dad has found the part. Now he must survive the purchase.
+
+Floor 20
+  He appeared from nowhere. He knows where everything is. The Floor Manager will upsell Dad into a better version.
+
+Floor 21
+  The park entrance. Parking is worse than the hardware store. The 5K is finishing. Dad is in the chute.
+
+Floor 22
+  The cleats were left 'by the goalpost.' There are twelve goalposts.
+
+Floor 23
+  The equipment shed: lost items, broken nets, a lost-and-found nobody has checked since March.
+
+Floor 24
+  The dog show has taken over Field 5. Dad must cross it.
+
+Floor 25
+  The farmers market. Dad does not need anything here. He will spend forty-seven dollars.
+
+Floor 26
+  The produce section. The tomatoes are the same tomatoes as the grocery store. They cost more. Dad buys six.
+
+Floor 27
+  The craft vendor corridor. Dad has no interest in any of it. Dad is now holding a wind chime.
+
+Floor 28
+  The food truck gauntlet. Dad is hungry. Two trucks have forty-minute waits. The rest he does not understand.
+
+Floor 29
+  The birthday party for a child named Brayden or Cayden or possibly Hayden has escaped its zone.
+
+Floor 30
+  She has been here since 5 AM. She has a radio, a floor plan, and opinions about Dad's parking.
+
+Floor 31
+  Vastco. Dad cannot find his membership card. This is not a store you enter on goodwill.
+
+Floor 32
+  The parking lot perimeter. No spots near the entrance. Dad will park far and walk. This is fine. Relatively.
+
+Floor 33
+  The Vastco cart is not a cart. It is a commercial vehicle. It handles like a barge.
+
+Floor 34
+  The sample corridor. Movement drops to thirty percent. The cheese is very good.
+
+Floor 35
+  Paper goods. Enough paper towels to last until the kids graduate college. This is the rational choice.
+
+Floor 36
+  The food section. The rotisserie chicken. Also the giant muffins. These were not on the list.
+
+Floor 37
+  Electronics. Dad does not need electronics. Dad is now standing in front of a 75-inch television.
+
+Floor 38
+  Clothing. Dad's fleece is fine. Dad now has two new fleeces.
+
+Floor 39
+  The checkout line. Six lanes, fourteen carts each. Self-checkout is fifteen items. Dad has thirty-one.
+
+Floor 40
+  She controls the desk, the returns, and the renewals. The Membership Desk Guardian controls Dad.
+
+Floor 41
+  The soccer complex. Twenty-four fields. The bracket is in font size 8. The QR code is in the group chat.
+
+Floor 42
+  Dad was told his son is on Field 7B. Fields 1 through 6 are visible. Field 7 is conceptual.
+
+Floor 43
+  The snack stand is a beacon. The prices are audacious. Dad buys everything.
+
+Floor 44
+  The team is here. Dad's son needs his shin guards. The shin guards are in the car. The car is now far away.
+
+Floor 45
+  The sideline claim. The good spots are taken. The good-spot parents have been here since 10 AM.
+
+Floor 46
+  Dad has opinions. Dad is expressing opinions. The coach can hear Dad.
+
+Floor 47
+  Halftime is eight minutes. Dad must secure orange slices, water, and which quarter it actually is.
+
+Floor 48
+  The sports dad convention. Their own civilization, their own language, their own opinions about refs.
+
+Floor 49
+  The referee has made a call. The referee was correct. Dad does not know this.
+
+Floor 50
+  She has been here since 6 AM. She controls the bracket, the fields, and Dad's afternoon.
+
+Floor 51
+  Jefferson Middle School. On a Saturday. The school is not supposed to be open. The school is open.
+
+Floor 52
+  The main hallway. The lockers are the same. Something is fundamentally different and Dad cannot name it.
+
+Floor 53
+  The gymnasium: a team meeting, a cheer practice, a robotics demo, and a fog machine that should not be here.
+
+Floor 54
+  The locker room corridor. Dad is not supposed to be here. Dad is here. It smells like 1987.
+
+Floor 55
+  The east wing. Dad took a wrong turn. There are signs for the PTA meeting. He does not process this in time.
+
+Floor 56
+  The PTA meeting. It is about the spring fundraiser. Dad is nodding. Dad is learning.
+
+Floor 57
+  Dad is now helping plan the spring fundraiser. This was not the plan.
+
+Floor 58
+  The principal has stopped by to thank everyone. The principal also has a few items for the agenda.
+
+Floor 59
+  Dad's son is done. Dad must exit the PTA meeting. There is, however, one more thing.
+
+Floor 60
+  She knows every parent's name, their kids' names, and what they said they'd do last year and didn't.
+
+Floor 61
+  The family restaurant lot. Same physics as the hardware store. Different clientele. Same chaos.
+
+Floor 62
+  The host stand has a list. The wait is forty-five minutes. The host says it could be sooner. The host is optimistic.
+
+Floor 63
+  The lobby has three chairs and seventeen people. The TVs are playing sports. Not the right sport.
+
+Floor 64
+  The buzzer activates at twenty-seven minutes. Ahead of schedule. Dad is suspicious.
+
+Floor 65
+  The menu negotiation. Nine burgers. Dad's son cannot choose among nine burgers.
+
+Floor 66
+  The order relay. Everyone is ready except the person who just decided to change their order.
+
+Floor 67
+  Food arrives in the wrong sequence. Half is here. Half is 'coming right out.'
+
+Floor 68
+  The food is finished. Dad would like the check. The check has not arrived. The server is nowhere.
+
+Floor 69
+  The check has arrived. Something on it is wrong.
+
+Floor 70
+  Dad is trying to leave. The lobby is now standing-room-only. The Hostess controls all movement.
+
+Floor 71
+  IDKEA. Nobody arrives on purpose. Everyone arrives eventually. The escalator takes carts. This is a warning.
+
+Floor 72
+  The living room showroom. Dad is sitting on a sectional. The sectional is very comfortable.
+
+Floor 73
+  The bedroom section. The pillows are four dollars each. Dad now has four pillows in the cart.
+
+Floor 74
+  The kitchen section. Dad's kitchen could look like this. It would require replacing the entire kitchen.
+
+Floor 75
+  The children's section. Dad's kids are grown. Dad is looking at a small tent.
+
+Floor 76
+  The self-serve warehouse. The air is different here. Time moves differently. Row 14 is between Row 12 and Row 17.
+
+Floor 77
+  Flat pack retrieval. The shelf weighs more than Dad expected. The cart steers worse than the Vastco barge.
+
+Floor 78
+  The meatball cafe is mandatory. It is not technically mandatory. It is mandatory.
+
+Floor 79
+  Checkout. The flat pack does not fit on the conveyor. Dad must hand-key the barcode. There are seven barcodes.
+
+Floor 80
+  The shelf is home. The instructions are fourteen pages. Page 8 cannot be interpreted by existing technology.
+
+Floor 81
+  Dad's car is back in the driveway. A citation notice is on the mailbox. It is about the length of the grass.
+
+Floor 82
+  A child has built a lemonade stand in front of Dad's driveway. Dad has no cash. This requires diplomacy.
+
+Floor 83
+  The HOA event has let out. Every attendee is driving through the neighborhood at once. None of them yield.
+
+Floor 84
+  The neighbor across the street is waving. This is friendly. This will take twenty-five minutes.
+
+Floor 85
+  The cul-de-sac. The center of the neighborhood universe. Dad circles it slowly, assessing.
+
+Floor 86
+  The backyard. The sprinkler ran. Or it didn't. The Remote controls the sprinkler. Dad does not have the Remote.
+
+Floor 87
+  Three violation notices in the neighborhood today. Dad has one. The solidarity discussion has begun.
+
+Floor 88
+  Dad walks the dog. The dog walks Dad. The dog has an agenda.
+
+Floor 89
+  Dad is preparing the final run to the Community Center. The neighbor has noticed he is going somewhere.
+
+Floor 90
+  He is watering his already-perfect lawn at 8:20 PM on a Saturday, because he saw Dad's car in the driveway.
+
+Floor 91
+  The Community Center lot. The meeting ended two hours ago. The HOA President does not leave when it ends.
+
+Floor 92
+  The lobby: a bulletin board, the by-laws laminated to fourteen pages, and a sign-in sheet.
+
+Floor 93
+  The multipurpose room smells like coffee made at 6 PM. The screen still shows Slide 7 of Community Values.
+
+Floor 94
+  The kitchen was cleaned with the thoroughness of someone who cleans when frustrated. They are still here.
+
+Floor 95
+  The records hallway. A portrait of the President hangs here. The HOA budget paid for it.
+
+Floor 96
+  The records room: every violation and grudge since 1987, organized with frightening precision.
+
+Floor 97
+  The board room is empty. The Remote is not here. The agenda is partially erased.
+
+Floor 98
+  The President has a private office. A nameplate, a file cabinet, a small refrigerator with a labeled lunch.
+
+Floor 99
+  Full circle. The lobby. Karen Blackwell is here. The Remote is clipped to her clipboard.
+
+Floor 100
+  Karen Blackwell. President since 2019. Unopposed. She has the Remote, the citation, and a binder.

@@ -1,0 +1,38 @@
+SHATTERED DAD ADVENTURE — HERO CLASSES
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+The Grillmaster
+  HP 30  STR 6  DEF 2  PER 3  WIS 4  Patience 6
+  Dadisms: Char It, Stand Near the Meat, Back In My Day, The Dad Sneeze
+  Controls fire, meat, and conversations nobody asked for. Sweating over a grill burns water fast.
+
+The DIY Dad
+  HP 32  STR 5  DEF 3  PER 3  WIS 3  Patience 5
+  Dadisms: Improvised Solution, Good Enough, Back In My Day, The Dad Sneeze
+  Weaponized confidence. Best at combining junk into worse junk. Steady metabolism, steady work.
+
+The Tech Dad
+  HP 26  STR 4  DEF 2  PER 5  WIS 5  Patience 7
+  Dadisms: Turn It Off and On Again, Mandatory Firmware Update, Back In My Day, The Dad Sneeze
+  Forgets to eat. Forgets to drink. Has survived on forgotten granola bars and spite since 2014.
+
+The Gym Dad
+  HP 40  STR 8  DEF 3  PER 1  WIS 1  Patience 4
+  Dadisms: One More Rep, Scoop of Pre-Workout, Back In My Day, Assume Tactical Stance, The Dad Sneeze
+  Needs protein every 90 seconds. Already dehydrated. Has been since 2009.
+
+The Tactical Dad
+  HP 30  STR 6  DEF 4  PER 5  WIS 3  Patience 6
+  Dadisms: Dad Scan, Tactical Flashlight, Back In My Day, Assume Tactical Stance, The Dad Sneeze
+  Has packed snacks. Did not pack enough water. The plan did not account for this.
+
+The Sports Dad
+  HP 32  STR 6  DEF 3  PER 5  WIS 3  Patience 6
+  Dadisms: Back In My Day, Sideline Tirade, Halftime Orange Slices, The Dad Sneeze
+  Coaches from the sideline at a volume the league has formally discussed. Reads the field, misreads the room. Tailgate logistics: flawless.
+
+The Yard Dad
+  HP 34  STR 7  DEF 3  PER 4  WIS 2  Patience 5
+  Dadisms: Back In My Day, Mow It Down, Activate The Sprinklers, The Dad Sneeze
+  At war with the lawn, the weeds, and the neighbor's slightly greener grass. Diagonal stripes are not a choice. They are a calling.

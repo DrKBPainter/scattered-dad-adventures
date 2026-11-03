@@ -1,0 +1,189 @@
+SHATTERED DAD ADVENTURE — VISUAL ASSET INVENTORY
+Generated: 2026-06-17
+Columns: Type | Name | Needs Inventory Icon | Needs Floor Image
+Notes:
+  Inventory Icon = unique icon shown in player inventory / equipment panel
+  Floor Image    = sprite tile rendered on the dungeon map
+  Y = yes, needs a unique image for this entry
+  - = not applicable to this type
+================================================================================
+
+Type            | Name                                          | Inv Icon | Floor Image
+----------------|-----------------------------------------------|----------|------------
+-- TILE SPRITES (environmental, not entity-specific) --
+Tile            | Floor                                         | -        | Y
+Tile            | Wall                                          | -        | Y
+Tile            | Stairs (Down)                                 | -        | Y
+Tile            | Door (Closed)                                 | -        | Y
+Tile            | Door (Locked)                                 | -        | Y
+Tile            | Vendor Stall                                  | -        | Y
+Tile            | Fountain (Stat Boost)                         | -        | Y
+Tile            | Fountain (Heal)                               | -        | Y
+Tile            | Water                                         | -        | Y
+
+-- PLAYER --
+Player          | Dad (Player Character)                        | -        | Y
+
+-- CREATURES (The House, floors 1–10) --
+Creature        | Morning Obligation                            | -        | Y
+Creature        | The Unread Text                               | -        | Y
+Creature        | Rogue Roomba                                  | -        | Y
+Creature        | The Laundry Pile                              | -        | Y
+Creature        | The Permission Slip                           | -        | Y
+Creature        | The Thermostat Phantom                        | -        | Y
+Creature        | The Mystery Leftovers                         | -        | Y
+Creature        | The Overflowing Diaper of Stench              | -        | Y
+Creature        | The Unknown Brown Substance                   | -        | Y
+
+-- CREATURES (Lowe & Behold, floors 11–20) --
+Creature        | Shopping Cart Ambush                          | -        | Y
+Creature        | Weekend Warrior                               | -        | Y
+Creature        | Self-Checkout Sentinel                        | -        | Y
+Creature        | The Unfindable Associate                      | -        | Y
+Creature        | Paint Swatch Swarm                            | -        | Y
+Creature        | Aisle 12 Forklift                             | -        | Y
+
+-- CREATURES (The Park, floors 21–30) --
+Creature        | The Youth Soccer Coach                        | -        | Y
+Creature        | The Off-Leash Dog                             | -        | Y
+Creature        | The Jogger (Headphones In)                    | -        | Y
+Creature        | The Event Coordinator                         | -        | Y
+
+-- CREATURES (Vastco, floors 31–40) --
+Creature        | Extended Warranty Wraith                      | -        | Y
+Creature        | Sale Sign Golem                               | -        | Y
+Creature        | The Sample Station                            | -        | Y
+Creature        | The Vastco Flatbed                            | -        | Y
+Creature        | The Membership Card Inspector                 | -        | Y
+Creature        | The Spirit of Bulk Savings                    | -        | Y
+
+-- CREATURES (Soccer Complex, floors 41–50) --
+Creature        | The Sideline Parent                           | -        | Y
+Creature        | The Trophy                                    | -        | Y
+Creature        | The Waterboy                                  | -        | Y
+
+-- CREATURES (The School, floors 51–60) --
+Creature        | The Permission Form                           | -        | Y
+Creature        | The Science Fair Project                      | -        | Y
+Creature        | The Car Pool Line                             | -        | Y
+
+-- CREATURES (The Family Restaurant, floors 61–70) --
+Creature        | The Wait                                      | -        | Y
+Creature        | The Children's Menu                           | -        | Y
+Creature        | The Check                                     | -        | Y
+
+-- CREATURES (IDKEA, floors 71–80) --
+Creature        | The Assembly Instructions                     | -        | Y
+Creature        | The Missing Dowel                             | -        | Y
+Creature        | The IDKEA Employee                            | -        | Y
+
+-- CREATURES (The Neighborhood, floors 81–90) --
+Creature        | The Lawnmower (Peak Hours)                    | -        | Y
+Creature        | The Neighborhood Newsletter                   | -        | Y
+Creature        | The Nextdoor Post                             | -        | Y
+
+-- CREATURES (The HOA Dominion, floors 91–100) --
+Creature        | The Covenant                                  | -        | Y
+Creature        | The Violation Notice                          | -        | Y
+Creature        | The Annual Meeting                            | -        | Y
+
+-- CREATURES (Water floors, any depth) --
+Creature        | Hungry Goldfish (Mrs. Kowalski's Rm. 14)      | -        | Y
+
+-- BOSSES --
+Boss            | The Garage (As Entity)                        | -        | Y
+Boss            | The Floor Manager                             | -        | Y
+Boss            | The Tournament Director                       | -        | Y
+Boss            | The Black Friday Formation                    | -        | Y
+Boss            | The Referee (Final Whistle)                   | -        | Y
+Boss            | The PTA President                             | -        | Y
+Boss            | The Birthday Party (Full Deployment)          | -        | Y
+Boss            | The Assembly Instructions, Final Form         | -        | Y
+Boss            | The Neighborhood Watch Captain                | -        | Y
+Boss            | The HOA President                             | -        | Y
+
+-- ALLIES (appear on floor, fight alongside player) --
+Ally            | Family Dog of Chaotic Neutral Alignment       | -        | Y
+Ally            | Chad From Next Door                           | -        | Y
+Ally            | Karen (Sympathetic Mode)                      | -        | Y
+Ally            | Uncle Ron (From Florida)                      | -        | Y
+Ally            | Little Timmy (Your Kid)                       | -        | Y
+Ally            | Officer Doug (Off-Duty)                       | -        | Y
+
+-- WEAPONS (appear on floor as pickup; shown in inventory when held) --
+Weapon          | Spatula                                       | Y        | Y
+Weapon          | Plunger                                       | Y        | Y
+Weapon          | Leaf Rake                                     | Y        | Y
+Weapon          | Caulk Gun                                     | Y        | Y
+Weapon          | Mini Blowtorch                                | Y        | Y
+Weapon          | Steel-Toe Boot                                | Y        | Y
+Weapon          | Broom Handle                                  | Y        | Y
+Weapon          | The Flame Spatula                             | Y        | Y
+Weapon          | Half a Brick                                  | Y        | Y
+
+-- ARMOR (appear on floor as pickup; shown in inventory when worn) --
+Armor           | Construction Hard Hat                         | Y        | Y
+Armor           | Dad Cap                                       | Y        | Y
+Armor           | Chest Pad (Catcher's)                         | Y        | Y
+Armor           | Fleece Vest                                    | Y        | Y
+Armor           | Work Gloves                                   | Y        | Y
+Armor           | Tape Measure (Belt Clip)                      | Y        | Y
+Armor           | Cargo Shorts                                  | Y        | Y
+Armor           | Khaki Dad Pants                               | Y        | Y
+Armor           | Tube Socks (Pulled Up)                        | Y        | Y
+Armor           | Steel-Toe Boots                               | Y        | Y
+
+-- CHARMS (appear on floor as pickup; shown in inventory when equipped) --
+Charm           | Membership Lanyard                            | Y        | Y
+Charm           | Wedding Ring                                  | Y        | Y
+Charm           | Class Ring                                    | Y        | Y
+Charm           | Reading Glasses on a Chain                    | Y        | Y
+Charm           | Lucky Pencil Behind the Ear                   | Y        | Y
+Charm           | Foam Trucker Visor                            | Y        | Y
+
+-- CONSUMABLES (appear on floor as pickup; used from inventory) --
+Consumable      | Leftover Casserole                            | Y        | Y
+Consumable      | Sad Granola Bar                               | Y        | Y
+Consumable      | Mystery Jerky                                 | Y        | Y
+Consumable      | Lukewarm Meatball                             | Y        | Y
+Consumable      | Gas Station Coffee                            | Y        | Y
+Consumable      | Blue Gatorade                                 | Y        | Y
+Consumable      | Warm Water Bottle                             | Y        | Y
+Consumable      | Pedialyte                                     | Y        | Y
+Consumable      | Off-Brand Energy Drink                        | Y        | Y
+Consumable      | Light Beer                                    | Y        | Y
+Consumable      | Warm Beer Can                                 | Y        | Y
+Consumable      | Pocket Flask of Whiskey                       | Y        | Y
+Consumable      | Laminated Rehab Pamphlet                      | Y        | Y
+Consumable      | Ibuprofen (Family Size)                       | Y        | Y
+
+-- OBJECTS (floor pickups; utility items held in inventory) --
+Object          | Half Roll of Duct Tape                        | Y        | Y
+Object          | Mystery Screws x14                            | Y        | Y
+Object          | Scrap Plywood                                 | Y        | Y
+Object          | Bag of Zip Ties                               | Y        | Y
+Object          | Can of WD-40                                  | Y        | Y
+Object          | Tangled HDMI Cables                           | Y        | Y
+Object          | 9-Volt Battery                                | Y        | Y
+Object          | Half-Full Propane Tank                        | Y        | Y
+Object          | Loose AA Battery                              | Y        | Y
+
+-- KEYS --
+Key             | The Key                                       | Y        | Y
+
+-- TRAPS (floor only; not held or equipped) --
+Trap            | HOA Violation Notice                          | -        | Y
+Trap            | Scattered Legos                               | -        | Y
+Trap            | Tangle of Extension Cords                     | -        | Y
+Trap            | Unmarked Wet Floor                            | -        | Y
+Trap            | Product Recall Notice                         | -        | Y
+Trap            | Unskippable Ad                                | -        | Y
+Trap            | Unknown Brown Substance (Floor)               | -        | Y
+
+================================================================================
+SUMMARY
+  Total entries requiring a floor image:     138
+  Total entries requiring an inventory icon:  48
+  Entries requiring BOTH:                     48
+  Entries requiring floor image only:         90
+================================================================================

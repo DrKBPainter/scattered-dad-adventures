@@ -1,0 +1,57 @@
+SHATTERED DAD ADVENTURE — STATUS EFFECTS / Learning Experiences & buffs
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Regen  [BUFF]
+  Regenerating HP each turn. Everything is under control.
+
+Pumped Up  [BUFF]
+  +3 ATK. He is locked in.
+
+Guard Stance  [BUFF]
+  +2 DEF. He saw this coming.
+
+The Jitters  [DEBUFF]
+  Caffeine overload. Random movement occasionally.
+
+The Thirst  [DEBUFF]
+  Escalating dependency: Stage 1 (depend 1-2) slows cravings; Stage 2 (3-5) -1 STR, -3 PER, faster cravings; Stage 3 (6+) -2 STR, -4 PER, craving threshold drops. Cure: Family Intervention Binder.
+
+Hangry  [DEBUFF]
+  Unfed too long. ATK reduced. Dignity: wavering.
+
+Hangover  [DEBUFF]
+  The morning after. PER and WIS both suffer.
+
+Soaked  [DEBUFF]
+  Wet. DEF reduced. Dignity: soaked.
+
+Pain Managed  [BUFF]
+  +2 DEF. The acetaminophen is working. Probably.
+
+Maximum Dad Relief  [BUFF]
+  Briefly immune to damage. He has never felt better. The dosage was not approved.
+
+The Knee  [DEBUFF]
+  It acts up. Movement costs extra.
+
+The Back  [DEBUFF]
+  Goes out at the worst time. Always.
+
+Dad Drunk  [DEBUFF]
+  +2 ATK, -2 PER. You are fine. You are not fine.
+
+Blinded  [DEBUFF]
+  Cannot see adjacent enemies. The flashlight did this.
+
+Frozen (Update Installing)  [DEBUFF]
+  Cannot move. Mandatory. No skip option.
+
+Back Locked  [DEBUFF]
+  It went out. Movement is, for the moment, not on the table.
+
+The Reaction  [DEBUFF]
+  Acetaminophen met alcohol. The body is responding. Rapidly. Find a bathroom and some water.
+
+Salt Mouth  [DEBUFF]
+  That jerky was aggressively salty. You dehydrate faster for a few turns. Worth it.

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shattered Dad Adventure</title>
+<style>
+  :root{
+    --bg:#11131a; --ink:#eef0e2; --gold:#f4c430; --red:#e0453a; --grn:#5fbf4f;
+    --panel:#1c2030; --panel2:#232838; --border:#3a4358; --dim:#8a92a6; --blu:#7fb0e8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#07080c;color:var(--ink);height:100%;
+    font-family:Consolas,'DejaVu Sans Mono','Segoe UI',monospace;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  #wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    min-height:100%;padding:10px;gap:8px;}
+  #stage{position:relative;border:3px solid var(--border);border-radius:4px;background:#000;
+    box-shadow:0 10px 40px rgba(0,0,0,.7);}
+  canvas#screen{display:block;image-rendering:pixelated;image-rendering:crisp-edges;
+    -ms-interpolation-mode:nearest-neighbor;background:#0b0e16;}
+  /* crisp DOM HUD */
+  #hud{width:100%;background:var(--panel);border-top:2px solid var(--border);
+    padding:6px 8px;font-size:13px;line-height:1.45;}
+  #statline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  #statline b{color:var(--gold);}
+  .bar{display:inline-block;width:120px;height:11px;background:#2a0f0f;border:1px solid #000;
+    border-radius:2px;vertical-align:middle;overflow:hidden;position:relative;}
+  .bar > span{display:block;height:100%;}
+  .bar.hp > span{background:linear-gradient(#ff6f5c,#d8362b);}
+  .bar.mox{background:#0f1a2a;} .bar.mox > span{background:linear-gradient(#7fd0ff,#3a8fd0);}
+  .bar.xp{background:#1a160a;width:90px;height:7px;} .bar.xp > span{background:#f4c430;}
+  #statuses{font-size:12px;color:var(--blu);}
+  .st-bad{color:#ff8a7a;} .st-good{color:#9be88a;}
+  #log{margin-top:5px;min-height:78px;font-size:12.5px;}
+  #log .l-gold{color:var(--gold);} #log .l-red{color:#ff8a7a;}
+  #log .l-grn{color:var(--grn);} #log .l-dim{color:var(--dim);} #log .l-blu{color:var(--blu);}
+  #hint{color:var(--dim);font-size:11.5px;text-align:center;}
+  /* overlays */
+  .ov{position:absolute;inset:0;background:rgba(8,10,16,.97);display:none;overflow-y:auto;
+    padding:16px 20px;font-size:13.5px;line-height:1.5;}
+  .ov.show{display:block;}
+  .ov h1{color:var(--gold);font-size:19px;margin:0 0 8px;letter-spacing:.5px;}
+  .ov h2{color:var(--gold);font-size:14px;margin:13px 0 4px;}
+  .ov .key{color:var(--gold);font-weight:bold;}
+  .ov .dim{color:var(--dim);} .ov p{margin:4px 0;}
+  .row{display:flex;justify-content:space-between;gap:10px;padding:5px 8px;border:1px solid var(--border);
+    background:var(--panel2);border-radius:3px;margin:3px 0;cursor:pointer;}
+  .row:hover,.row.sel{border-color:var(--gold);background:#2a2f42;}
+  .row .nm{color:var(--ink);} .row .meta{color:var(--dim);font-size:11.5px;}
+  .tag{font-size:10.5px;padding:1px 5px;border-radius:3px;margin-left:5px;}
+  .t-help{background:#1d3a1d;color:#9be88a;} .t-hinder{background:#3a1d1d;color:#ff8a7a;}
+  .t-nothing{background:#2a2a2a;color:#b9b9b9;}
+  .r-Common{color:#cfcfcf;} .r-Uncommon{color:#7fd060;} .r-Rare{color:#5fa8e0;}
+  .r-Epic{color:#b87fd0;} .r-Legendary{color:#f4c430;} .r-Mythic{color:#ff6f9c;}
+  .slots{display:flex;gap:8px;margin:6px 0 10px;flex-wrap:wrap;}
+  .slot{flex:1;min-width:120px;border:1px solid var(--border);background:var(--panel2);
+    border-radius:3px;padding:6px 8px;font-size:12px;}
+  .slot .sl{color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
+  .beast-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px;}
+  .bcard{border:1px solid var(--border);background:var(--panel2);padding:8px;border-radius:3px;}
+  .bcard.und{opacity:.5;} .bcard canvas{display:block;margin:0 auto 4px;image-rendering:pixelated;background:#0d1b2a;border-radius:2px;}
+  .bcard .bn{color:var(--gold);font-size:12px;font-weight:bold;} .bcard .bs{font-size:10.5px;color:var(--blu);margin-top:2px;}
+  .bcard .bd{font-size:10.5px;color:#b9b29a;margin-top:3px;line-height:1.35;}
+  #confirm{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(5,6,10,.78);}
+  #confirm.show{display:flex;}
+  #confirm .box{background:var(--panel);border:2px solid var(--gold);border-radius:5px;padding:18px 22px;max-width:320px;text-align:center;}
+  #confirm .box p{margin:0 0 12px;font-size:14px;}
+  #confirm .box .btns{color:var(--dim);font-size:12px;}
+  #inspectbox{position:absolute;left:8px;bottom:8px;max-width:300px;background:rgba(10,12,20,.96);
+    border:1px solid var(--gold);border-radius:4px;padding:8px 10px;font-size:12.5px;display:none;}
+  #inspectbox.show{display:block;} #inspectbox .it{color:var(--gold);font-weight:bold;}
+  a{color:var(--gold);}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="screen" width="240" height="160"></canvas>
+    <div id="inspectbox"></div>
+    <div id="confirm"><div class="box"><p id="cf-text"></p><div class="btns">[Y] Yes &nbsp;&nbsp; [N] No</div></div></div>
+    <div id="ovInstr" class="ov"></div>
+    <div id="ovInv" class="ov"></div>
+    <div id="ovDad" class="ov"></div>
+    <div id="ovBest" class="ov"></div>
+  </div>
+  <div id="hud">
+    <div id="statline"></div>
+    <div id="statuses"></div>
+    <div id="log"></div>
+  </div>
+  <div id="hint">move: arrows/WASD &middot; bump=attack &middot; click a tile to inspect/move &middot; I=inventory &middot; K=Dadisms &middot; X=inspect &middot; T=throw &middot; H=help &middot; B=bestiary</div>
+</div>
+<script>
+"use strict";
+/* ===== SHATTERED DAD ADVENTURE v0.4 — single-file build ===== */
+const GAME_VERSION="0.4.0";
+const TILE=16, VIEW_W=15, VIEW_H=10, MAP_W=40, MAP_H=30;
+const SAVE_KEY="sda_save_v2", BESTIARY_KEY="sda_bestiary_v1";
+const SHOW_HP_PER=5;        // perception at/above this auto-reveals enemy HP bars
+const INSPECT_PER_GROWTH=5; // inspects needed per +1 perception
+
+const canvas=document.getElementById("screen");
+const ctx=canvas.getContext("2d"); ctx.imageSmoothingEnabled=false;
+function fitCanvas(){
+  const maxW=Math.min(window.innerWidth-36,960), maxH=Math.min(window.innerHeight-200,640);
+  let s=Math.max(2,Math.floor(Math.min(maxW/240,maxH/160)));
+  canvas.style.width=(240*s)+"px"; canvas.style.height=(160*s)+"px"; canvas._scale=s;
+}
+window.addEventListener("resize",fitCanvas);
+
+/* ---- palette (kept compatible with reused creature sprites) ---- */
+const PAL={
+  '.':null,
+  '0':'#0d1b2a','1':'#1b263b','2':'#2e3a59','3':'#415a77',
+  'k':'#0a0a0a','w':'#e8e0c8','W':'#ffffff','g':'#3a7d34','G':'#5fbf4f',
+  'b':'#2e5a8c','B':'#5fa8e0','r':'#9c2b2b','R':'#e0453a','o':'#d97a2b',
+  'O':'#f0a040','y':'#c9a227','Y':'#f4c430','p':'#7a4a8c','P':'#b06fd0',
+  's':'#8a8a8a','S':'#c8c8c8','f':'#caa472','F':'#e8c9a0',
+  'd':'#5a3a1a','D':'#7a5230','m':'#4a4a4a','M':'#6a6a6a',
+  'c':'#1f6f6f','C':'#37b0b0','n':'#b0432b','N':'#d8693e'
+};
+function S(rows){return rows;}
+
+/* ---- tiles & icons ---- */
+const SPR_FLOOR=S(["1111111111111111","1111111111111111","1111211111112111","1111111111111111","1111111111111111","2111111121111111","1111111111111111","1111111111111111","1111111211111111","1111111111111111","1112111111111211","1111111111111111","1111111111111111","1111111111121111","1111111111111111","1111111111111111"]);
+const SPR_WALL=S(["3333333333333333","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","3222222222222220","0000000000000000"]);
+const SPR_STAIRS=S(["0000000000000000","0YYYYYYYYYYYYYY0","0Y000000000000Y0","0Y0YYYYYYYYYY0Y0","0Y0Y00000000Y0Y0","0Y0Y0YYYYYY0Y0Y0","0Y0Y0Y0000Y0Y0Y0","0Y0Y0Y0YY0Y0Y0Y0","0Y0Y0Y0YY0Y0Y0Y0","0Y0Y0Y0000Y0Y0Y0","0Y0Y0YYYYYY0Y0Y0","0Y0Y00000000Y0Y0","0Y0YYYYYYYYYY0Y0","0Y000000000000Y0","0YYYYYYYYYYYYYY0","0000000000000000"]);
+const SPR_DAD=S(["....ssss........","...sffffs.......","...sfFFfs.......","...ffFFff.......","...sf..fs.......","....ffff........","...bBBBBb.......","..bBBBBBBb......","..BBBBBBBB......","..BBBBBBBB......","..fB.BB.Bf......","...B....B.......","..2222.2222.....","..222...222.....","..mm.....mm.....",".mmm.....mmm...."]);
+const SPR_GEAR_W=S(["................",".......SS.......",".......SS.......",".......SS.......",".......SS.......",".......SS.......",".......SS.......","......yyyy......",".......DD.......",".......DD.......",".......DD.......","................","................","................","................","................"]);
+const SPR_GEAR_A=S(["................","....bbbbbbbb....","...bBBBBBBBBb...","...bBBBBBBBBb...","...bBBWWWWBBb...","...bBBWWWWBBb...","...bBBBBBBBBb...","...bBBBBBBBBb...","....bBBBBBBb....",".....bBBBBb.....","......bBBb......",".......bb.......","................","................","................","................"]);
+const SPR_POTION=S(["................","......WWWW......","......W11W......",".....W1111W.....",".....WRRRRW.....","....WRRRRRRW....","....WRRRRRRW....","....WRRRRRRW....","....WRRRRRRW....",".....WRRRRW.....",".....WWWWWW.....","................","................","................","................","................"]);
+const SPR_OBJECT=S(["................","...dddddddddd...","...dDDDDDDDDd...","...dDdDDDDdDd...","...dDDDDDDDDd...","...dDdDDDDdDd...","...dDDDDDDDDd...","...dDdDDDDdDd...","...dDDDDDDDDd...","...dddddddddd...","................","................","................","................","................","................"]);
+const SPR_TRAP=S(["................","................","..r..r..r..r....","..rr.rr.rr.r....","...RRRRRRRR.....","..R........R....","..R.r.rr.r.R....","..R........R....","..R.rr..rr.R....","..R........R....","...RRRRRRRR.....","..rr.rr.rr.r....","..r..r..r..r....","................","................","................"]);
+
+/* ===== creature & boss data (reused art) ===== */
+const CREATURES = [
+  {
+    id:"morning_obligation", name:"Morning Obligation", biome:"The House",
+    hp:8, atk:2, def:0, xp:4, gold:1, speed:1,
+    sprite:S([
+      "................",
+      ".....mmmm.......",
+      "....mMMMMm......",
+      "....MM..MM......",
+      "....M.rr.M......",
+      "....MMMMMM......",
+      "...mMMMMMMm.....",
+      "..mMMMMMMMMm....",
+      "..MMMMMMMMMM....",
+      "..MM.MMMM.MM....",
+      "..M..MMMM..M....",
+      "..MMMMMMMMMM....",
+      "...m......m.....",
+      "...mm....mm.....",
+      "................",
+      "................"
+    ]),
+    flavor:"Slow. Persistent. It does not chase you so much as it is simply always there. Cannot be reasoned with before coffee."
+  },
+  {
+    id:"unread_text", name:"The Unread Text", biome:"The House",
+    hp:4, atk:3, def:0, xp:3, gold:0, speed:1, pack:true,
+    sprite:S([
+      "................",
+      "..GGGGGGGGGG....",
+      "..G........G....",
+      "..G.kk..kk.G....",
+      "..G........G....",
+      "..G.k....k.G....",
+      "..G..kkkk..G....",
+      "..G........G....",
+      "..GGGGGGGGGG....",
+      "....G..G........",
+      ".....GG.........",
+      "................",
+      "..RR............",
+      "..RRRR..........",
+      "................",
+      "................"
+    ]),
+    flavor:"Spawns in groups. Multiplies if ignored. Each one insists it is 'just a quick question.' None of them are."
+  },
+  {
+    id:"rogue_roomba", name:"Rogue Roomba", biome:"The House",
+    hp:10, atk:3, def:1, xp:6, gold:2, speed:1,
+    sprite:S([
+      "................",
+      "................",
+      "...mmmMMMmmm....",
+      "..mMMMMMMMMMm...",
+      ".mMMSSSSSSSMMm..",
+      ".MMSCCCCCCCSMM..",
+      ".MMSCkkkkkCSMM..",
+      ".MMSCkBBkCSMM...",
+      ".MMSCkkkkkCSMM..",
+      ".MMSCCCCCCCSMM..",
+      ".mMMSSSSSSSMMm..",
+      "..mMMMMMMMMMm...",
+      "...mmmMMMmmm....",
+      "................",
+      "................",
+      "................"
+    ]),
+    flavor:"Charts a path known only to itself. Has eaten a sock, a phone charger, and the family's sense of security. Bumps your ankles at 3 AM."
+  },
+  {
+    id:"shopping_cart", name:"Shopping Cart Ambush", biome:"Lowe & Behold",
+    hp:14, atk:4, def:1, xp:8, gold:3, speed:1,
+    sprite:S([
+      "................",
+      "..SSSSSSSSSS....",
+      "..S........S....",
+      "..S.SSSSSS.S....",
+      "..S.S....S.S....",
+      "..S.S....S.S....",
+      "..S.SSSSSS.S....",
+      "..SSSSSSSSSS....",
+      "...S......S.....",
+      "...S......S.....",
+      "..mmm....mmm....",
+      ".mMMMm..mMMMm...",
+      ".mMkMm..mMkMm...",
+      ".mMMMm..mMMMm...",
+      "..mmm....mmm....",
+      "................"
+    ]),
+    flavor:"One wheel possessed. Veers left under all circumstances. Always contains one item nobody placed there."
+  },
+  {
+    id:"weekend_warrior", name:"Weekend Warrior", biome:"Lowe & Behold",
+    hp:16, atk:5, def:2, xp:10, gold:4, speed:1,
+    sprite:S([
+      "....ssss........",
+      "...sffffs.......",
+      "...sfRRfs.......",
+      "...ffRRff.......",
+      "....ffff........",
+      "...oOOOOo.......",
+      "..oOOOOOOo......",
+      "..OO.OO.OO......",
+      "..OOOOOOOO......",
+      "..fO.OO.Of......",
+      "...O....O.......",
+      "..DDDD.DDDD.....",
+      "..DDD...DDD.....",
+      "..ss.....ss.....",
+      ".sss.....sss....",
+      "................"
+    ]),
+    flavor:"Owns every tool. Has used three. Will explain the project to you whether or not you ask. Lumbar Injury III imminent."
+  },
+  {
+    id:"warranty_wraith", name:"Extended Warranty Wraith", biome:"Vastco",
+    hp:20, atk:6, def:2, xp:14, gold:6, speed:1,
+    sprite:S([
+      "................",
+      "....pppppp......",
+      "...pPPPPPPp.....",
+      "..pP......Pp....",
+      "..pP.WW.WW.Pp...",
+      "..pP......Pp....",
+      "..pP..WW..Pp....",
+      "..pPPPPPPPPp....",
+      "..pP.PPPP.Pp....",
+      "..pP.PPPP.Pp....",
+      "..pPP.PP.PPp....",
+      "...pPP..PPp.....",
+      "....pP..Pp......",
+      ".....p..p.......",
+      "................",
+      "................"
+    ]),
+    flavor:"Materializes at checkout. Asks if you would like to protect your purchase. There is no correct answer. There has never been a correct answer."
+  },
+  {
+    id:"sale_sign_golem", name:"Sale Sign Golem", biome:"Vastco",
+    hp:26, atk:7, def:4, xp:18, gold:8, speed:1,
+    sprite:S([
+      "..YYYYYYYYYY....",
+      "..YRRRRRRRRY....",
+      "..YR.RR.R.RY....",
+      "..YRRRRRRRRY....",
+      "..YYYYYYYYYY....",
+      "....mMMMMm......",
+      "...mMMMMMMm.....",
+      "..mMMMMMMMMm....",
+      "..MMMMMMMMMM....",
+      "..MM.MMMM.MM....",
+      "..MMMMMMMMMM....",
+      "..mMMMMMMMMm....",
+      "...mm....mm.....",
+      "..mmm....mmm....",
+      "................",
+      "................"
+    ]),
+    flavor:"Constructed entirely of percentages. Each sign contradicts the one beside it. The real price is a closely guarded secret."
+  }
+];
+
+/* ================================================================
+   4. BOSS DATA
+   >>> NIGHTLY BUILD INSERTION POINT: BOSSES <<<
+   Bosses appear on floors that are multiples of 5.
+   ================================================================ */
+const BOSSES = [
+  {
+    id:"garage_entity", name:"The Garage (As Entity)", floor:5,
+    hp:60, atk:8, def:3, xp:60, gold:30, speed:1,
+    sprite:S([
+      "DDDDDDDDDDDDDDDD",
+      "D00000000000000D",
+      "D0ssss0000ssss0D",
+      "D0s00s0000s00s0D",
+      "D0ssss0000ssss0D",
+      "D00000000000000D",
+      "DDDDDDDDDDDDDDDD",
+      "D0rr00YY00rr000D",
+      "D00000000000000D",
+      "D0mm0mm0mm0mm00D",
+      "D00000000000000D",
+      "D0OO00OO00OO000D",
+      "D00000000000000D",
+      "DDDDDDDDDDDDDDDD",
+      "D00000000000000D",
+      "DDDDDDDDDDDDDDDD"
+    ]),
+    flavor:"Not entered fully since 2019. It has become a biome. Somewhere inside is the emergency release cord. Somewhere inside is everything you have ever lost."
+  },
+  {
+    id:"floor_manager", name:"The Floor Manager", floor:10,
+    hp:90, atk:11, def:4, xp:100, gold:60, speed:1,
+    sprite:S([
+      "....SSSSSS......",
+      "...SffffffS.....",
+      "...SfRRRRfS.....",
+      "...ffRRRRff.....",
+      "....ffffff......",
+      "...RRRRRRRR.....",
+      "..RRRRRRRRRR....",
+      "..RR.RRRR.RR....",
+      "..RRRRRRRRRR....",
+      "..fR.RRRR.Rf....",
+      "...R.RRRR.R.....",
+      "..222.YY.222....",
+      "..222....222....",
+      "..ss......ss....",
+      ".sss......sss...",
+      "................"
+    ]),
+    flavor:"Greets you the moment you look lost. Offers help you cannot refuse and do not want. 'While we're back here...' Attack: Upsell Cascade. Weakness: saying 'I'm just getting screws' before engagement."
+  }
+];
+
+/* ===== CLASSES ===== */
+const CLASSES=[
+ {id:"grill",name:"The Grillmaster",hp:30,str:6,def:2,per:3,wis:4,moxie:6,craft:"food",
+  blurb:"Controls fire, meat, and conversations nobody asked for."},
+ {id:"diy",name:"The DIY Dad",hp:32,str:5,def:3,per:3,wis:3,moxie:5,craft:"general",
+  blurb:"Weaponized confidence, no formal training. Best at combining junk."},
+ {id:"tech",name:"The Tech Dad",hp:26,str:4,def:2,per:5,wis:5,moxie:7,craft:"tech",
+  blurb:"Keeper of passwords. High perception: sees enemy health at a glance."},
+ {id:"gym",name:"The Gym Dad",hp:40,str:8,def:3,per:1,wis:1,moxie:4,craft:"none",
+  blurb:"Can deadlift a fridge. Cannot locate fridge. Low perception."},
+ {id:"tactical",name:"The Tactical Dad",hp:30,str:6,def:4,per:5,wis:3,moxie:6,craft:"general",
+  blurb:"Prepared for everything. Reveals threats and health instantly."}
+];
+
+/* ===== AFFIXES (silly buffs: help / hinder / nothing) ===== */
+const AFFIXES=[
+ {id:"confident",name:"of Misplaced Confidence",type:"help",mods:{atk:1},desc:"+1 ATK. It is not earned, but it counts."},
+ {id:"ergo",name:"Ergonomic",type:"help",mods:{atk:1},desc:"+1 ATK. The grip says so on the sticker."},
+ {id:"reinforced",name:"Reinforced w/ Duct Tape",type:"help",mods:{def:2},desc:"+2 DEF. Holds the universe together."},
+ {id:"lightlyused",name:"Lightly Used",type:"help",mods:{hp:6},desc:"+6 max HP. Previous owner barely cried."},
+ {id:"eagle",name:"of the Eagle Eye",type:"help",mods:{per:1},desc:"+1 Perception. You see the dropped sock now."},
+ {id:"grillblessed",name:"Blessed by the Grill",type:"help",mods:{atk:1,wis:1},desc:"+1 ATK, +1 Dadism power. Smells of mesquite."},
+ {id:"cursed",name:"Slightly Cursed",type:"hinder",mods:{atk:-1},desc:"-1 ATK. It hums at night."},
+ {id:"squeaky",name:"Squeaky",type:"hinder",mods:{def:-1},flag:"dadnoise",desc:"-1 DEF and it announces your every move."},
+ {id:"gassy",name:"Smells Like Gas",type:"hinder",mods:{},flag:"attract",desc:"No stat change. Enemies are drawn to the aroma."},
+ {id:"heavy",name:"Comically Overbuilt",type:"hinder",mods:{def:2,per:-2},desc:"+2 DEF, -2 Perception. You cannot see past it."},
+ {id:"sticky",name:"Mysteriously Sticky",type:"hinder",mods:{atk:-1},desc:"-1 ATK. Do not ask. Do not touch."},
+ {id:"tv",name:"As Seen On TV",type:"nothing",mods:{},desc:"No effect whatsoever. But what a value."},
+ {id:"owned",name:"Previously Owned",type:"nothing",mods:{},desc:"Does nothing. Has seen things."},
+ {id:"garage",name:"Smells Faintly of Garage",type:"nothing",mods:{},desc:"No effect. Deeply nostalgic."},
+ {id:"discontinued",name:"in a Discontinued Color",type:"nothing",mods:{},desc:"No effect. They don't make it anymore. Obviously."},
+ {id:"limited",name:"Limited Edition (Nobody Cares)",type:"nothing",mods:{},desc:"No effect. You care. That's enough."}
+];
+
+/* ===== WEAPON & ARMOR & TRINKET TEMPLATES ===== */
+const WEAPONS=[
+ {id:"tongs",name:"Tongs of Clicking",atk:2,desc:"Click click. The universal dad announcement."},
+ {id:"wrench",name:"Adjustable Wrench",atk:3,desc:"Fits everything poorly, nothing well."},
+ {id:"broom",name:"Push-Broom Lance",atk:2,desc:"Reach advantage. Dignity disadvantage."},
+ {id:"drill",name:"Cordless Drill (1 bar)",atk:4,desc:"Powerful until it isn't. Charge unknown."},
+ {id:"bat",name:"Aluminum Softball Bat",atk:5,desc:"From the rec league championship. He'll remind you."},
+ {id:"spatula",name:"Battle Spatula",atk:3,desc:"Flips burgers and assailants alike."},
+ {id:"maglite",name:"D-Cell Maglite",atk:4,desc:"A flashlight that is legally a club."},
+ {id:"pvc",name:"PVC Pipe of Persuasion",atk:3,desc:"Schedule 40. Diplomatic immunity not included."}
+];
+const ARMORS=[
+ {id:"apron",name:"Apron of Authority",def:2,desc:"KISS THE COOK. Few survive the attempt."},
+ {id:"cargovest",name:"Cargo Vest (37 Pockets)",def:3,desc:"Contains everything except the one thing."},
+ {id:"fleece",name:"Costco Fleece",def:2,desc:"Bought in a 2-pack. Worn for a decade."},
+ {id:"robe",name:"Saturday Bathrobe",def:1,desc:"Optimal comfort. Minimal protection. Maximal commitment."},
+ {id:"pads",name:"Old Catcher's Pads",def:4,desc:"Smell of 1997. Stop most things."},
+ {id:"hivis",name:"Hi-Vis Safety Vest",def:2,desc:"Grants the aura of someone in charge."}
+];
+const TRINKETS=[
+ {id:"lanyard",name:"Membership Lanyard",per:1,desc:"+1 Perception. Opens doors. And resentment."},
+ {id:"fanny",name:"Tactical Fanny Pack",cap:3,desc:"+3 inventory slots. Worn unironically."},
+ {id:"whistle",name:"Coach's Whistle",wis:1,desc:"+1 Dadism power. Deafening at close range."},
+ {id:"readers",name:"Reading Glasses (on a chain)",per:1,wis:1,desc:"+1 Per, +1 Dadism. Where ARE they. On your face."}
+];
+
+/* ===== CONSUMABLES (incl. healing, throwables, cures, alcohol) ===== */
+const CONSUMABLES=[
+ {id:"casserole",name:"Leftover Casserole",heal:12,desc:"Unidentifiable. Restorative. +12 HP."},
+ {id:"coffee",name:"Gas Station Coffee",heal:4,moxie:3,causes:"jitters",desc:"+4 HP, +3 Moxie, mild jitters."},
+ {id:"granola",name:"Sad Granola Bar",heal:6,desc:"Found at the bottom of a bag. +6 HP."},
+ {id:"gatorade",name:"Blue Gatorade",heal:5,cures:["hangry","hangover"],desc:"+5 HP. Replaces electrolytes and regret."},
+ {id:"ibuprofen",name:"Ibuprofen (Family Size)",heal:3,cures:["knee","back"],desc:"+3 HP. Cures Dad-body ailments."},
+ {id:"pedialyte",name:"Pedialyte",heal:4,cures:["hangover"],relieve:"thirst",desc:"+4 HP. Cures hangover, eases the Thirst."},
+ {id:"energy",name:"Off-Brand Energy Drink",moxie:6,causes:"jitters",desc:"+6 Moxie. Heart: optional."},
+ {id:"lightbeer",name:"Light Beer",heal:3,moxie:1,alcohol:true,desc:"+3 HP. Eases the Thirst now, deepens it later."},
+ {id:"beercan",name:"Warm Beer Can",heal:2,alcohol:true,throw:{dmg:5,status:"soaked"},desc:"Drink (+2 HP) or hurl it (5 dmg, soaks foe)."},
+ {id:"meatball",name:"Lukewarm Meatball",heal:4,throw:{dmg:4},desc:"Eat (+4 HP) or throw (4 dmg)."},
+ {id:"rehab",name:"Laminated Rehab Pamphlet",cures:["thirst"],desc:"The only thing that cures the Thirst. Surprisingly heavy."},
+ {id:"jerky",name:"Mystery Jerky",heal:8,causes:"thirst",desc:"+8 HP. So salty it summons the Thirst."}
+];
+
+/* ===== OBJECTS / crafting materials (some throwable) ===== */
+const OBJECTS=[
+ {id:"ducttape",name:"Half Roll of Duct Tape",desc:"Repairs anything, permanently temporarily."},
+ {id:"screws",name:"Mystery Screws x14",desc:"For a project that no longer exists."},
+ {id:"plywood",name:"Scrap Plywood",desc:"Structurally optimistic."},
+ {id:"ziptie",name:"Bag of Zip Ties",desc:"The dad adhesive of last resort."},
+ {id:"wd40",name:"Can of WD-40",desc:"If it moves and shouldn't, or doesn't and should."},
+ {id:"hdmi",name:"Tangled HDMI Cables",desc:"At least one works. Nobody knows which."},
+ {id:"battery",name:"9-Volt Battery",desc:"Tested by tongue. Verdict: yes."},
+ {id:"propane",name:"Half-Full Propane Tank",desc:"Or is it half-empty. He has opinions."},
+ {id:"aabattery",name:"Loose AA Battery",throw:{dmg:3},desc:"Throwable (3 dmg). The TV remote misses it."}
+];
+
+/* ===== ILLNESS / STATUS table (display + flags) ===== */
+const STATUSES={
+ thirst:{name:"The Thirst",bad:true,desc:"A Dad's mysterious craving. Drains Perception; the shakes may fumble actions. Cure: Rehab Pamphlet. Eased (then worsened) by drinking."},
+ hangover:{name:"Hungover",bad:true,desc:"-Perception, damage over time. Cure: Gatorade or Pedialyte."},
+ jitters:{name:"The Jitters",bad:true,desc:"Too much caffeine. Occasionally fumbles an action."},
+ knee:{name:"Knee Twinge",bad:true,desc:"Movement sometimes stalls. Cure: Ibuprofen."},
+ back:{name:"Tweaked Back",bad:true,desc:"-2 ATK. Cure: Ibuprofen or rest."},
+ nap:{name:"Nap Paralysis",bad:true,desc:"Cannot act. It will pass. It always passes."},
+ soaked:{name:"Soaked",bad:true,desc:"-1 DEF until you dry off."},
+ coma:{name:"Sample Coma",bad:true,desc:"Free samples were a trap. May lose turns."},
+ hangry:{name:"Hangry",bad:true,desc:"-1 ATK and a bad attitude. Eat something."},
+ regen:{name:"Standing Near Meat",bad:false,desc:"Regenerating HP each turn. Everything is under control."},
+ atkup:{name:"Pre-Workout",bad:false,desc:"+3 ATK. You are, in fact, locked in."},
+ guard:{name:"Tactical Stance",bad:false,desc:"+2 DEF. You identified the exits hours ago."}
+};
+
+/* ===== TRAPS (damage / illness / restriction); detect vs perception ===== */
+const TRAPS_DEF=[
+ {id:"lego",name:"Lego Minefield",detect:4,dmg:5,status:"knee",desc:"Catastrophic foot damage. Inflicts Knee Twinge."},
+ {id:"recliner",name:"The Recliner",detect:5,dmg:0,status:"nap",desc:"Too comfortable. Inflicts Nap Paralysis."},
+ {id:"loosestair",name:"Loose Stair Tread",detect:6,dmg:6,status:"back",desc:"Damage + Tweaked Back."},
+ {id:"cooler",name:"Open Cooler of Light Beer",detect:4,dmg:0,status:"thirst",desc:"Tempting. Awakens The Thirst."},
+ {id:"samples",name:"Free Sample Station",detect:5,dmg:0,status:"coma",desc:"You cannot say no. Inflicts Sample Coma."},
+ {id:"sprinkler",name:"Sprinkler Surprise",detect:5,dmg:3,status:"soaked",desc:"Damage + Soaked."},
+ {id:"thermostat",name:"Thermostat War Zone",detect:6,dmg:4,status:null,desc:"Unavoidable psychic damage."}
+];
+
+/* ===== DADISMS (whimsical abilities), class-gated, cost Moxie ===== */
+const DADISMS=[
+ {id:"char",name:"Char It",classes:["grill"],cost:3,kind:"dmg",power:9,desc:"Scorch an adjacent foe for big fire damage."},
+ {id:"standmeat",name:"Stand Near the Meat",classes:["grill"],cost:2,kind:"buff",status:"regen",turns:6,desc:"Everything is under control. Regenerate HP for a while."},
+ {id:"improv",name:"Improvised Solution",classes:["diy"],cost:2,kind:"random",desc:"60% great, 35% worse, 5% structural. Outcome unknown."},
+ {id:"goodenough",name:"Good Enough",classes:["diy"],cost:2,kind:"heal",power:10,desc:"Patch yourself up. +10 HP. Close enough."},
+ {id:"reboot",name:"Turn It Off and On Again",classes:["tech"],cost:3,kind:"stun",turns:3,desc:"Stun an adjacent foe. Works on everything but printers."},
+ {id:"firmware",name:"Mandatory Firmware Update",classes:["tech"],cost:5,kind:"rootall",turns:2,desc:"All enemies pause for an update they did not request."},
+ {id:"onemore",name:"One More Rep",classes:["gym"],cost:3,kind:"buff",status:"atkup",turns:5,desc:"+3 ATK. Health is a mindset."},
+ {id:"preworkout",name:"Scoop of Pre-Workout",classes:["gym"],cost:2,kind:"heal",power:8,desc:"+8 HP and a tingling face."},
+ {id:"dadscan",name:"Dad Scan",classes:["tactical"],cost:3,kind:"scan",desc:"Reveal the whole floor and every foe's health."},
+ {id:"flashlight",name:"Tactical Flashlight",classes:["tactical"],cost:2,kind:"blind",turns:2,desc:"Blind adjacent foes. And yourself a little."},
+ {id:"backinmyday",name:"Back In My Day",classes:["grill","diy","tech","gym","tactical"],cost:2,kind:"aoe",power:4,desc:"Nostalgia damage to all nearby. Effects increase yearly."},
+ {id:"guard",name:"Assume Tactical Stance",classes:["tactical","gym"],cost:2,kind:"buff",status:"guard",turns:5,desc:"+2 DEF. You saw this coming."}
+];
+
+/* ===== CRAFTING RECIPES (some class-locked / class-bonus) ===== */
+const RECIPES=[
+ {a:"ducttape",b:"tongs",out:{kind:"weapon",id:"reinftongs",name:"Duct-Taped Tongs",atk:4,desc:"Tongs, but they mean business now."},bonus:"diy",desc:"Duct Tape + Tongs."},
+ {a:"screws",b:"plywood",out:{kind:"armor",id:"plywoodarmor",name:"Plywood Armor",def:4,desc:"Splinters included free of charge."},bonus:"diy",desc:"Screws + Plywood."},
+ {a:"lightbeer",b:"lightbeer",out:{kind:"consumable",id:"sixer",name:"A Warm Sixer",heal:8,alcohol:true,desc:"+8 HP. The Thirst grows fonder."},desc:"Light Beer + Light Beer."},
+ {a:"coffee",b:"energy",out:{kind:"consumable",id:"anxiety",name:"Liquid Anxiety",moxie:12,causes:"jitters",desc:"+12 Moxie. Time becomes a suggestion."},desc:"Coffee + Energy Drink."},
+ {a:"wd40",b:"maglite",out:{kind:"weapon",id:"flamelite",name:"Flaming Maglite",atk:7,desc:"Ill-advised. Magnificent."},bonus:"tactical",desc:"WD-40 + Maglite."},
+ {a:"hdmi",b:"battery",out:{kind:"weapon",id:"taser",name:"Jury-Rigged Taser",atk:8,desc:"UL listing: pending."},lock:"tech",desc:"HDMI + 9V Battery (Tech Dad only)."},
+ {a:"propane",b:"spatula",out:{kind:"weapon",id:"flamespat",name:"The Flame Spatula",atk:9,desc:"OSHA has questions. The burgers do not."},lock:"grill",desc:"Propane + Spatula (Grillmaster only)."},
+ {a:"meatball",b:"propane",out:{kind:"consumable",id:"charball",name:"Charred Mega-Meatball",heal:18,throw:{dmg:9},desc:"+18 HP or a 9-dmg projectile of glory."},bonus:"grill",desc:"Meatball + Propane."}
+];
+
+/* ===== bestiary persistence (retained across all runs/deaths) ===== */
+function loadBestiary(){try{return JSON.parse(localStorage.getItem(BESTIARY_KEY))||{};}catch(e){return {};}}
+function saveBestiary(b){try{localStorage.setItem(BESTIARY_KEY,JSON.stringify(b));}catch(e){}}
+let discovered=loadBestiary();
+function discover(t,floor){if(!discovered[t.id]){discovered[t.id]={count:0,firstFloor:floor};log("NEW CREATURE LOGGED: "+t.name,"gold");}discovered[t.id].count++;saveBestiary(discovered);}
+
+/* ===== state ===== */
+const State={TITLE:0,CLASS:1,PLAY:2,DEAD:3,WIN:4};
+let game=null, mode=State.TITLE, classCursor=0;
+let messages=[]; function log(t,c){messages.push({t,c:c||"ink"});if(messages.length>6)messages.shift();}
+let ovInstr=false, ovInv=false, ovDad=false, ovBest=false;
+let pendingConfirm=null;
+let inspectOn=false, insX=0, insY=0;
+let throwRef=null, aiming=false;
+let invSel=0, dadSel=0, combineMark=null;
+let camX=0, camY=0;
+let uidc=1; const uid=()=>uidc++;
+
+/* ===== rng + mapgen ===== */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function genFloor(depth,seed){const rng=mulberry32(seed+depth*7919);const grid=[];for(let y=0;y<MAP_H;y++)grid.push(new Array(MAP_W).fill(1));
+ const rooms=[];const target=6+Math.floor(rng()*4);let tries=0;
+ while(rooms.length<target&&tries<200){tries++;const w=4+Math.floor(rng()*6),h=4+Math.floor(rng()*5);const x=1+Math.floor(rng()*(MAP_W-w-2)),y=1+Math.floor(rng()*(MAP_H-h-2));let ov=false;for(const o of rooms){if(x<o.x+o.w+1&&x+w+1>o.x&&y<o.y+o.h+1&&y+h+1>o.y){ov=true;break;}}if(ov)continue;for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)grid[yy][xx]=0;rooms.push({x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2)});}
+ for(let i=1;i<rooms.length;i++){const a=rooms[i-1],b=rooms[i];let x=a.cx,y=a.cy;while(x!==b.cx){grid[y][x]=0;x+=x<b.cx?1:-1;}while(y!==b.cy){grid[y][x]=0;y+=y<b.cy?1:-1;}}
+ return {grid,rooms,rng};}
+
+/* ===== effective stats ===== */
+function eqList(){return [game.equip.weapon,game.equip.armor,game.equip.trinket].filter(Boolean);}
+function gearSum(stat){let s=0;for(const g of eqList()){if(g[stat])s+=g[stat];for(const a of(g.affixes||[]))if(a.mods&&a.mods[stat])s+=a.mods[stat];}return s;}
+function hasFlag(f){for(const g of eqList())for(const a of(g.affixes||[]))if(a.flag===f)return true;return false;}
+function hasStatus(id){return !!game.statuses[id];}
+function effAtk(){return Math.max(1,game.str+gearSum("atk")+(hasStatus("atkup")?3:0)+(hasStatus("back")?-2:0)+(hasStatus("hangry")?-1:0));}
+function effDef(){return Math.max(0,game.def+gearSum("def")+(hasStatus("guard")?2:0)+(hasStatus("soaked")?-1:0));}
+function effPer(){return Math.max(0,game.per+gearSum("per")+(hasStatus("thirst")?-2:0)+(hasStatus("hangover")?-1:0));}
+function effWis(){return Math.max(0,game.wis+gearSum("wis"));}
+function invCap(){return 10+gearSum("cap");}
+function fumbleChance(){let c=0;const th=game.statuses.thirst;if(th&&th.craving>=6)c=Math.max(c,.18);if(hasStatus("jitters"))c=Math.max(c,.10);if(hasStatus("hangover"))c=Math.max(c,.10);return c;}
+function tryFumble(verb){if(Math.random()<fumbleChance()){log("The shakes! You fumble "+verb+".","red");endTurn();return true;}return false;}
+
+/* ===== run / floor ===== */
+function newRun(cls){const seed=(Math.random()*1e9)|0;
+ game={cls,seed,depth:1,hp:cls.hp,maxhp:cls.hp,str:cls.str,def:cls.def,per:cls.per,wis:cls.wis,
+  moxie:cls.moxie,maxmoxie:cls.moxie,level:1,xp:0,xpNext:12,gold:0,
+  equip:{weapon:null,armor:null,trinket:null},inv:[],dadisms:[],statuses:{},
+  inspectPts:0,inspectedKeys:{},moxTick:0,globalReveal:false,
+  px:0,py:0,enemies:[],loot:[],traps:[],stairs:{x:0,y:0},floor:null,seen:null,turn:0};
+ game.dadisms=DADISMS.filter(d=>d.classes.includes(cls.id)).map(d=>d.id);
+ // starting kit
+ const w=mkGear(WEAPONS[cls.id==="gym"?4:0],"weapon",Math.random,true);
+ addItem(w); equip(w,true);
+ addItem(mkConsumable("casserole")); addItem(mkConsumable("casserole"));
+ addItem(mkConsumable(cls.craft==="food"?"meatball":"coffee"));
+ addItem(mkObject("ducttape"));
+ buildFloor(); messages=[]; log("Floor 1. The house is warming up. Press H for help.","gold");
+ mode=State.PLAY; saveRun(); syncUI();}
+
+function rarityFromAffixes(af){const help=af.filter(a=>a.type==="help").length;if(af.some(a=>a.id==="grillblessed"))return "Epic";if(help>=2)return "Rare";if(help===1)return "Uncommon";return "Common";}
+function mkGear(tpl,kind,rng,clean){rng=rng||Math.random;const g={uid:uid(),kind,id:tpl.id,name:tpl.name,desc:tpl.desc,affixes:[]};
+ for(const k of ["atk","def","per","wis","cap"])if(tpl[k])g[k]=tpl[k];
+ if(!clean){const n=rng()<0.45?1:(rng()<0.6?2:0);const pool=AFFIXES.slice();for(let i=0;i<n&&pool.length;i++){g.affixes.push(pool.splice(Math.floor(rng()*pool.length),1)[0]);}}
+ g.rarity=rarityFromAffixes(g.affixes); g.disp=(g.affixes.filter(a=>a.type!=="nothing").map(a=>a.name.startsWith("of")||a.name.startsWith("in")?"":a.name).filter(Boolean)[0]?"":"")+tpl.name; return g;}
+function mkConsumable(id){const c=CONSUMABLES.find(x=>x.id===id);return Object.assign({kind:"consumable"},c);}
+function mkObject(id){const o=OBJECTS.find(x=>x.id===id);return Object.assign({kind:"object"},o);}
+
+function buildFloor(){const f=genFloor(game.depth,game.seed);game.floor=f;game.globalReveal=false;
+ game.seen=[];for(let y=0;y<MAP_H;y++)game.seen.push(new Array(MAP_W).fill(false));
+ game.px=f.rooms[0].cx;game.py=f.rooms[0].cy;const last=f.rooms[f.rooms.length-1];game.stairs={x:last.cx,y:last.cy};
+ game.enemies=[];game.loot=[];game.traps=[];
+ if(game.depth%5===0){const b=BOSSES.find(b=>b.floor===game.depth)||BOSSES[BOSSES.length-1];
+   game.enemies.push(mkEnemy(b,last.cx,last.cy-1,true));log("A presence fills the floor: "+b.name+".","red");}
+ const cnt=3+Math.floor(game.depth*0.8)+Math.floor(f.rng()*3);
+ for(let i=0;i<cnt;i++){const r=f.rooms[1+Math.floor(f.rng()*(f.rooms.length-1))];if(!r)continue;const ex=r.x+1+Math.floor(f.rng()*(r.w-2)),ey=r.y+1+Math.floor(f.rng()*(r.h-2));if(ex===game.px&&ey===game.py)continue;game.enemies.push(mkEnemy(pickCreature(game.depth,f.rng),ex,ey,false));}
+ const lc=3+Math.floor(f.rng()*3);for(let i=0;i<lc;i++){const r=f.rooms[Math.floor(f.rng()*f.rooms.length)];game.loot.push({x:r.x+1+Math.floor(f.rng()*(r.w-2)),y:r.y+1+Math.floor(f.rng()*(r.h-2)),item:pickLoot(f.rng,game.depth)});}
+ const tc=2+Math.floor(f.rng()*3);for(let i=0;i<tc;i++){const r=f.rooms[Math.floor(f.rng()*f.rooms.length)];const td=TRAPS_DEF[Math.floor(f.rng()*TRAPS_DEF.length)];game.traps.push({x:r.x+1+Math.floor(f.rng()*(r.w-2)),y:r.y+1+Math.floor(f.rng()*(r.h-2)),def:td,sprung:false});}
+ reveal();}
+function pickCreature(depth,rng){const bio=depth<=4?"The House":depth<=9?"Lowe & Behold":"Vastco";const pool=CREATURES.filter(c=>c.biome===bio);const src=pool.length?pool:CREATURES;return src[Math.floor(rng()*src.length)];}
+function mkEnemy(t,x,y,boss){return {def:t,x,y,hp:t.hp,maxhp:t.hp,isBoss:!!boss,shownHP:false,uid:uid(),stun:0,root:0,blind:0};}
+function pickLoot(rng,depth){const r=rng();
+ if(r<0.30){const t=WEAPONS[Math.floor(rng()*WEAPONS.length)];return mkGear(t,"weapon",rng,false);}
+ if(r<0.50){const t=ARMORS[Math.floor(rng()*ARMORS.length)];return mkGear(t,"armor",rng,false);}
+ if(r<0.58){const t=TRINKETS[Math.floor(rng()*TRINKETS.length)];return mkGear(t,"trinket",rng,false);}
+ if(r<0.82){return mkConsumable(CONSUMABLES[Math.floor(rng()*CONSUMABLES.length)].id);}
+ if(r<0.95){return mkObject(OBJECTS[Math.floor(rng()*OBJECTS.length)].id);}
+ return {kind:"gold",amount:3+Math.floor(rng()*depth*4),name:"a fistful of Gold"};}
+
+/* ===== inventory ===== */
+function stackable(it){return it.kind==="consumable"||it.kind==="object";}
+function addItem(it){if(it.kind==="gold"){game.gold+=it.amount;return true;}
+ if(stackable(it)){const e=game.inv.find(e=>e.it.kind===it.kind&&e.it.id===it.id);if(e){e.qty++;return true;}}
+ if(game.inv.length>=invCap()){log("Inventory full. ("+invCap()+" slots) Drop something.","red");return false;}
+ game.inv.push({it,qty:1});return true;}
+function removeEntry(e,n){n=n||1;e.qty-=n;if(e.qty<=0){const i=game.inv.indexOf(e);if(i>=0)game.inv.splice(i,1);}}
+function equip(itOrEntry,silent){const it=itOrEntry.it?itOrEntry.it:itOrEntry;if(!["weapon","armor","trinket"].includes(it.kind))return;
+ const slot=it.kind;const old=game.equip[slot];game.equip[slot]=it;
+ // remove from inv
+ const e=game.inv.find(e=>e.it===it);if(e)removeEntry(e,1);
+ if(old)addItem(old);
+ if(!silent)log("Equipped "+it.name+".","grn");}
+function unequip(slot){const old=game.equip[slot];if(!old)return;if(game.inv.length>=invCap()){log("No room to unequip.","red");return;}game.equip[slot]=null;addItem(old);log("Unequipped "+old.name+".","dim");}
+function useConsumable(e){const it=e.it;let did=false;
+ if(it.heal){game.hp=Math.min(game.maxhp,game.hp+it.heal);log("You consume "+it.name+". +"+it.heal+" HP.","grn");did=true;}
+ if(it.moxie){game.moxie=Math.min(game.maxmoxie,game.moxie+it.moxie);log("+"+it.moxie+" Moxie.","blu");did=true;}
+ if(it.cures){for(const c of it.cures)if(game.statuses[c]){delete game.statuses[c];log(STATUSES[c].name+" cured.","grn");}did=true;}
+ if(it.relieve&&game.statuses[it.relieve]){const th=game.statuses[it.relieve];th.craving=0;log("The Thirst is eased... for now.","dim");did=true;}
+ if(it.alcohol){const th=game.statuses.thirst;if(th){th.craving=0;th.depend=(th.depend||0)+1;log("The Thirst quiets. It will be back, and hungrier.","red");}}
+ if(it.causes){applyStatus(it.causes,it.causes==="thirst"?9999:14);log("...you've come down with "+STATUSES[it.causes].name+".","red");did=true;}
+ if(!did&&!it.causes){log("Nothing happens. Classic.","dim");}
+ removeEntry(e,1); endTurn();}
+
+/* ===== statuses ===== */
+function applyStatus(id,turns){if(!STATUSES[id])return;if(id==="thirst"){if(game.statuses.thirst){game.statuses.thirst.depend=(game.statuses.thirst.depend||0)+1;return;}game.statuses.thirst={turns:9999,craving:0,depend:0};return;}game.statuses[id]={turns};}
+function tickStatuses(){game.moxTick++;if(game.moxTick%4===0)game.moxie=Math.min(game.maxmoxie,game.moxie+1);
+ for(const id of Object.keys(game.statuses)){const s=game.statuses[id];
+  if(id==="regen"){game.hp=Math.min(game.maxhp,game.hp+2);}
+  if(id==="hangover"){game.hp=Math.max(1,game.hp-1);}
+  if(id==="thirst"){s.craving++;if(s.craving===6)log("The Thirst sets in. Your hands aren't steady.","red");continue;}
+  if(s.turns!==9999){s.turns--;if(s.turns<=0){log(STATUSES[id].name+" wore off.","dim");delete game.statuses[id];}}}}
+
+/* ===== traps ===== */
+function trapDetected(t){return t.def.detect<=effPer()||t.known;}
+function springTrap(t){t.sprung=true;const d=t.def;if(d.dmg){game.hp-=d.dmg;log("TRAP! "+d.name+". -"+d.dmg+" HP.","red");}
+ else log("TRAP! "+d.name+".","red");
+ if(d.status){applyStatus(d.status,d.status==="thirst"?9999:(d.status==="nap"?4:12));log("You have: "+STATUSES[d.status].name+".","red");}
+ if(game.hp<=0){die();}}
+
+/* ===== combat ===== */
+function attack(e){const dmg=Math.max(1,effAtk()-e.def.def+(Math.floor(Math.random()*3)-1));e.hp-=dmg;discover(e.def,game.depth);e.shownHP=true;
+ log("You hit "+e.def.name+" for "+dmg+".","ink");
+ if(e.hp<=0){log(e.def.name+" defeated. +"+e.def.xp+" XP, +"+e.def.gold+"g","gold");gainXP(e.def.xp);game.gold+=e.def.gold;game.enemies=game.enemies.filter(x=>x!==e);if(e.isBoss)log("The way down is clear.","gold");}}
+function canStep(x,y){if(x<0||y<0||x>=MAP_W||y>=MAP_H)return false;if(game.floor.grid[y][x]===1)return false;if(x===game.px&&y===game.py)return false;if(game.enemies.some(e=>e.x===x&&e.y===y))return false;return true;}
+function enemyTurn(){for(const e of game.enemies){if(e.stun>0){e.stun--;continue;}
+  const dist=Math.abs(e.x-game.px)+Math.abs(e.y-game.py);
+  if(dist===1){if(e.blind>0){e.blind--;if(Math.random()<0.6){log(e.def.name+" swings wildly and misses.","dim");continue;}}
+    const dmg=Math.max(1,e.def.atk-effDef()+(Math.floor(Math.random()*3)-1));game.hp-=dmg;log(e.def.name+" hits you for "+dmg+".","red");if(game.hp<=0){die();return;}}
+  else if(dist<=7&&e.root<=0){const sx=e.x+Math.sign(game.px-e.x),sy=e.y+Math.sign(game.py-e.y);if(canStep(sx,e.y))e.x=sx;else if(canStep(e.x,sy))e.y=sy;}
+  else if(e.root>0)e.root--;}}
+
+/* ===== turn / movement ===== */
+function napBlocked(){if(hasStatus("nap")){log("You are one with the recliner. Cannot act.","dim");endTurn();return true;}if(hasStatus("coma")&&Math.random()<0.5){log("Free samples cloud your mind. Turn lost.","dim");endTurn();return true;}return false;}
+function tryMove(dx,dy){if(mode!==State.PLAY||pendingConfirm)return;if(napBlocked())return;
+ const nx=game.px+dx,ny=game.py+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H)return;if(game.floor.grid[ny][nx]===1)return;
+ const e=game.enemies.find(e=>e.x===nx&&e.y===ny);if(e){if(tryFumble("your attack"))return;attack(e);endTurn();return;}
+ if(tryFumble("your footing"))return;
+ game.px=nx;game.py=ny;if(Math.random()<0.10)log("*knee crack* (Dad Noise)","dim");
+ const li=game.loot.findIndex(l=>l.x===nx&&l.y===ny);
+ if(li>=0){const l=game.loot[li];if(l.item.kind==="gold"){game.gold+=l.item.amount;log("Picked up "+l.item.amount+" gold.","gold");game.loot.splice(li,1);}
+   else openConfirm("Pick up "+l.item.name+"?",()=>{if(addItem(l.item)){log("Picked up "+l.item.name+".","grn");game.loot.splice(li,1);}syncUI();});}
+ const ti=game.traps.findIndex(t=>t.x===nx&&t.y===ny&&!t.sprung);
+ if(ti>=0){const t=game.traps[ti];if(trapDetected(t))log("You carefully step over the "+t.def.name+".","dim");else springTrap(t);}
+ if(nx===game.stairs.x&&ny===game.stairs.y){openConfirm("Descend to Floor "+(game.depth+1)+"?",doDescend);}
+ reveal();endTurn();}
+function endTurn(){game.turn++;tickStatuses();if(mode===State.PLAY)enemyTurn();if(mode===State.PLAY)saveRun();syncUI();}
+function reveal(){const rad=Math.max(4,Math.min(7,4+Math.floor(effPer()/3)));for(let dy=-rad;dy<=rad;dy++)for(let dx=-rad;dx<=rad;dx++){const x=game.px+dx,y=game.py+dy;if(x<0||y<0||x>=MAP_W||y>=MAP_H)continue;if(dx*dx+dy*dy<=rad*rad)game.seen[y][x]=true;}}
+
+/* ===== throwing ===== */
+function startThrow(e){const it=e.it;if(!it.throw){log(it.name+" is not meant for throwing. (You could try.)","dim");return;}throwRef=e;aiming=true;ovInv=false;syncOverlays();log("Throw "+it.name+" — press a direction.","blu");}
+function doThrow(dx,dy){aiming=false;const it=throwRef.it;let x=game.px,y=game.py;let hit=null;
+ for(let i=0;i<8;i++){x+=dx;y+=dy;if(x<0||y<0||x>=MAP_W||y>=MAP_H||game.floor.grid[y][x]===1)break;const e=game.enemies.find(e=>e.x===x&&e.y===y);if(e){hit=e;break;}}
+ if(hit){const d=it.throw.dmg||3;hit.hp-=d;hit.shownHP=true;discover(hit.def,game.depth);log("You hurl "+it.name+" at "+hit.def.name+". "+d+" dmg!","gold");if(it.throw.status){hit[it.throw.status]=hit[it.throw.status]||0;log(hit.def.name+" is "+(STATUSES[it.throw.status]?STATUSES[it.throw.status].name:it.throw.status)+".","blu");}if(hit.hp<=0){log(hit.def.name+" defeated by airborne object. +"+hit.def.xp+" XP","gold");gainXP(hit.def.xp);game.gold+=hit.def.gold;game.enemies=game.enemies.filter(x=>x!==hit);}}
+ else log("You throw "+it.name+" into the void. It is gone now.","dim");
+ removeEntry(throwRef,1);throwRef=null;endTurn();}
+
+/* ===== crafting ===== */
+function tryCraft(eA,eB){const a=eA.it.id,b=eB.it.id;const rec=RECIPES.find(r=>(r.a===a&&r.b===b)||(r.a===b&&r.b===a));
+ if(!rec){log("Those two do not combine. (Yet.)","dim");return;}
+ if(rec.lock&&game.cls.id!==rec.lock){log("Only "+CLASSES.find(c=>c.id===rec.lock).name+" can make that.","red");return;}
+ let base=0.7;if(rec.bonus&&game.cls.id===rec.bonus)base=0.95;if(game.cls.craft!=="none"&&!rec.lock)base+=0.05;
+ removeEntry(eA,1);removeEntry(eB,1);
+ if(Math.random()>base){log("The craft fails. You are left with regret and a "+(rec.out.name)+"-shaped lesson.","red");addItem(mkObject("ducttape"));return;}
+ const o=rec.out;let made;if(o.kind==="weapon"||o.kind==="armor"||o.kind==="trinket"){made=mkGear(o,o.kind,Math.random,true);}else if(o.kind==="consumable"){made=Object.assign({kind:"consumable"},o);}else{made=Object.assign({kind:"object"},o);}
+ addItem(made);log("CRAFTED: "+o.name+"!","gold");combineMark=null;}
+
+/* ===== dadisms ===== */
+function adjEnemies(){return game.enemies.filter(e=>Math.abs(e.x-game.px)+Math.abs(e.y-game.py)===1);}
+function castDadism(id){const d=DADISMS.find(x=>x.id===id);if(!d)return;if(game.moxie<d.cost){log("Not enough Moxie for "+d.name+".","red");return;}
+ game.moxie-=d.cost;let acted=true;
+ if(d.kind==="dmg"){const t=adjEnemies()[0];if(!t){log("Nothing close enough to "+d.name+".","dim");game.moxie+=d.cost;return;}const dm=d.power+Math.floor(effWis()/2);t.hp-=dm;t.shownHP=true;discover(t.def,game.depth);log(d.name+"! "+t.def.name+" takes "+dm+".","gold");if(t.hp<=0){gainXP(t.def.xp);game.gold+=t.def.gold;game.enemies=game.enemies.filter(x=>x!==t);}}
+ else if(d.kind==="heal"){game.hp=Math.min(game.maxhp,game.hp+d.power);log(d.name+". +"+d.power+" HP.","grn");}
+ else if(d.kind==="buff"){applyStatus(d.status,d.turns);log(d.name+" — "+STATUSES[d.status].name+".","blu");}
+ else if(d.kind==="stun"){const t=adjEnemies()[0];if(!t){log("No target to reboot.","dim");game.moxie+=d.cost;return;}t.stun=d.turns;log(d.name+". "+t.def.name+" freezes, confused.","blu");}
+ else if(d.kind==="rootall"){for(const e of game.enemies)e.root=d.turns;log(d.name+". Everything pauses to update.","blu");}
+ else if(d.kind==="blind"){for(const e of adjEnemies())e.blind=d.turns;log(d.name+". Spots everywhere.","blu");}
+ else if(d.kind==="scan"){for(let y=0;y<MAP_H;y++)for(let x=0;x<MAP_W;x++)game.seen[y][x]=true;game.globalReveal=true;log(d.name+". The whole floor, and every threat, revealed.","gold");}
+ else if(d.kind==="aoe"){let n=0;for(const e of game.enemies)if(Math.abs(e.x-game.px)+Math.abs(e.y-game.py)<=3){e.hp-=d.power;e.shownHP=true;discover(e.def,game.depth);n++;}game.enemies=game.enemies.filter(e=>e.hp>0);log(d.name+" hits "+n+" foe(s) for "+d.power+". Effects increase yearly.","gold");}
+ else if(d.kind==="random"){const r=Math.random();if(r<0.6){const t=adjEnemies()[0];if(t){t.hp-=12;t.shownHP=true;log("Improvised Solution: it WORKS. 12 dmg!","gold");if(t.hp<=0){gainXP(t.def.xp);game.gold+=t.def.gold;game.enemies=game.enemies.filter(x=>x!==t);}}else{game.hp=Math.min(game.maxhp,game.hp+6);log("Improvised Solution: you patch yourself. +6 HP.","grn");}}else if(r<0.95){game.hp=Math.max(1,game.hp-4);log("Improvised Solution: it gets WORSE. -4 HP.","red");}else{game.maxhp+=4;game.hp=game.maxhp;log("Improvised Solution: somehow STRUCTURAL. +4 max HP!","gold");}}
+ ovDad=false;syncOverlays();endTurn();}
+
+/* ===== leveling ===== */
+function gainXP(n){game.xp+=n;while(game.xp>=game.xpNext){game.xp-=game.xpNext;levelUp();}}
+function levelUp(){game.level++;game.xpNext=Math.floor(game.xpNext*1.4)+4;game.maxhp+=6+game.level;game.hp=game.maxhp;
+ const pool=["str","def","wis"];const s=pool[Math.floor(Math.random()*pool.length)];game[s]++;game.maxmoxie++;game.moxie=game.maxmoxie;
+ log("LEVEL UP! Lv"+game.level+". +HP, +"+s.toUpperCase()+". You feel briefly capable.","gold");}
+function growPerception(key){if(game.inspectedKeys[key])return;game.inspectedKeys[key]=1;game.inspectPts++;if(game.inspectPts%INSPECT_PER_GROWTH===0){game.per++;log("Your Perception sharpens. (+1 PER from observation)","gold");}}
+
+/* ===== descend / end ===== */
+function doDescend(){game.depth++;if(game.depth>10){win();return;}log("You descend to Floor "+game.depth+".","gold");game.moxie=Math.min(game.maxmoxie,game.moxie+2);buildFloor();saveRun();syncUI();}
+function die(){mode=State.DEAD;log("You have fallen. The thermostat remains at 81.","red");clearRun();syncUI();}
+function win(){mode=State.WIN;log("THE REMOTE IS YOURS. The dryer hums to life.","gold");clearRun();syncUI();}
+
+/* ===== save / load ===== */
+function saveRun(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({clsId:game.cls.id,seed:game.seed,depth:game.depth,hp:game.hp,maxhp:game.maxhp,str:game.str,def:game.def,per:game.per,wis:game.wis,moxie:game.moxie,maxmoxie:game.maxmoxie,level:game.level,xp:game.xp,xpNext:game.xpNext,gold:game.gold,equip:game.equip,inv:game.inv,dadisms:game.dadisms,statuses:game.statuses,inspectPts:game.inspectPts,px:game.px,py:game.py}));}catch(e){}}
+function clearRun(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+function hasSave(){try{return !!localStorage.getItem(SAVE_KEY);}catch(e){return false;}}
+function continueRun(){let s;try{s=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){return false;}if(!s)return false;
+ const cls=CLASSES.find(c=>c.id===s.clsId)||CLASSES[0];
+ game={cls,seed:s.seed,depth:s.depth,hp:s.hp,maxhp:s.maxhp,str:s.str,def:s.def,per:s.per,wis:s.wis,moxie:s.moxie,maxmoxie:s.maxmoxie,level:s.level,xp:s.xp,xpNext:s.xpNext,gold:s.gold,equip:s.equip||{weapon:null,armor:null,trinket:null},inv:s.inv||[],dadisms:s.dadisms||[],statuses:s.statuses||{},inspectPts:s.inspectPts||0,inspectedKeys:{},moxTick:0,globalReveal:false,px:s.px,py:s.py,enemies:[],loot:[],traps:[],stairs:{x:0,y:0},floor:null,seen:null,turn:0};
+ buildFloor();game.px=s.px;game.py=s.py;reveal();messages=[];log("Run resumed. Floor "+game.depth+".","gold");mode=State.PLAY;syncUI();return true;}
+
+/* ===== drawing ===== */
+function drawSprite(spr,dx,dy,sc){sc=sc||1;for(let y=0;y<spr.length;y++){const row=spr[y];for(let x=0;x<row.length;x++){const c=PAL[row[x]];if(!c)continue;ctx.fillStyle=c;ctx.fillRect(dx+x*sc,dy+y*sc,sc,sc);}}}
+function lootSprite(it){return it.kind==="weapon"?SPR_GEAR_W:it.kind==="armor"?SPR_GEAR_A:it.kind==="trinket"?SPR_GEAR_A:it.kind==="consumable"?SPR_POTION:SPR_OBJECT;}
+function showEnemyHP(e){return game.globalReveal||e.shownHP||effPer()>=SHOW_HP_PER;}
+function render(){ctx.fillStyle="#0b0e16";ctx.fillRect(0,0,240,160);
+ if(mode===State.PLAY)drawWorld();else drawMenuBackdrop();
+ requestAnimationFrame(render);}
+function drawMenuBackdrop(){ctx.fillStyle="#11131a";ctx.fillRect(0,0,240,160);for(let i=0;i<46;i++){ctx.fillStyle="#1c2030";ctx.fillRect((i*53)%240,(i*37)%160,2,2);}drawSprite(SPR_DAD,104,58,2);}
+function drawWorld(){camX=Math.max(0,Math.min(MAP_W-VIEW_W,game.px-Math.floor(VIEW_W/2)));camY=Math.max(0,Math.min(MAP_H-VIEW_H,game.py-Math.floor(VIEW_H/2)));
+ for(let vy=0;vy<VIEW_H;vy++)for(let vx=0;vx<VIEW_W;vx++){const mx=camX+vx,my=camY+vy;if(mx>=MAP_W||my>=MAP_H)continue;const px=vx*TILE,py=vy*TILE;if(!game.seen[my][mx]){ctx.fillStyle="#06070b";ctx.fillRect(px,py,TILE,TILE);continue;}drawSprite(game.floor.grid[my][mx]===1?SPR_WALL:SPR_FLOOR,px,py,1);}
+ if(game.seen[game.stairs.y][game.stairs.x])drawSprite(SPR_STAIRS,(game.stairs.x-camX)*TILE,(game.stairs.y-camY)*TILE,1);
+ for(const t of game.traps){if(t.sprung||!game.seen[t.y][t.x])continue;if(trapDetected(t))drawSprite(SPR_TRAP,(t.x-camX)*TILE,(t.y-camY)*TILE,1);}
+ for(const l of game.loot){if(!game.seen[l.y][l.x])continue;const px=(l.x-camX)*TILE,py=(l.y-camY)*TILE;if(l.item.kind==="gold"){ctx.fillStyle="#f4c430";ctx.fillRect(px+5,py+6,6,5);ctx.fillStyle="#c9a227";ctx.fillRect(px+5,py+10,6,2);}else drawSprite(lootSprite(l.item),px,py,1);}
+ for(const e of game.enemies){if(!game.seen[e.y][e.x])continue;const px=(e.x-camX)*TILE,py=(e.y-camY)*TILE;drawSprite(e.def.sprite,px,py,1);
+   if(showEnemyHP(e)){const w=TILE-2;ctx.fillStyle="#3a0d0d";ctx.fillRect(px+1,py-3,w,2);ctx.fillStyle=e.isBoss?"#f0a040":"#5fbf4f";ctx.fillRect(px+1,py-3,Math.max(0,w*e.hp/e.maxhp),2);}}
+ drawSprite(SPR_DAD,(game.px-camX)*TILE,(game.py-camY)*TILE,1);
+ if(inspectOn){const px=(insX-camX)*TILE,py=(insY-camY)*TILE;ctx.strokeStyle="#f4c430";ctx.lineWidth=1;ctx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);}}
+
+/* ===== inspect ===== */
+function qualHP(e){const f=e.hp/e.maxhp;return f>0.75?"looks barely scratched":f>0.4?"looks roughed up":f>0.15?"looks badly hurt":"is about to drop";}
+function inspectAt(x,y){if(x<0||y<0||x>=MAP_W||y>=MAP_H||!game.seen[y][x])return null;
+ const e=game.enemies.find(e=>e.x===x&&e.y===y);
+ if(e){growPerception("e"+e.uid);e.shownHP=effPer()>=3||e.shownHP;const hp=showEnemyHP(e)?("HP "+Math.max(0,e.hp)+"/"+e.maxhp):qualHP(e)+" (raise Perception to read exact HP)";return {t:e.def.name+(e.isBoss?" [BOSS]":""),b:"ATK "+e.def.atk+" &middot; DEF "+e.def.def+" &middot; "+hp+"<br>"+e.def.flavor};}
+ const l=game.loot.find(l=>l.x===x&&l.y===y);if(l){growPerception("l"+x+","+y);const it=l.item;return {t:it.name||"Gold",b:(it.desc||"")+(it.rarity?(" &middot; "+it.rarity):"")};}
+ const t=game.traps.find(t=>t.x===x&&t.y===y&&!t.sprung);if(t){growPerception("t"+x+","+y);if(trapDetected(t))return {t:"TRAP: "+t.def.name,b:t.def.desc};return {t:"The floor here",b:"Looks... fine? (Your Perception isn't sharp enough to be sure.)"};}
+ if(x===game.stairs.x&&y===game.stairs.y)return {t:"The Stairs Down",b:"They descend into deeper suburban peril. Step on them to go down."};
+ if(x===game.px&&y===game.py)return {t:"You, "+game.cls.name,b:"HP "+game.hp+"/"+game.maxhp+" &middot; ATK "+effAtk()+" DEF "+effDef()+" PER "+effPer()+" WIS "+effWis()};
+ if(game.floor.grid[y][x]===1)return {t:"A Wall",b:"Load-bearing. Probably. Do not test this."};
+ return {t:"Floor",b:"Suspiciously ordinary linoleum."};}
+function showInspect(x,y){const r=inspectAt(x,y);const box=document.getElementById("inspectbox");if(!r){box.classList.remove("show");return;}box.innerHTML='<div class="it">'+r.t+'</div>'+r.b;box.classList.add("show");}
+function toggleInspect(){inspectOn=!inspectOn;if(inspectOn){insX=game.px;insY=game.py;showInspect(insX,insY);log("Inspect mode: arrows to look, X to exit.","blu");}else document.getElementById("inspectbox").classList.remove("show");}
+function moveInspect(dx,dy){const nx=insX+dx,ny=insY+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H)return;insX=nx;insY=ny;showInspect(insX,insY);}
+
+/* ===== crisp DOM HUD / menus ===== */
+const elStat=document.getElementById("statline"),elStatuses=document.getElementById("statuses"),elLog=document.getElementById("log");
+function bar(cls,val,max){const p=Math.max(0,Math.min(100,100*val/max));return '<span class="bar '+cls+'"><span style="width:'+p+'%"></span></span>';}
+function syncUI(){
+ if(mode===State.TITLE){const n=Object.keys(discovered).length;elStat.innerHTML='<b style="font-size:16px">SHATTERED DAD ADVENTURE</b> &nbsp;<span class="dim">v'+GAME_VERSION+'</span>';elStatuses.innerHTML="";elLog.innerHTML='<div>[ENTER] New Adventure</div>'+(hasSave()?'<div>[C] Continue Run</div>':'')+'<div>[H] How To Play &nbsp; [B] Discovered Creatures ('+n+'/'+(CREATURES.length+BOSSES.length)+')</div>';}
+ else if(mode===State.CLASS){elStat.innerHTML='<b>CHOOSE YOUR DAD</b> <span class="dim">(UP/DOWN, ENTER)</span>';elStatuses.innerHTML="";let h="";for(let i=0;i<CLASSES.length;i++){const c=CLASSES[i];h+='<div class="'+(i===classCursor?"l-gold":"")+'">'+(i===classCursor?"&#9654; ":"&nbsp;&nbsp; ")+'<b>'+c.name+'</b> &mdash; HP'+c.hp+' STR'+c.str+' DEF'+c.def+' PER'+c.per+' WIS'+c.wis+' &middot; <span class="l-dim">'+c.blurb+'</span></div>';}elLog.innerHTML=h;}
+ else if(mode===State.PLAY){
+  elStat.innerHTML='<b>'+game.cls.name+'</b> Lv'+game.level+' '+bar("hp",game.hp,game.maxhp)+' <span class="l-red">'+Math.max(0,game.hp)+'/'+game.maxhp+'</span> &nbsp; Moxie '+bar("mox",game.moxie,game.maxmoxie)+' '+game.moxie+'/'+game.maxmoxie+' &nbsp; XP '+bar("xp",game.xp,game.xpNext)+' &nbsp; <span class="l-blu">Floor '+game.depth+'/10</span> &nbsp; <b>'+game.gold+'g</b> &nbsp; ATK '+effAtk()+' DEF '+effDef()+' PER '+effPer()+' WIS '+effWis();
+  const ss=Object.keys(game.statuses);elStatuses.innerHTML=ss.length?("Status: "+ss.map(id=>'<span class="'+(STATUSES[id].bad?"st-bad":"st-good")+'">'+STATUSES[id].name+(id==="thirst"&&game.statuses[id].craving>=6?" (the shakes)":"")+'</span>').join(", ")):'<span class="dim">No active conditions. Enjoy it.</span>';
+  elLog.innerHTML=messages.map(m=>'<div class="l-'+m.c+'">'+m.t+'</div>').join("");}
+ else if(mode===State.DEAD||mode===State.WIN){const won=mode===State.WIN;elStat.innerHTML='<b style="font-size:16px" class="'+(won?"l-grn":"l-red")+'">'+(won?"VICTORY":"YOU DIED")+'</b>';elStatuses.innerHTML=won?'<span class="dim">The Remote is recovered. Thermostat: 72. From upstairs: "Daaad? Since you\'re up...?"</span>':'<span class="dim">Your legacy: one repaired deck and a thermostat argument. Reached floor '+game.depth+'.</span>';elLog.innerHTML='<div class="l-grn">All discovered creatures retained.</div><div class="l-gold">[ENTER] Title &nbsp; [B] Bestiary</div>';}
+ syncOverlays();
+}
+
+/* ===== overlays ===== */
+const oI=document.getElementById("ovInstr"),oInv=document.getElementById("ovInv"),oD=document.getElementById("ovDad"),oB=document.getElementById("ovBest"),cf=document.getElementById("confirm"),cfT=document.getElementById("cf-text");
+function syncOverlays(){oI.classList.toggle("show",ovInstr);oInv.classList.toggle("show",ovInv);oD.classList.toggle("show",ovDad);oB.classList.toggle("show",ovBest);cf.classList.toggle("show",!!pendingConfirm);}
+function openConfirm(text,fn){pendingConfirm={fn};cfT.textContent=text;syncOverlays();}
+function resolveConfirm(yes){if(!pendingConfirm)return;const fn=pendingConfirm.fn;pendingConfirm=null;syncOverlays();if(yes&&fn)fn();}
+function buildInstr(){oI.innerHTML=`<h1>HOW TO PLAY</h1>
+<p>It is Saturday. The Remote of Ultimate Authority is missing, the thermostat is stuck at 81&deg;, and the garage won't open. You are Dad. Descend 10 floors and get it back.</p>
+<h2>Controls</h2>
+<p><span class="key">Arrows / WASD</span> move (and bump to attack). <span class="key">Click a tile</span> to inspect it; click an adjacent tile to move/attack.</p>
+<p><span class="key">I</span> Inventory &amp; equipment &middot; <span class="key">K</span> Dadisms &middot; <span class="key">X</span> Inspect mode &middot; <span class="key">T</span> Throw &middot; <span class="key">H</span> Help &middot; <span class="key">B</span> Bestiary &middot; <span class="key">Esc</span> close.</p>
+<h2>Inspecting &amp; Health</h2>
+<p>Your HP bar is always shown. Enemy health is only visible if your <span class="key">Perception</span> is high enough (Tech &amp; Tactical Dads see it instantly) &mdash; otherwise <span class="key">inspect</span> a creature to read it. The more you inspect, the more your Perception grows.</p>
+<h2>Gear &amp; Buffs</h2>
+<p>Equip a <span class="key">weapon</span>, <span class="key">armor</span>, and <span class="key">trinket</span>. Found gear rolls silly affixes that may help, hinder, or do absolutely nothing. Read them before you trust them.</p>
+<h2>Dadisms</h2>
+<p>Class-specific abilities cast with <span class="key">Moxie</span> (regenerates over time). Open with <span class="key">K</span>. A Grillmaster's Dadisms are nothing like a Tech Dad's.</p>
+<h2>Items, Crafting, Traps</h2>
+<p>Consume food/drinks to heal or cure ailments. <span class="key">Combine</span> two items in the inventory to craft new gear &mdash; some recipes only certain dads can pull off. Traps can hurt you, sicken you, or restrict you. Watch for The Thirst.</p>
+<h2>Leveling</h2>
+<p>Defeating foes grants XP; every level-up raises HP and a stat and fully heals you. Inspecting grows Perception passively.</p>
+<p class="dim">Press H or Esc to return.</p>`;}
+function affixHTML(g){if(!g.affixes||!g.affixes.length)return "";return g.affixes.map(a=>'<span class="tag t-'+a.type+'">'+a.name+'</span>').join("");}
+function gearStat(g){return [["atk","ATK"],["def","DEF"],["per","PER"],["wis","WIS"],["cap","slots"]].filter(p=>g[p[0]]).map(p=>"+"+g[p[0]]+" "+p[1]).join(" ");}
+function buildInv(){let h='<h1>INVENTORY &amp; EQUIPMENT</h1><div class="slots">';
+ for(const sl of ["weapon","armor","trinket"]){const g=game.equip[sl];h+='<div class="slot"><div class="sl">'+sl+'</div>'+(g?('<span class="r-'+(g.rarity||"Common")+'">'+g.name+'</span><br><span class="meta">'+gearStat(g)+'</span> '+affixHTML(g)):'<span class="meta">— empty —</span>')+'</div>';}
+ h+='</div><p class="dim">UP/DOWN select &middot; [E] use/equip &middot; [T] throw &middot; [C] combine (mark two) &middot; [D] drop &middot; [1/2/3] unequip W/A/T &middot; [Esc] close &nbsp; Slots: '+game.inv.length+'/'+invCap()+'</p>';
+ if(!game.inv.length)h+='<p class="dim">Empty. A rare state of grace.</p>';
+ game.inv.forEach((e,i)=>{const it=e.it;const rc=it.rarity?("r-"+it.rarity):"";const mk=combineMark===e?' &#9670;':'';
+  let meta=it.kind==="weapon"||it.kind==="armor"||it.kind==="trinket"?(gearStat(it)+" "+affixHTML(it)):(it.desc||"");
+  h+='<div class="row'+(i===invSel?" sel":"")+'" data-inv="'+i+'"><div><span class="nm '+rc+'">'+(it.name)+(e.qty>1?(" x"+e.qty):"")+'</span>'+mk+'<div class="meta">'+meta+(it.throw?' <span class="tag t-help">throwable</span>':'')+'</div></div><div class="meta">'+(it.kind)+'</div></div>';});
+ oInv.innerHTML=h;}
+function buildDad(){let h='<h1>DADISMS</h1><p class="dim">Class abilities. Cast with Moxie ('+game.moxie+'/'+game.maxmoxie+'). UP/DOWN select &middot; [ENTER] cast &middot; [Esc] close</p>';
+ const known=DADISMS.filter(d=>game.dadisms.includes(d.id));if(!known.length)h+='<p class="dim">No Dadisms. Strange.</p>';
+ known.forEach((d,i)=>{const can=game.moxie>=d.cost;h+='<div class="row'+(i===dadSel?" sel":"")+'" data-dad="'+i+'"><div><span class="nm '+(can?"":"")+'" style="'+(can?"":"opacity:.5")+'">'+d.name+'</span><div class="meta">'+d.desc+'</div></div><div class="meta">'+d.cost+' Moxie</div></div>';});
+ oD.innerHTML=h;}
+function buildBest(){let h='<h1>DISCOVERED CREATURES</h1><p class="dim">Logged: '+Object.keys(discovered).length+' / '+(CREATURES.length+BOSSES.length)+'. Retained across all runs, deaths, and victories.</p><div class="beast-grid">';
+ for(const c of CREATURES.concat(BOSSES)){const d=discovered[c.id];const where=c.biome?c.biome:("BOSS &middot; Floor "+c.floor);
+  if(d)h+='<div class="bcard"><canvas width="64" height="64" data-spr="'+c.id+'"></canvas><div class="bn">'+c.name+'</div><div class="bs">'+where+' &middot; seen '+d.count+'&times; &middot; first: floor '+d.firstFloor+'</div><div class="bd">'+c.flavor+'</div></div>';
+  else h+='<div class="bcard und"><canvas width="64" height="64"></canvas><div class="bn">??? ? ?</div><div class="bs">Not yet encountered</div><div class="bd">This creature has not revealed itself. Venture deeper.</div></div>';}
+ h+='</div><p class="dim">Press B or Esc to return.</p>';oB.innerHTML=h;
+ oB.querySelectorAll('canvas[data-spr]').forEach(cv=>{const c=CREATURES.concat(BOSSES).find(x=>x.id===cv.dataset.spr);const cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;const s=4;for(let y=0;y<c.sprite.length;y++){const row=c.sprite[y];for(let x=0;x<row.length;x++){const col=PAL[row[x]];if(!col)continue;cx.fillStyle=col;cx.fillRect(x*s,y*s,s,s);}}});}
+
+/* ===== inventory actions ===== */
+function invAction(k){if(!game.inv.length&&k!=="Escape")return;const e=game.inv[invSel];
+ if(k==="ArrowUp"){invSel=(invSel+game.inv.length-1)%game.inv.length;buildInv();}
+ else if(k==="ArrowDown"){invSel=(invSel+1)%game.inv.length;buildInv();}
+ else if(k==="e"||k==="E"){if(!e)return;if(["weapon","armor","trinket"].includes(e.it.kind)){equip(e);}else if(e.it.kind==="consumable"){closeOverlays();useConsumable(e);return;}else{log(e.it.name+": "+e.it.desc,"dim");}buildInv();syncUI();}
+ else if(k==="t"||k==="T"){if(e){closeOverlays();startThrow(e);}}
+ else if(k==="c"||k==="C"){if(!e)return;if(!combineMark){combineMark=e;buildInv();}else if(combineMark===e){combineMark=null;buildInv();}else{tryCraft(combineMark,e);combineMark=null;invSel=Math.min(invSel,game.inv.length-1);buildInv();syncUI();}}
+ else if(k==="d"||k==="D"){if(e){log("Dropped "+e.it.name+".","dim");removeEntry(e,1);invSel=Math.max(0,Math.min(invSel,game.inv.length-1));buildInv();syncUI();}}
+ else if(k==="1"){unequip("weapon");buildInv();syncUI();}
+ else if(k==="2"){unequip("armor");buildInv();syncUI();}
+ else if(k==="3"){unequip("trinket");buildInv();syncUI();}}
+
+function closeOverlays(){ovInv=ovDad=ovBest=ovInstr=false;combineMark=null;syncOverlays();}
+
+/* ===== input ===== */
+document.addEventListener("keydown",(e)=>{const k=e.key;
+ if(pendingConfirm){if(k==="y"||k==="Y"||k==="Enter")resolveConfirm(true);else if(k==="n"||k==="N"||k==="Escape")resolveConfirm(false);e.preventDefault();return;}
+ if(aiming){if(["ArrowUp","w","W"].includes(k)){doThrow(0,-1);}else if(["ArrowDown","s","S"].includes(k)){doThrow(0,1);}else if(["ArrowLeft","a","A"].includes(k)){doThrow(-1,0);}else if(["ArrowRight","d","D"].includes(k)){doThrow(1,0);}else if(k==="Escape"){aiming=false;throwRef=null;log("Throw cancelled.","dim");}e.preventDefault();return;}
+ // overlay toggles
+ if(k==="h"||k==="H"){ovInstr=!ovInstr;if(ovInstr){closeOverlays();ovInstr=true;buildInstr();}syncOverlays();e.preventDefault();return;}
+ if(k==="b"||k==="B"){ovBest=!ovBest;if(ovBest){closeOverlays();ovBest=true;buildBest();}syncOverlays();e.preventDefault();return;}
+ if(mode===State.PLAY&&(k==="i"||k==="I")){ovInv=!ovInv;if(ovInv){closeOverlays();ovInv=true;invSel=Math.min(invSel,Math.max(0,game.inv.length-1));buildInv();}syncOverlays();e.preventDefault();return;}
+ if(mode===State.PLAY&&(k==="k"||k==="K")){ovDad=!ovDad;if(ovDad){closeOverlays();ovDad=true;dadSel=0;buildDad();}syncOverlays();e.preventDefault();return;}
+ if(k==="Escape"){closeOverlays();if(inspectOn)toggleInspect();return;}
+ if(ovInv){invAction(k);e.preventDefault();return;}
+ if(ovDad){const known=DADISMS.filter(d=>game.dadisms.includes(d.id));if(k==="ArrowUp"){dadSel=(dadSel+known.length-1)%known.length;buildDad();}else if(k==="ArrowDown"){dadSel=(dadSel+1)%known.length;buildDad();}else if(k==="Enter"){if(known[dadSel])castDadism(known[dadSel].id);}e.preventDefault();return;}
+ if(ovBest||ovInstr)return;
+ if(mode===State.PLAY&&(k==="x"||k==="X")){toggleInspect();e.preventDefault();return;}
+ if(mode===State.PLAY&&(k==="t"||k==="T")){const e2=game.inv.find(en=>en.it.throw);if(e2){startThrow(e2);}else log("Nothing throwable. Open Inventory (I) to pick.","dim");e.preventDefault();return;}
+ if(inspectOn){if(k==="ArrowUp"||k==="w"||k==="W"){moveInspect(0,-1);}else if(k==="ArrowDown"||k==="s"||k==="S"){moveInspect(0,1);}else if(k==="ArrowLeft"||k==="a"||k==="A"){moveInspect(-1,0);}else if(k==="ArrowRight"||k==="d"||k==="D"){moveInspect(1,0);}e.preventDefault();return;}
+ if(mode===State.TITLE){if(k==="Enter"){mode=State.CLASS;syncUI();}else if((k==="c"||k==="C")&&hasSave()){if(!continueRun()){mode=State.CLASS;syncUI();}}return;}
+ if(mode===State.CLASS){if(k==="ArrowUp"||k==="w"||k==="W"){classCursor=(classCursor+CLASSES.length-1)%CLASSES.length;syncUI();}else if(k==="ArrowDown"||k==="s"||k==="S"){classCursor=(classCursor+1)%CLASSES.length;syncUI();}else if(k==="Enter"){newRun(CLASSES[classCursor]);}return;}
+ if(mode===State.PLAY){if(k==="ArrowUp"||k==="w"||k==="W"){tryMove(0,-1);e.preventDefault();}else if(k==="ArrowDown"||k==="s"||k==="S"){tryMove(0,1);e.preventDefault();}else if(k==="ArrowLeft"||k==="a"||k==="A"){tryMove(-1,0);e.preventDefault();}else if(k==="ArrowRight"||k==="d"||k==="D"){tryMove(1,0);e.preventDefault();}return;}
+ if(mode===State.DEAD||mode===State.WIN){if(k==="Enter"){mode=State.TITLE;messages=[];syncUI();}return;}
+});
+
+/* ===== mouse ===== */
+function tileFromEvent(ev){const r=canvas.getBoundingClientRect();const sx=canvas.width/r.width,sy=canvas.height/r.height;const cxp=(ev.clientX-r.left)*sx,cyp=(ev.clientY-r.top)*sy;return {x:camX+Math.floor(cxp/TILE),y:camY+Math.floor(cyp/TILE)};}
+canvas.addEventListener("click",(ev)=>{if(mode!==State.PLAY||pendingConfirm||ovInv||ovDad||ovBest||ovInstr||aiming)return;const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;
+ const adj=Math.abs(x-game.px)+Math.abs(y-game.py)===1;
+ if(adj&&!inspectOn){tryMove(Math.sign(x-game.px),Math.sign(y-game.py));}else{showInspect(x,y);}});
+canvas.addEventListener("contextmenu",(ev)=>{ev.preventDefault();if(mode===State.PLAY){const {x,y}=tileFromEvent(ev);showInspect(x,y);}});
+// click inventory / dadism rows
+oInv.addEventListener("click",(ev)=>{const row=ev.target.closest("[data-inv]");if(!row)return;invSel=+row.dataset.inv;buildInv();});
+oD.addEventListener("click",(ev)=>{const row=ev.target.closest("[data-dad]");if(!row)return;dadSel=+row.dataset.dad;buildDad();});
+
+/* ===== boot ===== */
+fitCanvas();syncUI();render();
+</script>
+</body>
+</html>

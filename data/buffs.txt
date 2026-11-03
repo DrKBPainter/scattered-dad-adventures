@@ -1,0 +1,89 @@
+SHATTERED DAD ADVENTURE — AFFIXES — Upgrades / Learning Experiences / no effect
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+UPGRADES
+------------------------------
+of Misplaced Confidence
+  +1 ATK. It is not earned, but it counts.
+
+Ergonomic
+  +1 ATK. The grip says so on the sticker.
+
+Reinforced w/ Duct Tape
+  +2 DEF. Holds the universe together.
+
+Extended Warranty
+  +1 DEF. For once in your life.
+
+Pre-Owned
+  +1 ATK, +1 DEF. Someone else's problem, now yours to enjoy.
+
+Contractor Grade
+  +1 ATK, +1 DEF. Costs forty percent more for reasons no one can articulate. Worth it, allegedly.
+
+New In Box
+  +1 DEF, +1 PER. Still has the twist-ties. He will keep the box. He will keep all the boxes.
+
+As Seen On TV
+  +2 ATK. But wait — there is no second one, the shipping consumed the savings, and it works exactly as advertised, which is alarming.
+
+
+LEARNING EXPERIENCES
+------------------------------
+Recalled
+  -1 ATK. The lawsuit is still pending.
+
+Batteries Not Included
+  -1 ATK. You knew. You bought it anyway.
+
+Assembly Required
+  -1 DEF. Three pieces are left over. Probably unimportant.
+
+Stripped Screw
+  -1 DEF. Stripped. Eternal.
+
+Dented
+  -1 ATK, -1 DEF. It was like this when you found it.
+
+of the HOA
+  -2 ATK. Technically violates several covenants.
+
+Counterfeit
+  -2 ATK, -1 DEF. Not from the manufacturer. You knew this in the parking lot.
+
+Expired (Best Before 2019)
+  -2 DEF. It is not 2019. It has never been 2019 since 2019.
+
+Flickering
+  -1 PER, -1 DEF. Unstable. Unreliable. The description said 'vibrant.'
+
+Wrong Size (Close Enough)
+  -1 ATK, -1 PER. You told yourself it would be fine. It is not fine.
+
+Stripped Beyond Salvation
+  -1 ATK, -2 DEF. The screw was a warning. You did not heed the warning.
+
+Warranty Voided
+  -1 ATK, -1 Dadism power. You opened the casing. That was the end of the warranty and also of a small piece of your dignity.
+
+Final Clearance
+  -1 DEF, -1 PER. All sales final. The endcap claimed it. He could not resist the endcap.
+
+Open Box (Some Wear)
+  -1 ATK. Someone returned it for a reason they did not write down. The reason reveals itself in combat.
+
+
+NO EFFECT
+------------------------------
+Fine, I Guess
+  Does nothing. Perfectly adequate. A metaphor.
+
+4-Star Rated
+  One reviewer called it 'adequate.' They were right.
+
+Store Brand
+  Same thing as the name brand. He insists otherwise.
+
+Sold As-Is
+  Does nothing, but with finality. No returns, no refunds, no opinions. A purchase and a philosophy.

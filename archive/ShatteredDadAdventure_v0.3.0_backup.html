@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shattered Dad Adventure</title>
+<style>
+  /* ============================================================
+     SHATTERED DAD ADVENTURE
+     A comedic turn-based roguelike. Single-file build.
+     Visual target: late-80s / early-90s 8-bit (Zelda 1986).
+     Game version is shown on the title screen (GAME_VERSION).
+     ============================================================ */
+  :root {
+    --bg:#0b0c10; --ink:#e8e0c8; --gold:#f4c430; --red:#d83a2e;
+    --panel:#16181f; --border:#3a3f4b;
+  }
+  * { box-sizing:border-box; }
+  html,body {
+    margin:0; padding:0; background:#000; color:var(--ink);
+    font-family:'Courier New',monospace; height:100%;
+    image-rendering:pixelated; image-rendering:crisp-edges;
+  }
+  #wrap {
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; min-height:100%; padding:8px; gap:8px;
+  }
+  #stage {
+    position:relative;
+    border:4px solid var(--border);
+    background:#000;
+    box-shadow:0 0 0 4px #000, 0 8px 40px rgba(0,0,0,0.8);
+  }
+  canvas#screen {
+    display:block;
+    image-rendering:pixelated; image-rendering:crisp-edges;
+    -ms-interpolation-mode:nearest-neighbor;
+  }
+  /* HTML overlays for text-heavy screens (instructions, bestiary). */
+  .overlay {
+    position:absolute; inset:0; background:rgba(8,9,14,0.97);
+    color:var(--ink); padding:18px 22px; overflow-y:auto;
+    display:none; font-size:13px; line-height:1.5;
+  }
+  .overlay.show { display:block; }
+  .overlay h1 { color:var(--gold); font-size:20px; margin:0 0 6px; letter-spacing:1px; }
+  .overlay h2 { color:var(--gold); font-size:15px; margin:14px 0 4px; }
+  .overlay p { margin:4px 0; }
+  .overlay .key { color:var(--gold); font-weight:bold; }
+  .overlay .hint { color:#8a92a6; font-size:11px; margin-top:14px; }
+  .overlay .dim { color:#8a92a6; }
+  .beast-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; margin-top:8px; }
+  .beast-card { border:2px solid var(--border); background:var(--panel); padding:8px; }
+  .beast-card.undiscovered { opacity:0.55; }
+  .beast-card canvas { display:block; margin:0 auto 4px; image-rendering:pixelated; background:#0d1b2a; }
+  .beast-card .bname { color:var(--gold); font-size:12px; font-weight:bold; }
+  .beast-card .bdesc { font-size:10px; color:#b9b29a; margin-top:3px; line-height:1.35; }
+  .beast-card .bstat { font-size:10px; color:#7fb0d6; margin-top:3px; }
+  #footer { color:#5a6172; font-size:11px; text-align:center; }
+  a { color:var(--gold); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="screen" width="320" height="240"></canvas>
+    <div id="instructions" class="overlay"></div>
+    <div id="bestiary" class="overlay"></div>
+  </div>
+  <div id="footer">Shattered Dad Adventure &mdash; arrow keys / WASD to move &middot; bump enemies to attack &middot; I = help &middot; B = bestiary</div>
+</div>
+
+<script>
+"use strict";
+/* ================================================================
+   0. CONSTANTS & GLOBAL STATE
+   ================================================================ */
+const GAME_VERSION = "0.3.0";   // bumped by nightly builds
+const TILE = 16;                // logical pixels per tile
+const VIEW_W = 20, VIEW_H = 15; // visible tiles (320x240 viewport)
+const MAP_W = 40, MAP_H = 30;   // floor dimensions in tiles
+const SAVE_KEY = "sda_save_v1";
+const BESTIARY_KEY = "sda_bestiary_v1";   // persists across ALL runs & deaths
+
+const canvas = document.getElementById("screen");
+const ctx = canvas.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+
+// Scale the canvas up with integer scaling for chunky retro pixels.
+function fitCanvas(){
+  const maxW = Math.min(window.innerWidth - 40, 960);
+  const maxH = Math.min(window.innerHeight - 80, 720);
+  let scale = Math.max(1, Math.floor(Math.min(maxW/320, maxH/240)));
+  canvas.style.width = (320*scale)+"px";
+  canvas.style.height = (240*scale)+"px";
+}
+window.addEventListener("resize", fitCanvas);
+
+/* ================================================================
+   1. PALETTE  (NES-ish limited palette)
+   ================================================================ */
+const PAL = {
+  '.':null,            // transparent
+  '0':'#0d1b2a','1':'#1b263b','2':'#2e3a59','3':'#415a77',
+  'k':'#0a0a0a','w':'#e8e0c8','W':'#ffffff','g':'#3a7d34','G':'#5fbf4f',
+  'b':'#2e5a8c','B':'#5fa8e0','r':'#9c2b2b','R':'#e0453a','o':'#d97a2b',
+  'O':'#f0a040','y':'#c9a227','Y':'#f4c430','p':'#7a4a8c','P':'#b06fd0',
+  's':'#8a8a8a','S':'#c8c8c8','f':'#caa472','F':'#e8c9a0', // skin tones
+  'd':'#5a3a1a','D':'#7a5230','m':'#4a4a4a','M':'#6a6a6a',
+  'c':'#1f6f6f','C':'#37b0b0','n':'#b0432b','N':'#d8693e'
+};
+
+/* ================================================================
+   2. PIXEL SPRITES  (16x16, char rows -> palette)
+   Helper rows kept short; '.' = transparent.
+   ================================================================ */
+function S(rows){ return rows; } // identity, for readability
+
+// --- Player (Dad) facing down ---
+const SPR_DAD = S([
+  "....ssss........",
+  "...sffffs.......",
+  "...sfFFfs.......",
+  "...ffFFff.......",
+  "...sf..fs.......",
+  "....ffff........",
+  "...bBBBBb.......",
+  "..bBBBBBBb......",
+  "..BBBBBBBB......",
+  "..BBBBBBBB......",
+  "..fB.BB.Bf......",
+  "...B....B.......",
+  "..2222.2222.....",
+  "..222...222.....",
+  "..mm.....mm.....",
+  ".mmm.....mmm...."
+]);
+
+// Tiles ------------------------------------------------------------
+const SPR_FLOOR = S([
+  "11111111111111111111".slice(0,16)
+].length?[
+  "1111111111111111",
+  "1112111111121111",
+  "1111111111111111",
+  "1111111111111111",
+  "1121111121111111",
+  "1111111111111111",
+  "1111111111111111",
+  "1111211111111211",
+  "1111111111111111",
+  "1111111111111111",
+  "1211111111112111",
+  "1111111111111111",
+  "1111111111111111",
+  "1111112111111111",
+  "1111111111111111",
+  "1111111111111111"
+]:[]);
+
+const SPR_WALL = S([
+  "3333333333333333",
+  "3222222222222223",
+  "3222222222222223",
+  "3220222022202223",
+  "3222222222222223",
+  "3333333333333333",
+  "3222222222222223",
+  "3222022202220223",
+  "3222222222222223",
+  "3222222222222223",
+  "3333333333333333",
+  "3220222022202223",
+  "3222222222222223",
+  "3222222222222223",
+  "3222222222222223",
+  "3333333333333333"
+]);
+
+const SPR_STAIRS = S([
+  "0000000000000000",
+  "0YYYYYYYYYYYYYY0",
+  "0Y000000000000Y0",
+  "0Y0YYYYYYYYYY0Y0",
+  "0Y0Y00000000Y0Y0",
+  "0Y0Y0YYYYYY0Y0Y0",
+  "0Y0Y0Y0000Y0Y0Y0",
+  "0Y0Y0Y0YY0Y0Y0Y0",
+  "0Y0Y0Y0YY0Y0Y0Y0",
+  "0Y0Y0Y0000Y0Y0Y0",
+  "0Y0Y0YYYYYY0Y0Y0",
+  "0Y0Y00000000Y0Y0",
+  "0Y0YYYYYYYYYY0Y0",
+  "0Y000000000000Y0",
+  "0YYYYYYYYYYYYYY0",
+  "0000000000000000"
+]);
+
+const SPR_LOOT = S([
+  "................",
+  "................",
+  ".....YYYY.......",
+  "....YOOOOY......",
+  "...YOOOOOOY.....",
+  "...YO0YY0OY.....",
+  "...YOY..YOY.....",
+  "...YOOOOOOY.....",
+  "...YYYYYYYY.....",
+  "...dDDDDDDd.....",
+  "...dD0YY0Dd.....",
+  "...dDDDDDDd.....",
+  "...dddddddd.....",
+  "................",
+  "................",
+  "................"
+]);
+
+const SPR_TRAP = S([
+  "................",
+  "................",
+  "..r..r..r..r....",
+  "..rr.rr.rr.r....",
+  "...RRRRRRRR.....",
+  "..R........R....",
+  "..R.r.rr.r.R....",
+  "..R........R....",
+  "..R.rr..rr.R....",
+  "..R........R....",
+  "...RRRRRRRR.....",
+  "..rr.rr.rr.r....",
+  "..r..r..r..r....",
+  "................",
+  "................",
+  "................"
+]);
+
+/* ================================================================
+   3. CREATURE / ENEMY DATA  (the bestiary)
+   Each creature: id, name, biome, hp, atk, def, xp, gold,
+   sprite (16x16), and flavor (deadpan field-guide text).
+   >>> NIGHTLY BUILD INSERTION POINT: CREATURES <<<
+   Add new creatures to this array. id must be unique & stable.
+   ================================================================ */
+const CREATURES = [
+  {
+    id:"morning_obligation", name:"Morning Obligation", biome:"The House",
+    hp:8, atk:2, def:0, xp:4, gold:1, speed:1,
+    sprite:S([
+      "................",
+      ".....mmmm.......",
+      "....mMMMMm......",
+      "....MM..MM......",
+      "....M.rr.M......",
+      "....MMMMMM......",
+      "...mMMMMMMm.....",
+      "..mMMMMMMMMm....",
+      "..MMMMMMMMMM....",
+      "..MM.MMMM.MM....",
+      "..M..MMMM..M....",
+      "..MMMMMMMMMM....",
+      "...m......m.....",
+      "...mm....mm.....",
+      "................",
+      "................"
+    ]),
+    flavor:"Slow. Persistent. It does not chase you so much as it is simply always there. Cannot be reasoned with before coffee."
+  },
+  {
+    id:"unread_text", name:"The Unread Text", biome:"The House",
+    hp:4, atk:3, def:0, xp:3, gold:0, speed:1, pack:true,
+    sprite:S([
+      "................",
+      "..GGGGGGGGGG....",
+      "..G........G....",
+      "..G.kk..kk.G....",
+      "..G........G....",
+      "..G.k....k.G....",
+      "..G..kkkk..G....",
+      "..G........G....",
+      "..GGGGGGGGGG....",
+      "....G..G........",
+      ".....GG.........",
+      "................",
+      "..RR............",
+      "..RRRR..........",
+      "................",
+      "................"
+    ]),
+    flavor:"Spawns in groups. Multiplies if ignored. Each one insists it is 'just a quick question.' None of them are."
+  },
+  {
+    id:"rogue_roomba", name:"Rogue Roomba", biome:"The House",
+    hp:10, atk:3, def:1, xp:6, gold:2, speed:1,
+    sprite:S([
+      "................",
+      "................",
+      "...mmmMMMmmm....",
+      "..mMMMMMMMMMm...",
+      ".mMMSSSSSSSMMm..",
+      ".MMSCCCCCCCSMM..",
+      ".MMSCkkkkkCSMM..",
+      ".MMSCkBBkCSMM...",
+      ".MMSCkkkkkCSMM..",
+      ".MMSCCCCCCCSMM..",
+      ".mMMSSSSSSSMMm..",
+      "..mMMMMMMMMMm...",
+      "...mmmMMMmmm....",
+      "................",
+      "................",
+      "................"
+    ]),
+    flavor:"Charts a path known only to itself. Has eaten a sock, a phone charger, and the family's sense of security. Bumps your ankles at 3 AM."
+  },
+  {
+    id:"shopping_cart", name:"Shopping Cart Ambush", biome:"Lowe & Behold",
+    hp:14, atk:4, def:1, xp:8, gold:3, speed:1,
+    sprite:S([
+      "................",
+      "..SSSSSSSSSS....",
+      "..S........S....",
+      "..S.SSSSSS.S....",
+      "..S.S....S.S....",
+      "..S.S....S.S....",
+      "..S.SSSSSS.S....",
+      "..SSSSSSSSSS....",
+      "...S......S.....",
+      "...S......S.....",
+      "..mmm....mmm....",
+      ".mMMMm..mMMMm...",
+      ".mMkMm..mMkMm...",
+      ".mMMMm..mMMMm...",
+      "..mmm....mmm....",
+      "................"
+    ]),
+    flavor:"One wheel possessed. Veers left under all circumstances. Always contains one item nobody placed there."
+  },
+  {
+    id:"weekend_warrior", name:"Weekend Warrior", biome:"Lowe & Behold",
+    hp:16, atk:5, def:2, xp:10, gold:4, speed:1,
+    sprite:S([
+      "....ssss........",
+      "...sffffs.......",
+      "...sfRRfs.......",
+      "...ffRRff.......",
+      "....ffff........",
+      "...oOOOOo.......",
+      "..oOOOOOOo......",
+      "..OO.OO.OO......",
+      "..OOOOOOOO......",
+      "..fO.OO.Of......",
+      "...O....O.......",
+      "..DDDD.DDDD.....",
+      "..DDD...DDD.....",
+      "..ss.....ss.....",
+      ".sss.....sss....",
+      "................"
+    ]),
+    flavor:"Owns every tool. Has used three. Will explain the project to you whether or not you ask. Lumbar Injury III imminent."
+  },
+  {
+    id:"warranty_wraith", name:"Extended Warranty Wraith", biome:"Vastco",
+    hp:20, atk:6, def:2, xp:14, gold:6, speed:1,
+    sprite:S([
+      "................",
+      "....pppppp......",
+      "...pPPPPPPp.....",
+      "..pP......Pp....",
+      "..pP.WW.WW.Pp...",
+      "..pP......Pp....",
+      "..pP..WW..Pp....",
+      "..pPPPPPPPPp....",
+      "..pP.PPPP.Pp....",
+      "..pP.PPPP.Pp....",
+      "..pPP.PP.PPp....",
+      "...pPP..PPp.....",
+      "....pP..Pp......",
+      ".....p..p.......",
+      "................",
+      "................"
+    ]),
+    flavor:"Materializes at checkout. Asks if you would like to protect your purchase. There is no correct answer. There has never been a correct answer."
+  },
+  {
+    id:"sale_sign_golem", name:"Sale Sign Golem", biome:"Vastco",
+    hp:26, atk:7, def:4, xp:18, gold:8, speed:1,
+    sprite:S([
+      "..YYYYYYYYYY....",
+      "..YRRRRRRRRY....",
+      "..YR.RR.R.RY....",
+      "..YRRRRRRRRY....",
+      "..YYYYYYYYYY....",
+      "....mMMMMm......",
+      "...mMMMMMMm.....",
+      "..mMMMMMMMMm....",
+      "..MMMMMMMMMM....",
+      "..MM.MMMM.MM....",
+      "..MMMMMMMMMM....",
+      "..mMMMMMMMMm....",
+      "...mm....mm.....",
+      "..mmm....mmm....",
+      "................",
+      "................"
+    ]),
+    flavor:"Constructed entirely of percentages. Each sign contradicts the one beside it. The real price is a closely guarded secret."
+  }
+];
+
+/* ================================================================
+   4. BOSS DATA
+   >>> NIGHTLY BUILD INSERTION POINT: BOSSES <<<
+   Bosses appear on floors that are multiples of 5.
+   ================================================================ */
+const BOSSES = [
+  {
+    id:"garage_entity", name:"The Garage (As Entity)", floor:5,
+    hp:60, atk:8, def:3, xp:60, gold:30, speed:1,
+    sprite:S([
+      "DDDDDDDDDDDDDDDD",
+      "D00000000000000D",
+      "D0ssss0000ssss0D",
+      "D0s00s0000s00s0D",
+      "D0ssss0000ssss0D",
+      "D00000000000000D",
+      "DDDDDDDDDDDDDDDD",
+      "D0rr00YY00rr000D",
+      "D00000000000000D",
+      "D0mm0mm0mm0mm00D",
+      "D00000000000000D",
+      "D0OO00OO00OO000D",
+      "D00000000000000D",
+      "DDDDDDDDDDDDDDDD",
+      "D00000000000000D",
+      "DDDDDDDDDDDDDDDD"
+    ]),
+    flavor:"Not entered fully since 2019. It has become a biome. Somewhere inside is the emergency release cord. Somewhere inside is everything you have ever lost."
+  },
+  {
+    id:"floor_manager", name:"The Floor Manager", floor:10,
+    hp:90, atk:11, def:4, xp:100, gold:60, speed:1,
+    sprite:S([
+      "....SSSSSS......",
+      "...SffffffS.....",
+      "...SfRRRRfS.....",
+      "...ffRRRRff.....",
+      "....ffffff......",
+      "...RRRRRRRR.....",
+      "..RRRRRRRRRR....",
+      "..RR.RRRR.RR....",
+      "..RRRRRRRRRR....",
+      "..fR.RRRR.Rf....",
+      "...R.RRRR.R.....",
+      "..222.YY.222....",
+      "..222....222....",
+      "..ss......ss....",
+      ".sss......sss...",
+      "................"
+    ]),
+    flavor:"Greets you the moment you look lost. Offers help you cannot refuse and do not want. 'While we're back here...' Attack: Upsell Cascade. Weakness: saying 'I'm just getting screws' before engagement."
+  }
+];
+
+/* ================================================================
+   5. ITEM / LOOT DATA
+   ================================================================ */
+const ITEMS = [
+  {id:"flashlight", name:"Half-Charged Flashlight", rarity:"Common", atk:0, def:0, hp:5, msg:"It works. For now."},
+  {id:"sparekey", name:"A Spare Key (Opens Something)", rarity:"Uncommon", atk:1, def:0, hp:0, msg:"You will never learn what."},
+  {id:"tapemeasure", name:"Tape Measure w/ Legible Markings", rarity:"Rare", atk:2, def:1, hp:0, msg:"Measure twice. Attack once."},
+  {id:"tupperware", name:"Matching Tupperware Lid", rarity:"Epic", atk:1, def:3, hp:8, msg:"A miracle. It actually fits."},
+  {id:"allenwrench", name:"The Correct Allen Wrench", rarity:"Legendary", atk:3, def:2, hp:10, msg:"Required for all quests. You found it. This never happens."},
+  {id:"goodflashlight", name:"The Good Flashlight", rarity:"Legendary", atk:2, def:1, hp:12, msg:"Never where you left it. Until now."}
+];
+
+/* ================================================================
+   6. CLASS DATA  (starter classes; more via nightly builds)
+   >>> NIGHTLY BUILD INSERTION POINT: CLASSES <<<
+   ================================================================ */
+const CLASSES = [
+  {id:"grill", name:"The Grillmaster", hp:30, atk:6, def:2,
+   blurb:"Controls fire, meat, and conversations nobody asked for."},
+  {id:"diy", name:"The DIY Dad", hp:32, atk:5, def:3,
+   blurb:"Weaponized confidence with no formal training. 60% of repairs work."},
+  {id:"tech", name:"The Tech Dad", hp:26, atk:5, def:2,
+   blurb:"Keeper of passwords. Reveals more of each floor. Cannot fix printers."},
+  {id:"gym", name:"The Gym Dad", hp:40, atk:8, def:3,
+   blurb:"Can deadlift a refrigerator. Cannot locate refrigerator."},
+  {id:"tactical", name:"The Tactical Dad", hp:30, atk:6, def:4,
+   blurb:"Prepared for everything. Inventory weight: catastrophic."}
+];
+
+/* ================================================================
+   7. BESTIARY PERSISTENCE
+   Discovered creatures are stored in localStorage and RETAINED
+   regardless of game status (death, win, new run, browser close).
+   ================================================================ */
+function loadBestiary(){
+  try { return JSON.parse(localStorage.getItem(BESTIARY_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveBestiary(b){
+  try { localStorage.setItem(BESTIARY_KEY, JSON.stringify(b)); } catch(e){}
+}
+let discovered = loadBestiary();   // { creatureId: {count, firstFloor} }
+
+function discover(creature, floor){
+  if(!discovered[creature.id]){
+    discovered[creature.id] = {count:0, firstFloor:floor};
+    log("NEW CREATURE LOGGED: " + creature.name, "gold");
+  }
+  discovered[creature.id].count++;
+  saveBestiary(discovered);
+}
+
+/* ================================================================
+   8. GAME STATE
+   ================================================================ */
+const State = { TITLE:0, CLASS:1, PLAY:2, DEAD:3, WIN:4 };
+let game = null;       // active run object
+let mode = State.TITLE;
+let classCursor = 0;
+let messages = [];     // log lines {text,color}
+
+function log(text, color){
+  messages.push({text, color:color||"ink"});
+  if(messages.length > 5) messages.shift();
+}
+
+/* ================================================================
+   9. MAP GENERATION  (rooms + corridors, seeded)
+   ================================================================ */
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+function genFloor(depth, seed){
+  const rng = mulberry32(seed + depth*7919);
+  const T_WALL=1, T_FLOOR=0;
+  const grid = [];
+  for(let y=0;y<MAP_H;y++){ grid.push(new Array(MAP_W).fill(T_WALL)); }
+  const rooms=[];
+  const target = 6 + Math.floor(rng()*4);
+  let tries=0;
+  while(rooms.length<target && tries<200){
+    tries++;
+    const w=4+Math.floor(rng()*6), h=4+Math.floor(rng()*5);
+    const x=1+Math.floor(rng()*(MAP_W-w-2));
+    const y=1+Math.floor(rng()*(MAP_H-h-2));
+    const r={x,y,w,h,cx:Math.floor(x+w/2),cy:Math.floor(y+h/2)};
+    let overlap=false;
+    for(const o of rooms){
+      if(x<o.x+o.w+1 && x+w+1>o.x && y<o.y+o.h+1 && y+h+1>o.y){ overlap=true; break; }
+    }
+    if(overlap) continue;
+    for(let yy=y; yy<y+h; yy++) for(let xx=x; xx<x+w; xx++) grid[yy][xx]=T_FLOOR;
+    rooms.push(r);
+  }
+  // connect rooms with L-corridors
+  for(let i=1;i<rooms.length;i++){
+    const a=rooms[i-1], b=rooms[i];
+    let x=a.cx, y=a.cy;
+    while(x!==b.cx){ grid[y][x]=T_FLOOR; x+=x<b.cx?1:-1; }
+    while(y!==b.cy){ grid[y][x]=T_FLOOR; y+=y<b.cy?1:-1; }
+  }
+  return {grid, rooms, rng};
+}
+
+/* ================================================================
+   10. RUN CREATION
+   ================================================================ */
+function newRun(cls){
+  const seed = (Math.random()*1e9)|0;
+  game = {
+    cls, seed,
+    depth:1,
+    hp:cls.hp, maxhp:cls.hp, atk:cls.atk, def:cls.def,
+    level:1, xp:0, xpNext:12, gold:0,
+    inventory:[], statuses:{},
+    px:0, py:0, enemies:[], loot:[], traps:[], stairs:{x:0,y:0},
+    floor:null, seen:null, turn:0
+  };
+  buildFloor();
+  messages=[];
+  log("Floor "+game.depth+". The house is warming up.", "gold");
+  mode = State.PLAY;
+  saveRun();
+}
+
+function buildFloor(){
+  const f = genFloor(game.depth, game.seed);
+  game.floor = f;
+  game.seen = []; for(let y=0;y<MAP_H;y++) game.seen.push(new Array(MAP_W).fill(false));
+  // place player in first room
+  game.px = f.rooms[0].cx; game.py = f.rooms[0].cy;
+  // stairs in last room
+  const last = f.rooms[f.rooms.length-1];
+  game.stairs = {x:last.cx, y:last.cy};
+  // spawn enemies
+  game.enemies = [];
+  game.loot = [];
+  game.traps = [];
+  const isBossFloor = (game.depth % 5 === 0);
+  if(isBossFloor){
+    const boss = pickBoss(game.depth);
+    game.enemies.push(makeEnemy(boss, last.cx, last.cy-1, true));
+    log("A presence fills the floor. "+boss.name+".", "red");
+  }
+  // regular enemies scale with depth
+  const count = 3 + Math.floor(game.depth*0.8) + Math.floor(f.rng()*3);
+  for(let i=0;i<count;i++){
+    const r = f.rooms[1+Math.floor(f.rng()*(f.rooms.length-1))];
+    if(!r) continue;
+    const ex=r.x+1+Math.floor(f.rng()*(r.w-2));
+    const ey=r.y+1+Math.floor(f.rng()*(r.h-2));
+    if(ex===game.px && ey===game.py) continue;
+    const c = pickCreature(game.depth, f.rng);
+    game.enemies.push(makeEnemy(c, ex, ey, false));
+  }
+  // loot
+  const lcount = 2+Math.floor(f.rng()*3);
+  for(let i=0;i<lcount;i++){
+    const r=f.rooms[Math.floor(f.rng()*f.rooms.length)];
+    game.loot.push({x:r.x+1+Math.floor(f.rng()*(r.w-2)), y:r.y+1+Math.floor(f.rng()*(r.h-2)), item:pickItem(f.rng)});
+  }
+  // traps
+  const tcount = 1+Math.floor(f.rng()*3);
+  for(let i=0;i<tcount;i++){
+    const r=f.rooms[Math.floor(f.rng()*f.rooms.length)];
+    game.traps.push({x:r.x+1+Math.floor(f.rng()*(r.w-2)), y:r.y+1+Math.floor(f.rng()*(r.h-2)), sprung:false});
+  }
+  revealAround();
+}
+
+function pickCreature(depth, rng){
+  // bias toward biome appropriate to depth; fall back to any
+  const biomeByDepth = depth<=4?"The House": depth<=9?"Lowe & Behold":"Vastco";
+  const pool = CREATURES.filter(c=>c.biome===biomeByDepth);
+  const src = pool.length?pool:CREATURES;
+  return src[Math.floor(rng()*src.length)];
+}
+function pickBoss(depth){
+  const b = BOSSES.find(b=>b.floor===depth);
+  return b || BOSSES[BOSSES.length-1];
+}
+function pickItem(rng){ return ITEMS[Math.floor(rng()*ITEMS.length)]; }
+
+function makeEnemy(def, x, y, isBoss){
+  return {def, x, y, hp:def.hp, maxhp:def.hp, isBoss:!!isBoss};
+}
+
+/* ================================================================
+   11. VISIBILITY / FOG
+   ================================================================ */
+function revealAround(){
+  const radius = game.cls.id==="tech" ? 6 : 4;  // Tech Dad sees more
+  for(let dy=-radius; dy<=radius; dy++){
+    for(let dx=-radius; dx<=radius; dx++){
+      const x=game.px+dx, y=game.py+dy;
+      if(x<0||y<0||x>=MAP_W||y>=MAP_H) continue;
+      if(dx*dx+dy*dy <= radius*radius) game.seen[y][x]=true;
+    }
+  }
+}
+
+/* ================================================================
+   12. PLAYER ACTIONS / TURN LOOP
+   ================================================================ */
+function tryMove(dx,dy){
+  if(mode!==State.PLAY) return;
+  const nx=game.px+dx, ny=game.py+dy;
+  if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H) return;
+  if(game.floor.grid[ny][nx]===1) return; // wall
+  // enemy there? attack
+  const e = game.enemies.find(e=>e.x===nx && e.y===ny);
+  if(e){ attack(e); endTurn(); return; }
+  game.px=nx; game.py=ny;
+  // knee twinge flavor
+  if(Math.random()<0.12){ log("*knee crack* (Dad Noise)", "dim"); }
+  // loot pickup
+  const li = game.loot.findIndex(l=>l.x===nx && l.y===ny);
+  if(li>=0){ pickup(game.loot[li].item); game.loot.splice(li,1); }
+  // trap
+  const ti = game.traps.findIndex(t=>t.x===nx && t.y===ny && !t.sprung);
+  if(ti>=0){ springTrap(game.traps[ti]); }
+  // stairs
+  if(nx===game.stairs.x && ny===game.stairs.y){ descend(); return; }
+  revealAround();
+  endTurn();
+}
+
+function attack(e){
+  const dmg = Math.max(1, game.atk - e.def.def + (Math.floor(Math.random()*3)-1));
+  e.hp -= dmg;
+  discover(e.def, game.depth);   // logged on first contact
+  log("You hit "+e.def.name+" for "+dmg+".", "ink");
+  if(e.hp<=0){
+    log(e.def.name+" defeated. +"+e.def.xp+" XP, +"+e.def.gold+"g", "gold");
+    gainXP(e.def.xp); game.gold+=e.def.gold;
+    game.enemies = game.enemies.filter(x=>x!==e);
+    if(e.isBoss){ log("The path clears. The stairs await.", "gold"); }
+  }
+}
+
+function enemyTurn(){
+  for(const e of game.enemies){
+    const dist = Math.abs(e.x-game.px)+Math.abs(e.y-game.py);
+    if(dist===1){ // adjacent -> attack
+      const dmg = Math.max(1, e.def.atk - game.def + (Math.floor(Math.random()*3)-1));
+      game.hp -= dmg;
+      log(e.def.name+" hits you for "+dmg+".", "red");
+      if(game.hp<=0){ die(); return; }
+    } else if(dist <= 7){ // chase
+      const sx = e.x + Math.sign(game.px-e.x);
+      const sy = e.y + Math.sign(game.py-e.y);
+      // try horizontal then vertical, avoid walls/occupied
+      if(canStep(sx,e.y)){ e.x=sx; }
+      else if(canStep(e.x,sy)){ e.y=sy; }
+    }
+  }
+}
+function canStep(x,y){
+  if(x<0||y<0||x>=MAP_W||y>=MAP_H) return false;
+  if(game.floor.grid[y][x]===1) return false;
+  if(x===game.px && y===game.py) return false;
+  if(game.enemies.some(e=>e.x===x&&e.y===y)) return false;
+  return true;
+}
+
+function endTurn(){
+  game.turn++;
+  enemyTurn();
+  if(mode===State.PLAY) saveRun();
+}
+
+function pickup(item){
+  game.inventory.push(item);
+  game.atk += item.atk; game.def += item.def; game.maxhp += item.hp; game.hp += item.hp;
+  log("Found "+item.name+" ["+item.rarity+"]. "+item.msg, "gold");
+}
+
+function springTrap(t){
+  t.sprung=true;
+  const dmg = 3+Math.floor(Math.random()*4);
+  game.hp -= dmg;
+  log("TRAP! Lego Minefield. -"+dmg+" HP. (catastrophic foot damage)", "red");
+  if(game.hp<=0) die();
+}
+
+function gainXP(n){
+  game.xp+=n;
+  while(game.xp>=game.xpNext){
+    game.xp-=game.xpNext; game.level++; game.xpNext=Math.floor(game.xpNext*1.4)+4;
+    game.maxhp+=6; game.hp=game.maxhp; game.atk+=2; game.def+=1;
+    log("LEVEL UP! Now level "+game.level+". You feel briefly capable.", "gold");
+  }
+}
+
+function descend(){
+  game.depth++;
+  if(game.depth>10){ win(); return; }
+  log("You descend to floor "+game.depth+".", "gold");
+  buildFloor();
+  saveRun();
+}
+
+function die(){
+  mode=State.DEAD;
+  log("You have fallen. The thermostat remains at 81.", "red");
+  clearRun();
+}
+function win(){
+  mode=State.WIN;
+  log("THE REMOTE IS YOURS. The dryer hums to life.", "gold");
+  clearRun();
+}
+
+/* ================================================================
+   13. RUN SAVE / LOAD  (mid-session continuity)
+   Bestiary is saved separately and is NEVER cleared here.
+   ================================================================ */
+function saveRun(){
+  try {
+    const slim = {
+      clsId:game.cls.id, seed:game.seed, depth:game.depth,
+      hp:game.hp, maxhp:game.maxhp, atk:game.atk, def:game.def,
+      level:game.level, xp:game.xp, xpNext:game.xpNext, gold:game.gold,
+      inventory:game.inventory, px:game.px, py:game.py
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(slim));
+  } catch(e){}
+}
+function clearRun(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+function hasSave(){ try{ return !!localStorage.getItem(SAVE_KEY); }catch(e){ return false; } }
+function continueRun(){
+  let s; try{ s=JSON.parse(localStorage.getItem(SAVE_KEY)); }catch(e){ return false; }
+  if(!s) return false;
+  const cls = CLASSES.find(c=>c.id===s.clsId) || CLASSES[0];
+  game = { cls, seed:s.seed, depth:s.depth, hp:s.hp, maxhp:s.maxhp, atk:s.atk, def:s.def,
+    level:s.level, xp:s.xp, xpNext:s.xpNext, gold:s.gold, inventory:s.inventory||[],
+    statuses:{}, px:s.px, py:s.py, enemies:[], loot:[], traps:[], stairs:{x:0,y:0}, floor:null, seen:null, turn:0 };
+  buildFloor();
+  // restore player pos (buildFloor reset it)
+  game.px=s.px; game.py=s.py; revealAround();
+  messages=[]; log("Run resumed. Floor "+game.depth+".", "gold");
+  mode=State.PLAY;
+  return true;
+}
+
+/* ================================================================
+   14. RENDERING
+   ================================================================ */
+function drawSprite(spr, dx, dy, scale){
+  scale = scale||1;
+  for(let y=0;y<spr.length;y++){
+    const row=spr[y];
+    for(let x=0;x<row.length;x++){
+      const c=PAL[row[x]];
+      if(!c) continue;
+      ctx.fillStyle=c;
+      ctx.fillRect(dx+x*scale, dy+y*scale, scale, scale);
+    }
+  }
+}
+
+function render(){
+  ctx.fillStyle="#000"; ctx.fillRect(0,0,320,240);
+  if(mode===State.TITLE){ drawTitle(); }
+  else if(mode===State.CLASS){ drawClassSelect(); }
+  else if(mode===State.PLAY){ drawPlay(); }
+  else if(mode===State.DEAD){ drawEnd(false); }
+  else if(mode===State.WIN){ drawEnd(true); }
+  requestAnimationFrame(render);
+}
+
+function txt(s,x,y,color,size){
+  ctx.fillStyle=color||"#e8e0c8";
+  ctx.font=(size||8)+"px 'Courier New',monospace";
+  ctx.textBaseline="top";
+  ctx.fillText(s,x,y);
+}
+
+function drawTitle(){
+  // backdrop
+  ctx.fillStyle="#0b0c10"; ctx.fillRect(0,0,320,240);
+  for(let i=0;i<40;i++){ ctx.fillStyle="#16181f"; ctx.fillRect((i*53)%320,(i*37)%240,2,2); }
+  drawSprite(SPR_DAD, 144, 70, 2);
+  ctx.fillStyle="#f4c430"; ctx.font="16px 'Courier New',monospace"; ctx.textAlign="center";
+  ctx.fillText("SHATTERED DAD", 160, 30);
+  ctx.fillText("ADVENTURE", 160, 48);
+  ctx.font="8px 'Courier New',monospace"; ctx.fillStyle="#8a92a6";
+  ctx.fillText("v"+GAME_VERSION, 160, 118);
+  ctx.fillStyle="#e8e0c8"; ctx.font="9px 'Courier New',monospace";
+  ctx.fillText("[ENTER] New Adventure", 160, 150);
+  if(hasSave()) ctx.fillText("[C] Continue Run", 160, 164);
+  ctx.fillText("[I] How To Play", 160, 178);
+  ctx.fillText("[B] Discovered Creatures", 160, 192);
+  const n=Object.keys(discovered).length;
+  ctx.fillStyle="#5fbf4f";
+  ctx.fillText("Bestiary: "+n+" / "+(CREATURES.length+BOSSES.length)+" logged", 160, 212);
+  ctx.textAlign="left";
+}
+
+function drawClassSelect(){
+  ctx.fillStyle="#0b0c10"; ctx.fillRect(0,0,320,240);
+  txt("CHOOSE YOUR DAD", 100, 12, "#f4c430", 12);
+  for(let i=0;i<CLASSES.length;i++){
+    const c=CLASSES[i]; const y=40+i*36;
+    if(i===classCursor){ ctx.fillStyle="#16181f"; ctx.fillRect(10,y-4,300,34); ctx.strokeStyle="#f4c430"; ctx.strokeRect(10,y-4,300,34); }
+    txt((i===classCursor?"> ":"  ")+c.name, 18, y, i===classCursor?"#f4c430":"#e8e0c8", 9);
+    txt("HP "+c.hp+"  ATK "+c.atk+"  DEF "+c.def, 18, y+12, "#7fb0d6", 8);
+    txt(c.blurb, 18, y+22, "#8a92a6", 7);
+  }
+  txt("[UP/DOWN] choose   [ENTER] begin", 60, 226, "#8a92a6", 8);
+}
+
+function drawPlay(){
+  // camera centered on player
+  let camX = game.px - Math.floor(VIEW_W/2);
+  let camY = game.py - Math.floor(VIEW_H/2);
+  camX=Math.max(0,Math.min(MAP_W-VIEW_W,camX));
+  camY=Math.max(0,Math.min(MAP_H-VIEW_H,camY));
+  // tiles
+  for(let vy=0;vy<VIEW_H;vy++){
+    for(let vx=0;vx<VIEW_W;vx++){
+      const mx=camX+vx, my=camY+vy;
+      if(mx>=MAP_W||my>=MAP_H) continue;
+      const px=vx*TILE, py=vy*TILE;
+      if(!game.seen[my][mx]){ ctx.fillStyle="#000"; ctx.fillRect(px,py,TILE,TILE); continue; }
+      if(game.floor.grid[my][mx]===1) drawSprite(SPR_WALL, px, py, 1);
+      else drawSprite(SPR_FLOOR, px, py, 1);
+    }
+  }
+  // stairs
+  if(game.seen[game.stairs.y][game.stairs.x]) drawSprite(SPR_STAIRS, (game.stairs.x-camX)*TILE,(game.stairs.y-camY)*TILE,1);
+  // traps (only if seen and sprung shown faintly)
+  for(const t of game.traps){ if(game.seen[t.y][t.x] && !t.sprung) drawSprite(SPR_TRAP,(t.x-camX)*TILE,(t.y-camY)*TILE,1); }
+  // loot
+  for(const l of game.loot){ if(game.seen[l.y][l.x]) drawSprite(SPR_LOOT,(l.x-camX)*TILE,(l.y-camY)*TILE,1); }
+  // enemies
+  for(const e of game.enemies){ if(game.seen[e.y][e.x]) drawSprite(e.def.sprite,(e.x-camX)*TILE,(e.y-camY)*TILE,1); }
+  // player
+  drawSprite(SPR_DAD,(game.px-camX)*TILE,(game.py-camY)*TILE,1);
+
+  // HUD bar
+  ctx.fillStyle="#0b0c10"; ctx.fillRect(0,VIEW_H*TILE,320,240-VIEW_H*TILE);
+  ctx.fillStyle="#3a3f4b"; ctx.fillRect(0,VIEW_H*TILE,320,1);
+  txt(game.cls.name+"  Lv"+game.level, 4, 242, "#f4c430", 8);
+  // HP bar
+  const hpw=80, hx=4, hy=252;
+  ctx.fillStyle="#3a1010"; ctx.fillRect(hx,hy,hpw,6);
+  ctx.fillStyle="#e0453a"; ctx.fillRect(hx,hy,Math.max(0,hpw*game.hp/game.maxhp),6);
+  txt("HP "+Math.max(0,game.hp)+"/"+game.maxhp, hx+hpw+4, hy-1, "#e8e0c8", 8);
+  txt("Floor "+game.depth+"/10", 220, 242, "#7fb0d6", 8);
+  txt("Gold "+game.gold, 220, 252, "#f4c430", 8);
+  // log lines
+  for(let i=0;i<messages.length;i++){
+    const m=messages[i];
+    const col=m.color==="gold"?"#f4c430":m.color==="red"?"#e0453a":m.color==="dim"?"#5a6172":"#cfc9b4";
+    txt(m.text.slice(0,52), 4, 264+i*9, col, 8);
+  }
+}
+
+function drawEnd(won){
+  ctx.fillStyle=won?"#10240f":"#240f0f"; ctx.fillRect(0,0,320,240);
+  ctx.textAlign="center";
+  ctx.fillStyle=won?"#5fbf4f":"#e0453a"; ctx.font="14px 'Courier New',monospace";
+  ctx.fillText(won?"VICTORY":"YOU DIED", 160, 60);
+  ctx.fillStyle="#e8e0c8"; ctx.font="9px 'Courier New',monospace";
+  if(won){
+    ctx.fillText("The Remote of Ultimate Authority", 160, 92);
+    ctx.fillText("is recovered. The thermostat: 72.", 160, 104);
+    ctx.fillText("From upstairs: 'Daaad? Since", 160, 124);
+    ctx.fillText("you're up, can you help me...?'", 160, 136);
+  } else {
+    ctx.fillText("Your legacy: one repaired deck", 160, 92);
+    ctx.fillText("and a thermostat argument.", 160, 104);
+    ctx.fillText("Reached floor "+game.depth+".", 160, 124);
+  }
+  ctx.fillStyle="#5fbf4f"; ctx.fillText("All discovered creatures retained.", 160, 156);
+  ctx.fillStyle="#f4c430"; ctx.fillText("[ENTER] Title   [B] Bestiary", 160, 180);
+  ctx.textAlign="left";
+}
+
+/* ================================================================
+   15. HTML OVERLAYS (instructions + bestiary)
+   ================================================================ */
+const elInstr = document.getElementById("instructions");
+const elBest = document.getElementById("bestiary");
+
+function showInstructions(show){
+  if(show){
+    elInstr.innerHTML = `
+      <h1>HOW TO PLAY</h1>
+      <p>It is Saturday. The Remote of Ultimate Authority is missing, the thermostat is stuck at 81&deg;, and the garage won't open. You are Dad. Descend 10 floors of suburban chaos and get it back.</p>
+      <h2>Controls</h2>
+      <p><span class="key">Arrow keys / W A S D</span> &mdash; move one tile (one turn).</p>
+      <p><span class="key">Move into an enemy</span> &mdash; attack it (bump combat).</p>
+      <p><span class="key">I</span> &mdash; toggle this help. <span class="key">B</span> &mdash; Discovered Creatures. <span class="key">Esc</span> &mdash; close.</p>
+      <h2>The Loop</h2>
+      <p>Each floor is procedurally generated. Walk onto the glowing <span class="key">stairs</span> to descend. Enemies act after you move &mdash; adjacent ones hit you. Grab <span class="key">loot</span> (boosts stats), avoid <span class="key">traps</span>.</p>
+      <p>Defeat XP raises your level (full heal on level-up). Bosses guard floors <span class="key">5</span> and <span class="key">10</span>.</p>
+      <h2>Death &amp; the Bestiary</h2>
+      <p>Death is permanent for that run, but every creature you've ever encountered is <span class="dim">logged forever</span> in the Discovered Creatures bestiary &mdash; it survives death, victory, and closing the browser. Your in-progress run also auto-saves so you can Continue from the title.</p>
+      <p class="hint">Press I or Esc to return.</p>`;
+    elInstr.classList.add("show");
+  } else { elInstr.classList.remove("show"); }
+}
+
+function showBestiary(show){
+  if(show){
+    let html = `<h1>DISCOVERED CREATURES</h1>
+      <p class="dim">Logged: ${Object.keys(discovered).length} / ${CREATURES.length+BOSSES.length}. Retained across all runs, deaths, and victories.</p>
+      <div class="beast-grid">`;
+    for(const c of CREATURES.concat(BOSSES)){
+      const d = discovered[c.id];
+      const where = c.biome ? c.biome : ("BOSS &middot; Floor "+c.floor);
+      if(d){
+        html += `<div class="beast-card"><canvas width="64" height="64" data-spr="${c.id}"></canvas>
+          <div class="bname">${c.name}</div>
+          <div class="bstat">${where} &middot; encountered ${d.count}&times; &middot; first: floor ${d.firstFloor}</div>
+          <div class="bdesc">${c.flavor}</div></div>`;
+      } else {
+        html += `<div class="beast-card undiscovered"><canvas width="64" height="64"></canvas>
+          <div class="bname">??? ? ? ?</div>
+          <div class="bstat">Not yet encountered</div>
+          <div class="bdesc">This creature has not revealed itself. Venture deeper.</div></div>`;
+      }
+    }
+    html += `</div><p class="hint">Press B or Esc to return.</p>`;
+    elBest.innerHTML = html;
+    // draw sprites into the small canvases
+    elBest.querySelectorAll('canvas[data-spr]').forEach(cv=>{
+      const c = CREATURES.concat(BOSSES).find(x=>x.id===cv.dataset.spr);
+      const cx = cv.getContext('2d'); cx.imageSmoothingEnabled=false;
+      const s=4;
+      for(let y=0;y<c.sprite.length;y++){ const row=c.sprite[y];
+        for(let x=0;x<row.length;x++){ const col=PAL[row[x]]; if(!col) continue; cx.fillStyle=col; cx.fillRect(x*s,y*s,s,s); }
+      }
+    });
+    elBest.classList.add("show");
+  } else { elBest.classList.remove("show"); }
+}
+
+/* ================================================================
+   16. INPUT
+   ================================================================ */
+let instrOpen=false, bestOpen=false;
+document.addEventListener("keydown", (e)=>{
+  const k=e.key;
+  // overlays first
+  if(k==="i"||k==="I"){ instrOpen=!instrOpen; if(instrOpen){bestOpen=false;showBestiary(false);} showInstructions(instrOpen); e.preventDefault(); return; }
+  if(k==="b"||k==="B"){ bestOpen=!bestOpen; if(bestOpen){instrOpen=false;showInstructions(false);} showBestiary(bestOpen); e.preventDefault(); return; }
+  if(k==="Escape"){ instrOpen=false;bestOpen=false; showInstructions(false); showBestiary(false); return; }
+  if(instrOpen||bestOpen) return;
+
+  if(mode===State.TITLE){
+    if(k==="Enter"){ mode=State.CLASS; }
+    else if((k==="c"||k==="C") && hasSave()){ if(!continueRun()){ mode=State.CLASS; } }
+    return;
+  }
+  if(mode===State.CLASS){
+    if(k==="ArrowUp"||k==="w"||k==="W"){ classCursor=(classCursor+CLASSES.length-1)%CLASSES.length; }
+    else if(k==="ArrowDown"||k==="s"||k==="S"){ classCursor=(classCursor+1)%CLASSES.length; }
+    else if(k==="Enter"){ newRun(CLASSES[classCursor]); }
+    return;
+  }
+  if(mode===State.PLAY){
+    if(k==="ArrowUp"||k==="w"||k==="W"){ tryMove(0,-1); e.preventDefault(); }
+    else if(k==="ArrowDown"||k==="s"||k==="S"){ tryMove(0,1); e.preventDefault(); }
+    else if(k==="ArrowLeft"||k==="a"||k==="A"){ tryMove(-1,0); e.preventDefault(); }
+    else if(k==="ArrowRight"||k==="d"||k==="D"){ tryMove(1,0); e.preventDefault(); }
+    return;
+  }
+  if(mode===State.DEAD||mode===State.WIN){
+    if(k==="Enter"){ mode=State.TITLE; }
+    return;
+  }
+});
+
+/* ================================================================
+   17. BOOT
+   ================================================================ */
+fitCanvas();
+render();
+</script>
+</body>
+</html>

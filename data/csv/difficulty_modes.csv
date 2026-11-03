@@ -1,0 +1,5 @@
+id,name,blurb,enemy_hp_multiplier,enemy_atk_multiplier,enemy_count_multiplier,flavor
+lawn_chair,Lawn Chair,The suburbs at their most cooperative. Enemies are forgiving. The HOA still isn't.,0.75,0.8,0.75,You brought a folding chair and a cooler. The adventure will pace itself. The back pain will not.
+weekend_warrior,Weekend Warrior,Standard suburban adventure. Two days off. One objective. No excuses.,1,1,1,The descent is what it is. The neighbors are what they are. Everything is fine. It is fine.
+hoa_approved,HOA Approved,The neighbors are watching. They have concerns. They have filed those concerns in triplicate.,1.25,1.2,1.25,A certified letter arrived this morning. It was about you. The descent will be less forgiving than the letter.
+dad_mode,Dad Mode,Everything is a test. The HOA voted unanimously. You are the problem.,1.6,1.4,1.5,The remote controls everything. Everything controls you. The thermostat laughs. Quietly. Smugly.

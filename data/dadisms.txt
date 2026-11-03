@@ -1,0 +1,111 @@
+SHATTERED DAD ADVENTURE — DADISMS (Book of Dadvice; cast with Patience)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Char It
+  Classes: grill   Cost: 3 Patience   Type: dmg
+  Scorch an adjacent foe for big fire damage.
+
+Stand Near the Meat
+  Classes: grill   Cost: 2 Patience   Type: buff
+  Everything is under control. Regenerate HP for a while.
+
+Improvised Solution
+  Classes: diy   Cost: 2 Patience   Type: random
+  60% great, 35% worse, 5% structural. Outcome unknown.
+
+Good Enough
+  Classes: diy   Cost: 2 Patience   Type: heal
+  Patch yourself up. +10 HP. Close enough.
+
+Turn It Off and On Again
+  Classes: tech   Cost: 3 Patience   Type: stun
+  Stun an adjacent foe. Works on everything but printers.
+
+Mandatory Firmware Update
+  Classes: tech   Cost: 5 Patience   Type: rootall
+  All enemies pause for an update they did not request.
+
+One More Rep
+  Classes: gym   Cost: 3 Patience   Type: buff
+  +3 ATK. Health is a mindset.
+
+Scoop of Pre-Workout
+  Classes: gym   Cost: 2 Patience   Type: heal
+  +8 HP and a tingling face.
+
+Dad Scan
+  Classes: tactical   Cost: 3 Patience   Type: scan
+  Reveal the whole floor and every foe's health.
+
+Tactical Flashlight
+  Classes: tactical   Cost: 2 Patience   Type: blind
+  Blind adjacent foes. And yourself a little.
+
+Back In My Day
+  Classes: grill, diy, tech, gym, tactical, sports, yard   Cost: 2 Patience   Type: aoe
+  Nostalgia damage to all nearby. Effects increase yearly.
+
+Assume Tactical Stance
+  Classes: tactical, gym   Cost: 2 Patience   Type: buff
+  +2 DEF. You saw this coming.
+
+Sideline Tirade
+  Classes: sports   Cost: 3 Patience   Type: stun
+  Question the officiating at a volume that stuns an adjacent foe. The call does not change. They never do.
+
+Halftime Orange Slices
+  Classes: sports   Cost: 2 Patience   Type: buff
+  Citrus, quartered, distributed at the half. Regenerate HP for a while.
+
+Mow It Down
+  Classes: yard   Cost: 3 Patience   Type: dmg
+  The mower meets an adjacent foe. Two-cycle justice. Bag sold separately.
+
+Activate The Sprinklers
+  Classes: yard   Cost: 4 Patience   Type: rootall
+  The in-ground system engages on schedule. Everything nearby stops to get out of water it did not expect.
+
+The Dad Sneeze
+  Classes: grill, diy, tech, gym, tactical, sports, yard   Cost: 2 Patience   Type: knockback
+  An involuntary, full-body detonation that launches an adjacent foe backward. No warning. No apology. No encore. Bless you.
+
+The Nod
+  Classes:    Cost: 2 Patience   Type: buff
+  +2 DEF. A single downward head movement communicating respect, acknowledgment, and quiet authority. No words. They were not needed.
+
+Walk It Off
+  Classes:    Cost: 3 Patience   Type: heal
+  +12 HP. He has been walking it off since 1987. It has never once not eventually worked.
+
+The Disappointed Look
+  Classes:    Cost: 3 Patience   Type: stun
+  A look that has silenced rooms, ended arguments, and once stopped a ceiling fan mid-spin. Stuns an adjacent foe for 3 turns.
+
+Firm Handshake
+  Classes:    Cost: 3 Patience   Type: dmg
+  He learned it from his father. His father learned it from his. The lineage delivers 8 damage and expects eye contact.
+
+I Watched A Video
+  Classes:    Cost: 2 Patience   Type: random
+  He watched a video. A whole one. It may or may not apply. Outcome: unpredictable. Confidence: maximum.
+
+I'll Fix It Later
+  Classes:    Cost: 1 Patience   Type: heal
+  +6 HP. A temporary measure. He is aware it is temporary. This awareness has not changed the approach.
+
+Dad Joke (Deployed)
+  Classes:    Cost: 4 Patience   Type: aoe
+  He tells it. The whole floor hears it. The groan travels 3 tiles and deals 5 damage to all nearby enemies. The joke was poor. The damage is real.
+
+It's Fine
+  Classes:    Cost: 2 Patience   Type: buff
+  Everything is fine. He is regenerating HP. This is fine. It is all fine. The situation is fine and he is fine.
+
+Count Heads
+  Classes:    Cost: 3 Patience   Type: scan
+  He counts. Then counts again. Then counts the exits, the threats, and the ceiling tiles. Everything on this floor: revealed.
+
+Found A Shortcut
+  Classes:    Cost: 4 Patience   Type: rootall
+  This is not a shortcut. It has never been a shortcut. The announcement of it has confused all nearby enemies for 2 turns while they process the claim.

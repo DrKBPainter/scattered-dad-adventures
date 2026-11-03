@@ -1,0 +1,487 @@
+
+SHATTERED DAD DUNGEON - EXPANDED CHARACTER CLASSES
+
+THE GRILLMASTER
+
+Class Fantasy: Controls fire, meat, and conversations nobody asked for.
+
+Starts With
+- Cargo Shorts +2
+- Tongs of Clicking
+- Apron of Authority
+- Secret Spice Rub (not actually secret)
+
+Base Attributes
+Strength: High
+Constitution: High
+Charisma: Legendary
+Dexterity: Moderate
+Wisdom: Moderate
+Intelligence: Average
+Perception: High (Around Meat)
+
+Passive Trait
+Dad's Domain
+
+Within 20 feet of a grill:
+- +50% confidence
+- +25% charisma
+- Immune to criticism
+
+Special Ability
+Stand Near Meat
+
+All nearby allies believe everything is under control.
+Actual status remains unchanged.
+
+Combat Ability
+Just About Done
+
+May claim food is ready regardless of actual readiness.
+
+Effects:
+- Confuses party
+- Increases anticipation
+- Occasionally causes poison damage
+
+Exploration Ability
+Smoke Signal
+
+Can locate:
+- Grills
+- Smokers
+- Propane tanks
+- Any person cooking incorrectly
+
+Starting Quest
+The Great Cookout
+
+Feed 20 guests.
+
+Reward:
+- Neighborhood Respect
+
+Failure:
+- Hotdog shortage
+
+Legendary Talent
+King of the Cul-de-Sac
+
+All neighborhood gatherings automatically migrate toward your grill.
+
+==================================================
+
+THE DIY DAD
+
+Class Fantasy: Weaponized confidence with no formal training.
+
+Starts With
+- Half Roll of Duct Tape
+- Mystery Screws x14
+- YouTube Tutorial Access
+- Toolbox of False Hope
+
+Base Attributes
+Strength: Moderate
+Constitution: High
+Charisma: Moderate
+Dexterity: Low
+Wisdom: Questionable
+Intelligence: Moderate
+Perception: Low
+
+Passive Trait
+Good Enough
+
+Any repair has:
+- 60% chance of success
+- 35% chance of becoming worse
+- 5% chance of becoming structural
+
+Special Ability
+I'll Figure It Out
+
+Removes instruction manuals.
+Adds uncertainty.
+
+Combat Ability
+Improvised Solution
+
+Can attack enemies with:
+- Zip ties
+- Plywood
+- PVC pipe
+- Leftover hardware
+
+Exploration Ability
+Garage Archaeology
+
+Can locate:
+- Every spare part ever owned
+
+Cannot locate:
+- The one currently needed
+
+Starting Quest
+Fix the Sink
+
+Estimated Time:
+15 minutes
+
+Actual Time:
+3 weekends
+
+Legendary Talent
+One More Trip
+
+Visit hardware store repeatedly.
+
+Each trip grants:
++5 Hope
+
+No project completion bonus.
+
+==================================================
+
+THE SPORTS DAD
+
+Class Fantasy: Tactical commander of youth athletics.
+
+Starts With
+- Folding Chair of Endurance
+- Giant Cooler
+- Team Schedule Binder
+- Portable Canopy
+
+Base Attributes
+Strength: Moderate
+Constitution: High
+Charisma: High
+Dexterity: Moderate
+Wisdom: Low
+Intelligence: Average
+Perception: Elite
+
+Passive Trait
+Game Day Awareness
+
+Can identify:
+- Opponent weaknesses
+- Field conditions
+- Snack quality
+
+Special Ability
+Back In My Day
+
+Deals nostalgia damage.
+Effects increase yearly.
+
+Combat Ability
+Questionable Coaching Advice
+
+Provides:
+- Confidence
+- Confusion
+- Contradictory instructions
+
+Exploration Ability
+Tournament Mapping
+
+Can navigate any sports complex.
+Cannot navigate malls.
+
+Starting Quest
+Triple Header Weekend
+
+Survive:
+- 14 games
+- 3 states
+- 2 hotel breakfasts
+
+Legendary Talent
+Travel Ball
+
+Consumes all gold.
+No known counter.
+
+==================================================
+
+THE TECH DAD
+
+Class Fantasy: Keeper of passwords and destroyer of Wi-Fi outages.
+
+Starts With
+- Password Notebook
+- HDMI Adapter Collection
+- Backup Charger
+- Reading Glasses
+
+Base Attributes
+Strength: Low
+Constitution: Moderate
+Charisma: Moderate
+Dexterity: High
+Wisdom: High
+Intelligence: High
+Perception: Moderate
+
+Passive Trait
+IT Department
+
+Everyone's technology becomes your responsibility.
+
+Special Ability
+Turn It Off and On Again
+
+Fixes:
+- Phones
+- TVs
+- Routers
+
+Does not fix:
+- Printers
+
+Combat Ability
+Firmware Update
+
+Enemy pauses for 45 minutes.
+
+Exploration Ability
+Cable Recognition
+
+Can identify every cable ever made.
+Still has a box full of them.
+
+Starting Quest
+Set Up Grandma's Tablet
+
+Difficulty:
+Legendary
+
+Legendary Talent
+The Family Administrator
+
+All passwords known.
+None remembered.
+
+==================================================
+
+THE YARD DAD
+
+Class Fantasy: Guardian of suburban perfection.
+
+Starts With
+- Dad Balance Sneakers
+- Lawnmower Blade
+- Weather App
+- Hose Attachment Collection
+
+Base Attributes
+Strength: High
+Constitution: High
+Charisma: Moderate
+Dexterity: Moderate
+Wisdom: High
+Intelligence: Average
+Perception: Legendary
+
+Passive Trait
+Lawn Awareness
+
+Instantly detects:
+- Weeds
+- Bare spots
+- Neighbor violations
+
+Special Ability
+Grass Surveillance
+
+No lawn imperfection escapes notice.
+
+Combat Ability
+Edge Trimming
+
+Applies precision damage.
+
+Exploration Ability
+Forecast Obsession
+
+Checks weather every 11 minutes.
+
+Starting Quest
+Spring Revival
+
+Defeat:
+- Crabgrass
+- Dandelions
+- Mole Empire
+
+Legendary Talent
+Perfect Stripe Pattern
+
+Increases neighborhood envy by 300%.
+
+==================================================
+
+THE TACTICAL DAD
+
+Class Fantasy: A retired operator of suburban security.
+
+Starts With
+- Flashlight of Solar Collapse
+- Pocket Knife
+- Cargo Pants
+- Situational Awareness
+
+Base Attributes
+Strength: High
+Constitution: High
+Charisma: Moderate
+Dexterity: High
+Wisdom: High
+Intelligence: High
+Perception: Legendary
+
+Passive Trait
+Always Watching
+
+Automatically identifies:
+- Exits
+- Threats
+- Loose railings
+
+Special Ability
+Dad Scan
+
+Reveals entire map.
+
+Combat Ability
+Flashlight
+
+Temporarily blinds:
+- Enemies
+- Friends
+- Aircraft
+
+Exploration Ability
+Parking Strategy
+
+Always parks near exit.
+Adds 15 minutes walking.
+
+Starting Quest
+Family Vacation Security Plan
+
+Create:
+- Contingencies
+- Backup contingencies
+- Backup contingency contingencies
+
+Legendary Talent
+Prepared For Anything
+
+Carries item needed for every situation.
+
+Inventory weight:
+Catastrophic.
+
+==================================================
+
+THE GYM DAD
+
+Class Fantasy: A walking protein synthesis experiment.
+
+Starts With
+- Sleeveless Shirt of Intimidation
+- Gallon Jug of Hydration
+- Wireless Earbuds
+
+Base Attributes
+Strength: Legendary
+Constitution: Legendary
+Charisma: Surprisingly High
+Dexterity: Moderate
+Wisdom: Questionable
+Intelligence: Low
+Perception: Extremely Low
+
+Passive Trait
+Never Skip Leg Day
+
+Massive bonuses to:
+- Strength
+- Constitution
+
+Special Ability
+Have You Tried Working Out?
+
+Attempts to solve all problems through exercise.
+
+Combat Ability
+One More Rep
+
+Health reaches zero.
+Gym Dad disagrees.
+
+Exploration Ability
+Tunnel Vision
+
+Finds:
+- Gyms
+- Supplements
+- Pull-up bars
+
+Misses:
+- Everything else
+
+Starting Quest
+Bulk Season
+
+Consume 4,000 calories daily.
+
+Reward:
++5 Strength
+
+Penalty:
+All shirts become legendary rarity.
+
+Secondary Quest
+Cut Season
+
+Consume:
+- Chicken
+- Rice
+- Suffering
+
+Reward:
++5 Vanity
+
+Legendary Talent
+Back Day
+
+Can carry:
+- All groceries
+- Entire luggage load
+- Refrigerator
+
+Immediately receives:
+- Lumbar Injury III
+
+Cooldown:
+6-8 weeks.
+
+==================================================
+
+HIDDEN UNLOCKABLE CLASS
+
+THE GRANDDAD
+
+Unlocked after reaching level 60 and surviving three barbecue seasons.
+
+Passive Ability
+I Told You So
+
+Automatically triggers whenever any other class fails.
+
+Cooldown:
+None.

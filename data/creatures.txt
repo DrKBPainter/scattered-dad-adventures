@@ -1,0 +1,310 @@
+SHATTERED DAD ADVENTURE — CREATURES (spawn by area/biome)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Morning Obligation  [The House]
+  HP 8  ATK 2  DEF 0  XP 4  Gold 1
+  Slow. Persistent. It does not chase you so much as it is simply always there. Cannot be reasoned with before coffee.
+
+The Unread Text  [The House]
+  HP 4  ATK 3  DEF 0  XP 3  Gold 0
+  Spawns in groups. Multiplies if ignored. Each one insists it is 'just a quick question.' None of them are.
+
+Rogue Robo-Vac  [The House]
+  HP 10  ATK 3  DEF 1  XP 6  Gold 2
+  Charts a path known only to itself. Has eaten a sock, a phone charger, and the family's sense of security. Bumps your ankles at 3 AM.
+
+Shopping Cart Ambush  [Lowe & Behold]
+  HP 14  ATK 4  DEF 1  XP 8  Gold 3
+  One wheel possessed. Veers left under all circumstances. Always contains one item nobody placed there.
+
+Weekend Warrior  [Lowe & Behold]
+  HP 16  ATK 5  DEF 2  XP 10  Gold 4
+  Owns every tool. Has used three. Will explain the project to you whether or not you ask. Lumbar Injury III imminent.
+
+Extended Warranty Wraith  [Vastco]
+  HP 20  ATK 6  DEF 2  XP 14  Gold 6
+  Materializes at checkout. Asks if you would like to protect your purchase. There is no correct answer. There has never been a correct answer.
+
+Sale Sign Golem  [Vastco]
+  HP 26  ATK 7  DEF 4  XP 18  Gold 8
+  Constructed entirely of percentages. Each sign contradicts the one beside it. The real price is a closely guarded secret.
+
+The Laundry Pile  [The House]
+  HP 12  ATK 3  DEF 1  XP 7  Gold 1
+  Has been on the chair since before the current presidency. It knows every secret the family has whispered near it. It is waiting for the right moment.
+
+The Permission Slip  [The House]
+  HP 6  ATK 4  DEF 0  XP 5  Gold 0
+  Due last Tuesday. Technically still valid. The consequences of not returning it remain implied but severe. It has found you.
+
+The Thermostat Phantom  [The House]
+  HP 14  ATK 4  DEF 2  XP 9  Gold 2
+  Nobody touched it. Nobody ever touches it. Yet the temperature is always wrong. The Phantom is always right. You are always wrong.
+
+The Mystery Leftovers  [The House]
+  HP 18  ATK 5  DEF 1  XP 12  Gold 3
+  Sealed in a container dated November. Which November is unclear. Do not open it. Do not make eye contact. Whatever is inside has been evolving.
+
+The Overflowing Diaper of Stench  [The House]
+  HP 10  ATK 4  DEF 0  XP 6  Gold 1
+  The ancient enemy. Biological warfare at its purest. The smell precedes it by two rooms and lingers for three. It has never been changed. It cannot be changed. It will not be changed. It approaches with the unhurried confidence of an entity that knows its own power.
+
+The Unknown Brown Substance  [The House]
+  HP 6  ATK 3  DEF 2  XP 5  Gold 0
+  Origin: unknown. Composition: under investigation. Timeline: unclear. The question 'is that chocolate?' has been asked and not answered for six consecutive days. Do not investigate. Do not acknowledge. The investigation would not go well for anyone.
+
+Hungry Goldfish (Mrs. Kowalski's Rm. 14)  [water]
+  HP 8  ATK 4  DEF 0  XP 5  Gold 1
+  Flushed down the classroom toilet in 2003 by a child who shall not be named (it was Tyler). Rediscovered in 2009. Flushed again. Found again in 2014. Science submitted three papers. The fish did not respond to peer review. The fish is not interested in your conclusions. The fish is hungry. The fish has always been hungry. The fish will outlast the school, the teacher, the district, and Tyler, who still feels bad about it.
+
+Self-Checkout Sentinel  [Lowe & Behold]
+  HP 13  ATK 4  DEF 2  XP 9  Gold 3
+  Four open lanes. All closed. This one is open, and it has chosen you. 'Unexpected item in bagging area.' There is no item. There has never been an item. It is waiting for an associate who will never come.
+
+The Unfindable Associate  [Lowe & Behold]
+  HP 11  ATK 5  DEF 1  XP 9  Gold 2
+  Always two aisles over. Always helping someone else. The moment you stop looking, it materializes behind you to ask if you're finding everything okay. You were not. You are not. You never will be.
+
+Paint Swatch Swarm  [Lowe & Behold]
+  HP 6  ATK 3  DEF 0  XP 5  Gold 1
+  Two hundred shades of off-white, each with a name like 'Accessible Beige' and 'Agreeable Gray.' They drift. They multiply. Your spouse will reject all of them and choose the first one you suggested.
+
+Aisle 12 Forklift  [Lowe & Behold]
+  HP 18  ATK 5  DEF 3  XP 12  Gold 5
+  Beeps when it reverses. Beeps when it advances. Beeps, you suspect, for the sheer joy of beeping. The pallet it carries contains the thing you came for, marked DO NOT SELL -- DISPLAY ONLY.
+
+The Sample Station  [Vastco]
+  HP 8  ATK 3  DEF 0  XP 5  Gold 3
+  Appears at the end of every aisle. You came in for paper towels. You will now taste seventeen varieties of cheese and purchase a $40 air fryer. Statistics show the conversion rate is 100%. There are no statistics. There are only more samples.
+
+The Vastco Flatbed  [Vastco]
+  HP 22  ATK 4  DEF 5  XP 14  Gold 5
+  Not a cart. A vehicle. Twelve feet long, carrying thirty boxes of paper towels and one confused dad who picked it up because all the regular carts were gone. Turns radius: approximately the parking lot.
+
+The Membership Card Inspector  [Vastco]
+  HP 18  ATK 5  DEF 2  XP 12  Gold 4
+  Stands at the entrance. Stands at the exit. Your card is expired. Your card has always been expired. You do not have a card. You have never had a card. Without a card you cannot enter. Without entering you cannot buy a card. The Inspector is aware of this paradox and considers it your problem.
+
+The Spirit of Bulk Savings  [Vastco]
+  HP 16  ATK 6  DEF 1  XP 12  Gold 8
+  Manifests as a certainty. The per-unit cost is better in bulk. The per-unit cost is always better in bulk. You will need this eventually. You will never need forty-eight of this. You will buy forty-eight of this. You will feel good about it until the move.
+
+The Youth Soccer Coach  [The Park]
+  HP 20  ATK 6  DEF 1  XP 14  Gold 3
+  Has been coaching the U8 team for nine seasons. Has never played soccer. Has absolute opinions about positioning. Carries a clipboard, a whistle, and a blood pressure reading that his doctor would prefer not to know about.
+
+The Off-Leash Dog  [The Park]
+  HP 10  ATK 5  DEF 0  XP 8  Gold 1
+  Friendly. So friendly. Incredibly friendly. Cannot be redirected. Cannot be called back. Its owner is somewhere behind you shouting a name and the dog will not respond to that name because it never has. Targets the cleanest clothes.
+
+The Jogger (Headphones In)  [The Park]
+  HP 14  ATK 4  DEF 0  XP 10  Gold 2
+  Cannot hear you. Will not hear you. Moving at a speed that suggests urgency but no particular destination. Will make eye contact at the last possible moment, apologize with genuine sincerity, and continue at the same speed in the same direction. The collision is simply a consequence of the headphones.
+
+The Event Coordinator  [The Park]
+  HP 16  ATK 5  DEF 2  XP 12  Gold 5
+  The 5K finisher chute is closing in three minutes and she needs everyone to move back. She has a radio. She has a floor plan. She has opinions about your parking. Her vest has seventeen pockets and a lanyard and a look that suggests she has been awake since 4:30 AM and will remain awake until the bounce house deflates. You are standing in the wrong place. You are always standing in the wrong place.
+
+The Sideline Parent  [Soccer Complex]
+  HP 22  ATK 7  DEF 1  XP 16  Gold 4
+  Has been on the sideline since the U6 years. Has opinions about every substitution, every offside call, and every other parent's parenting. The clipboard is decorative. The volume is not.
+
+The Trophy  [Soccer Complex]
+  HP 30  ATK 6  DEF 4  XP 18  Gold 12
+  Has not moved from the display case since 1987. This season it escaped. Nobody is taking responsibility. The engraving reads 'PARTICIPANT.' It does not find this funny.
+
+The Waterboy  [Soccer Complex]
+  HP 20  ATK 6  DEF 0  XP 14  Gold 3
+  Has a cooler, a ladle, and a sense of purpose that cannot be redirected. Does not care if you are not thirsty. The orange slices are non-negotiable. Inflicts SOAKED on contact.
+
+The Permission Form  [The School]
+  HP 8  ATK 8  DEF 0  XP 12  Gold 0
+  Due last Tuesday. Technically still valid in a legal grey area nobody wants to test. The parent signature line has been filled in with a scribble and a prayer. It has found you. It will always find you.
+
+The Science Fair Project  [The School]
+  HP 28  ATK 8  DEF 2  XP 20  Gold 5
+  Built the night before. The hypothesis was generated at 11:47 PM. The data was collected at 11:52. The graph was drawn in marker. It has achieved consciousness. It is angry about the methodology.
+
+The Car Pool Line  [The School]
+  HP 40  ATK 7  DEF 5  XP 22  Gold 2
+  Begins forming at 2:45 PM. Has never moved faster than 0.3 miles per hour. The child who needs picking up is in the building. You are in the line. These facts have nothing to do with each other.
+
+The Wait  [The Family Restaurant]
+  HP 35  ATK 9  DEF 3  XP 20  Gold 0
+  Not a delay. A being. The pager has not buzzed. The pager will never buzz. The name was called thirteen minutes ago while you were parking. You were not there. The Wait has always been there.
+
+The Children's Menu  [The Family Restaurant]
+  HP 18  ATK 8  DEF 0  XP 16  Gold 0
+  Twelve options. The child refuses all of them and orders plain pasta. Four noodles will be eaten. The crayons have been eaten. The puzzle on the back has been solved incorrectly and the child is proud of this.
+
+The Check  [The Family Restaurant]
+  HP 30  ATK 10  DEF 2  XP 22  Gold 20
+  Nobody remembers what they ordered. Nobody has exact change. The gratuity has already been added. Split four ways, it comes out to a number that ends in a moral judgment.
+
+The Assembly Instructions  [IDKEA]
+  HP 25  ATK 10  DEF 1  XP 20  Gold 5
+  Step 17 makes no sense. Step 17 has never made sense. The English translation omits it entirely and picks up at Step 18 as though nothing happened. The Swedish original describes 'The Decisive Moment.' You are in it.
+
+The Missing Dowel  [IDKEA]
+  HP 15  ATK 9  DEF 0  XP 18  Gold 3
+  Part 7 of 16. Not in the bag. Not on the floor. Not under the instructions. Not in the bag a second time, even though you checked. The entire structural integrity of the BILVAK bookcase depends on it. The bookcase knows this.
+
+The IDKEA Employee  [IDKEA]
+  HP 45  ATK 9  DEF 7  XP 25  Gold 5
+  Wearing the yellow vest. Is not sure what department this is. Will find someone who knows. Has been looking since 2019. The someone has not been found. The vest's DEF bonus is not a metaphor.
+
+Jugs of Bedazzlement  [IDKEA]
+  HP 30  ATK 8  DEF 3  XP 19  Gold 5
+  Display items from the seasonal home accents section. Large. Ornate. Absolutely covered in rhinestones. The label reads: 'Tuscany Collection, Decorative Only.' They have been placed at eye level. This was a deliberate choice by the merchandising team.
+
+The Lawnmower (Peak Hours)  [The Neighborhood]
+  HP 50  ATK 11  DEF 4  XP 28  Gold 6
+  Starts at 7:55 AM on Saturday. Quiet hours begin at 8:00 AM. The owner is aware of the ordinance. The owner has always been aware of the ordinance. The new mower is louder than the last one. This was intentional.
+
+The Neighborhood Newsletter  [The Neighborhood]
+  HP 22  ATK 10  DEF 0  XP 20  Gold 2
+  Published monthly. Seventeen passive-aggressive items, one recipe nobody asked for, and a lost cat that has been found for six months. The correction is pending editorial review.
+
+The Neighbor-Net Post  [The Neighborhood]
+  HP 35  ATK 12  DEF 2  XP 24  Gold 3
+  Begins: 'Does anyone else notice...' By the time you reach the comments, forty-seven neighbors have responded. Three are correct. None are agreeable. The original poster has not returned.
+
+The Dog Walker  [The Neighborhood]
+  HP 26  ATK 8  DEF 1  XP 18  Gold 4
+  Phone in one hand. Bag in the other. Technically she has the bag. She is not going to use the bag. She is very aware of where the dog has been. She will not make eye contact. This is the social contract of the neighborhood and it has held for decades.
+
+The Covenant  [The HOA Dominion]
+  HP 55  ATK 12  DEF 9  XP 30  Gold 8
+  Forty-seven pages. Signed in 2006. Section 12.4 prohibits what you have done. Section 12.4 has always prohibited what you have done. That owner is gone. The Covenant remains.
+
+The Violation Notice  [The HOA Dominion]
+  HP 20  ATK 13  DEF 0  XP 26  Gold 0
+  Found on the door at 6:47 AM. Yellow. Official. Offense: grass length 4.2 inches. Allowable: 4.0 inches. The difference is 0.2 inches. The fine is $175. A photograph has been filed. The photograph is better composed than your family photos.
+
+The Annual Meeting  [The HOA Dominion]
+  HP 60  ATK 11  DEF 6  XP 32  Gold 10
+  Scheduled since February. The agenda has twenty-three items. Item one has been tabled since 2018. There is no listed end time. There has never been a listed end time. The meeting does not end. The meeting transitions.
+
+The Chair Fortress  [Soccer Complex]
+  HP 24  ATK 4  DEF 3  XP 16  Gold 5
+  A perimeter of folding chairs, canopies, and parents who arrived at 6:40 AM. It does not attack so much as it declines to acknowledge your right to exist here.
+
+The Stats Dad  [Soccer Complex]
+  HP 16  ATK 6  DEF 1  XP 14  Gold 6
+  Has tracked every touch, pass, and hustle metric for three seasons. His son is nine. The spreadsheet has conditional formatting.
+
+The Snack Stand Line  [Soccer Complex]
+  HP 20  ATK 5  DEF 2  XP 15  Gold 8
+  It has not moved in eleven minutes. The menu board shows no prices until you are too deep to retreat. Somewhere ahead, a child is ordering for a family of nine, one item at a time.
+
+The Fog Machine  [The School]
+  HP 14  ATK 6  DEF 1  XP 15  Gold 5
+  Nobody knows who authorized it. Nobody knows who owns it. It is running at full capacity in a middle-school gymnasium, and it has strong opinions about visibility.
+
+The Trophy Case  [The School]
+  HP 26  ATK 5  DEF 4  XP 18  Gold 7
+  Regional. Division II. 1987. It pulls at a specific corner of a dad's memory and does not let go. Two full turns are lost to nostalgic review. Minimum.
+
+The Welcoming Committee  [The School]
+  HP 18  ATK 8  DEF 1  XP 17  Gold 6
+  Two PTA moms who are DELIGHTED to see a dad at the meeting. Their delight is a weapon. There is a sign-up sheet, and it is already moving toward you.
+
+The Buzzer  [The Family Restaurant]
+  HP 16  ATK 7  DEF 2  XP 17  Gold 6
+  Heavy. Ugly. Flashing red in a pattern that means either 'table ready' or 'low battery.' It has been 'about ten minutes' for forty-five minutes.
+
+The Invisible Server  [The Family Restaurant]
+  HP 22  ATK 6  DEF 3  XP 19  Gold 7
+  Made eye contact once, said 'I'll be right back,' and entered a dimension unreachable by science. Water refills arrive only for other tables.
+
+The Tip Calculation  [The Family Restaurant]
+  HP 28  ATK 8  DEF 2  XP 21  Gold 10
+  A number that must be produced under social observation, involving percentages, guilt, the quality of the service, and a pen that does not work. Dad math at its most public.
+
+The Comfortable Sectional  [IDKEA]
+  HP 30  ATK 6  DEF 5  XP 23  Gold 8
+  It is so, so comfortable. Sitting is easier than standing. The price seems reasonable until Dad does the math on 'per seat,' and by then he is already horizontal.
+
+The Plush Animal Avalanche  [IDKEA]
+  HP 20  ATK 8  DEF 1  XP 21  Gold 7
+  The display was never stable. One shark was load-bearing. It travels as a wave of soft, smiling casualties, and it knows your kid's birthday is coming up.
+
+The Extended Wave  [The Neighborhood]
+  HP 26  ATK 8  DEF 3  XP 25  Gold 9
+  Friendly. Immovable. A neighbor mid-wave who has entered conversational range and is now delivering a comprehensive update on every household in the subdivision. There is no known exit protocol.
+
+The Persistent Entrepreneur  [The Neighborhood]
+  HP 18  ATK 10  DEF 1  XP 24  Gold 12
+  Age eight. Lemonade, one dollar. Will not accept 'no.' Will not accept 'later.' Has change for a five and the negotiating posture of a closing attorney.
+
+The Hall Monitor Volunteer  [The HOA Dominion]
+  HP 26  ATK 9  DEF 3  XP 27  Gold 10
+  Semi-official. Fully committed. Wears a lanyard that grants no authority and all of the confidence. Would like to know your business here, and whether you signed in.
+
+The Motion-Sensor Light  [The HOA Dominion]
+  HP 20  ATK 11  DEF 2  XP 28  Gold 8
+  Activates aggressively for raccoons, wind, and moods. For you, it demands continuous, vigorous motion. Stand still to think and it plunges you into darkness, judgmentally.
+
+The Lingering Board Member  [The HOA Dominion]
+  HP 34  ATK 9  DEF 5  XP 32  Gold 14
+  The meeting ended forty minutes ago. He is still here, mid-conversation, and he has just spotted a fresh audience. Agenda item: you, now.
+
+The Youth Soccer Swarm  [The Park]
+  HP 12  ATK 5  DEF 0  XP 11  Gold 4
+  Seven-year-olds traveling at full speed in a formation known to physics as 'all of them, at the ball, at once.' The ball is incidental. Your shins are not.
+
+The Birthday Party  [The Park]
+  HP 20  ATK 4  DEF 2  XP 13  Gold 5
+  It has claimed the main pavilion and is expanding. Balloon perimeter. Cake logistics. A bounce house with a line. Somewhere at its center, a five-year-old rules absolutely.
+
+
+BOSSES
+----------------------------------------
+The Garage (As Entity)  (Floor 10)
+  HP 60  ATK 8  DEF 3
+  Not entered fully since 2019. It has become a biome. Somewhere inside is the emergency release cord. Somewhere inside is everything you have ever lost.
+
+The Assistant Manager of Lumber  (Floor 15)
+  HP 75  ATK 10  DEF 3
+  Controls aisles 12 through 17. Has been assistant manager for eleven years. Was passed over for manager in 2018. Is aware. The clipboard is laminated. The clipboard has always been laminated. He has not been asked if you need help. He is going to ask anyway.
+
+The Floor Manager  (Floor 20)
+  HP 90  ATK 11  DEF 4
+  Greets you the moment you look lost. Offers help you cannot refuse and do not want. 'While we're back here...' Attack: Upsell Cascade. Weakness: saying 'I'm just getting screws' before engagement.
+
+The Permit Inspector  (Floor 25)
+  HP 105  ATK 12  DEF 4
+  You do not have a permit for this. He has checked. The park requires a permit for groups of three or more. You are a group. He has the form. He has always had the form. The form has twelve pages. You will need a pen. He does not lend pens.
+
+The Tournament Director  (Floor 30)
+  HP 120  ATK 13  DEF 5
+  Runs the brackets. Controls all six fields. Has denied your schedule conflict appeal. Denied your parking appeal. Denied your snack table location appeal. Has a walkie-talkie on each hip. Both are squawking. He hears only the bracket.
+
+The Black Friday Formation  (Floor 40)
+  HP 150  ATK 15  DEF 6
+  Not a creature. A collective. A thermodynamic event. The doors opened at 5:00 AM and the Formation has not stopped moving since. It does not have a goal. It has momentum. The TV was the first casualty. You are the latest.
+
+The Referee (Final Whistle)  (Floor 50)
+  HP 180  ATK 17  DEF 7
+  Has already decided. The yellow card was issued before the game began. Immovable. The rule he is citing exists. The rule has always existed. You have always been in violation of it. The whistle sounds when it wants to.
+
+The PTA President  (Floor 60)
+  HP 210  ATK 19  DEF 8
+  Has the floor. Has had the floor since 2019. Has a motion. The motion will be seconded by her. She will second it herself if necessary. The agenda is laminated. The agenda has been laminated since October. You are on the agenda.
+
+The Birthday Party (Full Deployment)  (Floor 70)
+  HP 240  ATK 21  DEF 9
+  Twelve children. One table. No plan. The party started eleven minutes ago and someone has already cried. Someone who is not one of the twelve children has also cried. The cake is the wrong cake. There is no correct cake.
+
+The Assembly Instructions, Final Form  (Floor 80)
+  HP 270  ATK 23  DEF 10
+  Step 17. You are here. The instructions have been waiting. The previous owner of this BILVAK also reached Step 17. He is not spoken of. Step 17 is not a step. Step 17 is a reckoning.
+
+The Neighborhood Watch Captain  (Floor 90)
+  HP 300  ATK 25  DEF 11
+  Has been watching. Has always been watching. The flashlight was purchased for this purpose. The notebook was purchased for this purpose. The binder of documented incidents goes back to 2007. You are in the binder. You have always been in the binder.
+
+The HOA President  (Floor 100)
+  HP 350  ATK 28  DEF 12
+  He has been here since the development was built. He was here before the development was built. He approved the development. He wrote the covenants. He has been waiting for someone to reach Floor 100 since 2006 so he could enforce Section 47: No Heroes. You are the first. The Remote of Ultimate Authority is behind him. It has always been behind him.

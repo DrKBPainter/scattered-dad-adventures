@@ -1,0 +1,47 @@
+SHATTERED DAD ADVENTURE — DAD TALENTS (pick 1 of 3 on level-up)
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Dad Strength
+  +2 ATK
+  +2 ATK. Decades of stuck jar lids have prepared him for open warfare.
+
+Thick Skin
+  +2 DEF
+  +2 DEF. Unsolicited feedback now bounces off entirely. He didn't even flinch.
+
+Reads the Fine Print
+  +2 PER
+  +2 Perception. The warranty, the trap, the suspicious wall — nothing escapes the reading glasses.
+
+Back-In-My-Day Wisdom
+  +2 WIS
+  +2 WIS. The stories were load-bearing the whole time.
+
+Second Wind
+  +14 max HP
+  +14 max HP, fully topped off. He found another gear. It was in the garage, behind the gear.
+
+Deep Cleansing Breaths
+  +4 max Patience
+  +4 max Patience. Four counts in, four counts out. It is not working. It is almost certainly working.
+
+Suspiciously Good Knees
+  knee buckle x0.5
+  Knee pain chance halved. The knees have no explanation. He has stopped asking. Some gifts you simply accept.
+
+Lifts With the Legs
+  back-out x0.5
+  Back pain chance halved. He heard this advice at 22 and ignored it for decades. It is, regrettably, correct.
+
+Camel Mode
+  thirst slows x0.3, +40 Thirst cap
+  Thirst fills more slowly and the threshold is higher. Years of forgetting water bottles have forged this man into something the desert would respect.
+
+Snack Logistics
+  +50 Hunger cap
+  Hunger fills more slowly; food finds you more often. The cargo shorts were load-bearing the whole time. There was a system. There has always been a system.
+
+Note From Your Kid
+  +8 max HP, +4 max Patience
+  +8 max HP, +4 max Patience. You step lighter through the dungeon. The note was in his back pocket since Tuesday. He does not cry. He does not.

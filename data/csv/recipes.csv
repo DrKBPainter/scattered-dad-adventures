@@ -1,0 +1,24 @@
+ingredient_1,ingredient_2,class_restriction,result_name,rarity,result_type,flavor
+Duct Tape,Plunger,,Reinforced Plunger,uncommon,weapon,Duct tape makes it a weapon of consequence.
+Duct Tape,Rake,,Taped-Up Rake,uncommon,weapon,It holds. Barely. Enough.
+Propane,Spatula,Grillmaster only,The Flame Spatula,rare,weapon,OSHA has questions. The burgers do not.
+Meatball,Propane,bonus: grill,Charred Mega-Meatball,rare,consumable,+18 HP or a 9-dmg projectile of glory.
+Coffee,Energy Drink,,Double-Fisted Coffee,common,consumable,"+6 HP, +8 Patience. Heart rate: academic."
+Gatorade,Pedialyte,,Daderade,common,consumable,Maximum electrolytes. The science is real.
+Zip Ties,Battery,,Zip-Tied Battery Bundle,common,object,Throwable (7 dmg). 100% safe. 0% warranty.
+WD-40,Blowtorch,,WD-40 Torch,uncommon,weapon,Not intended for this. Definitely for this.
+Acetaminophen,Ibuprofen (do not take on an empty stomach),,Maximum Dad Relief Protocol,common,consumable,+5 HP. DEF +8 for 8 turns. Briefly immune to regret. The directions said not to combine these. He combined them.
+Zip Ties,HDMI Cable,,Tangled HDMI Flail,common,object,Throwable (9 dmg). The cable works now that it has been weaponized.
+Duct Tape,AA Battery,,Improvised Flashlight,common,consumable,+4 Patience. Actually works. He is unreasonably proud of this.
+Coffee,Blue Gatorade,,The Dad Boost,common,consumable,"+8HP, +5 Patience, hydrate 30. Also: The Jitters. You cannot have everything."
+Propane,WD-40,DIY / Tactical only,The Regrettable Flamethrower Rig,rare,object,Throwable (12 dmg). Warranty: absolutely void. OSHA: unaware.
+Screws,Plywood,Handy classes only,Plywood Barricade,rare,object,Placeable. Blocks a tile. Enemies must go around. Structurally questionable. Tactically sound.
+Acetaminophen,Whiskey,,Unlabeled Fizzing Concoction,common,consumable,It fizzed when it shouldn't have. The label told me not to do this.
+Acetaminophen,Light Beer,,Unlabeled Fizzing Concoction,common,consumable,It fizzed when it shouldn't have. The label told me not to do this.
+Acetaminophen,Warm Beer,,Unlabeled Fizzing Concoction,common,consumable,It fizzed when it shouldn't have. The label told me not to do this.
+Duct Tape,Horseshoe,,Duct-Taped Horseshoe Mace,uncommon,weapon,"Luck, taped to a handle. The handle is also tape. It connects with authority."
+Coffee,Protein Bar,,Pre-Run Fuel,common,consumable,"+6 HP, +6 Patience. The breakfast of men who say they will 'just do a quick loop.'"
+WD-40,Horseshoe,,Lubricated Throwing Shoe,common,object,"Throwable (9 dmg, long range). Frictionless. Flies further than physics strictly permits."
+Propane,Frozen Burger Patty,bonus: grill,Properly Grilled Burger,rare,consumable,+22 HP. Cooked to a temperature he refuses to disclose. It is perfect. It is always perfect.
+Propane,Golf Ball,Grillmaster only,Flaming Tee Shot,rare,object,"Throwable (11 dmg, long range). A golf ball, but on fire, and somehow personally offended. Fore."
+Screws,Bowling Ball,DIY / Tactical only,Screw-Studded Bowling Ball,rare,object,"Throwable (13 dmg). Fourteen mystery screws, finally employed. The project was always this."

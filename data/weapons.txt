@@ -1,0 +1,103 @@
+SHATTERED DAD ADVENTURE — WEAPONS
+Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+Spatula
+  Base ATK 4
+  Standard issue. Heavy-duty. Has flipped ten thousand burgers and one regret.
+
+Plunger
+  Base ATK 5
+  The hero Dad always needed. The hero he never acknowledged.
+
+Leaf Rake
+  Base ATK 4
+  Technically seasonal. Violence is not.
+
+Caulk Gun
+  Base ATK 5
+  Point at enemy. Express opinions firmly.
+
+Mini Blowtorch
+  Base ATK 7
+  For the creme brulee. And now this.
+
+Broom Handle
+  Base ATK 4
+  The broom part is gone. The handle remains. The handle is enough.
+
+The Flame Spatula
+  Base ATK 9
+  OSHA has questions. The burgers do not.
+
+Half a Brick
+  Base ATK 5
+  Found in the yard. Origin unknown. Purposes: many.
+
+The Leafblight Devastator
+  Base ATK 6
+  An ancient wind-cannon said to strip entire kingdoms of loose paperwork and decorative mulch. Wielded annually during the Season of Fallen Oaks.
+
+Grondar's Measure of Reckoning
+  Base ATK 4
+  A cursed tape measure that extends infinitely until reality itself is found to be 'just a quarter-inch off.'
+
+The Socketweaver's Doomchain
+  Base ATK 6
+  A legendary ratchet capable of summoning exactly the socket size you don't have. Entire civilizations have collapsed searching for the missing 10mm.
+
+The Pressure Wand of Aquatic Judgment
+  Base ATK 5
+  A hydrokinetic staff that reveals the true color of all surfaces and accidentally strips paint from neighboring dimensions.
+
+Orbital Sander of Reckoning
+  Base ATK 6
+  Spins at 12,000 RPM. Intended for drywall. The enemy counts as drywall now.
+
+The Extension Cord of Endless Horizons
+  Base ATK 4
+  A serpentine cable-beast stretching across battlefields, driveways, and occasionally international borders.
+
+The Ladder of Ascendant Peril
+  Base ATK 8
+  A towering relic whose wielders gain temporary flight, followed by immediate wisdom regarding gravity.
+
+The Orbital Edger of Property-Line Wars
+  Base ATK 10
+  Said to carve trenches so precise they have started blood feuds lasting generations.
+
+The Hexhammer of Weekend Intentions
+  Base ATK 11
+  Every strike repairs one thing and reveals three new projects.
+
+The Great PTO Reaper
+  Base ATK 14
+  A chainsaw of mythic power whose roar awakens ancient spirits and prompts neighbors to inspect trees they weren't worried about five minutes earlier.
+
+The Justin Case Bucket of Miscellaneous Screws
+  Base ATK 4
+  Contains every fastener required to save the realm except the one currently needed.
+
+The Shop-Vac of Infinite Suction
+  Base ATK 6
+  A roaring drum-beast that inhales sawdust, loose screws, and the occasional sock. Filter status: unknown for years.
+
+The Pizza Cutter of a Thousand Slices
+  Base ATK 5
+  A wheeled blade forged for Friday nights. Cuts crust, cardboard, and ambition in perfectly uneven portions.
+
+The Snow Shovel of Seasonal Vengeance
+  Base ATK 6
+  Lives in the garage eleven months a year, dreaming of the twelfth. The driveway remembers. So does his back.
+
+The Backyard Tiki Torch of Ambient Menace
+  Base ATK 7
+  Citronella-scented and faintly threatening. Keeps mosquitoes, raccoons, and party guests at a respectful distance.
+
+The Garden Hose of Unspooling Doom
+  Base ATK 4
+  A serpent that kinks at the precise moment of maximum need. Never rewinds correctly. Vengeance comes in PSI.
+
+The Pry Bar of Last Resort
+  Base ATK 8
+  When persuasion fails and the WD-40 is empty, the realm turns to leverage. Leverage does not negotiate.
