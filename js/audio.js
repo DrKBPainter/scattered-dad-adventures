@@ -1,4 +1,4 @@
-/* ===== SHATTERED DAD ADVENTURE — audio.js =====
+/* ===== SCATTERED DAD ADVENTURES — audio.js =====
    WebAudio SFX: all sounds generated procedurally via the Web Audio API.
    No external files required. AudioContext created lazily on first interaction.
    Sounds: sfxKneeCrack / sfxOof / sfxPickup / sfxCraft / sfxUnlock

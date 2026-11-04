@@ -1,4 +1,4 @@
-/* ===== SHATTERED DAD ADVENTURE — sprites.js =====
+/* ===== SCATTERED DAD ADVENTURES — sprites.js =====
    Pixel palette and sprite definitions. Loaded first.
    ================================================= */
 const PAL={'.':null,'0':'#0d1b2a','1':'#1b263b','2':'#2e3a59','3':'#415a77','k':'#0a0a0a','w':'#e8e0c8','W':'#ffffff','g':'#3a7d34','G':'#5fbf4f','b':'#2e5a8c','B':'#5fa8e0','r':'#9c2b2b','R':'#e0453a','o':'#d97a2b','O':'#f0a040','y':'#c9a227','Y':'#f4c430','p':'#7a4a8c','P':'#b06fd0','s':'#8a8a8a','S':'#c8c8c8','f':'#caa472','F':'#e8c9a0','d':'#5a3a1a','D':'#7a5230','m':'#4a4a4a','M':'#6a6a6a','c':'#1f6f6f','C':'#37b0b0','n':'#b0432b','N':'#d8693e'};

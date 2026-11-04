@@ -1,11 +1,11 @@
-# SHATTERED DAD ADVENTURE
+# SCATTERED DAD ADVENTURES
 ## Game Design Reference Document v0.1
 
 ---
 
 ## PREMISE
 
-**Shattered Dad Adventure** is a tactical, turn-based roguelike about a middle-aged father descending into the most dangerous place known to mankind: a home improvement store on a Saturday.
+**Scattered Dad Adventures** is a tactical, turn-based roguelike about a middle-aged father descending into the most dangerous place known to mankind: a home improvement store on a Saturday.
 
 You are Dad.
 
@@ -540,6 +540,25 @@ A voice from upstairs: *"Daaad? Since you're up, can you help me with something?
 ---
 
 *Document version 0.1 — living document, subject to expansion*
+
+---
+
+## VERSION CONTROL (GITHUB)
+
+*Added 2026-11-02.*
+
+- **Repository:** https://github.com/DrKBPainter/shattered-dad-adventure (private). Branch `main`; remote `origin` over HTTPS. Authentication via GitHub CLI (`gh auth login`); credentials stored in Windows Credential Manager.
+- **Initial commit:** `deeb162`, 75 files, pushed 2026-11-02.
+- **Title change (2026-11-03):** Game retitled *Scattered Dad Adventures*. Display titles, doc headings, JS header comments, and the export-tool header were updated (39 files). File names, repo name (`shattered-dad-adventure`), folder name, `lore/` headings, `sda_` storage keys, and historical logs (`Completed notes.txt`, `BUG_LOG.md`, `archive/`) were intentionally left unchanged. A second pass for file/repo renames is pending.
+- **Git data directory is outside OneDrive:** `C:\git\sda.git`. The project folder contains only a `.git` pointer file (`gitdir: C:/git/sda.git`). Reason: OneDrive can corrupt a `.git` folder by syncing many small object and lock files out of order (common practice, not a sourced finding). Do not delete `C:\git` or the `.git` pointer file; either one disconnects the folder from the repository. `C:\git\sda.git` is not backed up by OneDrive; GitHub holds the full history.
+- **Global git settings:** `safe.directory` includes `C:/git/sda.git`; `init.defaultBranch` is `main`.
+- **Run git from Windows PowerShell only.** The Linux bridge shell and sandbox mounts cannot resolve `C:/git/sda.git` and cannot use the Windows GitHub login. AI sessions edit files; the user stages, commits, and pushes.
+- **Routine (from the project folder):** `git add .`, `git status`, `git commit -m "<message>"`, `git push`.
+- **Before committing:** run `git status` and confirm no file is half-written. The build environment has a history of mount staleness and tail truncation (see the build-environment notes); a commit snapshots whatever is on disk.
+- **`.gitignore`:** `*.tmp`, `*.bak`, `~$*`, `.DS_Store`, `Thumbs.db`.
+- **Known quirk:** `gh repo create ... --source=.` fails with "current directory is not a git repository" because of the separate git directory. Use `gh repo create <owner>/<name> --private`, then `git remote add origin <url>` and `git push -u origin main`.
+- **Expected warnings:** "LF will be replaced by CRLF" on `git add` is harmless on Windows.
+- **Tracked but possibly unwanted (in the initial commit):** scratch files `_harness.js`, `_probe.js`, `_hres.txt`, `verify_ui.js`; generated outputs `CLAUDE.html`, `data/CREATURES_TABLE.html`, `docs/LEVEL_DESIGN.html`. To untrack: add to `.gitignore`, then `git rm --cached <file>`.
 
 ---
 

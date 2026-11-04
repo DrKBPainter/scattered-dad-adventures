@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — TRAPS (detection scales with Perception; throw to disarm)
+SCATTERED DAD ADVENTURES — TRAPS (detection scales with Perception; throw to disarm)
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

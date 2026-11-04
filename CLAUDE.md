@@ -1,4 +1,4 @@
-# SHATTERED DAD ADVENTURE — Project Instructions
+# SCATTERED DAD ADVENTURES — Project Instructions
 
 > For AI assistants working in this project. Read this before touching anything.
 
@@ -9,6 +9,8 @@
 A browser-based tactical roguelike. A middle-aged dad descends through 100 floors of suburban chaos to recover the Remote of Ultimate Authority. Tone: deadpan narrator treating mundane catastrophe with complete seriousness. Influences: Terry Pratchett, Mel Brooks, King of the Hill.
 
 **To play:** Open `ShatteredDadAdventure.html` in a browser. No build step. No server required.
+
+**Title:** The game is titled *Scattered Dad Adventures* (renamed 2026-11-03; acronym SDA unchanged). Only display titles and docs were renamed. File names (`ShatteredDadAdventure.html`, `docs/SHATTERED DAD Adventure notes.txt`, `lore/Shattered_Dad_*`), the GitHub repo name, the project folder name, the `lore/` document headings ("SHATTERED DAD DUNGEON"), and the `sda_` localStorage keys keep the old spelling. Do not rename them unless asked.
 
 ---
 

@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — DAD TALENTS (pick 1 of 3 on level-up)
+SCATTERED DAD ADVENTURES — DAD TALENTS (pick 1 of 3 on level-up)
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

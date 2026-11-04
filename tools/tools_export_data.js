@@ -10,7 +10,7 @@ const el=()=>({classList:{add(){},remove(){},toggle(){}},addEventListener(){},qu
 const sandbox={localStorage,document:{getElementById:id=>id==="screen"||id==="mapcv"?fc():el(),addEventListener:()=>{},createElement:fc},window:{addEventListener:()=>{},innerWidth:1200,innerHeight:800},requestAnimationFrame:()=>{},Math,JSON,console,Array,Object,Proxy,globalThis:{}};
 vm.createContext(sandbox);vm.runInContext(js,sandbox);const D=sandbox.globalThis.__D;
 fs.mkdirSync("data",{recursive:true});
-const H=t=>"SHATTERED DAD ADVENTURE — "+t+"\nAuto-generated from the build (v"+D.GAME_VERSION+"). Edit the matching data array in js/data.js; this mirrors it.\n"+"=".repeat(64)+"\n\n";
+const H=t=>"SCATTERED DAD ADVENTURES — "+t+"\nAuto-generated from the build (v"+D.GAME_VERSION+"). Edit the matching data array in js/data.js; this mirrors it.\n"+"=".repeat(64)+"\n\n";
 const w=(f,s)=>{fs.writeFileSync("data/"+f,s);console.log("wrote data/"+f);};
 w("creatures.txt",H("CREATURES (spawn by area/biome)")+D.CREATURES.map(c=>`${c.name}  [${c.biome}]\n  HP ${c.hp}  ATK ${c.atk}  DEF ${c.def}  XP ${c.xp}  Gold ${c.gold}\n  ${c.flavor}\n`).join("\n")+"\n\nBOSSES\n"+"-".repeat(40)+"\n"+D.BOSSES.map(b=>`${b.name}  (Floor ${b.floor})\n  HP ${b.hp}  ATK ${b.atk}  DEF ${b.def}\n  ${b.flavor}\n`).join("\n"));
 w("dadisms.txt",H("DADISMS (Book of Dadvice; cast with Patience)")+D.DADISMS.map(d=>`${d.name}\n  Classes: ${d.classes.join(", ")}   Cost: ${d.cost} Patience   Type: ${d.kind}\n  ${d.desc}\n`).join("\n"));

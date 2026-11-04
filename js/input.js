@@ -1,4 +1,4 @@
-/* ===== SHATTERED DAD ADVENTURE — input.js =====
+/* ===== SCATTERED DAD ADVENTURES — input.js =====
    Keyboard and mouse event handlers, game loop start.
    Depends on: everything else
    =============================================== */

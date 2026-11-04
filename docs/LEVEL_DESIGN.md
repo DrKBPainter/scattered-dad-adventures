@@ -1,4 +1,4 @@
-# SHATTERED DAD ADVENTURE — LEVEL DESIGN & NARRATIVE FLOW
+# SCATTERED DAD ADVENTURES — LEVEL DESIGN & NARRATIVE FLOW
 ## 100 Floors | 10 Themes | A Saturday That Got Away From Him
 
 ---
@@ -1568,7 +1568,7 @@ There is only Dad, standing up from the recliner, joints announcing his departur
 
 ---
 
-**SHATTERED DAD ADVENTURE**
+**SCATTERED DAD ADVENTURES**
 *A game about one Saturday.*
 
 *There are other Saturdays.*
@@ -1577,7 +1577,7 @@ There is only Dad, standing up from the recliner, joints announcing his departur
 
 *[END OF GAME]*
 
-*[CONTINUE? → SHATTERED DAD ADVENTURE II: HONEY-DO HARDER]*
+*[CONTINUE? → SCATTERED DAD ADVENTURES II: HONEY-DO HARDER]*
 *[Available when it's available. Dad's still recovering.]*
 
 ---

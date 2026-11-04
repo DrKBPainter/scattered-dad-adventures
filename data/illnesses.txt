@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — STATUS EFFECTS / Learning Experiences & buffs
+SCATTERED DAD ADVENTURES — STATUS EFFECTS / Learning Experiences & buffs
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

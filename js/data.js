@@ -1,4 +1,4 @@
-/* ===== SHATTERED DAD ADVENTURE -- data.js =====
+/* ===== SCATTERED DAD ADVENTURES -- data.js =====
    All static game data: creatures, bosses, classes, items.
    This is the primary file for nightly build content additions.
    NIGHTLY BUILD INSERTION POINTS marked below.

@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — CHARMS (worn neck/ring/hair; max 2)
+SCATTERED DAD ADVENTURES — CHARMS (worn neck/ring/hair; max 2)
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

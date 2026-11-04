@@ -1,4 +1,4 @@
-# SHATTERED DAD ADVENTURE -- MOBILE PWA + GRAPHICS PLAN
+# SCATTERED DAD ADVENTURES -- MOBILE PWA + GRAPHICS PLAN
 
 Authored 2026-10-29. Baseline: v0.11.0 (100 floors, 7 classes, mouse-only complete, N21-N29 graphics chunks authored but not started).
 
@@ -17,7 +17,7 @@ Ship a mobile-first build, installable from the browser (no app store), with upg
 | Area | Current state | Mobile impact |
 |---|---|---|
 | Canvas | Fixed 480x320 (15x10 tiles x 32px); `fitCanvas()` reserves 220px for HUD | Landscape-only 3:2; tiny in portrait |
-| Render loop | No `requestAnimationFrame`; `render()` called on demand | No animation, tweening, or particles possible |
+| Render loop | (Corrected 2026-11-03) Continuous `requestAnimationFrame` loop redrawing every frame even when idle; M4 made it dirty-flag driven | Battery drain on phones until M4 |
 | Sprite drawing | `drawSprite` = one `fillRect` per pixel (1,024 calls per 32x32 sprite); 196 SPR_ defs in sprites.js (250 KB) | CPU-heavy on phones; blocks image art |
 | Input | 10 `click` listeners, 1 `contextmenu` (right-click), 1 `keydown`; no pointer/touch events | Right-click and hover have no touch equivalent |
 | Tooltips | `.st-chip:hover` status tooltips | Unreachable on touch |
@@ -31,7 +31,7 @@ Ship a mobile-first build, installable from the browser (no app store), with upg
 
 1. **Art sourcing: option C.** Algorithmically upgrade existing 32x32 ASCII sprites (1px outline, 3-step shading ramps, highlight/shadow pass) and export to PNG atlases. Hand-drawn replacement of heroes/bosses is deferred, not scheduled.
 2. **Orientation: portrait-first.** Dynamic viewport (~9x13 tiles portrait); landscape supported but secondary. Controls designed for one-handed portrait play.
-3. **Hosting: public.** Public GitHub repo (DrKBPainter/shattered-dad-adventure) + GitHub Pages.
+3. **Hosting: public.** Public GitHub repo (DrKBPainter/shattered-dad-adventures) + GitHub Pages.
 
 ## 4. Phased Plan
 
@@ -39,7 +39,7 @@ Chunk IDs use an `M` prefix so they do not collide with nightly `N` chunks. Grap
 
 ### Phase 0 -- Foundation and deploy-first (M1-M2)
 
-- **M1 Source control.** Create a GitHub repo (DrKBPainter/shattered-dad-adventure). Move the working copy out of OneDrive or make git the source of truth; OneDrive becomes a backup only. Rationale: eliminates the mount-truncation class of failures and is required for Pages.
+- **M1 Source control.** Create a GitHub repo (DrKBPainter/shattered-dad-adventures). Move the working copy out of OneDrive or make git the source of truth; OneDrive becomes a backup only. Rationale: eliminates the mount-truncation class of failures and is required for Pages.
 - **M2 Deploy current build.** Rename `ShatteredDadAdventure.html` -> `index.html` (keep a redirect file under the old name). Enable GitHub Pages. Exit criterion: v0.11.0 plays from a phone browser over HTTPS. This proves the no-app-store path before any refactor.
 
 ### Phase 1 -- Render engine refactor (M3-M5)
@@ -120,3 +120,6 @@ Weekly scheduled run (Sundays) appends one entry: date, chunk(s) attempted, stat
 |---|---|---|---|---|
 | 2026-11-03 | M1 Source control | blocked | Checked GitHub access: cloud `gh` token invalid (GH_TOKEN rejected); device VM has git but no GitHub credentials; repo DrKBPainter/shattered-dad-adventure does not exist yet (HTTP 404); no add_repo tool available this run. | Needs user: create the public repo (or connect GitHub with push access to the scheduled task) so the next run can push. M2 (Pages deploy) also waits on this. |
 | 2026-11-03 | M3 Sprite cache | done | Done out of order because M1/M2 are blocked on GitHub. `js/render.js`: drawSprite/drawSpriteRemap now rasterize each sprite once per (remap,colorMap) variant to an offscreen canvas and draw with one `drawImage`; per-pixel fallback when no canvas is available; `registerSpriteImage(spr,img)` hook for N21 PNGs; `spriteCacheStats()` for debugging. Verified: `node --check` on all 8 js files; harness one class per call: 7/7 clears (grill, diy, tech, gym, tactical, sports, yard); Chromium pixel diff old vs new for all 196 SPR_ sprites x 5 variants (scale 1/2, curse remap + skin colorMap, empty remap): 0 mismatches; full-game Chromium smoke test (title -> class -> difficulty -> story clip -> moves/wait/inventory) gave identical canvas hashes at every step, no page errors; 2,000 sprite draws went from 404 ms to 5.6 ms. Canonical file verified through the Windows path (md5 matches build). Previous version saved as archive/render.pre-M3.js. | No save-format change. Inventory icons in ui.js still draw pixel by pixel on their own canvases (low priority; can switch to the cache during M9). |
+| 2026-11-03 (run 2) | M1 Source control (re-check) | blocked | Cloud `gh` token still invalid; GitHub API now says repo access must be granted via add_repo, but no add_repo tool exists in this session; api.github.com/repos/DrKBPainter/shattered-dad-adventure and the Pages URL both return 404 from the device. | Still needs user: create the public repo and give the scheduled task GitHub push access. A local git dir exists at C:/git/sda.git (outside the connected folder, not reachable from the device VM). |
+| 2026-11-03 (run 2) | M4 Frame loop | done | Note: the plan's section 2 was out of date: render() already ran a continuous requestAnimationFrame loop, redrawing every frame even when idle. `js/render.js`: the old body is now `drawFrame()`; `render()` (the rAF callback) redraws only when dirty, during an open `requestAnim(ms)` window (for M15), or every 1 s as a safety net. Dirty is set by any input event (capture phase), resize/orientation, visibilitychange/pageshow, every setTimeout callback (wrapped once; covers click-path auto-walk) and `registerSpriteImage`. New helpers: `markDirty()`, `requestAnim(ms)`, `renderStats()`. Verified: `node --check` on all 8 js files; harness per class, built from scratch copy outside OneDrive: 7/7 clears (grill, diy, tech, gym, tactical, sports, yard); Chromium old-vs-new with seeded Math.random: 20 checkpoints across title -> class -> difficulty -> intro -> story clip -> moves/inventory/map, 0 canvas-hash mismatches, no page errors; click-path auto-walk animates step by step and ends on an identical frame; idle 3 s: 3 frames drawn vs 177 skipped (was ~180 drawn); setTimeout wrapper keeps ids/clearTimeout/extra args working. Canonical render.js md5 checked through the Windows path. Old file: archive/render.pre-M4.js. | No save-format change. Any future non-input state change (e.g. N21 async image loads, fetch) should call `markDirty()`; the 1 s safety net covers misses. |
+| 2026-11-03 (manual) | M1 Source control | waiting on user push | Repo DrKBPainter/shattered-dad-adventures now exists (public, empty). Claude session can read it but push is refused (Claude GitHub App not installed for this repo). Added index.html redirect to ShatteredDadAdventure.html for Pages. | User to push local repo (gitdir C:/git/sda.git) and enable Pages; install Claude GitHub App for scheduled pushes. |

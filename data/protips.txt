@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — PRO TIPS (permanent upgrades; formerly 'scrolls')
+SCATTERED DAD ADVENTURES — PRO TIPS (permanent upgrades; formerly 'scrolls')
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

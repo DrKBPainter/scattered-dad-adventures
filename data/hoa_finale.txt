@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — THE HOA FINALE (floor 100 — multi-phase boss + class resolutions)
+SCATTERED DAD ADVENTURES — THE HOA FINALE (floor 100 — multi-phase boss + class resolutions)
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

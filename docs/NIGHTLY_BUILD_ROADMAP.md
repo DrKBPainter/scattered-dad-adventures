@@ -1,4 +1,4 @@
-# SHATTERED DAD ADVENTURE — NIGHTLY BUILD ROADMAP
+# SCATTERED DAD ADVENTURES — NIGHTLY BUILD ROADMAP
 
 Drives the automated 11:00 PM ET nightly build. Each night: complete **exactly ONE
 unchecked chunk**, run diagnostics, bump the version, sync the data catalogs, check

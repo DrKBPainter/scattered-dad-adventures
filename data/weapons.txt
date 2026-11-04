@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — WEAPONS
+SCATTERED DAD ADVENTURES — WEAPONS
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

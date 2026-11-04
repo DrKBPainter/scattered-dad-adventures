@@ -1,10 +1,10 @@
-/* ===== SHATTERED DAD ADVENTURE — config.js =====
+/* ===== SCATTERED DAD ADVENTURES — config.js =====
    Global constants, canvas reference, resize handler.
    Load this FIRST — everything else depends on it.
    =============================================== */
 
 "use strict";
-/* ===== SHATTERED DAD ADVENTURE v0.6 ===== */
+/* ===== SCATTERED DAD ADVENTURES v0.6 ===== */
 const GAME_VERSION="0.11.0";
 const TILE=32, VIEW_W=15, VIEW_H=10, MAP_W=40, MAP_H=30, MAXDEPTH=100;
 const SPR_SIZE=32; /* creature/boss/ally sprites are 32x32 pixels (1 char = 1 pixel at scale 1) */

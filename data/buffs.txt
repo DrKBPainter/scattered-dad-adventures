@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — AFFIXES — Upgrades / Learning Experiences / no effect
+SCATTERED DAD ADVENTURES — AFFIXES — Upgrades / Learning Experiences / no effect
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

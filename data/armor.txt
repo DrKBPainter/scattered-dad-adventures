@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — ARMOR (slots: head/torso/arms/legs/feet)
+SCATTERED DAD ADVENTURES — ARMOR (slots: head/torso/arms/legs/feet)
 Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 

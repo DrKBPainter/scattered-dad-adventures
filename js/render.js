@@ -1,4 +1,4 @@
-/* ===== SHATTERED DAD ADVENTURE -- render.js =====
+/* ===== SCATTERED DAD ADVENTURES -- render.js =====
    Canvas rendering: drawSprite, drawWorld, drawFX, inspect display.
    Depends on: sprites.js, data.js, game.js
    =============================================== */
@@ -16,7 +16,7 @@ function _sprVKey(remap,colorMap){let k="";if(remap)for(const a of Object.keys(r
 function _sprRecord(spr){let r=_sprIdCache.get(spr);if(r)return r;const ck=spr.join("\n");r=_sprKeyCache.get(ck);if(!r){let w=0;for(const row of spr)if(row.length>w)w=row.length;r={w,h:spr.length,v:new Map()};if(_sprKeyCache.size>4000)_sprKeyCache.clear();_sprKeyCache.set(ck,r);}_sprIdCache.set(spr,r);return r;}
 function _sprCached(spr,remap,colorMap){const r=_sprRecord(spr);const vk=_sprVKey(remap,colorMap);let cv=r.v.get(vk);if(cv)return{cv,w:r.w,h:r.h};const o=_sprNewCanvas(r.w||1,r.h||1);if(!o)return null;_sprPx(spr,remap,colorMap,(c,x,y)=>{o.x.fillStyle=c;o.x.fillRect(x,y,1,1);});cv=o.c;if(r.v.size>64)r.v.clear();r.v.set(vk,cv);return{cv,w:r.w,h:r.h};}
 function _sprBlit(spr,dx,dy,sc,remap,colorMap){sc=sc||1;if(!spr||!spr.length)return;if(_sprCacheOK===null)_sprCacheOK=!!_sprNewCanvas(1,1);if(!_sprCacheOK){_sprDirect(spr,dx,dy,sc,remap,colorMap);return;}const e=_sprCached(spr,remap,colorMap);if(!e){_sprDirect(spr,dx,dy,sc,remap,colorMap);return;}ctx.imageSmoothingEnabled=false;ctx.drawImage(e.cv,dx,dy,e.w*sc,e.h*sc);}
-function registerSpriteImage(spr,img){if(spr&&typeof spr==="object"&&img)_sprImg.set(spr,img);}
+function registerSpriteImage(spr,img){if(spr&&typeof spr==="object"&&img){_sprImg.set(spr,img);if(typeof markDirty==="function")markDirty();}}
 function spriteCacheStats(){let variants=0;for(const r of _sprKeyCache.values())variants+=r.v.size;return{enabled:!!_sprCacheOK,sprites:_sprKeyCache.size,variants};}
 function drawSprite(spr,dx,dy,sc){sc=sc||1;const im=spr&&typeof spr==="object"?_sprImg.get(spr):null;if(im&&im.complete!==false&&im.naturalWidth!==0){ctx.imageSmoothingEnabled=false;ctx.drawImage(im,dx,dy,(spr[0]?spr[0].length:32)*sc,spr.length*sc);return;}_sprBlit(spr,dx,dy,sc,null,null);}
 /* Draw sprite with palette-char substitution. remap = {fromChar:toChar,...} */
@@ -34,7 +34,26 @@ function lootSprite(it){return it.kind==="weapon"?SPR_GEAR_W:it.kind==="armor"?S
 /* itemIconSprite: returns 32x32 sprite for inventory icon if available, else 16x16 fallback */
 function itemIconSprite(it){return(it&&it.sprite)?it.sprite:lootSprite(it);}
 function showEnemyHP(e){return game.globalReveal||e.shownHP||effPer()>=SHOW_HP_PER;}
-function render(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;try{ctx.fillStyle="#06070b";ctx.fillRect(0,0,CW,CH);if(mode===State.PLAY&&game&&game.floor&&game.seen&&game.vis&&isFinite(game.px)&&isFinite(game.py))drawWorld();else drawMenuBackdrop();}catch(err){/* A draw error must never kill the loop (prevents the frozen-map / vanished-dad freeze). */if(typeof console!=="undefined")console.warn("render skipped frame:",err);}requestAnimationFrame(render);}
+/* M4 FRAME LOOP (mobile plan). render() is the requestAnimationFrame callback, but it only redraws when
+   something may have changed: markDirty() was called, an animation window from requestAnim(ms) is open, or the
+   RENDER_IDLE_MS safety net has elapsed. Any input event (capture phase), resize/rotation, visibility change and
+   every setTimeout callback (click-path auto-walk, etc.) marks the frame dirty, so game logic needs no changes.
+   Turn logic stays discrete; animation (M15) is purely visual and uses requestAnim(ms). Idle CPU ~0. */
+const RENDER_IDLE_MS=1000;let _rDirty=true,_rAnimUntil=0,_rLastDraw=-1e9,_rFrames=0,_rSkipped=0;
+function _rNow(){return(typeof performance!=="undefined"&&performance&&typeof performance.now==="function")?performance.now():Date.now();}
+function markDirty(){_rDirty=true;}
+function requestAnim(ms){const n=_rNow();if(n+(ms||0)>_rAnimUntil)_rAnimUntil=n+(ms||0);_rDirty=true;}
+function renderStats(){return{frames:_rFrames,skipped:_rSkipped,dirty:_rDirty,animating:_rNow()<_rAnimUntil};}
+(function _installDirtyHooks(){try{const h=()=>{_rDirty=true;};
+ if(typeof window!=="undefined"&&window&&typeof window.addEventListener==="function"){
+  ["keydown","keyup","pointerdown","pointerup","pointermove","pointercancel","mousedown","mouseup","mousemove","click","contextmenu","wheel","touchstart","touchend","resize","orientationchange","focus","pageshow"].forEach(t=>window.addEventListener(t,h,true));
+  if(typeof window.setTimeout==="function"&&!window.__sdaTimeoutHooked){const _st=window.setTimeout.bind(window);
+   window.setTimeout=function(fn,ms){const a=Array.prototype.slice.call(arguments,2);if(typeof fn!=="function")return _st.apply(null,arguments);return _st(function(){try{return fn.apply(this,a);}finally{_rDirty=true;}},ms);};
+   window.__sdaTimeoutHooked=true;}}
+ if(typeof document!=="undefined"&&document&&typeof document.addEventListener==="function")document.addEventListener("visibilitychange",h,true);
+}catch(e){}})();
+function drawFrame(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;try{ctx.fillStyle="#06070b";ctx.fillRect(0,0,CW,CH);if(mode===State.PLAY&&game&&game.floor&&game.seen&&game.vis&&isFinite(game.px)&&isFinite(game.py))drawWorld();else drawMenuBackdrop();}catch(err){/* A draw error must never kill the loop (prevents the frozen-map / vanished-dad freeze). */if(typeof console!=="undefined")console.warn("render skipped frame:",err);}}
+function render(){const n=_rNow();if(_rDirty||n<_rAnimUntil||n-_rLastDraw>=RENDER_IDLE_MS){_rDirty=false;_rLastDraw=n;_rFrames++;drawFrame();}else _rSkipped++;requestAnimationFrame(render);}
 
 /* ===== CLASS SELECT PORTRAITS =====
    Per-class illustrated backdrop drawn at 6× sprite scale (192×192) centered

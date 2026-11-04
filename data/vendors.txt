@@ -1,4 +1,4 @@
-SHATTERED DAD ADVENTURE — VENDORS (keyed by floor depth)
+SCATTERED DAD ADVENTURES — VENDORS (keyed by floor depth)
 Auto-generated mirror (v0.9.0). Edit the VENDORS array in js/data.js; this mirrors it.
 ================================================================
 

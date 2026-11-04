@@ -1,4 +1,4 @@
-/* ===== SHATTERED DAD ADVENTURE — game.js =====
+/* ===== SCATTERED DAD ADVENTURES — game.js =====
    Core engine: state, mapgen, stats, combat, movement, items,
    survival, traps, XP, shop, save/load.
    Depends on: sprites.js, data.js
