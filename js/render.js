@@ -52,12 +52,12 @@ function renderStats(){return{frames:_rFrames,skipped:_rSkipped,dirty:_rDirty,an
    window.__sdaTimeoutHooked=true;}}
  if(typeof document!=="undefined"&&document&&typeof document.addEventListener==="function")document.addEventListener("visibilitychange",h,true);
 }catch(e){}})();
-function drawFrame(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;try{ctx.fillStyle="#06070b";ctx.fillRect(0,0,CW,CH);if(mode===State.PLAY&&game&&game.floor&&game.seen&&game.vis&&isFinite(game.px)&&isFinite(game.py))drawWorld();else drawMenuBackdrop();}catch(err){/* A draw error must never kill the loop (prevents the frozen-map / vanished-dad freeze). */if(typeof console!=="undefined")console.warn("render skipped frame:",err);}}
+function drawFrame(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;try{if(ctx.setTransform)ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle="#06070b";ctx.fillRect(0,0,CW,CH);if(mode===State.PLAY&&game&&game.floor&&game.seen&&game.vis&&isFinite(game.px)&&isFinite(game.py))drawWorld();else drawMenuBackdrop();}catch(err){/* A draw error must never kill the loop (prevents the frozen-map / vanished-dad freeze). */if(typeof console!=="undefined")console.warn("render skipped frame:",err);}}
 function render(){const n=_rNow();if(_rDirty||n<_rAnimUntil||n-_rLastDraw>=RENDER_IDLE_MS){_rDirty=false;_rLastDraw=n;_rFrames++;drawFrame();}else _rSkipped++;requestAnimationFrame(render);}
 
 /* ===== CLASS SELECT PORTRAITS =====
    Per-class illustrated backdrop drawn at 6× sprite scale (192×192) centered
-   in the 480×320 canvas during State.CLASS. Scene elements fill the full canvas.
+   in the VIEW_W*TILE x VIEW_H*TILE canvas (480×320 desktop, 288×416 portrait) during State.CLASS. Scene elements fill the full canvas.
    ============================================================= */
 const PORTRAIT_CFG={
   grill:   {top:'#2a0d00',bot:'#6a2200',accent:'#d97a2b'},

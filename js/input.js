@@ -3,7 +3,7 @@
    Depends on: everything else
    =============================================== */
 
-function tileFromEvent(ev){const r=canvas.getBoundingClientRect();const sx=canvas.width/r.width,sy=canvas.height/r.height;const cxp=(ev.clientX-r.left)*sx,cyp=(ev.clientY-r.top)*sy;return {x:camX+Math.floor(cxp/TILE),y:camY+Math.floor(cyp/TILE)};}
+function tileFromEvent(ev){const r=canvas.getBoundingClientRect();const sx=(VIEW_W*TILE)/r.width,sy=(VIEW_H*TILE)/r.height;/* M5: logical px (backing store is RENDER_SCALE x larger) */const cxp=(ev.clientX-r.left)*sx,cyp=(ev.clientY-r.top)*sy;return {x:camX+Math.floor(cxp/TILE),y:camY+Math.floor(cyp/TILE)};}
 canvas.addEventListener("click",(ev)=>{if(mode!==State.PLAY)return;
  // Mouse aiming (handled BEFORE the overlay guard). Click a tile to set throw direction / trap tile.
  // Esc or the on-screen CANCEL button aborts; keyboard aiming path stays intact.
