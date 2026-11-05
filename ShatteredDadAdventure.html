@@ -297,6 +297,33 @@
   /* Story popup after a Dad is chosen (single Continue button) */
   #cf-text.cf-story{text-align:left;}
   #cf-text .cf-title{display:block;text-align:center;color:var(--gold);letter-spacing:1px;margin-bottom:8px;}
+  /* ===== M8 ACTION BAR REDESIGN (compact layouts only; desktop keeps the full button row) =====
+     Portrait: one row of 5 thumb buttons (BAG, SCAN, WAIT, THROW, MORE), each >=44x44 CSS px.
+     Everything else moves to the MORE drawer (#moresheet), a bottom sheet over a dimmed backdrop. */
+  body.m-compact #actionbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;overflow:visible;}
+  body.m-compact #actionbar button:not(.m-pri){display:none;}
+  body.m-compact #actionbar button.m-pri{min-height:44px;min-width:0;padding:4px 2px;font-size:11.5px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:clip;}
+  body.m-compact #actionbar [data-act="inv"]{order:1;} body.m-compact #actionbar [data-act="scan"]{order:2;} body.m-compact #actionbar [data-act="wait"]{order:3;}
+  body.m-compact #actionbar [data-act="throw"]{order:4;} body.m-compact #actionbar [data-act="more"]{order:5;color:var(--gold);}
+  body.m-compact.m-more #actionbar [data-act="more"]{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
+  body.m-compact.m-land #actionbar{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none;overflow:visible;align-content:start;}
+  body.m-compact.m-land #actionbar [data-act="more"]{grid-column:span 2;}
+  body.m-compact.m-land.m-nopad #actionbar{grid-template-columns:repeat(3,minmax(0,1fr));}
+  body.m-compact #dpad{grid-template-rows:repeat(3,44px);gap:3px;} body.m-compact.m-land #actionbar{gap:3px;} /* optional D-pad: 44 px rows keep small phones from overflowing */
+  #moresheet{display:none;}
+  body.m-compact.m-more #moresheet{display:flex;position:fixed;inset:0;z-index:120;background:rgba(4,6,10,.62);align-items:flex-end;justify-content:center;padding:0 var(--ms-r,0px) var(--ms-b,0px) 0;}
+  body.m-compact.m-more #actionbar{position:relative;z-index:121;} /* the bar stays above the backdrop: MORE toggles the drawer and taps never land on a hidden drawer button */
+  #moresheet .ms-panel{width:100%;max-width:560px;max-height:calc(100% - 16px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:10px 10px 0 0;padding:10px max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));box-shadow:0 -10px 30px rgba(0,0,0,.8);}
+  #moresheet .ms-head{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;margin-bottom:8px;}
+  #moresheet .ms-head b{color:var(--gold);font-size:15px;letter-spacing:1px;}
+  #moresheet .ms-sub{flex:1 1 140px;font-size:11px;color:var(--dim);}
+  #moresheet .ms-close{font-family:inherit;font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:4px;min-height:44px;min-width:44px;padding:4px 12px;cursor:pointer;}
+  #moresheet .ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;}
+  #moresheet .ms-grid button{font-family:inherit;font-size:12px;font-weight:bold;letter-spacing:.4px;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:5px;min-height:48px;padding:6px 4px;cursor:pointer;}
+  #moresheet .ms-grid button:active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
+  #moresheet .ms-grid .ms-menu{color:#ff9a8a;}
+  #moresheet .ms-note{margin:10px 2px 0;font-size:12px;line-height:1.4;color:#f0c86a;font-style:italic;transform:rotate(-1deg);}
+  #moresheet .ms-note:empty{display:none;}
   .cf-btn.cf-single{min-width:160px;}
 </style>
 </head>
@@ -329,12 +356,13 @@
     <button type="button" data-dx="1" data-dy="1" title="Move southeast">&#8600;</button>
   </div>
   <div id="actionbar" aria-label="Action buttons">
-    <button type="button" data-act="scan" title="Scan the area (X)">SCAN</button>
+    <button type="button" class="m-pri" data-act="scan" title="Scan the area (X)">SCAN</button>
     <button type="button" data-act="zoomin" title="Zoom in (+)">ZOOM +</button>
     <button type="button" data-act="zoomout" title="Zoom out (-)">ZOOM &minus;</button>
-    <button type="button" data-act="throw" title="Throw an item, then click a tile to aim (T)">THROW</button>
+    <button type="button" class="m-pri" data-act="throw" title="Throw an item, then click a tile to aim (T)">THROW</button>
     <button type="button" data-act="place" title="Place a trap, then click an adjacent tile (P)">PLACE</button>
-    <button type="button" data-act="inv" title="Open inventory (I)">BAG</button>
+    <button type="button" class="m-pri" data-act="inv" title="Open inventory (I)">BAG</button>
+    <button type="button" class="m-only m-pri" data-act="wait" title="Wait / pass a turn (Space)">WAIT</button>
     <button type="button" data-act="dad" title="Open Book of Dadvice (K)">DADVICE</button>
     <button type="button" data-act="map" title="Open floor map (M)">MAP</button>
     <button type="button" data-act="best" title="Discovered creatures (B)">BESTIARY</button>
@@ -344,11 +372,33 @@
     <button type="button" id="btnPad" class="m-only" data-act="pad" title="Show or hide the on-screen D-pad">D-PAD</button>
     <button type="button" id="btnMute" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
     <button type="button" data-act="quit" title="Save &amp; quit to main menu (Q)">MENU</button>
+    <button type="button" class="m-only m-pri" data-act="more" title="More actions" aria-haspopup="dialog" aria-controls="moresheet">MORE &#9776;</button>
   </div>
   <div id="aimbar" aria-label="Aim controls" style="display:none">
     <span id="aimlabel">Aiming&hellip;</span>
     <button type="button" id="aimGo" data-aim="confirm" title="Confirm the target" style="display:none">THROW</button>
     <button type="button" data-aim="cancel" title="Cancel aiming (Esc)">CANCEL</button>
+  </div>
+  <!-- M8: compact-only "More" drawer (bottom sheet). Hidden on desktop. -->
+  <div id="moresheet" aria-hidden="true">
+    <div class="ms-panel" role="dialog" aria-label="More actions">
+      <div class="ms-head"><b>THE JUNK DRAWER</b><span class="ms-sub">Everything else lives here. As it always has.</span><button type="button" class="ms-close" data-more="close" title="Close">&#10005; Close</button></div>
+      <div class="ms-grid">
+        <button type="button" data-act="dad" title="Open Book of Dadvice (K)">DADVICE</button>
+        <button type="button" data-act="map" title="Open floor map (M)">MAP</button>
+        <button type="button" data-act="best" title="Discovered creatures (B)">BESTIARY</button>
+        <button type="button" data-act="codex" title="Open the Codex (J)">CODEX</button>
+        <button type="button" data-act="grave" title="View the Graveyard (G)">GRAVEYARD</button>
+        <button type="button" data-act="instr" title="How to play (H)">HELP</button>
+        <button type="button" data-act="place" title="Place a trap, then tap an adjacent tile (P)">PLACE TRAP</button>
+        <button type="button" data-act="zoomin" title="Zoom in (+)">ZOOM +</button>
+        <button type="button" data-act="zoomout" title="Zoom out (-)">ZOOM &minus;</button>
+        <button type="button" data-act="pad" title="Show or hide the on-screen D-pad">D-PAD</button>
+        <button type="button" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
+        <button type="button" class="ms-menu" data-act="quit" title="Save &amp; quit to main menu (Q)">SAVE &amp; MENU</button>
+      </div>
+      <p class="ms-note" id="msNote"></p>
+    </div>
   </div>
   <div id="hint">arrows/WASD or on-screen D-pad move &middot; Space/center WAIT &middot; click=inspect/move &middot; on-screen SCAN / ZOOM / THROW / PLACE / MENU buttons &middot; after THROW/PLACE click a tile to aim (CANCEL aborts) &middot; I inventory &middot; K Book of Dadvice &middot; X scan &middot; T throw &middot; P place trap &middot; M map &middot; H help &middot; B bestiary &middot; J codex</div>
 </div>

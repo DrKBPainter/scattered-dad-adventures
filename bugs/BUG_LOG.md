@@ -12,14 +12,24 @@
 | BUG-001 | Directional movement dead (arrows/WASD) | `js/game.js` | resolved | 2026-06-18 |
 | BUG-002 | Choose Your Dad confirm popup cut off on mobile; Yes/No unreachable | `ShatteredDadAdventure.html, js/ui.js, js/input.js` | resolved | 2026-11-05 |
 | BUG-003 | device_commit_files re-sends stale content for a previously committed staged path | `tooling` | resolved | 2026-11-05 |
+| BUG-004 | Landscape phone with optional D-pad: side column taller than screen | `ShatteredDadAdventure.html` | open | 2026-11-05 |
 
 ---
 
 ## Open Bugs
 
-*(none yet)*
+### BUG-004 — Landscape phone with optional D-pad: side column taller than screen
+
+- **File:** `ShatteredDadAdventure.html`
+- **Status:** open
+- **Logged:** 2026-11-05
+
+**Description:** Compact landscape with the D-pad turned on (sda_dpad=1): HUD (164-193 px, varies with status/ally text) + D-pad stack in the side column exceeds short viewports, so the page scrolls vertically (iPhone SE landscape 330/320 px, iPhone 13 landscape 359/342 px). Pre-existing since M6/M7 (baseline SE landscape 338/320); M8 trimmed D-pad rows to 44 px which fixed portrait iPhone SE but not landscape. D-pad is off by default on touch layouts.
+
+**Repro steps:** Playwright iPhone SE landscape, localStorage sda_dpad=1, start a run, compare documentElement.scrollHeight to clientHeight
 
 ---
+
 
 ## Resolved Bugs
 

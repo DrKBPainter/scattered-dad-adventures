@@ -104,12 +104,19 @@ elStatuses.addEventListener("click",(ev)=>{if(mode!==State.CLASS)return;const s=
 // On-screen action bar: Scan, Zoom +/-, and Menu(save+quit) — same handlers as their keys.
 const oAct=document.getElementById("actionbar");
 // Keep the SOUND button label in sync with the mute state (mirrors the [U] key).
-function syncMuteBtn(){const b=document.getElementById("btnMute");if(!b)return;const muted=(typeof SFX_MUTED!=="undefined"&&SFX_MUTED);b.textContent=muted?"SOUND ✕":"SOUND";b.title=(muted?"Unmute":"Mute")+" sound (U)";}
-if(oAct)oAct.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-act]");if(!btn)return;
+function syncMuteBtn(){const muted=(typeof SFX_MUTED!=="undefined"&&SFX_MUTED);if(document.querySelectorAll)document.querySelectorAll('[data-act="mute"]').forEach(b=>{b.textContent=muted?"SOUND ✕":"SOUND";b.title=(muted?"Unmute":"Mute")+" sound (U)";});}
+// M8: one dispatcher shared by the action bar and the compact MORE drawer.
+function barAction(a){
  // Mute is a global toggle (like its key) — handle it BEFORE the play-mode guard so it always works when the bar is visible.
- if(btn.dataset.act==="mute"){if(typeof sfxToggleMute==="function"){sfxToggleMute();syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". Click SOUND or press [U] to toggle.","dim");}return;}
+ if(a==="mute"){if(typeof sfxToggleMute==="function"){sfxToggleMute();syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". Click SOUND or press [U] to toggle.","dim");}return;}
  if(mode!==State.PLAY||pendingConfirm||pendingMenu||aiming||placing||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen)return;
- const a=btn.dataset.act;if(a==="scan")scanArea();else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);});
+ if(a==="more"){setMoreOpen(!_m8More);return;}
+ if(a!=="pad")setMoreOpen(false);
+ if(a==="wait"){if(game)game.clickPath=[];clearMouseInspect();tryMove(0,0);return;}
+ if(a==="scan")scanArea();else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);}
+if(oAct)oAct.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-act]");if(btn)barAction(btn.dataset.act);});
+const oMore=document.getElementById("moresheet");
+if(oMore)oMore.addEventListener("click",(ev)=>{if(ev.target===oMore||ev.target.closest("[data-more=close]")){setMoreOpen(false);return;}const btn=ev.target.closest("[data-act]");if(btn)barAction(btn.dataset.act);});
 // Floating Close button (mouse-only): dismisses any open overlay/shop, same as Esc.
 const oClose=document.getElementById("ovClose");
 if(oClose)oClose.addEventListener("click",()=>{closeOverlays();if(inspectOn&&typeof toggleInspect==="function")toggleInspect();syncUI();});
