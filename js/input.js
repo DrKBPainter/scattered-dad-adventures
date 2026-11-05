@@ -87,7 +87,7 @@ elLog.addEventListener("click",(ev)=>{
   else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
   else if(a==="grave"){closeOverlays();ovGrave=true;buildGraveyard();syncOverlays();}
   return;}
- if(mode===State.CLASS){const cr=ev.target.closest("[data-class]");if(!cr)return;classCursor=+cr.dataset.class;const c=CLASSES[classCursor];syncUI();openConfirm(c.name.toUpperCase()+" — "+(c.backstory||c.blurb)+"   [Y/Enter] Begin the descent · [N] Pick a different Dad",()=>{pendingClass=c;mode=State.DIFF;diffCursor=1;syncUI();});return;}
+ if(mode===State.CLASS){const cr=ev.target.closest("[data-class]");if(!cr)return;classCursor=+cr.dataset.class;syncUI();openClassConfirm(CLASSES[classCursor]);return;}
  if(mode===State.DIFF){const dr=ev.target.closest("[data-diff]");if(!dr)return;if(dr.dataset.diff==="back"){mode=State.CLASS;syncUI();return;}diffCursor=+dr.dataset.diff;const _diff=DIFFICULTY_MODES[diffCursor];log(pendingClass.name+" on "+_diff.name+": "+_diff.flavor,"gold");const _dseed=pendingDaily?dailySeedFor(dailyDateStr()):undefined;pendingDaily=false;newRun(pendingClass,_diff,_dseed);return;}
  if(mode===State.DEAD||mode===State.WIN){const en=ev.target.closest("[data-end]");if(!en)return;const a=en.dataset.end;
   if(a==="title"){mode=State.TITLE;messages=[];syncUI();}
