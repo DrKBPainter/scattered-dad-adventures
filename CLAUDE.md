@@ -153,6 +153,10 @@ Selection within biome is **uniform random** — equal weight per creature. To m
 
 ---
 
+## Protected Mobile Screens (locked 2026-11-05)
+
+`js/dadselect.js` (Choose Your Dad deck), `js/titlecover.js` (title cover), and `js/bestcards.js` (Bestiary comic cards), with their CSS in `ShatteredDadAdventure.html`, are user-approved designs. Do not replace, restyle, or remove them. Bug fixes and wiring them into new systems are fine. Details: "Protected user-designed screens" in `docs/MOBILE_PWA_PLAN.md`.
+
 ## What NOT to Do
 
 - **Don't edit `data/*.txt` files** expecting game changes — they're mirrors

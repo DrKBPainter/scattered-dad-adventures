@@ -58,7 +58,11 @@ Chunk IDs use an `M` prefix so they do not collide with nightly `N` chunks. Grap
   - Tap status chip = tooltip (replaces `:hover`).
   - Throw/Place aiming: tap target, confirm button.
 - **M8 Action bar redesign.** 4-5 primary thumb buttons (Bag, Scan, Wait, Throw, More). "More" opens a drawer with Dadvice, Map, Bestiary, Codex, Graveyard, Help, Sound, Menu. Minimum touch target 44x44 CSS px.
-- **M9 Overlay redesign.** Overlays become full-screen sheets with sticky header + Close. Inventory grid becomes `repeat(auto-fill, minmax(56px,1fr))`; item detail becomes a bottom sheet with Use/Equip/Drop/Combine buttons. Codex/Bestiary grids collapse to 2 columns.
+- **M9 Overlay redesign.** Overlays become full-screen sheets with sticky header + Close. Inventory grid becomes `repeat(auto-fill, minmax(56px,1fr))`; item detail becomes a bottom sheet with Use/Equip/Drop/Combine buttons. Codex grid collapses to 2 columns. The Bestiary already uses the protected comic-card grid (`js/bestcards.js`) on compact layouts; keep it (only wrap it in the new sheet header/Close).
+
+### Protected user-designed screens (locked 2026-11-05, user request)
+
+The mobile Choose-Your-Dad deck (`js/dadselect.js`), title cover (`js/titlecover.js`), and Bestiary comic cards (`js/bestcards.js`), plus their `.dc-*` / `#titlecov` / `.bc-*` CSS in `ShatteredDadAdventure.html` and their hooks (`buildBest()` hand-off in ui.js, `doTitleAction()` in input.js, `openClassConfirm()`), are user-approved designs. Later chunks must keep their layout, look, and behavior. Allowed: bug fixes, wiring them into new systems (service-worker cache list, PNG sprites from N21/M13 shown inside the existing cards, M16 pixel font) without changing the card design. Not allowed: replacing, restyling, or removing them; reverting to the canvas/list versions on compact layouts. Any chunk that touches these screens must add a Playwright check (iPhone SE + iPhone 13) that each still renders and works (deck swipe/flip/Choose, title buttons, Bestiary card flip and undiscovered "?" cards) and must record that check in the Progress Log. If a planned change seems to require altering them, stop and ask the user.
 
 ### Phase 3 -- PWA layer (M10-M12)
 
@@ -82,7 +86,7 @@ Order: pipeline -> heroes -> bosses -> creatures -> environment -> juice.
 - **M14 Environment tiles.** Per-biome floor/wall/door/stairs/water tile sets with 2-4 variants each, autotiled wall edges. 10 biomes x ~8 tiles.
 - **N29** Player walk/attack frames.
 - **M15 Game feel ("juice").** Tweened movement (~80 ms), hit flash, floating damage numbers, knockback nudge, death puff particles, small screen shake on crits/boss phases, smooth FOV falloff/lighting instead of hard visibility edges, boss phase transition banner. All motion respects `prefers-reduced-motion` plus an in-game toggle.
-- **M16 UI skin.** Pixel font (licensed OFL), 9-slice panel frames, rarity-colored item borders, illustrated class-select cards replacing the procedural 480x320 backdrops, biome title cards for STORY_CLIPS. Encouragement notes (fridge-drawing "You're the best dad" style) as loading-screen tips and occasional floor pickups, per project tone rules.
+- **M16 UI skin.** Pixel font (licensed OFL), 9-slice panel frames, rarity-colored item borders, illustrated class-select cards replacing the procedural 480x320 backdrops on desktop only (the mobile Dad deck and title cover are protected; see "Protected user-designed screens"), biome title cards for STORY_CLIPS. Encouragement notes (fridge-drawing "You're the best dad" style) as loading-screen tips and occasional floor pickups, per project tone rules.
 
 ### Phase 5 -- QA, performance, release (M17-M18)
 
