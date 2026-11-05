@@ -68,11 +68,13 @@ canvas.addEventListener("contextmenu",(ev)=>{ev.preventDefault();if(mode===State
 // click inventory / dadism rows
 oInv.addEventListener("click",(ev)=>{
  // Bag-item action buttons (mouse-only): route to the SAME invAction() branch the keys use. Examine ("x") logs the item's flavor.
+ const m9b=ev.target.closest("[data-m9]");if(m9b){_m9Act(m9b.dataset.m9);return;}// M9: worn-item sheet buttons + sheet Close
  const act=ev.target.closest("[data-invact]");
+ const _cp=(typeof COMPACT!=="undefined"&&COMPACT);
  if(act){const a=act.dataset.invact;const e=game.inv[invSel];
-  if(a==="x"){if(e)log(itemDisplayName(e.it)+" — "+(e.it.desc||e.it.kind),"dim");return;}
-  invAction(a);return;}
- const row=ev.target.closest("[data-inv]");if(!row)return;invSel=+row.dataset.inv;buildInv();});
+  if(a==="x"){if(e)log(itemDisplayName(e.it)+" — "+(e.it.desc||e.it.kind),"dim");if(_cp&&ovInv)buildInv();return;}
+  invAction(a);if(_cp&&ovInv){if(game.inv[invSel]!==e)_m9Det=false;buildInv();}return;}
+ const row=ev.target.closest("[data-inv]");if(!row)return;invSel=+row.dataset.inv;if(_cp){_m9Slot=null;_m9Det=!!game.inv[invSel];}buildInv();});
 // Dadism list: clicking a row selects it; clicking its Cast button casts it (mouse-only casting).
 oD.addEventListener("click",(ev)=>{const cast=ev.target.closest("[data-cast]");if(cast){const kn=DADISMS.filter(d=>game.dadisms.includes(d.id));const ci=+cast.dataset.cast;if(kn[ci])castDadism(kn[ci].id);return;}const row=ev.target.closest("[data-dad]");if(!row)return;dadSel=+row.dataset.dad;buildDad();});
 // Confirm dialog + option menus: clickable Yes/No (data-cf) and numbered rows (data-menu; -1 = cancel).
