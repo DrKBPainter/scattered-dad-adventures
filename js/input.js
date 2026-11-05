@@ -77,16 +77,18 @@ oInv.addEventListener("click",(ev)=>{
 oD.addEventListener("click",(ev)=>{const cast=ev.target.closest("[data-cast]");if(cast){const kn=DADISMS.filter(d=>game.dadisms.includes(d.id));const ci=+cast.dataset.cast;if(kn[ci])castDadism(kn[ci].id);return;}const row=ev.target.closest("[data-dad]");if(!row)return;dadSel=+row.dataset.dad;buildDad();});
 // Confirm dialog + option menus: clickable Yes/No (data-cf) and numbered rows (data-menu; -1 = cancel).
 cf.addEventListener("click",(ev)=>{const cb=ev.target.closest("[data-cf]");if(cb){resolveConfirm(cb.dataset.cf==="y");return;}const mb=ev.target.closest("[data-menu]");if(mb){resolveMenu(parseInt(mb.dataset.menu,10));return;}});
-// Title / class / difficulty / end-screen options: click the same rows the keys trigger.
-elLog.addEventListener("click",(ev)=>{
- if(mode===State.TITLE){const opt=ev.target.closest("[data-title]");if(!opt)return;const a=opt.dataset.title;
+/* Title menu actions, shared by the HUD rows (desktop) and the compact comic cover (js/titlecover.js). */
+function doTitleAction(a){
   if(a==="new"){pendingDaily=false;mode=State.CLASS;syncUI();}
   else if(a==="continue"){if(hasSave()){if(!continueRun()){mode=State.CLASS;syncUI();}}}
   else if(a==="daily"){pendingDaily=true;mode=State.CLASS;syncUI();}
   else if(a==="help"){closeOverlays();ovInstr=true;buildInstr();syncOverlays();}
   else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
   else if(a==="grave"){closeOverlays();ovGrave=true;buildGraveyard();syncOverlays();}
-  return;}
+}
+// Title / class / difficulty / end-screen options: click the same rows the keys trigger.
+elLog.addEventListener("click",(ev)=>{
+ if(mode===State.TITLE){const opt=ev.target.closest("[data-title]");if(!opt)return;doTitleAction(opt.dataset.title);return;}
  if(mode===State.CLASS){const cr=ev.target.closest("[data-class]");if(!cr)return;classCursor=+cr.dataset.class;syncUI();openClassConfirm(CLASSES[classCursor]);return;}
  if(mode===State.DIFF){const dr=ev.target.closest("[data-diff]");if(!dr)return;if(dr.dataset.diff==="back"){mode=State.CLASS;syncUI();return;}diffCursor=+dr.dataset.diff;const _diff=DIFFICULTY_MODES[diffCursor];log(pendingClass.name+" on "+_diff.name+": "+_diff.flavor,"gold");const _dseed=pendingDaily?dailySeedFor(dailyDateStr()):undefined;pendingDaily=false;newRun(pendingClass,_diff,_dseed);return;}
  if(mode===State.DEAD||mode===State.WIN){const en=ev.target.closest("[data-end]");if(!en)return;const a=en.dataset.end;
