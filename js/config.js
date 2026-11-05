@@ -36,7 +36,8 @@ function pickViewport(w,h){const o=_viewOverride();if(o)return o;
  if(_coarsePointer()&&Math.min(w,h)>=600)return[17,12];
  return[15,10];}
 function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const v=pickViewport(iw,ih);VIEW_W=v[0];VIEW_H=v[1];
- const cw=VIEW_W*TILE,ch=VIEW_H*TILE;const maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
+ const cw=VIEW_W*TILE,ch=VIEW_H*TILE;let maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
+ const _l=_m6Layout(iw,ih);if(_l){maxW=Math.max(60,_l.maxW);maxH=Math.max(60,_l.maxH);}
  const s=Math.max(0.5,Math.min(maxW/cw,maxH/ch));const zm=ZOOM_STEPS[zoomStep]||1;
  canvas.style.width=Math.round(cw*s*zm)+"px";canvas.style.height=Math.round(ch*s*zm)+"px";
  const dpr=(typeof window.devicePixelRatio==="number"&&window.devicePixelRatio>0)?window.devicePixelRatio:1;
@@ -44,5 +45,37 @@ function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;cons
  if(canvas.width!==cw*k||canvas.height!==ch*k){canvas.width=cw*k;canvas.height=ch*k;}
  RENDER_SCALE=k;try{ctx.setTransform(k,0,0,k,0,0);}catch(e){}ctx.imageSmoothingEnabled=false;
  if(typeof markDirty==="function")markDirty();}
+/* ===== M6 RESPONSIVE SHELL =====
+   Compact (phone/tablet) layout when the window is small (w<760 or h<560) or the primary pointer is touch. Portrait: canvas on top,
+   HUD + controls below; the canvas gets whatever height the HUD/D-pad/action bar leave
+   (measured, with safe-area padding from #wrap). Landscape: canvas left, side column right.
+   During play the reserve only ever grows (largest HUD / control heights seen), so the
+   canvas does not jump when the D-pad hides for an overlay or the aim bar appears. */
+let COMPACT=false,LANDSCAPE_UI=false,_m6Play=false,_m6HudMax=0,_m6CtlMax=0,_m6Key="";
+function _isCompact(w,h){return w>0&&h>0&&(w<760||h<560||_coarsePointer());}
+function _m6H(id){try{const e=document.getElementById(id);return(e&&e.offsetHeight>0)?e.offsetHeight:0;}catch(e){return 0;}}
+function _m6Layout(iw,ih){
+ /* innerWidth/Height grow when content overflows on mobile (page zooms out), so size from the layout viewport. */
+ try{const de=document.documentElement;if(de&&de.clientWidth>0)iw=Math.min(iw||de.clientWidth,de.clientWidth);if(de&&de.clientHeight>0)ih=Math.min(ih||de.clientHeight,de.clientHeight);}catch(e){}
+ COMPACT=_isCompact(iw,ih);LANDSCAPE_UI=COMPACT&&iw>ih;
+ const key=iw+"x"+ih;if(key!==_m6Key){_m6Key=key;_m6HudMax=0;_m6CtlMax=0;}
+ try{const b=document.body;if(b&&b.classList){b.classList.toggle("m-compact",COMPACT);b.classList.toggle("m-land",LANDSCAPE_UI);}}catch(e){}
+ if(!COMPACT)return null;
+ let pt=4,pr=4,pb=4,pl=4,gap=4;
+ try{const cs=getComputedStyle(document.getElementById("wrap"));pt=parseFloat(cs.paddingTop)||0;pr=parseFloat(cs.paddingRight)||0;pb=parseFloat(cs.paddingBottom)||0;pl=parseFloat(cs.paddingLeft)||0;gap=parseFloat(cs.rowGap)||0;}catch(e){}
+ const bord=2;
+ if(LANDSCAPE_UI)return{maxW:iw-pl-pr-bord-6-Math.max(250,Math.min(320,Math.round(iw*0.3))),maxH:ih-pt-pb-bord};
+ let hud=_m6H("hud"),ctl=0;const dp=_m6H("dpad"),ab=_m6H("actionbar"),am=_m6H("aimbar");
+ if(dp)ctl+=dp+gap;if(ab)ctl+=ab+gap;if(am&&!dp&&!ab)ctl=am+gap;
+ if(_m6Play){_m6HudMax=Math.max(_m6HudMax,hud);_m6CtlMax=Math.max(_m6CtlMax,ctl);hud=_m6HudMax;ctl=_m6CtlMax;}
+ return{maxW:iw-pl-pr-bord,maxH:ih-pt-pb-bord-(hud?hud+gap:0)-ctl};}
+/* Called from syncUI(): marks live play (log collapses to 2 lines) and refits when the mode changes. */
+function _m6SetMode(play){play=!!play;try{const b=document.body;if(b&&b.classList)b.classList.toggle("m-play",play);
+ const lg=document.getElementById("log");if(lg&&lg.classList){lg.classList.toggle("log-play",play);if(!play){lg.classList.remove("log-open");const h=document.getElementById("hud");if(h&&h.classList)h.classList.remove("log-open-host");}}}catch(e){}
+ if(play!==_m6Play){_m6Play=play;_m6HudMax=0;_m6CtlMax=0;if(COMPACT)_m6Refit();}}
+let _m6Q=false;
+function _m6Refit(){if(_m6Q)return;_m6Q=true;const f=()=>{_m6Q=false;fitCanvas();};try{requestAnimationFrame(f);}catch(e){_m6Q=false;}}
+(function _m6Observe(){try{if(typeof ResizeObserver!=="function")return;const ro=new ResizeObserver(()=>{if(COMPACT&&!LANDSCAPE_UI)_m6Refit();});
+ ["hud","dpad","actionbar","aimbar"].forEach(id=>{const e=document.getElementById(id);if(e)ro.observe(e);});}catch(e){}})();
 window.addEventListener("resize",fitCanvas);
 window.addEventListener("orientationchange",fitCanvas);

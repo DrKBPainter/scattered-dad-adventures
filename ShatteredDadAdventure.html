@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Scattered Dad Adventures</title>
 <style>
   :root{--bg:#11131a;--ink:#eef0e2;--gold:#f4c430;--red:#e0453a;--grn:#5fbf4f;--panel:#1c2030;--panel2:#232838;--border:#3a4358;--dim:#8a92a6;--blu:#7fb0e8;}
@@ -107,6 +107,42 @@
   .cf-menu .key{color:var(--gold);font-weight:bold;margin-right:4px;}
   /* ===== Clickable title / class / difficulty / end-screen options ===== */
   .ti-opt{cursor:pointer;} .ti-opt:hover{color:var(--gold);}
+  /* ===== M6 RESPONSIVE SHELL (mobile plan) =====
+     body.m-compact is set by fitCanvas() when the window is phone-sized (w<760 or h<560) or touch-first;
+     body.m-land adds the landscape side-column layout; body.m-play marks live play.
+     Desktop (no m-compact) is unchanged apart from touch-only properties. */
+  html,body{overscroll-behavior:none;}
+  body{-webkit-tap-highlight-color:transparent;}
+  canvas#screen{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+  button{touch-action:manipulation;}
+  body.m-compact{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  body.m-compact #wrap{padding:max(4px,env(safe-area-inset-top)) max(4px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));gap:4px;min-height:100vh;min-height:100dvh;}
+  body.m-compact #stage{border-width:1px;border-radius:3px;box-shadow:none;}
+  body.m-compact #hud{position:relative;padding:4px 6px;font-size:11.5px;line-height:1.35;border-top-width:1px;}
+  body.m-compact #statline{gap:3px 7px;}
+  body.m-compact .bar{width:60px;height:9px;} body.m-compact .bar.xp{width:40px;height:6px;}
+  body.m-compact .meter{width:40px;height:8px;}
+  body.m-compact #statuses{font-size:11px;min-height:16px;}
+  body.m-compact #hint{display:none;}
+  body.m-compact #log{min-height:0;margin-top:3px;font-size:11.5px;line-height:15px;}
+  body.m-compact #log.log-play{height:32px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;position:relative;padding-right:42px;}
+  body.m-compact #log.log-play::after{content:"\25B4 log";position:absolute;right:0;bottom:0;font-size:9.5px;line-height:15px;color:var(--dim);border:1px solid var(--border);border-radius:3px;padding:0 4px;background:var(--panel2);}
+  body.m-compact #log.log-play.log-open{position:absolute;left:0;right:0;bottom:0;height:auto;max-height:55vh;overflow-y:auto;display:block;z-index:70;margin:0;background:var(--panel);border-top:2px solid var(--gold);padding:6px 46px 6px 8px;box-shadow:0 -8px 24px rgba(0,0,0,.75);}
+  body.m-compact #log.log-play.log-open::after{content:"\25BE close";top:6px;bottom:auto;right:6px;}
+  body.m-compact #hud.log-open-host{padding-bottom:39px;}
+  body.m-compact #dpad{margin:0 auto;}
+  body.m-compact #actionbar{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;width:100%;max-width:100%;gap:4px;margin:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  body.m-compact #actionbar::-webkit-scrollbar{display:none;}
+  body.m-compact #actionbar button{flex:0 0 auto;min-height:40px;padding:6px 10px;font-size:11px;}
+  body.m-compact #aimbar{margin:0 auto;} body.m-compact #aimbar button{min-height:40px;}
+  body.m-compact .ov{padding:10px 12px;font-size:12.5px;}
+  body.m-compact.m-land #wrap{display:grid;grid-template-columns:auto 146px minmax(0,1fr);grid-auto-rows:min-content;align-items:start;justify-items:stretch;column-gap:6px;row-gap:4px;}
+  body.m-compact.m-land #stage{grid-column:1;grid-row:1 / span 6;justify-self:start;}
+  body.m-compact.m-land #hud,body.m-compact.m-land #aimbar{grid-column:2 / span 2;}
+  body.m-compact.m-land #dpad{grid-column:2;grid-row:2;}
+  body.m-compact.m-land #actionbar{grid-column:3;grid-row:2;flex-direction:column;flex-wrap:nowrap;overflow-x:hidden;overflow-y:auto;max-height:146px;}
+  body.m-compact.m-land #actionbar button{width:100%;padding:6px 4px;}
+  body.m-compact.m-land #hud{border-top:none;border-left:1px solid var(--border);}
 </style>
 </head>
 <body>

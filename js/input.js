@@ -56,6 +56,8 @@ elLog.addEventListener("click",(ev)=>{
   else if(a==="ascent"&&mode===State.WIN&&!game.ascentDone&&!game.ascent&&typeof startAscent==="function"){startAscent();}
   return;}
 });
+// M6 compact shell: during play the log is collapsed to its last 2 lines; tap it to expand/collapse.
+elLog.addEventListener("click",()=>{if(mode!==State.PLAY||!document.body.classList.contains("m-compact"))return;const open=!elLog.classList.contains("log-open");elLog.classList.toggle("log-open",open);const h=document.getElementById("hud");if(h)h.classList.toggle("log-open-host",open);if(open)elLog.scrollTop=elLog.scrollHeight;});
 // Skin-tone swatch/arrows on the Dad-select screen (rendered in the status line).
 elStatuses.addEventListener("click",(ev)=>{if(mode!==State.CLASS)return;const s=ev.target.closest("[data-skin]");if(!s||typeof SKIN_SWATCHES==="undefined")return;if(s.dataset.skin==="prev")skinCursor=(skinCursor+SKIN_SWATCHES.length-1)%SKIN_SWATCHES.length;else skinCursor=(skinCursor+1)%SKIN_SWATCHES.length;syncUI();});
 // On-screen action bar: Scan, Zoom +/-, and Menu(save+quit) — same handlers as their keys.
