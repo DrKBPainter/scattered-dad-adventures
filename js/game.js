@@ -334,7 +334,10 @@ function continueClickPath(){
  const[dx,dy]=game.clickPath.shift();
  const lastHp=game.hp;
  const badBefore=badStatusCount();
+ const _inView=e=>!!(game.vis&&game.vis[e.y]&&game.vis[e.y][e.x]);const seenBefore=game.enemies.filter(_inView);
  tryMove(dx,dy);
+ // M7: auto-travel also halts when an enemy that was not visible before this step comes into view.
+ if(game&&game.clickPath&&game.clickPath.length&&mode===State.PLAY&&game.hp>=lastHp&&badStatusCount()<=badBefore&&game.enemies.some(e=>_inView(e)&&!seenBefore.includes(e))){log("Auto-travel halted. Something has entered the field of view. He stops, squints, and assumes a ready stance.","dim");game.clickPath=[];return;}
  // Auto-travel halts the moment anything goes wrong: HP loss OR any new negative status
  // (traps, thirst, the knee, the back, blindness — the universe's full catalogue of interruptions).
  if(game&&(game.hp<lastHp||badStatusCount()>badBefore)){if(game.clickPath.length)log("Auto-travel halted. Something went wrong, as it does. He proceeds on foot, alert and mildly betrayed.","dim");game.clickPath=[];}}

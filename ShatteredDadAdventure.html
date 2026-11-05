@@ -27,6 +27,9 @@
   .st-tip{display:none;position:absolute;left:0;bottom:130%;z-index:50;width:200px;padding:6px 8px;background:#0c0f18;border:1px solid var(--border);border-radius:4px;box-shadow:0 6px 20px rgba(0,0,0,.8);color:var(--ink);font-weight:normal;font-size:11.5px;line-height:1.4;letter-spacing:0;white-space:normal;pointer-events:none;}
   .st-tip b{color:var(--gold);}
   .st-chip:hover .st-tip{display:block;}
+  .st-chip.st-open .st-tip{display:block;} /* M7: tap-to-open tooltip */
+  #actionbar .m-only{display:none;} body.m-compact #actionbar .m-only{display:block;} /* M7: D-pad toggle is compact-only */
+  body.m-compact.m-land.m-nopad #actionbar{grid-column:2 / span 2;} /* M7: landscape without D-pad: buttons use the whole side column */
   #log{margin-top:5px;min-height:74px;font-size:12.5px;}
   #log .l-gold{color:var(--gold);} #log .l-red{color:#ff8a7a;} #log .l-grn{color:var(--grn);} #log .l-dim{color:var(--dim);} #log .l-blu{color:var(--blu);}
   #hint{color:var(--dim);font-size:11.5px;text-align:center;max-width:720px;}
@@ -186,11 +189,13 @@
     <button type="button" data-act="codex" title="Open the Codex (J)">CODEX</button>
     <button type="button" data-act="grave" title="View the Graveyard (G)">GRAVEYARD</button>
     <button type="button" data-act="instr" title="How to play (H)">HELP</button>
+    <button type="button" id="btnPad" class="m-only" data-act="pad" title="Show or hide the on-screen D-pad">D-PAD</button>
     <button type="button" id="btnMute" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
     <button type="button" data-act="quit" title="Save &amp; quit to main menu (Q)">MENU</button>
   </div>
   <div id="aimbar" aria-label="Aim controls" style="display:none">
     <span id="aimlabel">Aiming&hellip;</span>
+    <button type="button" id="aimGo" data-aim="confirm" title="Confirm the target" style="display:none">THROW</button>
     <button type="button" data-aim="cancel" title="Cancel aiming (Esc)">CANCEL</button>
   </div>
   <div id="hint">arrows/WASD or on-screen D-pad move &middot; Space/center WAIT &middot; click=inspect/move &middot; on-screen SCAN / ZOOM / THROW / PLACE / MENU buttons &middot; after THROW/PLACE click a tile to aim (CANCEL aborts) &middot; I inventory &middot; K Book of Dadvice &middot; X scan &middot; T throw &middot; P place trap &middot; M map &middot; H help &middot; B bestiary &middot; J codex</div>

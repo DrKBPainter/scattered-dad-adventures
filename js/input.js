@@ -4,11 +4,13 @@
    =============================================== */
 
 function tileFromEvent(ev){const r=canvas.getBoundingClientRect();const sx=(VIEW_W*TILE)/r.width,sy=(VIEW_H*TILE)/r.height;/* M5: logical px (backing store is RENDER_SCALE x larger) */const cxp=(ev.clientX-r.left)*sx,cyp=(ev.clientY-r.top)*sy;return {x:camX+Math.floor(cxp/TILE),y:camY+Math.floor(cyp/TILE)};}
-canvas.addEventListener("click",(ev)=>{if(mode!==State.PLAY)return;
+/* M7: canvasTap() is the single tap/click action, fed by the Pointer Events layer below (mouse, touch and pen).
+   touchy=true (touch/pen): aiming taps set a target that the aim bar CONFIRM button fires; tapping your own tile waits. */
+function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  // Mouse aiming (handled BEFORE the overlay guard). Click a tile to set throw direction / trap tile.
  // Esc or the on-screen CANCEL button aborts; keyboard aiming path stays intact.
- if(aiming){const t=tileFromEvent(ev);const dx=Math.sign(t.x-game.px),dy=Math.sign(t.y-game.py);if(dx===0&&dy===0){log("Aim away from yourself — click a tile in the throw direction.","dim");return;}clearMouseInspect();doThrow(dx,dy);return;}
- if(placing){const t=tileFromEvent(ev);const dx=t.x-game.px,dy=t.y-game.py;if(Math.max(Math.abs(dx),Math.abs(dy))!==1){log("Traps go on an adjacent tile — click a square right next to you.","dim");return;}clearMouseInspect();placeTrap(dx,dy);return;}
+ if(aiming){const t=tileFromEvent(ev);const dx=Math.sign(t.x-game.px),dy=Math.sign(t.y-game.py);if(dx===0&&dy===0){log("Aim away from yourself — click a tile in the throw direction.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();doThrow(dx,dy);return;}
+ if(placing){const t=tileFromEvent(ev);const dx=t.x-game.px,dy=t.y-game.py;if(Math.max(Math.abs(dx),Math.abs(dy))!==1){log("Traps go on an adjacent tile — click a square right next to you.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();placeTrap(dx,dy);return;}
  if(pendingConfirm||pendingMenu||ovInv||ovDad||ovBest||ovInstr||ovMap)return;const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;
  // Shift+click directs the active companion: shift+click an enemy = attack it, shift+click a tile = move there.
  if(ev.shiftKey&&game&&game.ally&&game.ally.following){game.clickPath=[];orderAlly(x,y);return;}
@@ -17,6 +19,7 @@ canvas.addEventListener("click",(ev)=>{if(mode!==State.PLAY)return;
  const _dr=doorAt(x,y);if(_dr&&_dr.open){showInspect(x,y);return;}
  // Adjacency = Chebyshev distance 1, so all 8 neighbours (orthogonal AND diagonal) route to tryMove.
  // tryMove attacks an occupying enemy or steps into an empty tile — this gives click-to-attack on diagonals.
+ if(touchy&&x===game.px&&y===game.py){clearMouseInspect();tryMove(0,0);return;}// M7: tap your own tile = wait (or take the stairs you stand on)
  const _dxa=Math.abs(x-game.px),_dya=Math.abs(y-game.py);const adj=Math.max(_dxa,_dya)===1;
  if(adj){clearMouseInspect();tryMove(Math.sign(x-game.px),Math.sign(y-game.py));}
  else if(game.vis&&game.vis[y]&&game.vis[y][x]){
@@ -24,7 +27,43 @@ canvas.addEventListener("click",(ev)=>{if(mode!==State.PLAY)return;
   const path=bfsPath(game.px,game.py,x,y);
   if(path&&path.length){game.clickPath=path;continueClickPath();}
   else{showInspect(x,y);}
- }else{showInspect(x,y);}});
+ }else{showInspect(x,y);}}
+/* ===== M7 touch input layer =====
+   Pointer Events give mouse, touch and pen one code path on the canvas.
+   Mouse: left button = canvasTap (same as the old click). Right button stays on contextmenu (inspect).
+   Touch/pen: tap = canvasTap; swipe (>=24 CSS px, <0.9 s) = one 8-direction step; press and hold (480 ms, no drag) = inspect.
+   A second finger cancels the gesture. */
+const M7_SWIPE=24,M7_SLOP=10,M7_LONG=480;let _m7P=null;
+function _m7Busy(){return !!(pendingConfirm||pendingMenu||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen);}
+function _m7Dir(dx,dy){const o=Math.round(Math.atan2(dy,dx)/(Math.PI/4));const D=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];return D[(o+8)%8];}
+function _m7SetAim(dx,dy,tx,ty){aimTgt={dx:dx,dy:dy,x:tx,y:ty};clearMouseInspect();if(typeof markDirty==="function")markDirty();syncAimBar();}
+function _m7Swipe(dx,dy){if(mode!==State.PLAY||_m7Busy()||!game)return;
+ if(aiming||placing){_m7SetAim(dx,dy,game.px+dx,game.py+dy);return;}
+ game.clickPath=[];clearMouseInspect();tryMove(dx,dy);}
+function _m7End(){const p=_m7P;if(p&&p.timer)clearTimeout(p.timer);_m7P=null;}
+canvas.addEventListener("pointerdown",(ev)=>{
+ if(!ev.isPrimary){_m7End();return;}
+ if(ev.pointerType==="mouse"&&ev.button!==0){_m7End();return;}
+ _m7End();const p={id:ev.pointerId,type:ev.pointerType,x0:ev.clientX,y0:ev.clientY,t0:Date.now(),moved:false,long:false,timer:null};_m7P=p;
+ try{canvas.setPointerCapture(ev.pointerId);}catch(e){}
+ if(ev.pointerType!=="mouse"){p.timer=setTimeout(()=>{p.timer=null;if(_m7P!==p||p.moved)return;p.long=true;
+  if(mode===State.PLAY&&!_m7Busy()&&game){const t=tileFromEvent({clientX:p.x0,clientY:p.y0});if(t.x>=0&&t.y>=0&&t.x<MAP_W&&t.y<MAP_H){inspectKb=false;showInspect(t.x,t.y);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}}},M7_LONG);}});
+canvas.addEventListener("pointermove",(ev)=>{const p=_m7P;if(!p||ev.pointerId!==p.id||p.moved)return;
+ if(Math.hypot(ev.clientX-p.x0,ev.clientY-p.y0)>M7_SLOP){p.moved=true;if(p.timer){clearTimeout(p.timer);p.timer=null;}}});
+canvas.addEventListener("pointerup",(ev)=>{const p=_m7P;if(!p||ev.pointerId!==p.id)return;_m7End();if(p.long)return;
+ if(p.type==="mouse"){canvasTap(ev,false);return;}
+ const dx=ev.clientX-p.x0,dy=ev.clientY-p.y0,d=Math.hypot(dx,dy);
+ if(d>=M7_SWIPE&&Date.now()-p.t0<900){const v=_m7Dir(dx,dy);_m7Swipe(v[0],v[1]);return;}
+ if(d<=M7_SLOP*2)canvasTap({clientX:p.x0,clientY:p.y0,shiftKey:false},true);});
+canvas.addEventListener("pointercancel",()=>{_m7End();});
+// M7: status chips show their tooltip on tap (touch has no :hover). Tap again, or anywhere else, to close.
+function _m7CloseTips(keep){try{document.querySelectorAll(".st-chip.st-open").forEach(c=>{if(c!==keep)c.classList.remove("st-open");});}catch(e){}}
+elStatuses.addEventListener("click",(ev)=>{const chip=ev.target.closest(".st-chip");if(!chip)return;const open=!chip.classList.contains("st-open");_m7CloseTips(chip);chip.classList.toggle("st-open",open);if(!open)return;
+ const tip=chip.querySelector(".st-tip");if(!tip)return;tip.style.left="";tip.style.top="";tip.style.bottom="";
+ const vw=document.documentElement.clientWidth||window.innerWidth;let r=tip.getBoundingClientRect();
+ if(r.right>vw-4)tip.style.left=(-(r.right-(vw-4)))+"px";r=tip.getBoundingClientRect();if(r.left<4)tip.style.left=((parseFloat(tip.style.left)||0)+(4-r.left))+"px";
+ if(r.top<4){tip.style.bottom="auto";tip.style.top="130%";}});
+document.addEventListener("pointerdown",(ev)=>{const t=ev.target;if(!(t&&t.closest&&t.closest(".st-chip")))_m7CloseTips(null);},true);
 canvas.addEventListener("contextmenu",(ev)=>{ev.preventDefault();if(mode===State.PLAY){const {x,y}=tileFromEvent(ev);showInspect(x,y);}});
 // click inventory / dadism rows
 oInv.addEventListener("click",(ev)=>{
@@ -68,13 +107,14 @@ if(oAct)oAct.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-
  // Mute is a global toggle (like its key) — handle it BEFORE the play-mode guard so it always works when the bar is visible.
  if(btn.dataset.act==="mute"){if(typeof sfxToggleMute==="function"){sfxToggleMute();syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". Click SOUND or press [U] to toggle.","dim");}return;}
  if(mode!==State.PLAY||pendingConfirm||pendingMenu||aiming||placing||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen)return;
- const a=btn.dataset.act;if(a==="scan")scanArea();else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);});
+ const a=btn.dataset.act;if(a==="scan")scanArea();else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);});
 // Floating Close button (mouse-only): dismisses any open overlay/shop, same as Esc.
 const oClose=document.getElementById("ovClose");
 if(oClose)oClose.addEventListener("click",()=>{closeOverlays();if(inspectOn&&typeof toggleInspect==="function")toggleInspect();syncUI();});
 // Aim/place CANCEL bar: clears aiming/placing (same effect as pressing Esc) and refreshes the HUD.
 const oAim=document.getElementById("aimbar");
 if(oAim)oAim.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-aim]");if(!btn)return;
+ if(btn.dataset.aim==="confirm"){const t=aimTgt;aimTgt=null;if(t){clearMouseInspect();if(aiming)doThrow(t.dx,t.dy);else if(placing)placeTrap(t.dx,t.dy);}syncUI();return;}// M7: fire the tapped target
  if(aiming){aiming=false;throwRef=null;log("Throw cancelled.","dim");}
  else if(placing){placing=false;placeRef=null;log("Placement cancelled.","dim");}
  syncUI();});
