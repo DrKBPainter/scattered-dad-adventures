@@ -51,6 +51,9 @@ tools/tools_export_data.js   ← regenerates data/*.txt from js/data.js
 tools/tools_log_bug.js       ← CLI: append a bug entry to bugs/BUG_LOG.md
 tools/tools_scan_bugs.js     ← scan js/*.js for TODO/FIXME/HACK/BUG; auto-log new ones
 bugs/BUG_LOG.md              ← persistent bug registry
+sw.js                        ← offline service worker (M11); BUILD line stamped by tools/tools_sw_stamp.js
+tools/tools_sw_stamp.js      ← re-stamp sw.js after changing ANY cached file (`--check` to verify)
+js/durable.js                ← M12: install prompt/banner, iOS Add-to-Home-Screen sheet, save on background, Save Backup export/import (openSaveBackup()), audio unlock
 ```
 
 ---
@@ -156,6 +159,10 @@ Selection within biome is **uniform random** — equal weight per creature. To m
 ## Protected Mobile Screens (locked 2026-11-05)
 
 `js/dadselect.js` (Choose Your Dad deck), `js/titlecover.js` (title cover), and `js/bestcards.js` (Bestiary comic cards), with their CSS in `ShatteredDadAdventure.html`, are user-approved designs. Do not replace, restyle, or remove them. Bug fixes and wiring them into new systems are fine. Details: "Protected user-designed screens" in `docs/MOBILE_PWA_PLAN.md`.
+
+## Offline Cache (service worker, 2026-11-06)
+
+`sw.js` caches the game for offline play. After changing any file in its `ASSETS` list (the HTML, any `js/*.js`, icons, manifest), or adding a new file the game loads (add it to `ASSETS`), run `node tools/tools_sw_stamp.js` before publishing. If you skip this, installed players keep the old version. `node tools/tools_sw_stamp.js --check` reports a stale stamp.
 
 ## What NOT to Do
 

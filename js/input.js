@@ -87,6 +87,7 @@ function doTitleAction(a){
   else if(a==="help"){closeOverlays();ovInstr=true;buildInstr();syncOverlays();}
   else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
   else if(a==="grave"){closeOverlays();ovGrave=true;buildGraveyard();syncOverlays();}
+  else if(a==="backup"){if(typeof openSaveBackup==="function")openSaveBackup();}
 }
 // Title / class / difficulty / end-screen options: click the same rows the keys trigger.
 elLog.addEventListener("click",(ev)=>{
@@ -113,6 +114,7 @@ function barAction(a){
  if(a==="mute"){if(typeof sfxToggleMute==="function"){sfxToggleMute();syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". Click SOUND or press [U] to toggle.","dim");}return;}
  if(mode!==State.PLAY||pendingConfirm||pendingMenu||aiming||placing||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen)return;
  if(a==="more"){setMoreOpen(!_m8More);return;}
+ if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
  if(a!=="pad")setMoreOpen(false);
  if(a==="wait"){if(game)game.clickPath=[];clearMouseInspect();tryMove(0,0);return;}
  if(a==="scan")scanArea();else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);}
