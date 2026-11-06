@@ -1,0 +1,161 @@
+From 71c6858d17bd8f4c99ea2ecf65ccb328cfa3aba8 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 22:19:33 +0000
+Subject: [PATCH] M6: responsive mobile shell (compact HUD, 2-line
+ tap-to-expand log, safe areas, touch gesture guards, landscape side column)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013fAi4XXR1KZfRW3FWX2eAo
+---
+ ShatteredDadAdventure.html | 38 +++++++++++++++++++++++++++++++++++++-
+ docs/MOBILE_PWA_PLAN.md    |  1 +
+ js/config.js               | 35 ++++++++++++++++++++++++++++++++++-
+ js/input.js                |  2 ++
+ js/ui.js                   |  1 +
+ 5 files changed, 75 insertions(+), 2 deletions(-)
+
+diff --git a/ShatteredDadAdventure.html b/ShatteredDadAdventure.html
+index 2f953b9..473a2a8 100644
+--- a/ShatteredDadAdventure.html
++++ b/ShatteredDadAdventure.html
+@@ -2,7 +2,7 @@
+ <html lang="en">
+ <head>
+ <meta charset="UTF-8">
+-<meta name="viewport" content="width=device-width, initial-scale=1.0">
++<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+ <title>Scattered Dad Adventures</title>
+ <style>
+   :root{--bg:#11131a;--ink:#eef0e2;--gold:#f4c430;--red:#e0453a;--grn:#5fbf4f;--panel:#1c2030;--panel2:#232838;--border:#3a4358;--dim:#8a92a6;--blu:#7fb0e8;}
+@@ -107,6 +107,42 @@
+   .cf-menu .key{color:var(--gold);font-weight:bold;margin-right:4px;}
+   /* ===== Clickable title / class / difficulty / end-screen options ===== */
+   .ti-opt{cursor:pointer;} .ti-opt:hover{color:var(--gold);}
++  /* ===== M6 RESPONSIVE SHELL (mobile plan) =====
++     body.m-compact is set by fitCanvas() when the window is phone-sized (w<760 or h<560) or touch-first;
++     body.m-land adds the landscape side-column layout; body.m-play marks live play.
++     Desktop (no m-compact) is unchanged apart from touch-only properties. */
++  html,body{overscroll-behavior:none;}
++  body{-webkit-tap-highlight-color:transparent;}
++  canvas#screen{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
++  button{touch-action:manipulation;}
++  body.m-compact{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
++  body.m-compact #wrap{padding:max(4px,env(safe-area-inset-top)) max(4px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));gap:4px;min-height:100vh;min-height:100dvh;}
++  body.m-compact #stage{border-width:1px;border-radius:3px;box-shadow:none;}
++  body.m-compact #hud{position:relative;padding:4px 6px;font-size:11.5px;line-height:1.35;border-top-width:1px;}
++  body.m-compact #statline{gap:3px 7px;}
++  body.m-compact .bar{width:60px;height:9px;} body.m-compact .bar.xp{width:40px;height:6px;}
++  body.m-compact .meter{width:40px;height:8px;}
++  body.m-compact #statuses{font-size:11px;min-height:16px;}
++  body.m-compact #hint{display:none;}
++  body.m-compact #log{min-height:0;margin-top:3px;font-size:11.5px;line-height:15px;}
++  body.m-compact #log.log-play{height:32px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;position:relative;padding-right:42px;}
++  body.m-compact #log.log-play::after{content:"\25B4 log";position:absolute;right:0;bottom:0;font-size:9.5px;line-height:15px;color:var(--dim);border:1px solid var(--border);border-radius:3px;padding:0 4px;background:var(--panel2);}
++  body.m-compact #log.log-play.log-open{position:absolute;left:0;right:0;bottom:0;height:auto;max-height:55vh;overflow-y:auto;display:block;z-index:70;margin:0;background:var(--panel);border-top:2px solid var(--gold);padding:6px 46px 6px 8px;box-shadow:0 -8px 24px rgba(0,0,0,.75);}
++  body.m-compact #log.log-play.log-open::after{content:"\25BE close";top:6px;bottom:auto;right:6px;}
++  body.m-compact #hud.log-open-host{padding-bottom:39px;}
++  body.m-compact #dpad{margin:0 auto;}
++  body.m-compact #actionbar{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;width:100%;max-width:100%;gap:4px;margin:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
++  body.m-compact #actionbar::-webkit-scrollbar{display:none;}
++  body.m-compact #actionbar button{flex:0 0 auto;min-height:40px;padding:6px 10px;font-size:11px;}
++  body.m-compact #aimbar{margin:0 auto;} body.m-compact #aimbar button{min-height:40px;}
++  body.m-compact .ov{padding:10px 12px;font-size:12.5px;}
++  body.m-compact.m-land #wrap{display:grid;grid-template-columns:auto 146px minmax(0,1fr);grid-auto-rows:min-content;align-items:start;justify-items:stretch;column-gap:6px;row-gap:4px;}
++  body.m-compact.m-land #stage{grid-column:1;grid-row:1 / span 6;justify-self:start;}
++  body.m-compact.m-land #hud,body.m-compact.m-land #aimbar{grid-column:2 / span 2;}
++  body.m-compact.m-land #dpad{grid-column:2;grid-row:2;}
++  body.m-compact.m-land #actionbar{grid-column:3;grid-row:2;flex-direction:column;flex-wrap:nowrap;overflow-x:hidden;overflow-y:auto;max-height:146px;}
++  body.m-compact.m-land #actionbar button{width:100%;padding:6px 4px;}
++  body.m-compact.m-land #hud{border-top:none;border-left:1px solid var(--border);}
+ </style>
+ </head>
+ <body>
+diff --git a/docs/MOBILE_PWA_PLAN.md b/docs/MOBILE_PWA_PLAN.md
+index 7be28cc..7ecef12 100644
+--- a/docs/MOBILE_PWA_PLAN.md
++++ b/docs/MOBILE_PWA_PLAN.md
+@@ -126,3 +126,4 @@ Weekly scheduled run (Sundays) appends one entry: date, chunk(s) attempted, stat
+ | 2026-11-04 | M1 Source control | done | User pushed commit aefa5d3 to DrKBPainter/shattered-dad-adventures (main); verified from cloud clone: all top-level files, 8 js files, index.html present. | M2: user to enable Pages (Settings > Pages > main / root). Claude GitHub App still needed for scheduled-task pushes. |
+ | 2026-11-04 | M2 Deploy current build | done | User enabled Pages (main, root) and confirmed the game loads; repo renamed to DrKBPainter/scattered-dad-adventures; Pages URL https://drkbpainter.github.io/scattered-dad-adventures/ returns HTTP 200 from the cloud. Claude GitHub App installed; push access confirmed from the cloud (git push --dry-run succeeded). index.html redirects to ShatteredDadAdventure.html instead of a rename, so the desktop file name is unchanged. | Next chunk: M5. In-game rename to "Scattered Dad Adventures" is a separate pending decision (not started). Stray private duplicate repo DrKBPainter/shattered-dad-adventure exists; do not push to it. |
+ | 2026-11-04 (weekly run) | M5 Dynamic viewport + HiDPI | done (local; push blocked) | `js/config.js`: VIEW_W/VIEW_H are now `let`, set by `pickViewport()` inside `fitCanvas()` (desktop/landscape 15x10, portrait phone 9x13, portrait tablet 11x15, touch-tablet landscape 17x12, `?view=WxH` test override); canvas backing store = integer RENDER_SCALE (1-4, from CSS scale x devicePixelRatio) with matching `ctx.setTransform`, so draw code stays in logical px; minimum CSS scale lowered 1 -> 0.5 for small phones; `orientationchange` listener. `js/render.js`: drawFrame re-applies the transform each frame. `js/input.js`: tileFromEvent maps clicks in logical px. Audit: VIEW_W/VIEW_H/CW/CH used only in config.js, render.js (drawFrame, drawMenuBackdrop, class portraits, drawWorld) and input.js. Verified: `node --check` all 8 js; harness one class per run: 7/7 clears (grill, diy, tech, gym, tactical, sports, yard); Chromium/Playwright (cloud): desktop 1280x800 keeps 15x10 and identical CSS size, sampled pixels identical to the old build on title and play screens (0.000% diff), class screen 1.5% diff confined to the portrait frame stroke (now crisper at 2x; visually checked); iPhone 13 emulation 9x13 at 4x backing, camera keeps player in view, tap on adjacent tile moves to the correct tile; rotate to 844x390 -> 15x10 and back -> 9x13; sda_save_v4 save + continueRun across rotation OK; iPad portrait 11x15, landscape 17x12; zoom backing capped at 4x; idle loop 2 frames/2 s; no page errors. | Push to GitHub BLOCKED: no add_repo tool in this run, cloud git proxy refuses the repo (not in session's authorized repos) and device VM has no GitHub credentials. Changes copied to the project folder only; next run's Step 0c sync will commit them. Landscape phone canvas is small (255x170 CSS px) because fitCanvas still reserves 220 px for the HUD: M6 responsive shell fixes this. |
++| 2026-11-04 (weekly run 2) | M6 Responsive shell | done (local; push blocked) | `ShatteredDadAdventure.html`: viewport-fit=cover; new M6 CSS block. Global (touch-only, no desktop visual change): overscroll-behavior none (no pull-to-refresh), touch-action none on canvas, touch-action manipulation on buttons (no double-tap zoom), no tap highlight / long-press callout on canvas. Compact mode (`body.m-compact`, set by fitCanvas when w<760 or h<560 or coarse pointer): safe-area padding via env(safe-area-inset-*), 1px stage border, smaller HUD/bars, hint hidden, no text selection/callouts, action bar becomes one horizontally scrolling row with 40px buttons; during play the log collapses to its last 2 lines with a tap-to-expand sheet (absolute overlay, HUD height unchanged). Landscape compact (`m-land`): canvas left, side column with HUD on top and D-pad + vertically scrolling action buttons side by side. `js/config.js`: `_m6Layout()` measures safe-area padding and the HUD/D-pad/action bar heights to size the canvas (layout-viewport clientWidth/Height, because innerWidth is inflated by overflow at boot on mobile); during play the reserved height only grows, so the canvas does not jump when an overlay hides the D-pad or the aim bar appears; ResizeObserver refits. `js/ui.js`: syncUI calls `_m6SetMode()` (m-play class, log-play). `js/input.js`: log tap toggle. Verified: `node --check` all 8 js; harness one class per call: 7/7 clears; Chromium/Playwright: desktop 1280x800 title + play screenshots pixel-identical to the M5 build (0 px diff) with identical element boxes; iPhone 13, iPhone SE, Pixel 5, Galaxy S9+, iPad portrait/landscape, iPhone 13 landscape: no horizontal or vertical page overflow on title or play; canvas box unchanged when log expands, inventory opens, or aim bar replaces the D-pad; tap on an adjacent tile moves the player there; rotate portrait -> landscape -> portrait reflows (9x13 -> 15x10 -> 9x13) with no overflow; sda_save_v4 save + reload + continueRun restores position; idle 2 s: 2 frames drawn / 118 skipped; no page errors. | Push to GitHub BLOCKED again: no add_repo tool, cloud git proxy returns 403 for the repo, gh token invalid. Commit made in the cloud clone only; changed files copied to the project folder for the user to commit/push. Small phones are cramped in portrait (iPhone SE canvas 145x210; iPhone 13 230x332) because the 9-button D-pad + full action bar take ~190 px: M7 (swipe, optional D-pad) and M8 (4-5 primary buttons) reclaim that space. Status-chip tooltips are still hover-only (M7). |
+diff --git a/js/config.js b/js/config.js
+index 124679f..c659e80 100644
+--- a/js/config.js
++++ b/js/config.js
+@@ -36,7 +36,8 @@ function pickViewport(w,h){const o=_viewOverride();if(o)return o;
+  if(_coarsePointer()&&Math.min(w,h)>=600)return[17,12];
+  return[15,10];}
+ function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const v=pickViewport(iw,ih);VIEW_W=v[0];VIEW_H=v[1];
+- const cw=VIEW_W*TILE,ch=VIEW_H*TILE;const maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
++ const cw=VIEW_W*TILE,ch=VIEW_H*TILE;let maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
++ const _l=_m6Layout(iw,ih);if(_l){maxW=Math.max(60,_l.maxW);maxH=Math.max(60,_l.maxH);}
+  const s=Math.max(0.5,Math.min(maxW/cw,maxH/ch));const zm=ZOOM_STEPS[zoomStep]||1;
+  canvas.style.width=Math.round(cw*s*zm)+"px";canvas.style.height=Math.round(ch*s*zm)+"px";
+  const dpr=(typeof window.devicePixelRatio==="number"&&window.devicePixelRatio>0)?window.devicePixelRatio:1;
+@@ -44,5 +45,37 @@ function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;cons
+  if(canvas.width!==cw*k||canvas.height!==ch*k){canvas.width=cw*k;canvas.height=ch*k;}
+  RENDER_SCALE=k;try{ctx.setTransform(k,0,0,k,0,0);}catch(e){}ctx.imageSmoothingEnabled=false;
+  if(typeof markDirty==="function")markDirty();}
++/* ===== M6 RESPONSIVE SHELL =====
++   Compact (phone/tablet) layout when the window is small (w<760 or h<560) or the primary pointer is touch. Portrait: canvas on top,
++   HUD + controls below; the canvas gets whatever height the HUD/D-pad/action bar leave
++   (measured, with safe-area padding from #wrap). Landscape: canvas left, side column right.
++   During play the reserve only ever grows (largest HUD / control heights seen), so the
++   canvas does not jump when the D-pad hides for an overlay or the aim bar appears. */
++let COMPACT=false,LANDSCAPE_UI=false,_m6Play=false,_m6HudMax=0,_m6CtlMax=0,_m6Key="";
++function _isCompact(w,h){return w>0&&h>0&&(w<760||h<560||_coarsePointer());}
++function _m6H(id){try{const e=document.getElementById(id);return(e&&e.offsetHeight>0)?e.offsetHeight:0;}catch(e){return 0;}}
++function _m6Layout(iw,ih){
++ /* innerWidth/Height grow when content overflows on mobile (page zooms out), so size from the layout viewport. */
++ try{const de=document.documentElement;if(de&&de.clientWidth>0)iw=Math.min(iw||de.clientWidth,de.clientWidth);if(de&&de.clientHeight>0)ih=Math.min(ih||de.clientHeight,de.clientHeight);}catch(e){}
++ COMPACT=_isCompact(iw,ih);LANDSCAPE_UI=COMPACT&&iw>ih;
++ const key=iw+"x"+ih;if(key!==_m6Key){_m6Key=key;_m6HudMax=0;_m6CtlMax=0;}
++ try{const b=document.body;if(b&&b.classList){b.classList.toggle("m-compact",COMPACT);b.classList.toggle("m-land",LANDSCAPE_UI);}}catch(e){}
++ if(!COMPACT)return null;
++ let pt=4,pr=4,pb=4,pl=4,gap=4;
++ try{const cs=getComputedStyle(document.getElementById("wrap"));pt=parseFloat(cs.paddingTop)||0;pr=parseFloat(cs.paddingRight)||0;pb=parseFloat(cs.paddingBottom)||0;pl=parseFloat(cs.paddingLeft)||0;gap=parseFloat(cs.rowGap)||0;}catch(e){}
++ const bord=2;
++ if(LANDSCAPE_UI)return{maxW:iw-pl-pr-bord-6-Math.max(250,Math.min(320,Math.round(iw*0.3))),maxH:ih-pt-pb-bord};
++ let hud=_m6H("hud"),ctl=0;const dp=_m6H("dpad"),ab=_m6H("actionbar"),am=_m6H("aimbar");
++ if(dp)ctl+=dp+gap;if(ab)ctl+=ab+gap;if(am&&!dp&&!ab)ctl=am+gap;
++ if(_m6Play){_m6HudMax=Math.max(_m6HudMax,hud);_m6CtlMax=Math.max(_m6CtlMax,ctl);hud=_m6HudMax;ctl=_m6CtlMax;}
++ return{maxW:iw-pl-pr-bord,maxH:ih-pt-pb-bord-(hud?hud+gap:0)-ctl};}
++/* Called from syncUI(): marks live play (log collapses to 2 lines) and refits when the mode changes. */
++function _m6SetMode(play){play=!!play;try{const b=document.body;if(b&&b.classList)b.classList.toggle("m-play",play);
++ const lg=document.getElementById("log");if(lg&&lg.classList){lg.classList.toggle("log-play",play);if(!play){lg.classList.remove("log-open");const h=document.getElementById("hud");if(h&&h.classList)h.classList.remove("log-open-host");}}}catch(e){}
++ if(play!==_m6Play){_m6Play=play;_m6HudMax=0;_m6CtlMax=0;if(COMPACT)_m6Refit();}}
++let _m6Q=false;
++function _m6Refit(){if(_m6Q)return;_m6Q=true;const f=()=>{_m6Q=false;fitCanvas();};try{requestAnimationFrame(f);}catch(e){_m6Q=false;}}
++(function _m6Observe(){try{if(typeof ResizeObserver!=="function")return;const ro=new ResizeObserver(()=>{if(COMPACT&&!LANDSCAPE_UI)_m6Refit();});
++ ["hud","dpad","actionbar","aimbar"].forEach(id=>{const e=document.getElementById(id);if(e)ro.observe(e);});}catch(e){}})();
+ window.addEventListener("resize",fitCanvas);
+ window.addEventListener("orientationchange",fitCanvas);
+diff --git a/js/input.js b/js/input.js
+index 7b0c299..8696b89 100644
+--- a/js/input.js
++++ b/js/input.js
+@@ -56,6 +56,8 @@ elLog.addEventListener("click",(ev)=>{
+   else if(a==="ascent"&&mode===State.WIN&&!game.ascentDone&&!game.ascent&&typeof startAscent==="function"){startAscent();}
+   return;}
+ });
++// M6 compact shell: during play the log is collapsed to its last 2 lines; tap it to expand/collapse.
++elLog.addEventListener("click",()=>{if(mode!==State.PLAY||!document.body.classList.contains("m-compact"))return;const open=!elLog.classList.contains("log-open");elLog.classList.toggle("log-open",open);const h=document.getElementById("hud");if(h)h.classList.toggle("log-open-host",open);if(open)elLog.scrollTop=elLog.scrollHeight;});
+ // Skin-tone swatch/arrows on the Dad-select screen (rendered in the status line).
+ elStatuses.addEventListener("click",(ev)=>{if(mode!==State.CLASS)return;const s=ev.target.closest("[data-skin]");if(!s||typeof SKIN_SWATCHES==="undefined")return;if(s.dataset.skin==="prev")skinCursor=(skinCursor+SKIN_SWATCHES.length-1)%SKIN_SWATCHES.length;else skinCursor=(skinCursor+1)%SKIN_SWATCHES.length;syncUI();});
+ // On-screen action bar: Scan, Zoom +/-, and Menu(save+quit) — same handlers as their keys.
+diff --git a/js/ui.js b/js/ui.js
+index bd75ff3..1f059db 100644
+--- a/js/ui.js
++++ b/js/ui.js
+@@ -10,6 +10,7 @@ function meter(cls,v){return '<span class="meter '+cls+'"><span style="width:'+M
+ function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+ function statusChip(id){const S=STATUSES[id];if(!S)return "";const shakes=(id==="thirst"&&game.statuses[id]&&game.statuses[id].craving>=6);const nm=esc(S.name)+(shakes?" (the shakes)":"");const tip=esc((S.name+(shakes?" (the shakes)":""))+" — "+S.desc);return '<span class="st-chip '+(S.bad?"st-bad":"st-good")+'" title="'+tip+'">'+esc(S.icon||S.name)+'<span class="st-tip"><b>'+nm+'</b><br>'+esc(S.desc)+'</span></span>';}
+ function syncUI(){
++ if(typeof _m6SetMode==="function")_m6SetMode(mode===State.PLAY);
+  if(mode===State.TITLE){const n=Object.keys(discovered).length;const gn=loadGraveyard().length;const dRec=todaysDailyRecord();const dStat=dRec?('best: <b class="l-gold">'+(dRec.outcome==="win"?"WON":"Floor "+dRec.depth)+'</b> as '+dRec.clsName+' ('+dRec.attempts+' attempt'+(dRec.attempts===1?"":"s")+')'):'not yet attempted';elStat.innerHTML='<b style="font-size:16px">SCATTERED DAD ADVENTURES</b> <span class="dim">v'+GAME_VERSION+'</span>';elStatuses.innerHTML="";elLog.innerHTML='<div class="ti-opt" data-title="new">[ENTER] New Adventure</div>'+(hasSave()?'<div class="ti-opt" data-title="continue">[C] Continue Run</div>':'')+'<div class="ti-opt" data-title="daily">[D] Daily Challenge ('+dailyDateStr()+') &middot; <span class="l-dim">'+dStat+'</span></div>'+'<div><span class="ti-opt" data-title="help">[H] How To Play</span> &nbsp; <span class="ti-opt" data-title="best">[B] Discovered Creatures ('+n+'/'+(CREATURES.length+BOSSES.length)+')</span> &nbsp; <span class="ti-opt" data-title="grave">[G] Graveyard ('+gn+')</span></div>';}
+  else if(mode===State.CLASS){elStat.innerHTML='<b>CHOOSE YOUR DAD'+(pendingDaily?' &mdash; DAILY CHALLENGE':'')+'</b> <span class="dim">(UP/DOWN pick Dad, [ / ] pick skin, ENTER)</span>';const _sk=(typeof SKIN_SWATCHES!=="undefined")?SKIN_SWATCHES[((skinCursor%SKIN_SWATCHES.length)+SKIN_SWATCHES.length)%SKIN_SWATCHES.length]:null;elStatuses.innerHTML=_sk?('<div>Skin Tone: <b>'+_sk.name+'</b> <span class="ti-opt" data-skin="next" title="Click to cycle skin tone" style="display:inline-block;width:12px;height:12px;vertical-align:middle;border:1px solid #000;background:'+_sk.f+'"></span> <span class="l-dim"><span class="ti-opt" data-skin="prev">&larr; [</span> &nbsp; <span class="ti-opt" data-skin="next">] &rarr;</span></span></div>'):"";let h="";CLASSES.forEach((c,i)=>{h+='<div class="ti-opt '+(i===classCursor?"l-gold":"")+'" data-class="'+i+'">'+(i===classCursor?"&#9654; ":"&nbsp;&nbsp; ")+'<b>'+c.name+'</b> &mdash; HP'+c.hp+' STR'+c.str+' DEF'+c.def+' PER'+c.per+' WIS'+c.wis+' &middot; <span class="l-dim">'+c.blurb+'</span></div>';});elLog.innerHTML=h;}
+  else if(mode===State.DIFF){elStat.innerHTML='<b>CHOOSE DIFFICULTY'+(pendingDaily?' &mdash; DAILY CHALLENGE':'')+'</b> <span class="dim">(UP/DOWN, ENTER &middot; Esc = back)</span>';elStatuses.innerHTML='<span class="dim">Chosen dad: <b class="l-gold">'+(pendingClass?pendingClass.name:'')+'</b></span>';let h='';DIFFICULTY_MODES.forEach((d,i)=>{h+='<div class="ti-opt '+(i===diffCursor?'l-gold':'')+'" data-diff="'+i+'">'+(i===diffCursor?'&#9654; ':'&nbsp;&nbsp; ')+'<b>'+d.name+'</b> &mdash; <span class="l-dim">'+d.blurb+'</span></div>';});h+='<div class="ti-opt l-dim" data-diff="back" style="margin-top:6px">&larr; Back to Dad select</div>';elLog.innerHTML=h;}
+-- 
+2.43.0
+
