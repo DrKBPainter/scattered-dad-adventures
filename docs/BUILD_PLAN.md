@@ -187,7 +187,8 @@ All sprites are 32×32 ASCII-grid strings in `js/sprites.js`, mapped through a f
 - [ ] Hand-author 12 boss sprites
 - [ ] Hand-author creature rosters biome-by-biome (~64 creatures across all 10 biomes) reusing the asset pipeline
 - [ ] Walk/attack animation frames (2–4 frames) for the player sprite once static art lands
-- [ ] Update `tools/tools_export_data.js` and the diagnostic harness sprite-integrity check to validate image assets instead of/alongside `PAL` character sets
+- [x] (M13, 2026-11-06) Diagnostic harness validates the atlas alongside `PAL` character sets (`node _harness.js atlas`: every key resolves, rects are grid x k inside the sheet); `tools/tools_make_atlas.js --check` verifies sheets match the ASCII source and are in sw.js ASSETS
+- [x] (M13, 2026-11-06) Option C generator `tools/tools_make_atlas.js` (outline + 3-step shading); items group live, heroes/bosses/creatures groups ready for N22-N28
 
 ### Acceptance Criteria
 Player, all bosses, and all creatures render from hand-authored image assets with shading and an outline, not flat single-tone code blocks. Skin-tone selection and cursed-status visuals still work. Diagnostic harness still clears 7/7 classes.

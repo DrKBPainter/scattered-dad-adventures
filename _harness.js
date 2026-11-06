@@ -12,6 +12,14 @@ vm.createContext(sb);vm.runInContext(js,sb);const T=sb.globalThis.__T;let F=0;
 const PK=new Set(Object.keys(T.PAL));
 function cs(n,s){if(s.length!==32){console.log("SPR",n,"rows",s.length);F++;}for(const r of s){if(r.length!==32){console.log("SPR",n,"col",r.length,"(expected 32)");F++;}for(const c of r)if(!PK.has(c)){console.log("SPR",n,"char",JSON.stringify(c));F++;}}}
 Object.entries(T.SPR).forEach(([n,s])=>cs(n,s));for(const c of T.CREATURES.concat(T.BOSSES))cs(c.id,c.sprite);
+/* M13 atlas check: every key in assets/sprites/atlas.js resolves to a real sprite (SPR_* / creature id / boss id), rects are grid x k and inside an existing sheet */
+if(fs.existsSync("assets/sprites/atlas.js")){let AN=0;try{vm.runInContext(fs.readFileSync("assets/sprites/atlas.js","utf8")+";globalThis.__A=SPRITE_ATLAS;",sb);}catch(e){console.log("ATLAS parse error:",e.message);F++;}
+ const A=sb.globalThis.__A;if(A&&Array.isArray(A.sheets))for(const sh of A.sheets){if(!fs.existsSync(sh.src)){console.log("ATLAS missing sheet",sh.src);F++;continue;}const b=fs.readFileSync(sh.src),SW=b.readUInt32BE(16),SH=b.readUInt32BE(20);
+  for(const[k,r]of Object.entries(sh.sprites||{})){let spr=null,m;if((m=/^creature:(.+)$/.exec(k))){const c=T.CREATURES.find(x=>x.id===m[1]);spr=c&&c.sprite;}else if((m=/^boss:(.+)$/.exec(k))){const c=T.BOSSES.find(x=>x.id===m[1]);spr=c&&c.sprite;}else if(/^SPR_[A-Z0-9_]+$/.test(k)){try{spr=vm.runInContext("typeof "+k+"!=='undefined'?"+k+":null",sb);}catch(e){spr=null;}}
+   if(!Array.isArray(spr)){console.log("ATLAS unknown key",k);F++;continue;}const kk=r[2]/spr[0].length;
+   if(!(r.length===4&&kk>=1&&kk<=8&&kk===Math.floor(kk)&&r[3]===spr.length*kk&&r[0]>=0&&r[1]>=0&&r[0]+r[2]<=SW&&r[1]+r[3]<=SH)){console.log("ATLAS bad rect",k,JSON.stringify(r));F++;continue;}AN++;}}
+ if(process.argv[2]===undefined||process.argv[2]==="atlas")console.log("atlas: "+AN+" sprite key(s) OK");}
+if(process.argv[2]==="atlas")process.exit(F?1:0);
 let g;
 function bfsTo(tx,ty){
  const gr=g.floor.grid,vd=g.vendor,lockedSet=new Set(g.doors.filter(d=>d.locked).map(d=>d.x+","+d.y));

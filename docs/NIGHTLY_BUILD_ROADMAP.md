@@ -46,6 +46,7 @@ the box, append a changelog line, and STOP. Small runs by design; err toward mor
 - [x] N19 — Full 10-biome creature rosters from LEVEL_DESIGN.md.
 - [x] N20 — HOA President multi-phase final boss + class-specific resolutions.
 - [x] N21 (2026-11-06, mobile plan weekly run) — Sprite asset pipeline: add PNG image loading + `ctx.drawImage` rendering path alongside existing ASCII/`fillRect` sprites (fallback preserved if image fails to load); implement skin-tone tint and cursed-remap via canvas compositing for image sprites; establish `assets/sprites/` convention.
+- [x] M13 (2026-11-06, mobile plan) — `tools/tools_make_atlas.js`: option C generator (outline + shading) for all groups; items live. Under the locked option C, N22-N28 below = enable that chunk's group in the tool (`ENABLED`), tune per sprite (`TUNING`) if needed, review previews, add the sheet to sw.js ASSETS. Hand-drawn art stays deferred.
 - [ ] N22 — Hand-author 8 player class sprites (7 classes + hidden Granddad, idle frame) as PNGs; wire into `dadSprite()` via the new pipeline.
 - [ ] N23 — Hand-author 12 boss sprites as PNGs.
 - [ ] N24 — Hand-author creature sprites: **The House** + **Lowe & Behold** (~14 creatures).
