@@ -183,7 +183,7 @@ All sprites are 32×32 ASCII-grid strings in `js/sprites.js`, mapped through a f
 - [ ] Lock **Visual style** decision (resolves Open Question #2 below): hand-authored pixel art, keeping the current GBA-crisp 32×32 grid resolution
 - [x] (N21, 2026-11-06) Asset pipeline: swap `drawSprite`/`drawSpriteRemap` from `fillRect`-per-char to `ctx.drawImage` from PNG sprite sheets; preserve skin-tone remap (`SKIN_SWATCHES`) and cursed-status remap (`dadVisRemap`) via canvas tinting/compositing, since flat per-char recolor no longer applies to baked images
 - [x] (N21, 2026-11-06) Fallback path: keep existing ASCII sprite defs as backup if an image fails to load — no regression risk to saves or the diagnostic harness
-- [ ] Hand-author 8 player sprites (7 classes + hidden Granddad), idle frame
+- [x] (N22, 2026-11-06) Player sprites, idle frame: under locked option C the 8 Dad sprites (generic + 7 classes), 5 allies and the family dog are the upgraded `heroes` group (`assets/sprites/heroes.png`); skin tones and cursed remap baked by the N21 pipeline. No hidden Granddad class exists in the code, so none was drawn. Hand-drawn replacement stays deferred
 - [ ] Hand-author 12 boss sprites
 - [ ] Hand-author creature rosters biome-by-biome (~64 creatures across all 10 biomes) reusing the asset pipeline
 - [ ] Walk/attack animation frames (2–4 frames) for the player sprite once static art lands

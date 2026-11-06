@@ -84,5 +84,20 @@ var SPRITE_ATLAS={version:1,sheets:[
   "SPR_Q_FLASK":[396,99,32,32],
   "SPR_Q_PAMPHLET":[429,99,32,32],
   "SPR_Q_BINDER":[462,99,32,32],
-  "SPR_Q_IBUPROFEN":[495,99,32,32]}}
+  "SPR_Q_IBUPROFEN":[495,99,32,32]}},
+ {src:"assets/sprites/heroes.png",group:"heroes",sprites:{
+  "SPR_DAD":[0,0,32,32],
+  "SPR_DAD_GRILL":[33,0,32,32],
+  "SPR_DAD_DIY":[66,0,32,32],
+  "SPR_DAD_TECH":[99,0,32,32],
+  "SPR_DAD_GYM":[132,0,32,32],
+  "SPR_DAD_TACTICAL":[165,0,32,32],
+  "SPR_DAD_SPORTS":[198,0,32,32],
+  "SPR_DAD_YARD":[231,0,32,32],
+  "SPR_A_CHAD":[264,0,32,32],
+  "SPR_A_KAREN":[297,0,32,32],
+  "SPR_A_UNCLE_RON":[330,0,32,32],
+  "SPR_A_LITTLE_TIMMY":[363,0,32,32],
+  "SPR_A_OFFICER_DOUG":[396,0,32,32],
+  "SPR_FAMILY_DOG":[429,0,32,32]}}
 ]};

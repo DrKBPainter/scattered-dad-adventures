@@ -13,6 +13,7 @@
 | BUG-002 | Choose Your Dad confirm popup cut off on mobile; Yes/No unreachable | `ShatteredDadAdventure.html, js/ui.js, js/input.js` | resolved | 2026-11-05 |
 | BUG-003 | device_commit_files re-sends stale content for a previously committed staged path | `tooling` | resolved | 2026-11-05 |
 | BUG-004 | Landscape phone with optional D-pad: side column taller than screen | `ShatteredDadAdventure.html` | open | 2026-11-05 |
+| BUG-005 | Mobile Dad deck: page behind the deck scrolls vertically | `ShatteredDadAdventure.html` | open | 2026-11-06 |
 
 ---
 
@@ -31,6 +32,18 @@
 ---
 
 
+
+### BUG-005 — Mobile Dad deck: page behind the deck scrolls vertically
+
+- **File:** `ShatteredDadAdventure.html`
+- **Status:** open
+- **Logged:** 2026-11-06
+
+**Description:** On compact layouts with the Choose-Your-Dad deck open, the document is taller than the viewport (iPhone SE: scrollHeight 975 vs 568) and body overflow is not hidden (the title cover sets it hidden), so window.scrollTo moves the page 407 px under the fixed #dadsel. Nothing visible changes (both layers are fixed), but on iOS a vertical drag on the deck may rubber-band or collapse the address bar. Pre-existing: identical on the pre-N22 build. Protected screen: a fix (overflow hidden while body.m-dadsel) is a bug fix, allowed, but was out of scope for N22.
+
+**Repro steps:** iPhone SE emulation, title cover -> New Adventure -> window.scrollTo(0,1e5); window.scrollY becomes 407.
+
+---
 ## Resolved Bugs
 
 ### BUG-001 — Directional movement dead (arrows/WASD)
