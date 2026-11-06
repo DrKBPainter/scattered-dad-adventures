@@ -70,7 +70,7 @@ function renderStats(){return{frames:_rFrames,skipped:_rSkipped,dirty:_rDirty,an
  if(typeof document!=="undefined"&&document&&typeof document.addEventListener==="function")document.addEventListener("visibilitychange",h,true);
 }catch(e){}})();
 function drawFrame(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;try{if(ctx.setTransform)ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle="#06070b";ctx.fillRect(0,0,CW,CH);if(mode===State.PLAY&&game&&game.floor&&game.seen&&game.vis&&isFinite(game.px)&&isFinite(game.py))drawWorld();else drawMenuBackdrop();}catch(err){/* A draw error must never kill the loop (prevents the frozen-map / vanished-dad freeze). */if(typeof console!=="undefined")console.warn("render skipped frame:",err);}}
-function render(){const n=_rNow();if(_rDirty||n<_rAnimUntil||n-_rLastDraw>=RENDER_IDLE_MS){_rDirty=false;_rLastDraw=n;_rFrames++;drawFrame();}else _rSkipped++;requestAnimationFrame(render);}
+function render(){const n=_rNow();/* MOB-03: effects advance one step per drawn frame, so keep drawing while any are playing (the scan pulse used to wait for the next tap) */const _fxOn=typeof game!=="undefined"&&game&&game.fx&&game.fx.length>0&&typeof mode!=="undefined"&&mode===State.PLAY;if(_rDirty||_fxOn||n<_rAnimUntil||n-_rLastDraw>=RENDER_IDLE_MS){_rDirty=false;_rLastDraw=n;_rFrames++;drawFrame();}else _rSkipped++;requestAnimationFrame(render);}
 
 /* ===== CLASS SELECT PORTRAITS =====
    Per-class illustrated backdrop drawn at 6× sprite scale (192×192) centered

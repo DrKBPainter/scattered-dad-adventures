@@ -4,6 +4,7 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: (none)   [displaced 2026-11-06 nightly run]
 
 
 =====================================================================
@@ -14,4 +15,12 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-06 (nightly)
+- Triaged 14 INBOX lines -> MOB-01..MOB-14: BUG MOB-02, MOB-03, MOB-13; UX MOB-01, 04, 05, 06, 07, 08, 10, 11, 12, 14; BALANCE MOB-09. No KBP notes, no [x] items.
+- States: [c] MOB-02, MOB-03, MOB-13 | [-] MOB-01, 04, 05, 10, 12 | [k] MOB-07, 09 | [!] MOB-06, 08, 11, 14.
+- Worked (3 BUG items, all fixed + verified): MOB-02 doors stay open while occupied; MOB-03 effects animate after one tap (M4 frame-loop regression); MOB-13 unrecruited companion no longer carried to later floors inside walls + _settlePlacements safety net.
+- Files changed: js/game.js, js/render.js, sw.js (BUILD 0.11.0-272d8a370c), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged (resolved): BUG-006 (MOB-02), BUG-007 (MOB-03), BUG-008 (MOB-13).
+- Verification: node --check all js; harness 7/7 clears; vm + Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape; desktop 1280x800 md5-identical except the scan frame; protected screens (iPhone SE + 13) md5-identical and functional.
+
 
