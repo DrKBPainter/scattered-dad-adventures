@@ -1,0 +1,1 @@
+Mobile notes nightly run -- skip log (one line per skipped night: "SKIPPED YYYY-MM-DD -- no INBOX lines, no unanswered KBP notes, no [-]/[!] items, no [x] to archive.")

@@ -1,0 +1,17 @@
+SCATTERED DAD ADVENTURES -- MOBILE NOTES ARCHIVE
+Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothing here is edited afterward.
+
+=====================================================================
+LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
+=====================================================================
+
+
+=====================================================================
+COMPLETED ITEMS  ([x] items moved verbatim, newest first)
+=====================================================================
+
+
+=====================================================================
+RUN LOGS  (one short block per nightly run that did work, newest first)
+=====================================================================
+

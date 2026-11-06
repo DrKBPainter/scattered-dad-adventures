@@ -68,7 +68,11 @@ All files are plain-text mirrors of the arrays in `js/data.js`. Edit `js/data.js
 | `NIGHTLY_BUILD_ROADMAP.md` | Sprint-level task tracking and nightly build targets. |
 | `LEVEL_DESIGN.md` | Floor biome layout, boss placement, vendor floors, and encounter scaling notes. |
 | `LEVEL_DESIGN.html` | Visual/interactive version of the level design document. |
-| `SHATTERED DAD Adventure notes.txt` | Freeform design notes, brainstorming, and ideas not yet formalized. |
+| `SHATTERED DAD Adventure notes.txt` | Desktop-era notes and directives (superseded 2026-11-06 by `MOBILE NOTES.txt`; history only). |
+| `MOBILE NOTES.txt` | KBP's mobile playtest observations (INBOX) + triaged MOB-NN items; worked by the nightly mobile notes run (Mon-Sat). Rules at the top of the file. |
+| `MOBILE NOTES archive.txt` | Closed [x] MOB items, LAST UPDATED HISTORY, and nightly RUN LOGS. |
+| `mobile_notes_skip_log.txt` | One line per nightly run that found nothing to do. |
+| `mobile_screens/` | Phone screenshots referenced from MOBILE NOTES items. |
 
 ---
 

@@ -45,6 +45,7 @@ FOLDER_STRUCTURE.md          ← complete directory map with file descriptions
 docs/GAME_DESIGN_REFERENCE.md← master GDD, start here for design questions
 docs/BUILD_PLAN.md           ← phased roadmap with acceptance criteria
 docs/NIGHTLY_BUILD_ROADMAP.md← sprint-level task tracking
+docs/MOBILE NOTES.txt        ← mobile playtest notes: KBP INBOX + MOB-NN items (nightly run works these)
 lore/                        ← bestiary expansions and extended class lore
 archive/                     ← v0.3 and v0.4 single-file backups
 tools/tools_export_data.js   ← regenerates data/*.txt from js/data.js
@@ -170,6 +171,10 @@ Selection within biome is **uniform random** — equal weight per creature. To m
 ## Sprite Art (M13, 2026-11-06)
 
 The PNG sprite sheets in `assets/sprites/` are generated from the ASCII sprites by `node tools/tools_make_atlas.js`. After changing any ASCII sprite (or enabling a new group in the tool's `ENABLED` list), re-run it, add any new sheet to `sw.js` ASSETS, then run `tools_sw_stamp.js`. `node tools/tools_make_atlas.js --check` fails if the sheets are stale; `node _harness.js atlas` checks every atlas key resolves. Never hand-edit the generated PNGs or atlas.js.
+
+## Mobile Notes (nightly run, 2026-11-06)
+
+`docs/MOBILE NOTES.txt` holds KBP's phone playtest observations (INBOX) and the triaged MOB-NN items. A nightly scheduled task (Mon-Sat) triages the INBOX, actions `KBP note:` lines, and fixes small items; the RULES block at the top of that file governs states ([ ] [-] [k] [c] [!] [x]), the item format, and the per-item PowerShell PUSH block on every [c] item. Only KBP marks [x]. Closed items, history, and run logs go to `docs/MOBILE NOTES archive.txt`. `docs/SHATTERED DAD Adventure notes.txt` is superseded (history only). Before changing mobile UI, check the file for open MOB items so a fix awaiting KBP's push is not overwritten.
 
 ## What NOT to Do
 

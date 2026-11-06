@@ -1,0 +1,88 @@
+SCATTERED DAD ADVENTURES -- MOBILE NOTES
+File: docs/MOBILE NOTES.txt (created 2026-11-06). Replaces docs/SHATTERED DAD Adventure notes.txt for all new observations.
+Archive: docs/MOBILE NOTES archive.txt | Skip log: docs/mobile_notes_skip_log.txt | Screenshots: docs/mobile_screens/
+
+Last updated: 2026-11-06 (setup). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 0 | [!] 0 | [x] awaiting archive 0. INBOX: 0 lines.
+Previously: (none)
+
+=====================================================================
+HOW TO USE (KBP)
+=====================================================================
+1. Play on your phone. When you notice something, add ONE line under INBOX. No format required.
+   Optional tags help:  device/orientation | version (shown on the title cover) | what happened / what you expected
+   Example:  - iPhone 13 portrait | v0.11.0 | BAG button is hard to hit with my thumb; expected it bigger
+   Screenshot: save it in docs/mobile_screens/ and put the file name on the line.
+2. To direct a run on an existing item, add a line inside that item:
+       KBP note: <instruction>
+   The next run replies directly beneath it with "-> Actioned YYYY-MM-DD: ..." or "-> BLOCKED YYYY-MM-DD: ...".
+3. Items marked [c] carry their own PUSH block. Paste it into PowerShell, wait ~2 minutes,
+   hard-refresh https://drkbpainter.github.io/scattered-dad-adventures/ (Ctrl+F5 on desktop; on the phone,
+   close and reopen the app, then tap Reload on the "new edition" banner), and check the fix.
+   - Fixed: change [c] to [x] and add "- KBP (YYYY-MM-DD): verified on <device>." The next run archives it.
+   - Not fixed: leave [c] and add a KBP note saying what you saw. The next run reopens it.
+
+=====================================================================
+RULES (automated runs: the nightly mobile notes task and the weekly PWA build task)
+=====================================================================
+STATES
+  [ ] open: triaged, not started. May end with a NEXT STEP.
+  [-] in progress: a run must do the work. Ends with exactly one NEXT STEP.
+  [k] awaiting KBP: a decision, approval, or information. Ends with exactly one ASK, written as a direct question.
+  [c] fixed and verified in the project folder; awaiting KBP push + phone check.
+      Carries a Files line and a PUSH block, and ends with exactly one ASK:
+      "ASK (date): Push with the block above, check on <device>, then mark [x] + KBP."
+  [!] large item: a dedicated run only (one [!] item per night, whole run on it). Ends with a NEXT STEP.
+  [x] closed by KBP only, with a "KBP (date): verified ..." line. Runs move [x] items verbatim to the archive.
+  Only KBP marks [x] or moves an item out of [!]. A run may assign [!] when triaging or when work proves too large.
+
+TYPES: BUG | UX | CONTENT | BALANCE | QUESTION
+  BUG: also log it with tools/tools_log_bug.js and record the BUG-NNN id on the item; resolve it there when fixed.
+  QUESTION: answer in a Note and set [k]; no code change unless a KBP note directs one.
+
+IDS: MOB-NN, sequential, never reused or renumbered. Next unused ID: MOB-01
+
+ITEM FORMAT
+  [state] MOB-NN [TYPE] Short headline
+  	- KBP (YYYY-MM-DD): <his INBOX line, verbatim; never reworded>
+  	- Device: <device / orientation / version, or "not stated">
+  	- Summary: current state only (rewritten each time the item changes).
+  	- Note (YYYY-MM-DD, nightly run): what was found or done; dated notes accumulate, newest last.
+  	- Files: <every changed path, relative, forward slashes>                      ([c] only)
+  	- PUSH (YYYY-MM-DD):                                                          ([c] only)
+  	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+  	    git fetch origin
+  	    git reset --mixed origin/main
+  	    git status --short
+  	    git add "<path 1>" "<path 2>"
+  	    git commit -m "MOB-NN: <one-line summary>"
+  	    git push origin main
+  	- ASK (date): ...   or   - NEXT STEP (date): ...      <- always last; exactly one per item
+  PUSH block rules: real paths and a real commit message, no placeholders; quote every path. If another [c] item
+  changed the same file, pushing either block commits both fixes: say so in a Note on both items. git status
+  should list only the files in the block, plus any unpushed files from earlier runs (add those too).
+
+LARGE ITEM ([!]) -- assign when the fix would:
+  - change the save format (sda_save_v4) or any localStorage key;
+  - touch 3 or more systems, or need new files;
+  - change sprite generation (tools/tools_make_atlas.js groups or tuning);
+  - overlap the next incomplete chunk in docs/MOBILE_PWA_PLAN.md (name the chunk);
+  - not fit in one run.
+
+PROTECTED SCREENS: js/dadselect.js (Choose Your Dad deck), js/titlecover.js (title cover), js/bestcards.js (Bestiary
+  cards) and their CSS. Bug fixes and wiring are allowed. Any change to their layout, look, or behavior: set [k] and ASK.
+
+GUARDRAILS
+  - Never edit KBP's words (INBOX lines once moved, KBP notes, KBP verification lines). Only append beneath them.
+  - Never leave a half-applied fix in the folder. If an item cannot be finished, revert it in full and record why.
+  - No git or GitHub actions by runs. KBP pushes with the PUSH blocks.
+  - Player-facing text follows the project tone rules (no real store names; deadpan narrator; occasional dad encouragement).
+
+=====================================================================
+INBOX  (KBP: add lines below. Runs: move each line into an item, then delete it here.)
+=====================================================================
+
+
+=====================================================================
+OPEN ITEMS
+=====================================================================
+(none yet)
