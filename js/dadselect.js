@@ -30,7 +30,7 @@ function _dsEsc(s){return (typeof esc==="function")?esc(s):String(s);}
 /* Draw one Dad sprite into a card's 32x32 canvas (CSS scales it up, pixelated). */
 function _dsDrawSprite(cv,id){const cx=cv.getContext("2d");if(!cx)return;cx.clearRect(0,0,cv.width,cv.height);cx.imageSmoothingEnabled=false;const spr=_dsSpr(id);if(!spr)return;const s=_dsSkin();const cmap=s?{'f':s.f,'F':s.F}:null;
  let e=null;try{if(typeof _sprCached==="function")e=_sprCached(spr,null,cmap);}catch(err){e=null;}
- if(e&&e.cv){cx.drawImage(e.cv,0,0);return;}
+ if(e&&e.cv){cx.drawImage(e.cv,0,0,e.w,e.h);return;}
  if(typeof _sprPx==="function")_sprPx(spr,null,cmap,(c,x,y)=>{cx.fillStyle=c;cx.fillRect(x,y,1,1);});}
 
 function _dsHpMax(){let h=1;CLASSES.forEach(c=>{h=Math.max(h,c.hp);});return h;}

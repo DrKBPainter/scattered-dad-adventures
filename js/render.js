@@ -6,19 +6,36 @@
 /* M3 SPRITE CACHE (mobile plan). Each ASCII sprite is rasterized ONCE per (remap,colorMap) variant to an
    offscreen canvas; drawSprite/drawSpriteRemap then issue a single drawImage instead of ~1,024 fillRects.
    Falls back to the original per-pixel path when no offscreen canvas exists (node harness, old browsers).
-   N21 hook: registerSpriteImage(spr,img) overrides a sprite with loaded PNG art for un-remapped draws;
-   the cached ASCII raster always remains the fallback. */
+   N21 PNG PIPELINE: registerSpriteImage(spr,img) attaches image art (an Image or canvas whose size is the
+   ASCII grid size times an integer k, 1-8) to a sprite. _sprCached then returns the image for every draw:
+   plain draws use it as-is; skin colorMap / curse remap variants are baked once per variant by recoloring
+   the image pixels whose ASCII cell char changes color (luminance ratio vs the PAL source color, so the
+   shading ramp is kept), and cached. If the pixels cannot be read (file:// taint) or the image is missing,
+   that draw falls back to the cached ASCII raster. Loader: js/spriteimg.js + assets/sprites/atlas.js. */
 const _sprIdCache=new WeakMap(),_sprKeyCache=new Map(),_sprImg=new WeakMap();let _sprCacheOK=null;
 function _sprPx(spr,remap,colorMap,put){for(let y=0;y<spr.length;y++){const row=spr[y];for(let x=0;x<row.length;x++){let ch=row[x];if(remap&&remap[ch])ch=remap[ch];const c=(colorMap&&colorMap[ch])?colorMap[ch]:PAL[ch];if(!c)continue;put(c,x,y);}}}
 function _sprDirect(spr,dx,dy,sc,remap,colorMap){_sprPx(spr,remap,colorMap,(c,x,y)=>{ctx.fillStyle=c;ctx.fillRect(dx+x*sc,dy+y*sc,sc,sc);});}
 function _sprNewCanvas(w,h){try{if(typeof document==="undefined"||!document.createElement)return null;const c=document.createElement("canvas");if(!c||typeof c.getContext!=="function")return null;c.width=w;c.height=h;const x=c.getContext("2d");if(!x||typeof x.fillRect!=="function")return null;return{c,x};}catch(e){return null;}}
 function _sprVKey(remap,colorMap){let k="";if(remap)for(const a of Object.keys(remap).sort())k+=a+remap[a];k+="|";if(colorMap)for(const a of Object.keys(colorMap).sort())k+=a+colorMap[a]+",";return k;}
 function _sprRecord(spr){let r=_sprIdCache.get(spr);if(r)return r;const ck=spr.join("\n");r=_sprKeyCache.get(ck);if(!r){let w=0;for(const row of spr)if(row.length>w)w=row.length;r={w,h:spr.length,v:new Map()};if(_sprKeyCache.size>4000)_sprKeyCache.clear();_sprKeyCache.set(ck,r);}_sprIdCache.set(spr,r);return r;}
-function _sprCached(spr,remap,colorMap){const r=_sprRecord(spr);const vk=_sprVKey(remap,colorMap);let cv=r.v.get(vk);if(cv)return{cv,w:r.w,h:r.h};const o=_sprNewCanvas(r.w||1,r.h||1);if(!o)return null;_sprPx(spr,remap,colorMap,(c,x,y)=>{o.x.fillStyle=c;o.x.fillRect(x,y,1,1);});cv=o.c;if(r.v.size>64)r.v.clear();r.v.set(vk,cv);return{cv,w:r.w,h:r.h};}
+function _sprCached(spr,remap,colorMap){const r=_sprRecord(spr);const vk=_sprVKey(remap,colorMap);const ie=_sprImg.get(spr);if(ie){const iv=_sprImgVariant(ie,spr,remap,colorMap,vk);if(iv)return{cv:iv,w:r.w,h:r.h,img:true};}let cv=r.v.get(vk);if(cv)return{cv,w:r.w,h:r.h};const o=_sprNewCanvas(r.w||1,r.h||1);if(!o)return null;_sprPx(spr,remap,colorMap,(c,x,y)=>{o.x.fillStyle=c;o.x.fillRect(x,y,1,1);});cv=o.c;if(r.v.size>64)r.v.clear();r.v.set(vk,cv);return{cv,w:r.w,h:r.h};}
 function _sprBlit(spr,dx,dy,sc,remap,colorMap){sc=sc||1;if(!spr||!spr.length)return;if(_sprCacheOK===null)_sprCacheOK=!!_sprNewCanvas(1,1);if(!_sprCacheOK){_sprDirect(spr,dx,dy,sc,remap,colorMap);return;}const e=_sprCached(spr,remap,colorMap);if(!e){_sprDirect(spr,dx,dy,sc,remap,colorMap);return;}ctx.imageSmoothingEnabled=false;ctx.drawImage(e.cv,dx,dy,e.w*sc,e.h*sc);}
-function registerSpriteImage(spr,img){if(spr&&typeof spr==="object"&&img){_sprImg.set(spr,img);if(typeof markDirty==="function")markDirty();}}
+function _sprImgDims(img){return{w:img.naturalWidth||img.width||0,h:img.naturalHeight||img.height||0};}
+function registerSpriteImage(spr,img){if(!spr||typeof spr!=="object"||!spr.length||!img)return false;if(img.complete===false){if(img.addEventListener)img.addEventListener("load",()=>registerSpriteImage(spr,img),{once:true});return false;}
+ const r=_sprRecord(spr),d=_sprImgDims(img),k=r.w?d.w/r.w:0;if(!(k>=1&&k<=8&&k===Math.floor(k)&&d.h===r.h*k)){if(typeof console!=="undefined"&&console.warn)console.warn("sprite image rejected: "+d.w+"x"+d.h+" does not fit a "+r.w+"x"+r.h+" grid");return false;}
+ const chars=new Set();for(const row of spr)for(const ch of row)chars.add(ch);_sprImg.set(spr,{img,k,W:d.w,H:d.h,chars,v:new Map()});if(typeof markDirty==="function")markDirty();return true;}
+function unregisterSpriteImage(spr){if(spr&&_sprImg.has(spr)){_sprImg.delete(spr);if(typeof markDirty==="function")markDirty();}}
+function hasSpriteImage(spr){return !!(spr&&typeof spr==="object"&&_sprImg.get(spr));}
+const _sprHexC=new Map();function _sprHex(h){let v=_sprHexC.get(h);if(v)return v;const m=/^#?([0-9a-f]{6})$/i.exec(h||"");v=m?[parseInt(m[1].slice(0,2),16),parseInt(m[1].slice(2,4),16),parseInt(m[1].slice(4,6),16)]:[0,0,0];_sprHexC.set(h,v);return v;}
+/* image variant for (remap,colorMap): the image itself when no cell changes color; a baked recolor otherwise; null = use ASCII */
+function _sprImgVariant(e,spr,remap,colorMap,vk){const ch=new Map();for(const c of e.chars){const src=PAL[c];if(!src)continue;const c2=(remap&&remap[c])?remap[c]:c;const t=(colorMap&&colorMap[c2])?colorMap[c2]:PAL[c2];if(t!==src)ch.set(c,t||null);}
+ if(!ch.size)return e.img;if(e.v.has(vk))return e.v.get(vk);if(e.v.size>64)e.v.clear();
+ const o=_sprNewCanvas(e.W,e.H);if(!o){e.v.set(vk,null);return null;}let d;try{o.x.drawImage(e.img,0,0);d=o.x.getImageData(0,0,e.W,e.H);}catch(err){e.v.set(vk,null);return null;}
+ const a=d.data,k=e.k;for(let gy=0;gy<spr.length;gy++){const row=spr[gy];for(let gx=0;gx<row.length;gx++){const c=row[gx];if(!ch.has(c))continue;const t=ch.get(c),s=_sprHex(PAL[c]),ls=0.299*s[0]+0.587*s[1]+0.114*s[2]+1,tc=t?_sprHex(t):null;
+  for(let yy=gy*k;yy<gy*k+k;yy++)for(let xx=gx*k;xx<gx*k+k;xx++){const i=(yy*e.W+xx)*4;if(!a[i+3])continue;if(!tc){a[i+3]=0;continue;}const f=(0.299*a[i]+0.587*a[i+1]+0.114*a[i+2]+1)/ls;a[i]=Math.min(255,Math.round(tc[0]*f));a[i+1]=Math.min(255,Math.round(tc[1]*f));a[i+2]=Math.min(255,Math.round(tc[2]*f));}}}
+ o.x.putImageData(d,0,0);e.v.set(vk,o.c);return o.c;}
 function spriteCacheStats(){let variants=0;for(const r of _sprKeyCache.values())variants+=r.v.size;return{enabled:!!_sprCacheOK,sprites:_sprKeyCache.size,variants};}
-function drawSprite(spr,dx,dy,sc){sc=sc||1;const im=spr&&typeof spr==="object"?_sprImg.get(spr):null;if(im&&im.complete!==false&&im.naturalWidth!==0){ctx.imageSmoothingEnabled=false;ctx.drawImage(im,dx,dy,(spr[0]?spr[0].length:32)*sc,spr.length*sc);return;}_sprBlit(spr,dx,dy,sc,null,null);}
+function drawSprite(spr,dx,dy,sc){_sprBlit(spr,dx,dy,sc||1,null,null);}
 /* Draw sprite with palette-char substitution. remap = {fromChar:toChar,...} */
 function drawSpriteRemap(spr,dx,dy,sc,remap,colorMap){const hasR=remap&&Object.keys(remap).length;_sprBlit(spr,dx,dy,sc,hasR?remap:null,colorMap||null);}
 /* skinColorMap: direct char->hex override for the dad's skin chars 'f'/'F'.

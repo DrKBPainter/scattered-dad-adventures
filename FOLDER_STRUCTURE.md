@@ -52,6 +52,9 @@ All files are plain-text mirrors of the arrays in `js/data.js`. Edit `js/data.js
 | `input.js` | Keyboard and mouse input handlers. |
 | `render.js` | Tile-based canvas renderer. Handles map drawing, fog of war, and visual effects. |
 | `sprites.js` | Sprite definitions and ASCII/tile character mappings. |
+| `spriteimg.js` | N21: loads PNG sprite sheets listed in `assets/sprites/atlas.js` and registers them with the renderer (ASCII sprites stay the fallback; `?ascii` forces ASCII). |
+
+`/assets/sprites/` holds `atlas.js` (sprite sheet index, empty until M13), the sheet PNGs, and a README describing the format.
 | `ui.js` | HUD, inventory panel, log display, and modal dialogs. |
 
 ---

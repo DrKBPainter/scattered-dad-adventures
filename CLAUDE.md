@@ -54,6 +54,8 @@ bugs/BUG_LOG.md              ← persistent bug registry
 sw.js                        ← offline service worker (M11); BUILD line stamped by tools/tools_sw_stamp.js
 tools/tools_sw_stamp.js      ← re-stamp sw.js after changing ANY cached file (`--check` to verify)
 js/durable.js                ← M12: install prompt/banner, iOS Add-to-Home-Screen sheet, save on background, Save Backup export/import (openSaveBackup()), audio unlock
+js/spriteimg.js              ← N21: loads PNG sprite sheets listed in assets/sprites/atlas.js into the sprite cache (ASCII stays the fallback; ?ascii forces it; spriteImageStats())
+assets/sprites/              ← N21: atlas.js index (empty until M13) + sheet PNGs; format in atlas.js header / README.md. New sheets must go in sw.js ASSETS
 ```
 
 ---

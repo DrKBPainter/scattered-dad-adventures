@@ -45,7 +45,7 @@ the box, append a changelog line, and STOP. Small runs by design; err toward mor
 - [x] N18 — Ascent mode after victory (reverse floors, +difficulty).
 - [x] N19 — Full 10-biome creature rosters from LEVEL_DESIGN.md.
 - [x] N20 — HOA President multi-phase final boss + class-specific resolutions.
-- [ ] N21 — Sprite asset pipeline: add PNG image loading + `ctx.drawImage` rendering path alongside existing ASCII/`fillRect` sprites (fallback preserved if image fails to load); implement skin-tone tint and cursed-remap via canvas compositing for image sprites; establish `assets/sprites/` convention.
+- [x] N21 (2026-11-06, mobile plan weekly run) — Sprite asset pipeline: add PNG image loading + `ctx.drawImage` rendering path alongside existing ASCII/`fillRect` sprites (fallback preserved if image fails to load); implement skin-tone tint and cursed-remap via canvas compositing for image sprites; establish `assets/sprites/` convention.
 - [ ] N22 — Hand-author 8 player class sprites (7 classes + hidden Granddad, idle frame) as PNGs; wire into `dadSprite()` via the new pipeline.
 - [ ] N23 — Hand-author 12 boss sprites as PNGs.
 - [ ] N24 — Hand-author creature sprites: **The House** + **Lowe & Behold** (~14 creatures).

@@ -25,7 +25,7 @@ const BEST_BIOME_ORDER=["The House","Lowe & Behold","The Park","Vastco","Soccer 
 function _bcCfg(c){if(c.biome)return BEST_BIOME_CFG[c.biome]||BEST_BIOME_CFG["The House"];const b=BEST_BIOME_ORDER[Math.min(BEST_BIOME_ORDER.length-1,Math.max(0,Math.ceil((c.floor||1)/10)-1))];return BEST_BIOME_CFG[b];}
 function _bcEsc(s){return (typeof esc==="function")?esc(s):String(s);}
 function _bcDraw(cv,spr){const cx=cv.getContext("2d");if(!cx||!spr)return;cx.imageSmoothingEnabled=false;let e=null;try{if(typeof _sprCached==="function")e=_sprCached(spr,null,null);}catch(err){e=null;}
- if(e&&e.cv){cx.drawImage(e.cv,0,0);return;}if(typeof _sprPx==="function")_sprPx(spr,null,null,(col,x,y)=>{cx.fillStyle=col;cx.fillRect(x,y,1,1);});}
+ if(e&&e.cv){cx.drawImage(e.cv,0,0,e.w,e.h);return;}if(typeof _sprPx==="function")_sprPx(spr,null,null,(col,x,y)=>{cx.fillStyle=col;cx.fillRect(x,y,1,1);});}
 
 function buildBestCards(host){const all=CREATURES.concat(BOSSES);const n=Object.keys(discovered).length;
  let h='<h1 class="bc-h1">BESTIARY</h1><div class="bc-prog"><span style="width:'+Math.round(100*n/all.length)+'%"></span></div><p class="dim bc-sub">Logged '+n+' / '+all.length+' &middot; kept across every run &middot; tap a card to flip it</p><div class="bc-grid">';
