@@ -4,17 +4,80 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-06 (setup). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 0 | [!] 0 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-07 nightly run]
 Previously: (none)   [displaced 2026-11-06 nightly run]
 
 
 =====================================================================
 COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
+[x] MOB-02 [BUG] Doors closed on whatever was standing in the doorway (BUG-006)
+	- KBP (2026-11-06): Keep doors open if there is something in that space (e.g., an item, any character)
+	- Device: not stated
+	- Summary: Fixed. An open door now stays open while a creature, a companion (recruited or not), a vendor, or an item is on its tile, and closes on the first turn after the doorway is clear. Empty doors still close as before.
+	- Note (2026-11-06, nightly run): Cause: endTurn() closed open doors after 3 turns (or once you stepped off) checking only you and a following companion. Fix in js/game.js: new _doorOccupied(d); endTurn skips closing an occupied door. Logged and resolved as BUG-006. Verification performed: node --check on all js; harness one class per process, 7/7 clears; vm test (door with enemy / item / companion / nothing, 5 turns): before all closed, after occupied stayed open and the empty one closed; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: same result in-browser before vs after, no page errors; desktop 1280x800 title, play and movement frames md5-identical to the previous build; protected screens (iPhone SE + iPhone 13) unchanged: cover, deck swipe/flip/Choose, Bestiary flip, undiscovered "?" cards do not flip; sw.js re-stamped (BUILD 0.11.0-272d8a370c, --check OK on your folder).
+	- Note (2026-11-06, nightly run): MOB-02, MOB-03 and MOB-13 were fixed together and share files (js/game.js: MOB-02 + MOB-13; sw.js and bugs/BUG_LOG.md: all three). Pushing any one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Files: js/game.js, sw.js, bugs/BUG_LOG.md
+	- PUSH (2026-11-06):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js" "bugs/BUG_LOG.md"
+	    git commit -m "MOB-02: doors stay open while something occupies the doorway"
+	    git push origin main
+	- ASK (2026-11-06): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-06): close out. kbp.
+
+[x] MOB-03 [BUG] Scan pulse only radiated after a second tap (BUG-007)
+	- KBP (2026-11-06): Scan button needs to be tapped twice to radiate the scan, but when tapped once you can tap on something and then it will be described
+	- Device: not stated
+	- Summary: Fixed. One tap on SCAN now plays the whole pulse (about a quarter second). The same fix makes thrown items and blast effects animate without extra taps. Describing a tile is unchanged (press and hold it).
+	- Note (2026-11-06, nightly run): Cause: the M4 battery-saving frame loop only redraws after input (or once a second), but effects advance one step per drawn frame, so the pulse sat on its first frame until the next tap. Fix in js/render.js: render() keeps drawing every frame while an effect is playing during a run. Read your line as describing the bug; if you also want SCAN to work as a two-mode button (one tap = pick a tile to describe, double tap = radiate), add a KBP note here. Logged and resolved as BUG-007. Verification performed: node --check on all js; harness 7/7 clears; Playwright real tap on the SCAN button on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, 150 ms after the tap the pulse was at step 1/12 and still on screen 1.45 s later; after, step 10-11/12 at 150 ms and gone by 1.45 s; desktop 1280x800 (X key): same before/after, all other desktop frames md5-identical; protected screens unchanged; sw.js re-stamped.
+	- Note (2026-11-06, nightly run): MOB-02, MOB-03 and MOB-13 were fixed together and share files (js/game.js: MOB-02 + MOB-13; sw.js and bugs/BUG_LOG.md: all three). Pushing any one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Files: js/render.js, sw.js, bugs/BUG_LOG.md
+	- PUSH (2026-11-06):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/render.js" "sw.js" "bugs/BUG_LOG.md"
+	    git commit -m "MOB-03: scan pulse and other effects animate after one tap"
+	    git push origin main
+	- ASK (2026-11-06): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-06): close out. kbp.
+
+[x] MOB-13 [BUG] Things spawning inside walls (BUG-008)
+	- KBP (2026-11-06): Creatures, companions, bosses, and items should not be able to spawn in a wall
+	- Device: not stated
+	- Summary: Fixed. The thing in the wall was a companion you had met but not recruited: it followed you to every later floor at its old position, usually inside a wall (and blocked new companion encounters). It now stays on the floor where you met it. A safety net also moves any creature, item, companion or the player off a wall tile after every floor build, revisit or Continue.
+	- Note (2026-11-06, nightly run): Probe of 60 seeds x 100 floors: 3,084 wall placements before, all the unrecruited companion; creatures, bosses and items were already on floor tiles; 0 after. Fix in js/game.js: buildFloor and _restoreFloorFromCache drop an unrecruited companion from another floor; new _settlePlacements() (uses no random numbers, so seeded and Daily floors are unchanged) runs at the end of buildFloor, _restoreFloorFromCache and continueRun. Logged and resolved as BUG-008. Verification performed: node --check on all js; harness 7/7 clears; full 1-class harness run with a per-step wall check: 3,143 bad placements before, 0 after; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (companion left on floor 1, 30 descents): 29 wall placements before, 0 after, no page errors; desktop frames md5-identical; protected screens unchanged; sw.js re-stamped.
+	- Note (2026-11-06, nightly run): MOB-02, MOB-03 and MOB-13 were fixed together and share files (js/game.js: MOB-02 + MOB-13; sw.js and bugs/BUG_LOG.md: all three). Pushing any one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Files: js/game.js, sw.js, bugs/BUG_LOG.md
+	- PUSH (2026-11-06):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js" "bugs/BUG_LOG.md"
+	    git commit -m "MOB-13: unrecruited companions stay on their floor; nothing is left inside a wall"
+	    git push origin main
+	- ASK (2026-11-06): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-06): close out. kbp.
 
 
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-07 (nightly)
+- INBOX empty; no new items. KBP answers on MOB-07 ("match the bestiary") and MOB-09 ("use proposed curve") actioned.
+- Archived [x] MOB-02, MOB-03, MOB-13 (KBP "close out" lines); BUG-006/007/008 already resolved.
+- Worked (3 [-] items, all fixed + verified -> [c]): MOB-07 Codex hides unmet creatures/bosses (lifetime, as the Bestiary) and consumables not identified this run; MOB-09 scan curve 1 + PER/2 to 7, PER 14+ adds everything in view; MOB-01 tap a distant door = walk beside it, then the door menu.
+- Files changed: js/game.js, js/ui.js, js/input.js, sw.js (BUILD 0.11.0-a39705d9fc), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: none (UX/BALANCE items).
+- Verification: node --check all js; harness 7/7 clears; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape + desktop 1280x800 (title/play/move frames md5-identical); protected screens (iPhone SE + 13) functional and md5-identical.
+- Still open: [-] MOB-04, 05, 10, 12 | [!] MOB-06, 08, 11, 14.
+
 RUN 2026-11-06 (nightly)
 - Triaged 14 INBOX lines -> MOB-01..MOB-14: BUG MOB-02, MOB-03, MOB-13; UX MOB-01, 04, 05, 06, 07, 08, 10, 11, 12, 14; BALANCE MOB-09. No KBP notes, no [x] items.
 - States: [c] MOB-02, MOB-03, MOB-13 | [-] MOB-01, 04, 05, 10, 12 | [k] MOB-07, 09 | [!] MOB-06, 08, 11, 14.

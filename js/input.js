@@ -14,7 +14,7 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  if(pendingConfirm||pendingMenu||ovInv||ovDad||ovBest||ovInstr||ovMap)return;const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;
  // Shift+click directs the active companion: shift+click an enemy = attack it, shift+click a tile = move there.
  if(ev.shiftKey&&game&&game.ally&&game.ally.following){game.clickPath=[];orderAlly(x,y);return;}
- if(game)game.clickPath=[];// cancel any existing path
+ if(game){game.clickPath=[];game.clickDoor=null;}// cancel any existing path
  // Doors auto-close; clicking an open door inspects it
  const _dr=doorAt(x,y);if(_dr&&_dr.open){showInspect(x,y);return;}
  // Adjacency = Chebyshev distance 1, so all 8 neighbours (orthogonal AND diagonal) route to tryMove.
@@ -24,8 +24,9 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  if(adj){clearMouseInspect();tryMove(Math.sign(x-game.px),Math.sign(y-game.py));}
  else if(game.vis&&game.vis[y]&&game.vis[y][x]){
   // Visible non-adjacent tile: pathfind toward it
-  const path=bfsPath(game.px,game.py,x,y);
-  if(path&&path.length){game.clickPath=path;continueClickPath();}
+  // MOB-01: a closed door is never a path tile, so walk to the tile beside it, then ask what to do.
+  const _cd=(_dr&&!_dr.open)?_dr:null;const path=_cd?pathToDoor(_cd):bfsPath(game.px,game.py,x,y);
+  if(path&&path.length){game.clickPath=path;if(_cd)game.clickDoor={x:_cd.x,y:_cd.y};continueClickPath();}
   else{showInspect(x,y);}
  }else{showInspect(x,y);}}
 /* ===== M7 touch input layer =====

@@ -2,8 +2,8 @@ SCATTERED DAD ADVENTURES -- MOBILE NOTES
 File: docs/MOBILE NOTES.txt (created 2026-11-06). Replaces docs/SHATTERED DAD Adventure notes.txt for all new observations.
 Archive: docs/MOBILE NOTES archive.txt | Skip log: docs/mobile_notes_skip_log.txt | Screenshots: docs/mobile_screens/
 
-Last updated: 2026-11-06 (nightly run). Census: [ ] 0 | [-] 5 | [k] 2 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.
-Previously: 2026-11-06 (setup). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 0 | [!] 0 | [x] awaiting archive 0. INBOX: 0 lines.
+Last updated: 2026-11-07 (nightly run). Census: [ ] 0 | [-] 4 | [k] 0 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.
+Previously: 2026-11-06 (nightly run). Census: [ ] 0 | [-] 5 | [k] 2 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.
 
 =====================================================================
 HOW TO USE (KBP)
@@ -84,46 +84,23 @@ INBOX  (KBP: add lines below. Runs: move each line into an item, then delete it 
 =====================================================================
 OPEN ITEMS
 =====================================================================
-[-] MOB-01 [UX] Tapping a distant door should walk to it, then ask what to do
+[c] MOB-01 [UX] Tapping a distant door should walk to it, then ask what to do
 	- KBP (2026-11-06): When I click on a door that I am not next to, travel to the door, then prompt what to do if the travel is not impeded
 	- Device: not stated
-	- Summary: Tapping a closed door that is not adjacent only shows its description: auto-travel (bfsPath) treats closed doors as walls, so there is no path to the door tile. Wanted: walk to the tile next to the door, then show a prompt (open / leave it) if the walk was not interrupted.
+	- Summary: Fixed. Tapping (or clicking) a closed door you are not next to now walks you to the floor tile beside it; if the walk finishes without being interrupted, the door menu opens (Open it / Do nothing; locked doors offer the key, lock-picking or kicking as before). If anything interrupts the walk (an enemy comes into view, HP loss, a new bad status such as the knee), no menu appears. Pressing and holding still describes the door.
 	- Note (2026-11-06, nightly run): Triaged as a small input.js + game.js change: path to the nearest open tile adjacent to the door, and when the auto-walk ends there uninterrupted, open a door prompt (openConfirm/openMenu). Locked doors would use the existing key check. Not worked tonight (budget went to the three BUG items).
-	- NEXT STEP (2026-11-06): In canvasTap, when the tapped tile is a closed door, bfsPath to its open neighbor, tag game.clickPath with the door target, and in continueClickPath show the door prompt when the path completes without a halt; verify on the 4 phone profiles.
-
-[c] MOB-02 [BUG] Doors closed on whatever was standing in the doorway (BUG-006)
-	- KBP (2026-11-06): Keep doors open if there is something in that space (e.g., an item, any character)
-	- Device: not stated
-	- Summary: Fixed. An open door now stays open while a creature, a companion (recruited or not), a vendor, or an item is on its tile, and closes on the first turn after the doorway is clear. Empty doors still close as before.
-	- Note (2026-11-06, nightly run): Cause: endTurn() closed open doors after 3 turns (or once you stepped off) checking only you and a following companion. Fix in js/game.js: new _doorOccupied(d); endTurn skips closing an occupied door. Logged and resolved as BUG-006. Verification performed: node --check on all js; harness one class per process, 7/7 clears; vm test (door with enemy / item / companion / nothing, 5 turns): before all closed, after occupied stayed open and the empty one closed; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: same result in-browser before vs after, no page errors; desktop 1280x800 title, play and movement frames md5-identical to the previous build; protected screens (iPhone SE + iPhone 13) unchanged: cover, deck swipe/flip/Choose, Bestiary flip, undiscovered "?" cards do not flip; sw.js re-stamped (BUILD 0.11.0-272d8a370c, --check OK on your folder).
-	- Note (2026-11-06, nightly run): MOB-02, MOB-03 and MOB-13 were fixed together and share files (js/game.js: MOB-02 + MOB-13; sw.js and bugs/BUG_LOG.md: all three). Pushing any one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
-	- Files: js/game.js, sw.js, bugs/BUG_LOG.md
-	- PUSH (2026-11-06):
+	- Note (2026-11-07, nightly run): js/game.js: new pathToDoor(d) (shortest path to an open tile orthogonally beside the door) and _doorArrive() (opens openDoorMenu(d) when the walk ends next to a still-closed door); both halt paths in continueClickPath clear the pending door. js/input.js canvasTap: a visible closed door that is not adjacent uses pathToDoor and tags game.clickDoor (not saved; sda_save_v4 unchanged). Only doors in view, as for other tap travel (MOB-12 covers shaded tiles). Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright (cloud Chromium) real tap on a door 2-5 tiles away on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, no movement and the tile description; after, Dad ends beside the door, "A door. What's the play?" menu shown, choosing Open opens it; with the knee forced to buckle, the walk halts and no menu appears; desktop 1280x800 mouse click: same result; desktop title, play and movement frames md5-identical to the previous build; protected screens unchanged (see MOB-07 note).
+	- Note (2026-11-07, nightly run): MOB-01, MOB-07 and MOB-09 were fixed together and share files (js/game.js: MOB-01 + MOB-09; sw.js: all three, re-stamped BUILD 0.11.0-a39705d9fc). Pushing one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Files: js/game.js, js/input.js, sw.js
+	- PUSH (2026-11-07):
 	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
 	    git fetch origin
 	    git reset --mixed origin/main
 	    git status --short
-	    git add "js/game.js" "sw.js" "bugs/BUG_LOG.md"
-	    git commit -m "MOB-02: doors stay open while something occupies the doorway"
+	    git add "js/game.js" "js/input.js" "sw.js"
+	    git commit -m "MOB-01: tapping a distant door walks to it, then offers the door menu"
 	    git push origin main
-	- ASK (2026-11-06): Push with the block above, check on your phone, then mark [x] + KBP.
-
-[c] MOB-03 [BUG] Scan pulse only radiated after a second tap (BUG-007)
-	- KBP (2026-11-06): Scan button needs to be tapped twice to radiate the scan, but when tapped once you can tap on something and then it will be described
-	- Device: not stated
-	- Summary: Fixed. One tap on SCAN now plays the whole pulse (about a quarter second). The same fix makes thrown items and blast effects animate without extra taps. Describing a tile is unchanged (press and hold it).
-	- Note (2026-11-06, nightly run): Cause: the M4 battery-saving frame loop only redraws after input (or once a second), but effects advance one step per drawn frame, so the pulse sat on its first frame until the next tap. Fix in js/render.js: render() keeps drawing every frame while an effect is playing during a run. Read your line as describing the bug; if you also want SCAN to work as a two-mode button (one tap = pick a tile to describe, double tap = radiate), add a KBP note here. Logged and resolved as BUG-007. Verification performed: node --check on all js; harness 7/7 clears; Playwright real tap on the SCAN button on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, 150 ms after the tap the pulse was at step 1/12 and still on screen 1.45 s later; after, step 10-11/12 at 150 ms and gone by 1.45 s; desktop 1280x800 (X key): same before/after, all other desktop frames md5-identical; protected screens unchanged; sw.js re-stamped.
-	- Note (2026-11-06, nightly run): MOB-02, MOB-03 and MOB-13 were fixed together and share files (js/game.js: MOB-02 + MOB-13; sw.js and bugs/BUG_LOG.md: all three). Pushing any one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
-	- Files: js/render.js, sw.js, bugs/BUG_LOG.md
-	- PUSH (2026-11-06):
-	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
-	    git fetch origin
-	    git reset --mixed origin/main
-	    git status --short
-	    git add "js/render.js" "sw.js" "bugs/BUG_LOG.md"
-	    git commit -m "MOB-03: scan pulse and other effects animate after one tap"
-	    git push origin main
-	- ASK (2026-11-06): Push with the block above, check on your phone, then mark [x] + KBP.
+	- ASK (2026-11-07): Push with the block above, check on your phone, then mark [x] + KBP.
 
 [-] MOB-04 [UX] Pinch to zoom the map
 	- KBP (2026-11-06): Pinch to zoom out and reverse pinch to zoom in
@@ -137,6 +114,7 @@ OPEN ITEMS
 	- Device: not stated
 	- Summary: Tapping a wall tile only shows its description. Wanted: walk to the nearest reachable floor tile next to the tapped wall.
 	- Note (2026-11-06, nightly run): Small js/input.js change in canvasTap: when the tapped tile is a wall, pick the closest reachable open neighbor and auto-walk there (press-and-hold still describes). Shares canvasTap with MOB-01 and MOB-12; do them in the same run if possible.
+	- Note (2026-11-07, nightly run): js/input.js canvasTap now carries the MOB-01 door-walk change ([c], not yet pushed); build on that version.
 	- NEXT STEP (2026-11-06): Implement the wall-tap target in canvasTap, keep long-press inspect, verify on the 4 phone profiles.
 
 [!] MOB-06 [UX] Action bar as 2 rows x 4 buttons (add Dadvice, Map, Place Trap), player-customizable
@@ -146,12 +124,26 @@ OPEN ITEMS
 	- Note (2026-11-06, nightly run): Marked [!] because saving a custom layout needs a new localStorage key (LARGE ITEM rule) and touches the HTML/CSS bar, ui.js (M8 bar + MORE drawer) and input.js. The fixed 2x4 layout alone (BAG, SCAN, WAIT, THROW / DADVICE, MAP, PLACE TRAP, MORE) would be a small item; if you want that first, say so in a KBP note and the customization can follow as its own item.
 	- NEXT STEP (2026-11-06): Dedicated run: 2x4 compact grid (portrait + landscape), move DADVICE/MAP/PLACE out of the MORE drawer, add a "Customize bar" sheet that saves the order under a new sda_ key, keep desktop unchanged.
 
-[k] MOB-07 [UX] Codex shows bosses, creatures and consumables before you have met them
+[c] MOB-07 [UX] Codex shows bosses, creatures and consumables before you have met them
 	- KBP (2026-11-06): Bosses and creates in the codex should only appear after encountering them in that run. Same applies to consumables.
 	- Device: not stated
-	- Summary: The Codex Creatures, Bosses and Consumables tabs list everything from the start. Wanted: show only what you have encountered in the current run.
+	- Summary: Fixed. Codex Creatures and Bosses tabs now match the Bestiary: only creatures and bosses you have ever encountered (any run) are shown; the rest are dimmed "??? ? ?" cards marked Not yet encountered, with a "Logged: N / total" line. The Consumables tab shows only consumables identified in the current run (starting rations count); the rest are "???" cards, with an "Identified this run: N / total" line. Weapons, Armor, Charms and Recipes tabs are unchanged; the Bestiary cards themselves were not touched.
 	- Note (2026-11-06, nightly run): The game already tracks identified consumables per run (saved), but creatures and bosses are only tracked lifetime (the Bestiary, sda_bestiary_v1). Per-run creature tracking means adding a field to the run save (a LARGE ITEM). Using lifetime Bestiary discoveries for the Codex is a small change. The Bestiary cards themselves are a protected screen and would not change unless you say so.
-	- ASK (2026-11-06): Should Codex creatures and bosses reset every run (new save field, done as a large item), or unlock once you have ever met them (lifetime, matches the Bestiary, small fix), with consumables following the per-run identified list either way?
+	- Asked (2026-11-06): Should Codex creatures and bosses reset every run (new save field, done as a large item), or unlock once you have ever met them (lifetime, matches the Bestiary, small fix), with consumables following the per-run identified list either way?
+	- Note (2026-11-06): match the bestiary.
+	  -> Actioned 2026-11-07: Codex Creatures/Bosses now use the lifetime Bestiary discoveries (js/ui.js buildCodex); Consumables use the per-run identified list. See the note below.
+	- Note (2026-11-07, nightly run): js/ui.js buildCodex only (no save change; uses the existing discovered map from sda_bestiary_v1 and game.knownConsumables). Verification performed: node --check on all js; harness 7/7 clears; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape with 1 creature, 1 boss and 2 consumables known: before, all 64 creatures / 12 bosses / 34 consumables listed; after, 63 / 11 / 32 shown as "???" cards and only the known entries named; mobile and desktop screenshots checked; desktop Codex Weapons tab md5-identical to the previous build (Creatures tab differs as intended). Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose shows the story; cover, Bestiary and deck screenshots md5-identical to the previous build. No page errors.
+	- Note (2026-11-07, nightly run): MOB-01, MOB-07 and MOB-09 were fixed together and share files (js/game.js: MOB-01 + MOB-09; sw.js: all three, re-stamped BUILD 0.11.0-a39705d9fc). Pushing one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Files: js/ui.js, sw.js
+	- PUSH (2026-11-07):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/ui.js" "sw.js"
+	    git commit -m "MOB-07: Codex hides unmet creatures and bosses (as the Bestiary) and consumables not identified this run"
+	    git push origin main
+	- ASK (2026-11-07): Push with the block above, check on your phone, then mark [x] + KBP.
 
 [!] MOB-08 [UX] Target box: in-range enemies in a lower-right box, swipe to choose, tap to attack
 	- KBP (2026-11-06): When attacking a creature or boss, when it is in range of your weapon it should appear in a box at the lower right corner of the map. There you can also tap it to attack. if there are multiple, you can swipe to the left or right to choose which to attack. Tapping the box actions an attack. 
@@ -160,18 +152,33 @@ OPEN ITEMS
 	- Note (2026-11-06, nightly run): Marked [!]: new on-screen component (HTML/CSS), target selection state, weapon-reach checks (game.js), render/ui updates each turn, and touch handling in input.js (3+ systems). Must stay clear of the protected screens.
 	- NEXT STEP (2026-11-06): Dedicated run: build #tgtbox (compact layouts only) listing enemies within effective reach, swipe to cycle, tap = attack the selected one through the existing attack path; verify on the 4 phone profiles and confirm desktop is unchanged.
 
-[k] MOB-09 [BALANCE] Scan radius should scale with Perception, from 1 tile to everything you can see
+[c] MOB-09 [BALANCE] Scan radius should scale with Perception, from 1 tile to everything you can see
 	- KBP (2026-11-06): Scanning should be dependent on your perception, the lowest perception you scan 1 tile all around the character while the max perception scans  all visible squares the player sees. 
 	- Device: not stated
-	- Summary: Scan already scales with Perception: radius = 2 + PER/2, clamped to 2-8 tiles. Wanted: lowest Perception scans 1 tile around you; maximum Perception scans every tile currently in view.
+	- Summary: Fixed. Scan radius = 1 + floor(Perception / 2), capped at 7 (PER 0-1 = 1 tile, PER 12-13 = 7). From PER 14 the scan also covers every tile currently in view, however far, on top of the 7-tile circle (so nothing close but out of sight is lost at the top step). The log says "Scan covers everything in view" at that level. Applies on desktop too.
 	- Note (2026-11-06, nightly run): Perception has no hard maximum (gear and levels keep adding), so "max" needs a number. Proposal: radius = 1 + floor(PER/2) up to 7, and from PER 14 on, the scan covers every visible tile. Small game.js change once the curve is set.
-	- ASK (2026-11-06): Use the proposed curve (PER 0-1 = 1 tile, +1 tile per 2 PER, full field of view at PER 14), or give the Perception value that should count as max?
+	- Asked (2026-11-06): Use the proposed curve (PER 0-1 = 1 tile, +1 tile per 2 PER, full field of view at PER 14), or give the Perception value that should count as max?
+	- Note (2026-11-06): use proposed curve.
+	  -> Actioned 2026-11-07: proposed curve applied in js/game.js scanArea (new constant SCAN_FULL_PER = 14). See the note below.
+	- Note (2026-11-07, nightly run): Design detail: at PER 14+ the scan is the 7-tile circle plus all visible tiles (a literal "visible tiles only" would have skipped hidden tiles right next to you that PER 13 still covers). Verification performed: node --check on all js; harness 7/7 clears; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, scan at PER 0/1/4/10/13/14/20: before radius 2/2/4/7/8/8/8, after 1/1/3/6/7/full/full; with detection forced, a trap on a visible tile 12 tiles away is found at PER 14 (not at PER 13 or in the old build), and a hidden trap 2 tiles away is still found at PER 14; no page errors. Desktop scan changes as intended; other desktop frames md5-identical.
+	- Note (2026-11-07, nightly run): MOB-01, MOB-07 and MOB-09 were fixed together and share files (js/game.js: MOB-01 + MOB-09; sw.js: all three, re-stamped BUILD 0.11.0-a39705d9fc). Pushing one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Files: js/game.js, sw.js
+	- PUSH (2026-11-07):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js"
+	    git commit -m "MOB-09: scan radius 1 + PER/2 up to 7; PER 14+ also scans everything in view"
+	    git push origin main
+	- ASK (2026-11-07): Push with the block above, check on your phone, then mark [x] + KBP.
 
 [-] MOB-10 [UX] Companions should stay within 3 tiles of the player unless attacking
 	- KBP (2026-11-06): Companion characters should always stay within 3 tiles of the player unless attacking something.
 	- Device: not stated
 	- Summary: A recruited companion can wander farther than 3 tiles. Wanted: it stays within 3 tiles unless it is attacking something.
 	- Note (2026-11-06, nightly run): Small js/game.js change in the companion turn (allyTurn): when not engaged with an enemy and farther than 3 tiles (Chebyshev) from you, step back toward you first. Tonight's MOB-13 fix also stops an unrecruited companion from following you to later floors at stale coordinates. Shares js/game.js with MOB-02 and MOB-13 ([c], not yet pushed); build on that version.
+	- Note (2026-11-07, nightly run): js/game.js now carries the MOB-01 and MOB-09 changes ([c], not yet pushed); build on that version.
 	- NEXT STEP (2026-11-06): Add the 3-tile leash to allyTurn (not while attacking or under a direct order), verify with a vm walk test and the 4 phone profiles.
 
 [!] MOB-11 [UX] Throw: pick the item from a list, then the target; STR limits distance
@@ -186,24 +193,8 @@ OPEN ITEMS
 	- Device: not stated
 	- Summary: Tap-to-travel only works on tiles currently in view; tapping a discovered but shaded tile only describes it. Wanted: auto-travel to any discovered tile.
 	- Note (2026-11-06, nightly run): Small js/input.js change: canvasTap checks game.vis; switch to game.seen for travel (paths still avoid closed doors; travel still halts when a new enemy comes into view). Shares canvasTap with MOB-01 and MOB-05.
+	- Note (2026-11-07, nightly run): js/input.js canvasTap now carries the MOB-01 door-walk change ([c], not yet pushed); build on that version. Doors in shaded tiles should use the same pathToDoor path when this is done.
 	- NEXT STEP (2026-11-06): Change the travel test in canvasTap to discovered tiles, verify on the 4 phone profiles that taps on shaded tiles travel and taps on undiscovered tiles still describe.
-
-[c] MOB-13 [BUG] Things spawning inside walls (BUG-008)
-	- KBP (2026-11-06): Creatures, companions, bosses, and items should not be able to spawn in a wall
-	- Device: not stated
-	- Summary: Fixed. The thing in the wall was a companion you had met but not recruited: it followed you to every later floor at its old position, usually inside a wall (and blocked new companion encounters). It now stays on the floor where you met it. A safety net also moves any creature, item, companion or the player off a wall tile after every floor build, revisit or Continue.
-	- Note (2026-11-06, nightly run): Probe of 60 seeds x 100 floors: 3,084 wall placements before, all the unrecruited companion; creatures, bosses and items were already on floor tiles; 0 after. Fix in js/game.js: buildFloor and _restoreFloorFromCache drop an unrecruited companion from another floor; new _settlePlacements() (uses no random numbers, so seeded and Daily floors are unchanged) runs at the end of buildFloor, _restoreFloorFromCache and continueRun. Logged and resolved as BUG-008. Verification performed: node --check on all js; harness 7/7 clears; full 1-class harness run with a per-step wall check: 3,143 bad placements before, 0 after; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (companion left on floor 1, 30 descents): 29 wall placements before, 0 after, no page errors; desktop frames md5-identical; protected screens unchanged; sw.js re-stamped.
-	- Note (2026-11-06, nightly run): MOB-02, MOB-03 and MOB-13 were fixed together and share files (js/game.js: MOB-02 + MOB-13; sw.js and bugs/BUG_LOG.md: all three). Pushing any one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
-	- Files: js/game.js, sw.js, bugs/BUG_LOG.md
-	- PUSH (2026-11-06):
-	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
-	    git fetch origin
-	    git reset --mixed origin/main
-	    git status --short
-	    git add "js/game.js" "sw.js" "bugs/BUG_LOG.md"
-	    git commit -m "MOB-13: unrecruited companions stay on their floor; nothing is left inside a wall"
-	    git push origin main
-	- ASK (2026-11-06): Push with the block above, check on your phone, then mark [x] + KBP.
 
 [!] MOB-14 [UX] Codex in the Bestiary card style, recipes included
 	- KBP (2026-11-06): Replicate the card theme used in the bestiary on to the codex for everything, even the recipes. recipe cards will have the name (once discovered) on the front and the combination of items on the back.

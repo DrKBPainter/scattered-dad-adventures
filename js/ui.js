@@ -197,8 +197,12 @@ function buildCodex(){
   });
   h+='</div>';
  }else if(codexTab===3){/* Consumables */
+  /* MOB-07: only consumables identified in this run are listed; the rest are "???" cards. */
+  const _kc=(typeof game!=="undefined"&&game&&game.knownConsumables)||[];
+  h+='<p class="dim">Identified this run: '+CONSUMABLES.filter(c=>_kc.includes(c.id)).length+' / '+CONSUMABLES.length+'. Forgotten at the start of every run, like the grocery list.</p>';
   h+='<div class="cdx-grid cdx-grid-item">';
   CONSUMABLES.forEach(c=>{
+   if(!_kc.includes(c.id)){h+='<div class="cdx-card" style="opacity:.5"><canvas class="cdx-ic" width="64" height="64"></canvas><div class="cdx-nm">??? ? ?</div><div class="cdx-st">Not yet identified this run</div><div class="cdx-ds">Consume one or read the manual. Nobody reads the manual.</div></div>';return;}
    const eff=[];
    if(c.heal)eff.push('+'+c.heal+' HP');
    if(c.nourish)eff.push('Nourish '+c.nourish);
@@ -217,8 +221,11 @@ function buildCodex(){
   });
   h+='</div>';
  }else if(codexTab===4){/* Creatures */
+  /* MOB-07: matches the Bestiary: only creatures you have ever encountered; the rest are "???" cards. */
+  h+='<p class="dim">Logged: '+CREATURES.filter(c=>discovered[c.id]).length+' / '+CREATURES.length+'. Retained across all runs, as in the Bestiary.</p>';
   h+='<div class="beast-grid">';
   CREATURES.forEach(c=>{
+   if(!discovered[c.id]){h+='<div class="bcard und"><canvas width="64" height="64"></canvas><div class="bn">??? ? ?</div><div class="bs">Not yet encountered</div><div class="bd">Venture deeper.</div></div>';return;}
    h+='<div class="bcard" data-cid="'+c.id+'">'
     +'<canvas width="64" height="64" data-spr-cr="'+c.id+'"></canvas>'
     +'<div class="bn">'+c.name+'</div>'
@@ -228,8 +235,11 @@ function buildCodex(){
   });
   h+='</div>';
  }else if(codexTab===5){/* Bosses */
+  /* MOB-07: matches the Bestiary: only bosses you have ever encountered. */
+  h+='<p class="dim">Logged: '+BOSSES.filter(b=>discovered[b.id]).length+' / '+BOSSES.length+'. Retained across all runs, as in the Bestiary.</p>';
   h+='<div class="beast-grid">';
   BOSSES.forEach(b=>{
+   if(!discovered[b.id]){h+='<div class="bcard und"><canvas width="64" height="64"></canvas><div class="bn">??? ? ?</div><div class="bs">BOSS &bull; Not yet encountered</div><div class="bd">Venture deeper.</div></div>';return;}
    h+='<div class="bcard" data-bid="'+b.id+'">'
     +'<canvas width="64" height="64" data-spr-cr="'+b.id+'"></canvas>'
     +'<div class="bn r-Legendary">'+b.name+' <span class="r-Common">[BOSS &bull; Floor '+b.floor+']</span></div>'
