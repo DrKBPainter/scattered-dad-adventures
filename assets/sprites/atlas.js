@@ -129,5 +129,18 @@ var SPRITE_ATLAS={version:1,sheets:[
   "creature:selfcheckout_sentinel":[396,0,32,32],
   "creature:unfindable_associate":[429,0,32,32],
   "creature:paint_swatch_swarm":[462,0,32,32],
-  "creature:aisle12_forklift":[495,0,32,32]}}
+  "creature:aisle12_forklift":[495,0,32,32]}},
+ {src:"assets/sprites/creatures-park-vastco.png",group:"creatures-park-vastco",sprites:{
+  "creature:warranty_wraith":[0,0,32,32],
+  "creature:sale_sign_golem":[33,0,32,32],
+  "creature:vastco_sample_station":[66,0,32,32],
+  "creature:vastco_flatbed":[99,0,32,32],
+  "creature:vastco_membership":[132,0,32,32],
+  "creature:vastco_bulk_spirit":[165,0,32,32],
+  "creature:park_soccer_coach":[198,0,32,32],
+  "creature:park_offleash_dog":[231,0,32,32],
+  "creature:park_headphone_jogger":[264,0,32,32],
+  "creature:park_event_coordinator":[297,0,32,32],
+  "creature:youth_soccer_swarm":[330,0,32,32],
+  "creature:birthday_party":[363,0,32,32]}}
 ]};

@@ -24,7 +24,7 @@ const ROOT=path.resolve(__dirname,"..");
 const OUT_DIR="assets/sprites";
 
 /* ---- groups switched on in the shipped atlas (edit this list in later chunks) ---- */
-const ENABLED=["items","heroes","bosses","creatures-house-lowe"];
+const ENABLED=["items","heroes","bosses","creatures-house-lowe","creatures-park-vastco"];
 
 /* ---- per-sprite tuning hooks for later chunks: key -> {outline:false, shade:false} ---- */
 const TUNING={};
