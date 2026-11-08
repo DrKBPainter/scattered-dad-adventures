@@ -4,6 +4,7 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-06 (nightly run). Census: [ ] 0 | [-] 5 | [k] 2 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-08 nightly run]
 Previously: 2026-11-06 (setup). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 0 | [!] 0 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-07 nightly run]
 Previously: (none)   [displaced 2026-11-06 nightly run]
 
@@ -11,6 +12,27 @@ Previously: (none)   [displaced 2026-11-06 nightly run]
 =====================================================================
 COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
+[x] MOB-01 [UX] Tapping a distant door should walk to it, then ask what to do
+	- KBP (2026-11-06): When I click on a door that I am not next to, travel to the door, then prompt what to do if the travel is not impeded
+	- Device: not stated
+	- Summary: Fixed. Tapping (or clicking) a closed door you are not next to now walks you to the floor tile beside it; if the walk finishes without being interrupted, the door menu opens (Open it / Do nothing; locked doors offer the key, lock-picking or kicking as before). If anything interrupts the walk (an enemy comes into view, HP loss, a new bad status such as the knee), no menu appears. Pressing and holding still describes the door.
+	- Note (2026-11-06, nightly run): Triaged as a small input.js + game.js change: path to the nearest open tile adjacent to the door, and when the auto-walk ends there uninterrupted, open a door prompt (openConfirm/openMenu). Locked doors would use the existing key check. Not worked tonight (budget went to the three BUG items).
+	- Note (2026-11-07, nightly run): js/game.js: new pathToDoor(d) (shortest path to an open tile orthogonally beside the door) and _doorArrive() (opens openDoorMenu(d) when the walk ends next to a still-closed door); both halt paths in continueClickPath clear the pending door. js/input.js canvasTap: a visible closed door that is not adjacent uses pathToDoor and tags game.clickDoor (not saved; sda_save_v4 unchanged). Only doors in view, as for other tap travel (MOB-12 covers shaded tiles). Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright (cloud Chromium) real tap on a door 2-5 tiles away on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, no movement and the tile description; after, Dad ends beside the door, "A door. What's the play?" menu shown, choosing Open opens it; with the knee forced to buckle, the walk halts and no menu appears; desktop 1280x800 mouse click: same result; desktop title, play and movement frames md5-identical to the previous build; protected screens unchanged (see MOB-07 note).
+	- Note (2026-11-07, nightly run): MOB-01, MOB-07 and MOB-09 were fixed together and share files (js/game.js: MOB-01 + MOB-09; sw.js: all three, re-stamped BUILD 0.11.0-a39705d9fc). Pushing one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Note (2026-11-08, weekly PWA build run, N25): sw.js changed again: the new sprite sheet assets/sprites/creatures-park-vastco.png was added to ASSETS and BUILD re-stamped 0.11.0-a39705d9fc -> 0.11.0-fa1f304857 (stamp covers this item's files too). This item's fix was kept unchanged. Pushing this block alone would leave sw.js listing a sheet that is not pushed; use the combined block in the 2026-11-08 weekly report (this item's files + the N25 files).
+	- Note (2026-11-08, weekly PWA build run 2, N26): sw.js changed again: assets/sprites/creatures-soccer-school.png added to ASSETS and BUILD re-stamped 0.11.0-fa1f304857 -> 0.11.0-d305560e20. This item's fix was kept unchanged. Use the combined block in the N26 weekly report (this item's files + the N25 and N26 files).
+	- Files: js/game.js, js/input.js, sw.js
+	- PUSH (2026-11-07):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "js/input.js" "sw.js"
+	    git commit -m "MOB-01: tapping a distant door walks to it, then offers the door menu"
+	    git push origin main
+	- ASK (2026-11-07): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-08): Close out. KBP
+
 [x] MOB-02 [BUG] Doors closed on whatever was standing in the doorway (BUG-006)
 	- KBP (2026-11-06): Keep doors open if there is something in that space (e.g., an item, any character)
 	- Device: not stated
@@ -69,6 +91,16 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-08 (nightly)
+- Fired outside the Mon-Sat schedule (Sunday, after the INBOX was edited); worked as a normal nightly run. Files from today's two weekly build runs (N25, N26) kept unchanged.
+- Triaged 3 INBOX lines -> MOB-15 UX stairs art [-], MOB-16 BALANCE depth-scaled gear drops [-], MOB-17 UX auto-walk avoids known traps [-]. KBP reopened MOB-07 ([c] -> [-]) with a 2026-11-08 note: gear hiding needs a new record, so MOB-07 -> [!] (its done creatures/bosses/consumables part still awaits push); flip cards for all tabs added to [!] MOB-14.
+- Archived [x] MOB-01 (KBP "Close out"). No BUG id to resolve.
+- Worked (3 [-] items, all fixed + verified -> [c]): MOB-04 pinch zoom on the map; MOB-05 tap a wall = walk beside it; MOB-10 companion leash with path-following catch-up.
+- Files changed: js/game.js, js/input.js, sw.js (BUILD 0.11.0-926e2cd850), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: none (UX items).
+- Verification: node --check all js; harness one class per process, 7/7 clears (run twice, last on the final code); Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape + desktop 1280x800 (title/play/move frames md5-identical); protected screens (iPhone SE + 13) functional and md5-identical; sw stamp --check OK in the folder.
+- Still open: [c] MOB-04, 05, 09, 10 | [-] MOB-12, 15, 16, 17 | [!] MOB-06, 07, 08, 11, 14.
+
 RUN 2026-11-07 (nightly)
 - INBOX empty; no new items. KBP answers on MOB-07 ("match the bestiary") and MOB-09 ("use proposed curve") actioned.
 - Archived [x] MOB-02, MOB-03, MOB-13 (KBP "close out" lines); BUG-006/007/008 already resolved.

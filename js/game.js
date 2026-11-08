@@ -340,6 +340,8 @@ function bfsPath(x0,y0,x1,y1){
  return path;}
 /* MOB-01: shortest path to a floor tile orthogonally next to closed door d (null if none reachable). */
 function pathToDoor(d){let best=null;for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0]]){const nx=d.x+dx,ny=d.y+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||game.floor.grid[ny][nx]===1)continue;const od=doorAt(nx,ny);if(od&&!od.open)continue;const p=bfsPath(game.px,game.py,nx,ny);if(p&&(!best||p.length<best.length))best=p;}return best;}
+/* MOB-05: shortest path to an open tile next to wall (wx,wy), any of its 8 neighbors (null if none reachable). */
+function pathToWall(wx,wy){let best=null;for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,-1],[-1,1],[1,1]]){const nx=wx+dx,ny=wy+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||game.floor.grid[ny][nx]===1)continue;const od=doorAt(nx,ny);if(od&&!od.open)continue;const p=bfsPath(game.px,game.py,nx,ny);if(p&&p.length&&(!best||p.length<best.length))best=p;}return best;}
 /* MOB-01: the walk ended without a halt next to the tapped door: offer the door menu. */
 function _doorArrive(){const cd=game.clickDoor;game.clickDoor=null;if(!cd||mode!==State.PLAY||pendingConfirm||pendingMenu)return;const d=doorAt(cd.x,cd.y);if(!d||d.open)return;if(Math.abs(d.x-game.px)+Math.abs(d.y-game.py)!==1)return;openDoorMenu(d);}
 function continueClickPath(){
@@ -603,8 +605,15 @@ function allyTurn(){
  if(adj){allyHit(def,adj);return;}
  const tgt=game.enemies.filter(en=>!en.isDog&&(Math.abs(en.x-game.px)+Math.abs(en.y-game.py))<=ALLY_LEASH).sort((a,b)=>(Math.abs(a.x-A.x)+Math.abs(a.y-A.y))-(Math.abs(b.x-A.x)+Math.abs(b.y-A.y)))[0];
  if(tgt){allyStepToward(tgt.x,tgt.y);allySufferAdjacent(def);return;}
- if(Math.abs(A.x-game.px)+Math.abs(A.y-game.py)>ALLY_LEASH){allyStepToward(game.px,game.py);}
+ allyCatchUp();
  allySufferAdjacent(def);}
+/* MOB-10: when not fighting, the companion stays within ALLY_LEASH tiles (8-way count) of Dad: farther than that, it follows the walkable path
+   (not a straight line into a wall) and jogs up to 2 tiles a turn until it is back in range. In range but more than ALLY_LEASH walking steps away
+   (the other side of a wall), it takes one step along the path so it does not get left behind the next time Dad moves. */
+function allyCatchUp(){const A=game.ally;const far=()=>Math.max(Math.abs(A.x-game.px),Math.abs(A.y-game.py));
+ const step=()=>{const p=bfsPath(A.x,A.y,game.px,game.py);const s=p&&p[0];if(s&&p.length>1&&canStep(A.x+s[0],A.y+s[1])){A.x+=s[0];A.y+=s[1];return true;}return allyStepToward(game.px,game.py);};
+ if(far()<=ALLY_LEASH){const p=bfsPath(A.x,A.y,game.px,game.py);if(p?p.length>ALLY_LEASH:Math.abs(A.x-game.px)+Math.abs(A.y-game.py)>ALLY_LEASH)step();return;}
+ for(let i=0;i<2&&far()>ALLY_LEASH;i++){if(!step())break;}}
 
 
 /* ===== FX ===== */

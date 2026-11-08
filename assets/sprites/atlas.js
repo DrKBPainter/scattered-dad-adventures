@@ -142,5 +142,18 @@ var SPRITE_ATLAS={version:1,sheets:[
   "creature:park_headphone_jogger":[264,0,32,32],
   "creature:park_event_coordinator":[297,0,32,32],
   "creature:youth_soccer_swarm":[330,0,32,32],
-  "creature:birthday_party":[363,0,32,32]}}
+  "creature:birthday_party":[363,0,32,32]}},
+ {src:"assets/sprites/creatures-soccer-school.png",group:"creatures-soccer-school",sprites:{
+  "creature:sideline_parent":[0,0,32,32],
+  "creature:the_trophy":[33,0,32,32],
+  "creature:the_waterboy":[66,0,32,32],
+  "creature:permission_form":[99,0,32,32],
+  "creature:science_fair_project":[132,0,32,32],
+  "creature:car_pool_line":[165,0,32,32],
+  "creature:chair_fortress":[198,0,32,32],
+  "creature:stats_dad":[231,0,32,32],
+  "creature:snack_stand_line":[264,0,32,32],
+  "creature:fog_machine":[297,0,32,32],
+  "creature:trophy_case":[330,0,32,32],
+  "creature:welcoming_committee":[363,0,32,32]}}
 ]};

@@ -25,7 +25,7 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  else if(game.vis&&game.vis[y]&&game.vis[y][x]){
   // Visible non-adjacent tile: pathfind toward it
   // MOB-01: a closed door is never a path tile, so walk to the tile beside it, then ask what to do.
-  const _cd=(_dr&&!_dr.open)?_dr:null;const path=_cd?pathToDoor(_cd):bfsPath(game.px,game.py,x,y);
+  const _cd=(_dr&&!_dr.open)?_dr:null;const _wl=!_cd&&game.floor.grid[y][x]===1;/* MOB-05: a tapped wall walks to the nearest floor tile beside it */const path=_cd?pathToDoor(_cd):_wl?pathToWall(x,y):bfsPath(game.px,game.py,x,y);
   if(path&&path.length){game.clickPath=path;if(_cd)game.clickDoor={x:_cd.x,y:_cd.y};continueClickPath();}
   else{showInspect(x,y);}
  }else{showInspect(x,y);}}
@@ -42,7 +42,17 @@ function _m7Swipe(dx,dy){if(mode!==State.PLAY||_m7Busy()||!game)return;
  if(aiming||placing){_m7SetAim(dx,dy,game.px+dx,game.py+dy);return;}
  game.clickPath=[];clearMouseInspect();tryMove(dx,dy);}
 function _m7End(){const p=_m7P;if(p&&p.timer)clearTimeout(p.timer);_m7P=null;}
+/* MOB-04: two fingers on the map = pinch zoom. Fingers together = zoom out, apart = zoom in (one ZOOM_STEPS step per 25% change in spread).
+   The second finger cancels the one-finger tap/swipe/hold, so a pinch never moves Dad. Mouse and keyboard zoom are unchanged. */
+const M4P_STEP=1.25;const _m4Pts=new Map();let _m4Pinch=null;
+function _m4Dist(){const a=Array.from(_m4Pts.values());return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);}
+function _m4Move(){if(!_m4Pinch||_m4Pts.size!==2||mode!==State.PLAY||_m7Busy()||!game)return;const d=_m4Dist();if(_m4Pinch.d0<1){_m4Pinch.d0=d;return;}const r=d/_m4Pinch.d0;
+ if(r>=M4P_STEP){_m4Pinch.d0=d;if(zoomStep<ZOOM_STEPS.length-1)doZoom(1);}else if(r<=1/M4P_STEP){_m4Pinch.d0=d;if(zoomStep>0)doZoom(-1);}}
+function _m4Up(ev){if(!_m4Pts.has(ev.pointerId))return;_m4Pts.delete(ev.pointerId);if(_m4Pts.size<2)_m4Pinch=null;}
+canvas.addEventListener("pointermove",(ev)=>{if(!_m4Pts.has(ev.pointerId))return;_m4Pts.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});_m4Move();});
+document.addEventListener("pointerup",_m4Up,true);document.addEventListener("pointercancel",_m4Up,true);
 canvas.addEventListener("pointerdown",(ev)=>{
+ if(ev.pointerType!=="mouse"){_m4Pts.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});if(_m4Pts.size>=2){_m7End();try{canvas.setPointerCapture(ev.pointerId);}catch(e){}_m4Pinch=_m4Pts.size===2?{d0:_m4Dist()}:null;return;}}
  if(!ev.isPrimary){_m7End();return;}
  if(ev.pointerType==="mouse"&&ev.button!==0){_m7End();return;}
  _m7End();const p={id:ev.pointerId,type:ev.pointerType,x0:ev.clientX,y0:ev.clientY,t0:Date.now(),moved:false,long:false,timer:null};_m7P=p;
