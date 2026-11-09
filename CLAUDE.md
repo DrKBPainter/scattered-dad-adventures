@@ -172,6 +172,8 @@ Selection within biome is **uniform random** — equal weight per creature. To m
 
 The PNG sprite sheets in `assets/sprites/` are generated from the ASCII sprites by `node tools/tools_make_atlas.js`. After changing any ASCII sprite (or enabling a new group in the tool's `ENABLED` list), re-run it, add any new sheet to `sw.js` ASSETS, then run `tools_sw_stamp.js`. `node tools/tools_make_atlas.js --check` fails if the sheets are stale; `node _harness.js atlas` checks every atlas key resolves. Never hand-edit the generated PNGs or atlas.js.
 
+Player animation (N29, 2026-11-09): `drawDadAnim()` in `js/render.js` animates the Dad on the map (4-frame walk cycle + attack lunge) by slicing his cached sprite at draw time; there are no frame sheets to regenerate. `game.js attack(e)` calls `dadAnimAttack(dx,dy)` (visual only). `?noanim` turns it off; the idle frame is the unchanged `drawDad()`.
+
 ## Mobile Notes (nightly run, 2026-11-06)
 
 `docs/MOBILE NOTES.txt` holds KBP's phone playtest observations (INBOX) and the triaged MOB-NN items. A nightly scheduled task (Mon-Sat) triages the INBOX, actions `KBP note:` lines, and fixes small items; the RULES block at the top of that file governs states ([ ] [-] [k] [c] [!] [x]), the item format, and the per-item PowerShell PUSH block on every [c] item. Only KBP marks [x]. Closed items, history, and run logs go to `docs/MOBILE NOTES archive.txt`. `docs/SHATTERED DAD Adventure notes.txt` is superseded (history only). Before changing mobile UI, check the file for open MOB items so a fix awaiting KBP's push is not overwritten.

@@ -69,6 +69,41 @@ function dadSprite(){let id;if(typeof game==="undefined"||!game||!game.cls){if(t
 function dadVisRemap(){const remap={};const hasCurse=game&&game.equip&&typeof SLOTS!=="undefined"&&SLOTS.some(s=>typeof isCursed==="function"&&isCursed(game.equip[s]));if(hasCurse){remap['s']='r';remap['S']='R';remap['2']='R';}return remap;}
 /* Draw the hero sprite (32x32) with cursed remap and equipped-weapon indicator */
 function drawDad(dx,dy,sc){sc=sc||1;const spr=dadSprite();const remap=(typeof game!=="undefined"&&game)?dadVisRemap():{};drawSpriteRemap(spr,dx,dy,sc,remap,skinColorMap());if(typeof game==="undefined"||!game)return;if(game.equip&&game.equip.weapon){ctx.fillStyle=PAL['y'];ctx.fillRect(dx+24*sc,dy+18*sc,sc,sc);ctx.fillRect(dx+24*sc,dy+19*sc,sc,sc);}}
+/* N29 PLAYER ANIMATION (mobile plan). A 4-frame walk cycle (left step, pass, right step, pass) and a basic attack
+   frame (lunge + lean toward the target, with a short swing streak), cut at draw time from the Dad's cached sprite
+   (PNG art or ASCII raster, skin/curse variant included): the sprite is drawn as 3 slices (left leg, right leg,
+   upper body) with per-frame pixel offsets (the leg slices start as many rows higher as the body is raised, so no seam opens). The leg split is found once per sprite from the ASCII grid (lowest rows
+   with a gap between the legs). Purely visual: a step is detected in drawWorld when game.px/py moves by one tile on
+   the same floor; attack(e) in game.js calls dadAnimAttack(dx,dy). Each plays ~200 ms via requestAnim (M4), then the
+   idle frame is the unchanged drawDad(). Off with ?noanim or prefers-reduced-motion. dadAnimStats() for tests. */
+const DAD_STEP_MS=110,DAD_WALK_MS=200,DAD_LUNGE_MS=130,DAD_ATK_MS=200,DAD_SLASH_MS=90;
+const _daGeo=new WeakMap();let _daOff=null,_daLast=null,_daWalk=null,_daAtk=null,_daStep=0,_daWalks=0,_daAtks=0,_daFrames=0;
+function _daOn(){if(_daOff===null){_daOff=false;try{if(typeof location!=="undefined"&&location&&/[?&]noanim(?:[=&]|$)/.test(location.search||""))_daOff=true;else if(typeof matchMedia==="function"&&matchMedia("(prefers-reduced-motion: reduce)").matches)_daOff=true;}catch(e){}}return !_daOff;}
+function _daLegs(spr){let g=_daGeo.get(spr);if(g)return g;const H=spr.length;let top=-1,mid=0,n=0;
+ for(let y=H-1;y>=0;y--){const row=spr[y]||"";let a=-1,b=-1;for(let x=0;x<row.length;x++)if(row[x]!=="."){if(a<0)a=x;b=x;}
+  if(a<0){if(top<0)continue;break;}let best=null;for(let x=a+1;x<b;x++){if(row[x]!==".")continue;let e=x;while(e+1<b&&row[e+1]===".")e++;const m=(x+e)/2;if(!best||Math.abs(m-15.5)<Math.abs(best-15.5))best=m;x=e;}
+  if(best===null||Math.abs(best-15.5)>6)break;top=y;mid+=best;n++;}
+ if(top<0||H-top<4){top=H-8;g={top:top,split:16};}else{if(H-top>14)top=H-14;g={top:top,split:Math.ceil(mid/n)};}
+ _daGeo.set(spr,g);return g;}
+function dadAnimAttack(dx,dy){if(!_daOn())return;_daAtk={t0:_rNow(),dx:Math.sign(dx||0),dy:Math.sign(dy||0)};_daWalk=null;_daAtks++;requestAnim(DAD_ATK_MS+40);}
+function _daTrack(){if(typeof game==="undefined"||!game)return;const L=_daLast;if(L&&L.g===game&&L.d===game.depth){const ddx=game.px-L.x,ddy=game.py-L.y;if((ddx||ddy)&&Math.abs(ddx)<=1&&Math.abs(ddy)<=1&&_daOn()){_daStep++;_daWalks++;_daWalk={t0:_rNow(),left:(_daStep&1)===1};_daAtk=null;requestAnim(DAD_WALK_MS+40);}}else{_daWalk=null;_daAtk=null;}
+ _daLast={g:game,d:game.depth,x:game.px,y:game.py};}
+function _daFrame(){if(!_daOn())return null;const n=_rNow();
+ if(_daAtk){const t=n-_daAtk.t0,a=_daAtk;if(t>=0&&t<DAD_ATK_MS){const lg=t<DAD_LUNGE_MS;const L=lg?5:2;return{k:lg?"attack":"recover",x:a.dx*L,y:a.dy*L,b:0,bx:a.dx*(lg?2:1),by:a.dy*(lg?1:0),l:0,r:0,slash:t<DAD_SLASH_MS?a:null};}_daAtk=null;}
+ if(_daWalk){const t=n-_daWalk.t0;if(t>=0&&t<DAD_WALK_MS){if(t<DAD_STEP_MS)return _daWalk.left?{k:"stepL",x:0,y:0,b:-1,bx:0,by:0,l:-2,r:0}:{k:"stepR",x:0,y:0,b:-1,bx:0,by:0,l:0,r:-2};return{k:"pass",x:0,y:0,b:1,bx:0,by:0,l:0,r:0};}_daWalk=null;}
+ return null;}
+function dadAnimStats(){const f=_daFrame();return{on:_daOn(),walks:_daWalks,attacks:_daAtks,frames:_daFrames,frame:f?f.k:"idle"};}
+function _daBlit(e,sx,sy,sw,sh,dx,dy,sc){if(sw<=0||sh<=0)return;const k=_sprImgDims(e.cv).w/e.w||1;ctx.drawImage(e.cv,sx*k,sy*k,sw*k,sh*k,dx+sx*sc,dy+sy*sc,sw*sc,sh*sc);}
+/* drawWorld's Dad: the animated frame when one is playing, else exactly drawDad() */
+function drawDadAnim(dx,dy,sc){sc=sc||1;_daTrack();const f=_daFrame();if(!f){drawDad(dx,dy,sc);return;}
+ const spr=dadSprite();const remap=dadVisRemap();const hasR=remap&&Object.keys(remap).length;if(_sprCacheOK===null)_sprCacheOK=!!_sprNewCanvas(1,1);
+ const e=_sprCacheOK?_sprCached(spr,hasR?remap:null,skinColorMap()):null;if(!e||!e.cv){drawDad(dx,dy,sc);return;}
+ const g=_daLegs(spr),W=e.w,H=e.h,lt=Math.max(0,g.top-Math.max(0,-(f.b+f.by))),ox=dx+f.x*sc,oy=dy+f.y*sc;ctx.imageSmoothingEnabled=false;_daFrames++;
+ _daBlit(e,0,lt,g.split,H-lt,ox,oy+f.l*sc,sc);_daBlit(e,g.split,lt,W-g.split,H-lt,ox,oy+f.r*sc,sc);
+ const bx=ox+f.bx*sc,by=oy+(f.b+f.by)*sc;_daBlit(e,0,0,W,g.top,bx,by,sc);
+ if(game.equip&&game.equip.weapon){ctx.fillStyle=PAL['y'];ctx.fillRect(bx+24*sc,by+18*sc,sc,sc);ctx.fillRect(bx+24*sc,by+19*sc,sc,sc);}
+ if(f.slash&&(f.slash.dx||f.slash.dy)){const a=f.slash,cx=dx+16*sc+a.dx*22*sc,cy=dy+16*sc+a.dy*22*sc,px=-a.dy,py=a.dx;ctx.fillStyle="#f4f1e8";
+  for(let i=-3;i<=3;i++){const bend=-Math.abs(i);ctx.fillRect(Math.round(cx+(px*i*2+a.dx*bend)*sc)-sc,Math.round(cy+(py*i*2+a.dy*bend)*sc)-sc,2*sc,2*sc);}}}
 function lootSprite(it){return it.kind==="weapon"?SPR_GEAR_W:it.kind==="armor"?SPR_GEAR_A:it.kind==="charm"?SPR_CHARM:it.kind==="key"?SPR_KEY:it.kind==="object"?SPR_OBJECT:SPR_POTION;}
 /* itemIconSprite: returns 32x32 sprite for inventory icon if available, else 16x16 fallback */
 function itemIconSprite(it){return(it&&it.sprite)?it.sprite:lootSprite(it);}
@@ -234,7 +269,7 @@ function drawWorld(){camX=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,
  if(game.ally&&!game.ally.following){const ax=(game.ally.x-camX)*TILE,ay=(game.ally.y-camY)*TILE;if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef)drawSprite(adef.sprite,ax,ay,1);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,TILE-2,2);}}
  // Draw active following ally with HP bar
  if(game.ally&&game.ally.following){const ax=(game.ally.x-camX)*TILE,ay=(game.ally.y-camY)*TILE;if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef){drawSprite(adef.sprite,ax,ay,1);const w=TILE-2;ctx.fillStyle="#1a3a1a";ctx.fillRect(ax+1,ay-3,w,2);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,Math.max(0,w*game.ally.hp/game.ally.maxhp),2);}}}
- drawDad((game.px-camX)*TILE,(game.py-camY)*TILE,1);
+ drawDadAnim((game.px-camX)*TILE,(game.py-camY)*TILE,1);/* N29 */
  drawFX();
  if(inspectOn){const px=(insX-camX)*TILE,py=(insY-camY)*TILE;ctx.strokeStyle="#f4c430";ctx.lineWidth=1;ctx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);}
  drawAimPreview();}
