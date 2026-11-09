@@ -172,6 +172,7 @@ OPEN ITEMS
 	    git push origin main
 	- Note (2026-11-09, weekly PWA run, N28): sw.js changed again for chunk N28 (new sheet assets/sprites/creatures-hood-hoa.png added to ASSETS; BUILD 0.11.0-decd471b0d -> 0.11.0-eac10af746). The MOB-18 sw.js content is kept; js/data.js and js/game.js are unchanged. Pushing this block also commits the N28 sw.js, which lists the new sheet, so use the combined block in the weekly report (it adds the sheet, atlas.js and the docs).
 	- Note (2026-11-09, nightly run 3): js/game.js changed again by tonight's MOB-20 and MOB-21 fixes (companion and key placement, lock choice) and sw.js re-stamped (0.11.0-eac10af746 -> 0.11.0-89d24698e2); this item's showBiomeClip and data.js changes kept unchanged. Pushing this block also commits those changes; use the combined block in tonight's report.
+	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
 	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
 
 
@@ -201,6 +202,7 @@ OPEN ITEMS
 	    git add "js/game.js" "sw.js"
 	    git commit -m "MOB-20: companions wait in proper rooms, not narrow hallway rooms"
 	    git push origin main
+	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
 	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
 
 [c] MOB-21 [UX] Keys and locked doors not next to the arrival stairs
@@ -219,6 +221,7 @@ OPEN ITEMS
 	    git add "js/game.js" "sw.js" "bugs/BUG_LOG.md"
 	    git commit -m "MOB-21: key and locked door kept away from the arrival stairs; start room never locked (BUG-010)"
 	    git push origin main
+	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
 	- ASK (2026-11-09): Push with the block above, check on your phone (a floor with a locked door), then mark [x] + KBP.
 
 [!] MOB-22 [BALANCE] Locked rooms reachable only through the locked door; some keys held by a tougher creature
@@ -229,7 +232,7 @@ OPEN ITEMS
 	- Note (2026-11-09, nightly run): The generator already locks only a room with exactly one entrance (roomEntries === 1), so the other way in is somewhere else: possibly a diagonal step past the door corner, a secret passage, or a corridor carved after the check. Needs a reproduction first; if one is found it is a bug and gets a BUG-NNN. The two wordings differ on the key-holder: one unique tougher character per biome (main notes) vs a random tougher-than-usual creature on that floor (Workstation copy). The plan follows the main notes (a named elite of an existing creature per biome, like the elite targets of the companion hunt quests) unless you add a KBP note. Marked [!]: floor generation, spawning and drops, new names and lore, possibly sprites (3+ systems).
 	- NEXT STEP (2026-11-09): Dedicated run: reproduce and close every other way into locked rooms (probe many seeds), then add a per-biome key-holder elite that carries the key on some floors, verify 7/7 clears and the 4 phone profiles.
 
-[c] MOB-23 [UX] ATTRIBUTES button in MORE: the stats and what each one does
+[-] MOB-23 [UX] ATTRIBUTES button in MORE: the stats and what each one does
 	- KBP (2026-11-09): Move the player stats, like STR, to a Attributes button in the More tab. This should also indicate what they help with.
 	- KBP (2026-11-09, from docs/MOBILE NOTES-Workstation.txt, an OneDrive conflict copy): Move the player stats (STR, DEF, etc.) to an Attributes button in the More tab. This should also indicate what each attribute can help with, generally.
 	- Device: not stated
@@ -247,6 +250,7 @@ OPEN ITEMS
 	    git commit -m "MOB-23: ATTRIBUTES sheet in MORE; stat row removed from the phone HUD"
 	    git push origin main
 	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): On my Galaxy S25+, the attributes of STR, ATK, DEF, PER, and WIS still show in the main play HUD and I do not see the ATTRIBUTES sheet in MORE.
 
 [!] MOB-24 [BALANCE] Higher Wisdom: better odds of identifying an item by examining it
 	- KBP (2026-11-09): The higher a players wisdom, the more likely it is for them to identify an item when examining it. There should be abase level to be able to identify even a small portion of the item (e.g. an enchantment).

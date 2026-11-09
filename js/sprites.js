@@ -5668,6 +5668,9 @@ function getBiomeSprites(depth){
   if(depth<=90)          return [SPR_FLOOR_HOOD,  SPR_WALL_HOOD];
   return                        [SPR_FLOOR_HOA,   SPR_WALL_HOA];
 }
+/* M14: biome slugs for the environment tile art (tile:<slug>:<kind>:<n> keys in assets/sprites/tiles.png),
+   same order and floor ranges as getBiomeSprites(); the SPR_FLOOR_<SLUG>/SPR_WALL_<SLUG> sprites are each tile set's source. */
+const TILE_BIOMES=["house","lowe","park","vastco","soccer","school","resto","idkea","hood","hoa"];
 /* ===== N19: full 10-biome creature roster sprites ===== */
 const SPR_C_STATS_DAD=S([
   "................................",

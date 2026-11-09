@@ -16,7 +16,8 @@
 
    Groups follow the plan's chunks, so each later chunk only flips its group into ENABLED
    (and may add per-sprite TUNING): items (M13), heroes (N22), bosses (N23),
-   creatures by biome pair (N24-N28). Environment tiles are M14 (not generated here).
+   creatures by biome pair (N24-N28), environment tiles (M14: group "tiles", built by tileGroup() below,
+   keys tile:<biome>:<kind>:<n> drawn by render.js drawWorld via registerTileImage()).
    Output is deterministic: same ASCII in -> byte-identical PNG out. */
 "use strict";
 const fs=require("fs"),path=require("path"),vm=require("vm"),zlib=require("zlib");
@@ -24,7 +25,7 @@ const ROOT=path.resolve(__dirname,"..");
 const OUT_DIR="assets/sprites";
 
 /* ---- groups switched on in the shipped atlas (edit this list in later chunks) ---- */
-const ENABLED=["items","heroes","bosses","creatures-house-lowe","creatures-park-vastco","creatures-soccer-school","creatures-resto-idkea","creatures-hood-hoa"];
+const ENABLED=["items","heroes","bosses","creatures-house-lowe","creatures-park-vastco","creatures-soccer-school","creatures-resto-idkea","creatures-hood-hoa","tiles"];
 
 /* ---- per-sprite tuning hooks for later chunks: key -> {outline:false, shade:false} ---- */
 const TUNING={};
@@ -44,7 +45,7 @@ function loadGame(){
  const names=[...js.matchAll(/^(?:const|let|var)\s+(SPR_[A-Z0-9_]+)\s*=/gm)].map(m=>m[1]);
  const get=n=>{try{return vm.runInContext("typeof "+n+"!=='undefined'?"+n+":undefined",sb);}catch(e){return undefined;}};
  const SPR={};for(const n of names){const v=get(n);if(Array.isArray(v))SPR[n]=v;}
- const G={};for(const n of["PAL","CREATURES","BOSSES","CLASSES","ALLIES","FAMILY_DOG","WEAPONS","ARMORS","CHARMS","CONSUMABLES","KEYS","OBJECTS"])G[n]=get(n);
+ const G={};for(const n of["TILE_BIOMES","PAL","CREATURES","BOSSES","CLASSES","ALLIES","FAMILY_DOG","WEAPONS","ARMORS","CHARMS","CONSUMABLES","KEYS","OBJECTS"])G[n]=get(n);
  return{SPR,G};
 }
 
@@ -72,7 +73,66 @@ function groupDefs(D){
  out.bosses={chunk:"N23",list:(G.BOSSES||[]).filter(b=>Array.isArray(b.sprite)).map(b=>({key:"boss:"+b.id,spr:b.sprite}))};
  for(const [g,d] of Object.entries(CREATURE_GROUPS))
   out[g]={chunk:d.chunk,list:(G.CREATURES||[]).filter(c=>d.biomes.includes(c.biome)&&Array.isArray(c.sprite)).map(c=>({key:"creature:"+c.id,spr:c.sprite}))};
+ out.tiles={chunk:"M14",list:tileGroup(D)};
  return out;
+}
+
+/* ---------- M14 environment tiles ----------
+   Per biome (slug order = TILE_BIOMES in js/sprites.js): floor x3 and wall x2 variants (tileable bevel + grain from the
+   biome's ASCII floor/wall sprite, plus a stain / speck / crack detail on the extra variants), wall edge overlays
+   (n,e,s,w: drawn on a wall tile on each side that faces a seen open tile) and floor shade overlays (n,w: drawn on a
+   floor tile under / right of a seen wall). Shared: water x3 (key tile:all:water:<n>). Doors, stairs and biome gates
+   are opaque full tiles, so they get the same bevel under their SPR_* keys (registerSpriteImage, like other art). */
+function _th(a,b,c){let h=(a*374761393+b*668265263+c*1442695041)|0;h=Math.imul(h^(h>>>13),1274126177);return(h^(h>>>16))>>>0;}
+function tileBase(spr,PAL,o){
+ o=o||{};const H=spr.length,W=H?spr[0].length:0,px=new Uint8Array(W*H*4);
+ const ch=(x,y)=>{if(o.wrap){x=(x+W)%W;y=(y+H)%H;}else{x=Math.max(0,Math.min(W-1,x));y=Math.max(0,Math.min(H-1,y));}return spr[y][x];};
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const c0=ch(x,y),c=hex(PAL[c0]),i=(y*W+x)*4;if(!c)continue;
+  const r=ramp(c);let out=c.slice();
+  if(ch(x,y-1)!==c0||ch(x-1,y)!==c0)out=out.map((v,k)=>clamp(v+(r.hi[k]-v)*0.55));
+  else if(ch(x,y+1)!==c0||ch(x+1,y)!==c0)out=out.map((v,k)=>clamp(v+(r.sh[k]-v)*0.55));
+  if(o.noise){const n=(_th(x,y,o.seed|0)%9)-4;out=out.map(v=>clamp(v*(1+n*o.noise)));}
+  px[i]=out[0];px[i+1]=out[1];px[i+2]=out[2];px[i+3]=255;}
+ return{w:W,h:H,px};
+}
+function tileDetail(t,kind,seed){
+ const W=t.w,H=t.h,mul=(x,y,f)=>{x=(x+W*4)%W;y=(y+H*4)%H;const i=(y*W+x)*4;if(!t.px[i+3])return;for(let k=0;k<3;k++)t.px[i+k]=clamp(t.px[i+k]*f);};
+ const h=k=>_th(seed,k,977);
+ if(kind==="stain"){const cx=h(1)%W,cy=h(2)%H,rx=3+h(3)%3,ry=2+h(4)%3;
+  for(let y=-ry;y<=ry;y++)for(let x=-rx;x<=rx;x++){const d=(x*x)/(rx*rx)+(y*y)/(ry*ry);if(d<=1)mul(cx+x,cy+y,0.86+0.08*d);}}
+ else if(kind==="specks"){for(let n=0;n<4;n++){const x=h(10+n)%W,y=h(20+n)%H;mul(x,y,n===3?1.22:0.72);if(n<3)mul(x+1,y,0.8);}}
+ else if(kind==="crack"){let x=6+h(1)%20,y=6+h(2)%8;for(let n=0;n<9;n++){mul(x,y,0.62);mul(x+1,y+1,1.12);y++;x+=(h(30+n)%3)-1;if(y>=H-6)break;}}
+ return t;
+}
+function tileOverlay(fn,col){const W=32,H=32,px=new Uint8Array(W*H*4);
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const r=fn(x,y);if(!r)continue;const i=(y*W+x)*4,c=r[0]?[255,248,226]:col;px[i]=c[0];px[i+1]=c[1];px[i+2]=c[2];px[i+3]=r[1];}
+ return{w:W,h:H,px};}
+function tileGroup(D){
+ const {SPR,G}=D,PAL=G.PAL,slugs=G.TILE_BIOMES||[],list=[];if(!PAL||!slugs.length)return list;
+ slugs.forEach((b,bi)=>{const U=b.toUpperCase(),fl=SPR["SPR_FLOOR_"+U],wa=SPR["SPR_WALL_"+U];if(!fl||!wa)return;
+  const seed=1000+bi*37;
+  list.push({key:"tile:"+b+":floor:0",spr:fl,px:tileBase(fl,PAL,{wrap:1,noise:0.012,seed})});
+  list.push({key:"tile:"+b+":floor:1",spr:fl,px:tileDetail(tileBase(fl,PAL,{wrap:1,noise:0.012,seed:seed+1}),"stain",seed+1)});
+  list.push({key:"tile:"+b+":floor:2",spr:fl,px:tileDetail(tileBase(fl,PAL,{wrap:1,noise:0.012,seed:seed+2}),"specks",seed+2)});
+  list.push({key:"tile:"+b+":wall:0",spr:wa,px:tileBase(wa,PAL,{wrap:1,noise:0.01,seed:seed+3})});
+  list.push({key:"tile:"+b+":wall:1",spr:wa,px:tileDetail(tileBase(wa,PAL,{wrap:1,noise:0.01,seed:seed+4}),"crack",seed+4)});
+  /* shadow colour: the wall's darkest colour pushed toward the outline ink */
+  let dk=null;for(const row of wa)for(const c of row){const v=hex(PAL[c]);if(v&&(!dk||lum(v)<lum(dk)))dk=v;}
+  const sc=(dk||OUTLINE).map((v,k)=>clamp(v*0.35+OUTLINE[k]*0.65));
+  const A=(arr,i)=>i<arr.length?arr[i]:0;
+  list.push({key:"tile:"+b+":edge:n",px:tileOverlay((x,y)=>y<2?[1,[64,30][y]]:null,sc)});
+  list.push({key:"tile:"+b+":edge:e",px:tileOverlay((x,y)=>x>29?[0,[40,96][x-30]]:null,sc)});
+  list.push({key:"tile:"+b+":edge:s",px:tileOverlay((x,y)=>y>28?[0,[56,104,156][y-29]]:null,sc)});
+  list.push({key:"tile:"+b+":edge:w",px:tileOverlay((x,y)=>x<1?[1,40]:null,sc)});
+  list.push({key:"tile:"+b+":shade:n",px:tileOverlay((x,y)=>A([124,92,64,40,22,10],y)?[0,A([124,92,64,40,22,10],y)]:null,sc)});
+  list.push({key:"tile:"+b+":shade:w",px:tileOverlay((x,y)=>A([72,38,14],x)?[0,A([72,38,14],x)]:null,sc)});
+ });
+ const wt=SPR.SPR_WATER;
+ if(wt){const shiftX=(s,n)=>s.map(r=>r.slice(n)+r.slice(0,n)),shiftY=(s,n)=>s.slice(n).concat(s.slice(0,n));
+  [wt,shiftX(wt,16),shiftY(shiftX(wt,8),12)].forEach((w,n)=>list.push({key:"tile:all:water:"+n,spr:w,px:tileBase(w,PAL,{wrap:1,noise:0.014,seed:500+n})}));}
+ for(const n of["SPR_DOOR","SPR_DOOR_L","SPR_DOOR_OPEN","SPR_STAIRS","SPR_STAIRS_UP","SPR_BIOME_GATE","SPR_BIOME_GATE_UP"])
+  if(SPR[n])list.push({key:n,spr:SPR[n],px:tileBase(SPR[n],PAL,{noise:0.008,seed:700})});
+ return list;
 }
 
 /* ---------- colour helpers ---------- */
@@ -142,7 +202,7 @@ function decodeRGBA(buf){
 
 /* ---------- packing: fixed cells, 16 per row, 1px gap so neighbours never bleed ---------- */
 function pack(list,PAL){
- const tiles=list.map(it=>({key:it.key,t:upgrade(it.spr,PAL,TUNING[it.key])}));
+ const tiles=list.map(it=>({key:it.key,t:it.px||upgrade(it.spr,PAL,TUNING[it.key])}));
  const cw=Math.max(1,...tiles.map(t=>t.t.w)),ch=Math.max(1,...tiles.map(t=>t.t.h)),cols=Math.min(16,Math.max(1,tiles.length)),rows=Math.max(1,Math.ceil(tiles.length/cols));
  const W=cols*(cw+1)-1,H=rows*(ch+1)-1,px=new Uint8Array(W*H*4),rects={};
  tiles.forEach((t,n)=>{const x0=(n%cols)*(cw+1),y0=Math.floor(n/cols)*(ch+1);
@@ -180,7 +240,7 @@ if(args.includes("--preview")){
   const cols=8,cw=32*Z*2+12,chh=32*Z+12,rows=Math.ceil(d.list.length/cols),W=cols*cw,H=rows*chh,px=new Uint8Array(W*H*4);
   for(let i=0;i<W*H;i++){const x=i%W,y=Math.floor(i/W),chk=((x>>3)+(y>>3))&1;px[i*4]=px[i*4+1]=px[i*4+2]=chk?52:40;px[i*4+3]=255;}
   d.list.forEach((it,n)=>{const ox=(n%cols)*cw+4,oy=Math.floor(n/cols)*chh+6;
-   const asc=upgrade(it.spr,D.G.PAL,{outline:false,shade:false}),up=upgrade(it.spr,D.G.PAL,TUNING[it.key]);
+   const asc=it.spr?upgrade(it.spr,D.G.PAL,{outline:false,shade:false}):{w:0,h:0,px:new Uint8Array(0)},up=it.px||upgrade(it.spr,D.G.PAL,TUNING[it.key]);
    [[asc,0],[up,32*Z+4]].forEach(([t,dx])=>{for(let y=0;y<t.h*Z;y++)for(let x=0;x<t.w*Z;x++){const s=(Math.floor(y/Z)*t.w+Math.floor(x/Z))*4;if(!t.px[s+3])continue;const d2=((oy+y)*W+ox+dx+x)*4;px[d2]=t.px[s];px[d2+1]=t.px[s+1];px[d2+2]=t.px[s+2];}});});
   fs.writeFileSync(path.join(dir,g+".png"),encodePNG(W,H,px));console.log("preview "+g+": "+d.list.length+" sprites -> "+path.join(dir,g+".png"));}
  process.exit(0);

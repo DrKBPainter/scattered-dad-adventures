@@ -29,7 +29,10 @@
   if(typeof ovBest!=="undefined"&&ovBest&&typeof buildBest==="function")buildBest();
  }catch(e){console.warn("sprite atlas: card redraw failed",e);}}
  sheets.forEach(sh=>{const img=new Image();img.decoding="async";
-  img.onload=function(){st.loaded++;for(const key of Object.keys(sh.sprites)){const spr=resolve(key);if(!spr){st.unknown.push(key);continue;}const c=cut(img,sh.sprites[key]);if(c&&registerSpriteImage(spr,c))st.registered++;else st.rejected.push(key);}
+  img.onload=function(){st.loaded++;for(const key of Object.keys(sh.sprites)){
+    /* M14: environment tiles have no ASCII sprite object; they go to render.js registerTileImage() */
+    if(/^tile:/.test(key)){if(typeof registerTileImage!=="function"){st.unknown.push(key);continue;}const c=cut(img,sh.sprites[key]);if(c&&registerTileImage(key,c)){st.registered++;st.tiles=(st.tiles||0)+1;}else st.rejected.push(key);continue;}
+    const spr=resolve(key);if(!spr){st.unknown.push(key);continue;}const c=cut(img,sh.sprites[key]);if(c&&registerSpriteImage(spr,c))st.registered++;else st.rejected.push(key);}
    if(st.unknown.length||st.rejected.length)console.warn("sprite atlas: "+st.unknown.length+" unknown key(s), "+st.rejected.length+" rejected; those stay ASCII");fin();};
   img.onerror=function(){st.failed++;console.warn("sprite sheet failed to load, using ASCII sprites: "+sh.src);fin();};
   img.src=sh.src;});

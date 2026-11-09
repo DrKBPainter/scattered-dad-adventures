@@ -25,6 +25,28 @@ function registerSpriteImage(spr,img){if(!spr||typeof spr!=="object"||!spr.lengt
  const r=_sprRecord(spr),d=_sprImgDims(img),k=r.w?d.w/r.w:0;if(!(k>=1&&k<=8&&k===Math.floor(k)&&d.h===r.h*k)){if(typeof console!=="undefined"&&console.warn)console.warn("sprite image rejected: "+d.w+"x"+d.h+" does not fit a "+r.w+"x"+r.h+" grid");return false;}
  const chars=new Set();for(const row of spr)for(const ch of row)chars.add(ch);_sprImg.set(spr,{img,k,W:d.w,H:d.h,chars,v:new Map()});if(typeof markDirty==="function")markDirty();return true;}
 function unregisterSpriteImage(spr){if(spr&&_sprImg.has(spr)){_sprImg.delete(spr);if(typeof markDirty==="function")markDirty();}}
+/* M14: environment tile art. Keys tile:<biome>:floor|wall:<n>, tile:<biome>:edge:n|e|s|w, tile:<biome>:shade:n|w,
+   tile:all:water:<n> (assets/sprites/tiles.png via spriteimg.js). A biome draws tile art only when its floor:0 and wall:0
+   are registered; otherwise drawWorld keeps the ASCII floor/wall sprites (so ?ascii and file-less runs are unchanged).
+   Variant picks hash the map cell + depth (no RNG). Edges/shades only look at SEEN neighbours (no map info leak). */
+const _tileArt=new Map(),_tileSets=new Map();
+function registerTileImage(key,img){if(typeof key!=="string"||!/^tile:[a-z]+:[a-z]+:[a-z0-9]+$/.test(key)||!img)return false;const d=_sprImgDims(img);if(d.w!==TILE||d.h!==TILE){if(typeof console!=="undefined"&&console.warn)console.warn("tile image rejected: "+key+" "+d.w+"x"+d.h);return false;}_tileArt.set(key,img);_tileSets.clear();if(typeof markDirty==="function")markDirty();return true;}
+function tileArtStats(){return{tiles:_tileArt.size};}
+function _tileSlug(depth){const L=(typeof TILE_BIOMES!=="undefined")?TILE_BIOMES:null;if(!L)return null;return L[Math.max(0,Math.min(L.length-1,Math.floor(((depth||1)-1)/10)))];}
+function _tileSet(depth){if(!_tileArt.size)return null;const b=_tileSlug(depth);if(!b)return null;if(_tileSets.has(b))return _tileSets.get(b);
+ const g=k=>_tileArt.get("tile:"+b+":"+k)||null,list=(kind,pre)=>{const a=[];for(let n=0;n<8;n++){const i=_tileArt.get(pre+kind+":"+n);if(i)a.push(i);else break;}return a;};
+ const fl=list("floor","tile:"+b+":"),wa=list("wall","tile:"+b+":");
+ const ts=(fl.length&&wa.length)?{fl,wa,wt:list("water","tile:all:"),eN:g("edge:n"),eE:g("edge:e"),eS:g("edge:s"),eW:g("edge:w"),sN:g("shade:n"),sW:g("shade:w")}:null;
+ _tileSets.set(b,ts);return ts;}
+function _tileHash(x,y,z){let h=(x*374761393+y*668265263+z*1442695041)|0;h=Math.imul(h^(h>>>13),1274126177);return(h^(h>>>16))>>>0;}
+function _tilePick(a,h,common){if(a.length<2)return a[0];if(h%100<common)return a[0];return a[1+((h>>>8)%(a.length-1))];}
+/* draws the base tile (+ wall edges / floor shade) for one map cell; false = caller draws the ASCII sprite */
+function _drawTileArt(ts,tg,mx,my,px,py){const G=game.floor.grid,S=game.seen,h=_tileHash(mx,my,game.depth|0);
+ const sw=(x,y)=>x>=0&&y>=0&&x<MAP_W&&y<MAP_H&&G[y][x]===1&&S[y][x],so=(x,y)=>x>=0&&y>=0&&x<MAP_W&&y<MAP_H&&G[y][x]!==1&&S[y][x];
+ ctx.imageSmoothingEnabled=false;const d=i=>{if(i)ctx.drawImage(i,px,py,TILE,TILE);};
+ if(tg===1){d(_tilePick(ts.wa,h,80));if(so(mx,my-1))d(ts.eN);if(so(mx+1,my))d(ts.eE);if(so(mx,my+1))d(ts.eS);if(so(mx-1,my))d(ts.eW);return true;}
+ if(tg===2){if(!ts.wt.length)return false;d(ts.wt[h%ts.wt.length]);}else d(_tilePick(ts.fl,h,70));
+ if(sw(mx,my-1))d(ts.sN);if(sw(mx-1,my))d(ts.sW);return true;}
 function hasSpriteImage(spr){return !!(spr&&typeof spr==="object"&&_sprImg.get(spr));}
 const _sprHexC=new Map();function _sprHex(h){let v=_sprHexC.get(h);if(v)return v;const m=/^#?([0-9a-f]{6})$/i.exec(h||"");v=m?[parseInt(m[1].slice(0,2),16),parseInt(m[1].slice(2,4),16),parseInt(m[1].slice(4,6),16)]:[0,0,0];_sprHexC.set(h,v);return v;}
 /* image variant for (remap,colorMap): the image itself when no cell changes color; a baked recolor otherwise; null = use ASCII */
@@ -199,8 +221,8 @@ function drawClassPortrait(cls,CW,CH){
 }
 function drawMenuBackdrop(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;if(typeof mode!=="undefined"&&mode===State.CLASS&&typeof classCursor!=="undefined"&&typeof CLASSES!=="undefined"&&CLASSES[classCursor]){drawClassPortrait(CLASSES[classCursor],CW,CH);}else{ctx.fillStyle="#11131a";ctx.fillRect(0,0,CW,CH);for(let i=0;i<80;i++){ctx.fillStyle="#1c2030";ctx.fillRect((i*53)%CW,(i*37)%CH,2,2);}drawDad(Math.floor(CW/2)-16,Math.floor(CH/2)-16,1);}}
 function drawWorld(){camX=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,Math.min(MAP_W-VIEW_W,game.px-Math.floor(VIEW_W/2)));camY=VIEW_H>MAP_H?-Math.floor((VIEW_H-MAP_H)/2):Math.max(0,Math.min(MAP_H-VIEW_H,game.py-Math.floor(VIEW_H/2)));/* MOB-04: a view wider/taller than the floor centers it */
- const [flrSpr,wallSpr]=(typeof getBiomeSprites==="function")?getBiomeSprites(game.depth):[SPR_FLOOR,SPR_WALL];
- for(let vy=0;vy<VIEW_H;vy++)for(let vx=0;vx<VIEW_W;vx++){const mx=camX+vx,my=camY+vy;if(mx<0||my<0||mx>=MAP_W||my>=MAP_H)continue;const px=vx*TILE,py=vy*TILE;if(!game.seen[my][mx]){ctx.fillStyle="#06070b";ctx.fillRect(px,py,TILE,TILE);continue;}const _tg=game.floor.grid[my][mx];drawSprite(_tg===1?wallSpr:_tg===2?SPR_WATER:flrSpr,px,py,1);const dr=doorAt(mx,my);if(dr){if(!dr.open)drawSprite(dr.locked?SPR_DOOR_L:SPR_DOOR,px,py,1);else drawSprite(SPR_DOOR_OPEN,px,py,1);}if(!game.vis[my][mx]){ctx.fillStyle="rgba(4,5,9,0.55)";ctx.fillRect(px,py,TILE,TILE);}}
+ const [flrSpr,wallSpr]=(typeof getBiomeSprites==="function")?getBiomeSprites(game.depth):[SPR_FLOOR,SPR_WALL];const _tset=_tileSet(game.depth);/* M14 */
+ for(let vy=0;vy<VIEW_H;vy++)for(let vx=0;vx<VIEW_W;vx++){const mx=camX+vx,my=camY+vy;if(mx<0||my<0||mx>=MAP_W||my>=MAP_H)continue;const px=vx*TILE,py=vy*TILE;if(!game.seen[my][mx]){ctx.fillStyle="#06070b";ctx.fillRect(px,py,TILE,TILE);continue;}const _tg=game.floor.grid[my][mx];if(!_tset||!_drawTileArt(_tset,_tg,mx,my,px,py))drawSprite(_tg===1?wallSpr:_tg===2?SPR_WATER:flrSpr,px,py,1);const dr=doorAt(mx,my);if(dr){if(!dr.open)drawSprite(dr.locked?SPR_DOOR_L:SPR_DOOR,px,py,1);else drawSprite(SPR_DOOR_OPEN,px,py,1);}if(!game.vis[my][mx]){ctx.fillStyle="rgba(4,5,9,0.55)";ctx.fillRect(px,py,TILE,TILE);}}
  const sx=(game.stairs.x-camX)*TILE,sy=(game.stairs.y-camY)*TILE;const _gDn=game.depth%10===0&&typeof SPR_BIOME_GATE!=="undefined",_gUp=game.depth%10===1&&game.depth>1&&typeof SPR_BIOME_GATE_UP!=="undefined";/* MOB-15: biome gates on the floors where the stairs cross into another biome */if(game.seen[game.stairs.y][game.stairs.x])drawSprite(_gDn?SPR_BIOME_GATE:SPR_STAIRS,sx,sy,1);if(game.stairsUp&&game.seen[game.stairsUp.y]&&game.seen[game.stairsUp.y][game.stairsUp.x]){drawSprite(_gUp?SPR_BIOME_GATE_UP:SPR_STAIRS_UP,(game.stairsUp.x-camX)*TILE,(game.stairsUp.y-camY)*TILE,1);}
  for(const t of game.traps){if(t.sprung||!game.vis[t.y][t.x])continue;if(t.known)drawSprite(t.def.sprite||SPR_TRAP,(t.x-camX)*TILE,(t.y-camY)*TILE,1);}
  for(const l of game.loot){if(!game.vis[l.y][l.x])continue;const px=(l.x-camX)*TILE,py=(l.y-camY)*TILE;if(l.item.kind==="gold"){ctx.fillStyle="#f4c430";ctx.fillRect(px+5,py+6,6,5);ctx.fillStyle="#c9a227";ctx.fillRect(px+5,py+10,6,2);}else drawSprite(itemIconSprite(l.item),px,py,1);}

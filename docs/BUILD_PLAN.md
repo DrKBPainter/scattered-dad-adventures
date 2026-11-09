@@ -75,7 +75,7 @@ Each class plays noticeably differently. A Gym Dad playthrough feels nothing lik
 
 ### Deliverables
 **Floors 1–5: The Parking Lot of Despair / Warehouse Depths**
-- [ ] Biome tile sets and visual theming
+- [x] Biome tile sets and visual theming (M14, 2026-11-09: per-biome floor/wall variants + autotiled wall edges, `assets/sprites/tiles.png`)
 - [ ] Enemy roster: Shopping Cart Ambush, Confused Senior, Rogue Forklift, Weekend Warrior
 - [ ] Traps: Lego Minefield, "Quick Stop" Trap, Vastco Sample Corridor
 - [ ] Floor narrative text (loading screen / room descriptions)
@@ -186,6 +186,7 @@ All sprites are 32×32 ASCII-grid strings in `js/sprites.js`, mapped through a f
 - [x] (N22, 2026-11-06) Player sprites, idle frame: under locked option C the 8 Dad sprites (generic + 7 classes), 5 allies and the family dog are the upgraded `heroes` group (`assets/sprites/heroes.png`); skin tones and cursed remap baked by the N21 pipeline. No hidden Granddad class exists in the code, so none was drawn. Hand-drawn replacement stays deferred
 - [x] (N23, 2026-11-07) Boss sprites: under locked option C the 12 bosses are the upgraded `bosses` group (`assets/sprites/bosses.png`, keys `boss:<id>`), shown on the map, in the Codex, in the mobile Bestiary cards and (now wired via `_uiSprImg()`) in the desktop Bestiary list. Hand-drawn replacement stays deferred
 - [x] Creature rosters biome-by-biome (~64 creatures across all 10 biomes) reusing the asset pipeline. Under locked option C: (N24, 2026-11-07) The House + Lowe & Behold + aquatic goldfish done (`creatures-house-lowe` group, 16 sprites); (N25, 2026-11-08) The Park + Vastco done (`creatures-park-vastco` group, 12 sprites); (N26, 2026-11-08) Soccer Complex + The School done (`creatures-soccer-school` group, 12 sprites); (N27, 2026-11-09) The Family Restaurant + IDKEA done (`creatures-resto-idkea` group, 12 sprites); (N28, 2026-11-09) The Neighborhood + The HOA Dominion done (`creatures-hood-hoa` group, 12 sprites) -- every creature now has option C art
+- [x] (M14, 2026-11-09) Environment tiles under locked option C: `tiles` group in `tools/tools_make_atlas.js` -> `assets/sprites/tiles.png` (120 tiles: per biome 3 floor + 2 wall variants, wall edge overlays n/e/s/w, floor shade overlays n/w; shared water x3; bevelled doors, stairs and biome gates). render.js `registerTileImage()` + `_drawTileArt()`; ASCII floors/walls stay the fallback (`?ascii`)
 - [ ] Walk/attack animation frames (2–4 frames) for the player sprite once static art lands
 - [x] (M13, 2026-11-06) Diagnostic harness validates the atlas alongside `PAL` character sets (`node _harness.js atlas`: every key resolves, rects are grid x k inside the sheet); `tools/tools_make_atlas.js --check` verifies sheets match the ASCII source and are in sw.js ASSETS
 - [x] (M13, 2026-11-06) Option C generator `tools/tools_make_atlas.js` (outline + 3-step shading); items group live, heroes/bosses/creatures groups ready for N22-N28
