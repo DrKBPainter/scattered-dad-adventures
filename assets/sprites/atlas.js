@@ -155,5 +155,18 @@ var SPRITE_ATLAS={version:1,sheets:[
   "creature:snack_stand_line":[264,0,32,32],
   "creature:fog_machine":[297,0,32,32],
   "creature:trophy_case":[330,0,32,32],
-  "creature:welcoming_committee":[363,0,32,32]}}
+  "creature:welcoming_committee":[363,0,32,32]}},
+ {src:"assets/sprites/creatures-resto-idkea.png",group:"creatures-resto-idkea",sprites:{
+  "creature:the_wait":[0,0,32,32],
+  "creature:childrens_menu":[33,0,32,32],
+  "creature:the_check":[66,0,32,32],
+  "creature:assembly_instructions":[99,0,32,32],
+  "creature:missing_dowel":[132,0,32,32],
+  "creature:idkea_employee":[165,0,32,32],
+  "creature:jugs_of_bedazzlement":[198,0,32,32],
+  "creature:restaurant_buzzer":[231,0,32,32],
+  "creature:invisible_server":[264,0,32,32],
+  "creature:tip_calculation":[297,0,32,32],
+  "creature:comfortable_sectional":[330,0,32,32],
+  "creature:plush_avalanche":[363,0,32,32]}}
 ]};

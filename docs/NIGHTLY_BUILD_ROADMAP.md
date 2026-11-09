@@ -52,7 +52,7 @@ the box, append a changelog line, and STOP. Small runs by design; err toward mor
 - [x] N24 (2026-11-07, mobile plan) — option C: `creatures-house-lowe` group enabled -> `assets/sprites/creatures-house-lowe.png` (16 creatures: The House, Lowe & Behold, and the aquatic goldfish), in sw.js ASSETS. Hand-drawn replacement deferred.
 - [x] N25 (2026-11-08, mobile plan) — option C: `creatures-park-vastco` group enabled -> `assets/sprites/creatures-park-vastco.png` (12 creatures: 6 The Park, 6 Vastco), in sw.js ASSETS. Hand-drawn replacement deferred.
 - [x] N26 (2026-11-08, mobile plan) — option C: `creatures-soccer-school` group enabled -> `assets/sprites/creatures-soccer-school.png` (12 creatures: 6 Soccer Complex, 6 The School), in sw.js ASSETS. Hand-drawn replacement deferred.
-- [ ] N27 — Hand-author creature sprites: **The Family Restaurant** + **IDKEA** (~14 creatures).
+- [x] N27 (2026-11-09, mobile plan) — option C: `creatures-resto-idkea` group enabled -> `assets/sprites/creatures-resto-idkea.png` (12 creatures: 6 The Family Restaurant, 6 IDKEA), in sw.js ASSETS. Hand-drawn replacement deferred.
 - [ ] N28 — Hand-author creature sprites: **The Neighborhood** + **The HOA Dominion** (~14 creatures) — completes full creature art pass.
 - [ ] N29 — Player walk-cycle animation (2–4 frames) + basic attack frame, wired into the render loop.
 
