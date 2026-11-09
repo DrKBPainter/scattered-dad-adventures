@@ -22,8 +22,8 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  if(touchy&&x===game.px&&y===game.py){clearMouseInspect();tryMove(0,0);return;}// M7: tap your own tile = wait (or take the stairs you stand on)
  const _dxa=Math.abs(x-game.px),_dya=Math.abs(y-game.py);const adj=Math.max(_dxa,_dya)===1;
  if(adj){clearMouseInspect();tryMove(Math.sign(x-game.px),Math.sign(y-game.py));}
- else if(game.vis&&game.vis[y]&&game.vis[y][x]){
-  // Visible non-adjacent tile: pathfind toward it
+ else if((game.vis&&game.vis[y]&&game.vis[y][x])||(game.seen&&game.seen[y]&&game.seen[y][x])){
+  // Visible or discovered (MOB-12: shaded tiles too) non-adjacent tile: pathfind toward it
   // MOB-01: a closed door is never a path tile, so walk to the tile beside it, then ask what to do.
   const _cd=(_dr&&!_dr.open)?_dr:null;const _wl=!_cd&&game.floor.grid[y][x]===1;/* MOB-05: a tapped wall walks to the nearest floor tile beside it */const path=_cd?pathToDoor(_cd):_wl?pathToWall(x,y):bfsPath(game.px,game.py,x,y);
   if(path&&path.length){game.clickPath=path;if(_cd)game.clickDoor={x:_cd.x,y:_cd.y};continueClickPath();}

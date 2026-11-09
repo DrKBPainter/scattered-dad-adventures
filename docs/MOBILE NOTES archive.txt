@@ -4,6 +4,7 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-07 (nightly run). Census: [ ] 0 | [-] 4 | [k] 0 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run]
 Previously: 2026-11-06 (nightly run). Census: [ ] 0 | [-] 5 | [k] 2 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-08 nightly run]
 Previously: 2026-11-06 (setup). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 0 | [!] 0 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-07 nightly run]
 Previously: (none)   [displaced 2026-11-06 nightly run]
@@ -91,6 +92,15 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-09 (nightly)
+- Triaged 7 INBOX lines -> MOB-18 CONTENT story/objective before each level [k]; MOB-19 BALANCE creature attack styles [!]; MOB-20 UX no companions in hallways [-]; MOB-21 UX keys/locked doors away from the arrival stairs [-]; MOB-22 BALANCE locked rooms only via their door + key-holder creature [!]; MOB-23 UX ATTRIBUTES button in MORE [-]; MOB-24 BALANCE WIS-based identify on examine [k]. docs/MOBILE NOTES-Workstation.txt (an OneDrive conflict copy, 2026-11-09 01:22) holds other wordings of 6 of the 7 lines; each was copied verbatim into its item as a second KBP line. The conflict copy was left in place.
+- No unanswered KBP notes; no [x] items to archive; no [c] reopened.
+- Worked (3 UX [-] items, all fixed + verified -> [c]): MOB-12 tap travel to discovered (shaded) tiles; MOB-15 stairs drawn as staircases with arrows; MOB-17 auto-walk routes around known traps (no-route fallback).
+- Files changed: js/game.js, js/input.js, js/sprites.js, sw.js (BUILD 0.11.0-40ea949d85 -> 0.11.0-6ad8b9124b), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: none (UX items; no item triaged as BUG).
+- Verification: node --check all js; harness one class per process, 7/7 clears; atlas --check + harness atlas OK; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape + desktop 1280x800 (desktop title/play/move frames md5-identical); protected screens (iPhone SE + 13) functional and md5-identical; folder md5s match the working copy; sw stamp --check OK in the folder.
+- Still open: [c] MOB-04, 05, 09, 10, 12, 15, 17 | [-] MOB-16, 20, 21, 23 | [k] MOB-18, 24 | [!] MOB-06, 07, 08, 11, 14, 19, 22.
+
 RUN 2026-11-08 (nightly)
 - Fired outside the Mon-Sat schedule (Sunday, after the INBOX was edited); worked as a normal nightly run. Files from today's two weekly build runs (N25, N26) kept unchanged.
 - Triaged 3 INBOX lines -> MOB-15 UX stairs art [-], MOB-16 BALANCE depth-scaled gear drops [-], MOB-17 UX auto-walk avoids known traps [-]. KBP reopened MOB-07 ([c] -> [-]) with a 2026-11-08 note: gear hiding needs a new record, so MOB-07 -> [!] (its done creatures/bosses/consumables part still awaits push); flip cards for all tabs added to [!] MOB-14.

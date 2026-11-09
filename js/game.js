@@ -322,7 +322,10 @@ function enemyTurn(){for(const e of game.enemies){if(e.isDog)continue;
 /* ===== BFS click-to-move pathfinding ===== */
 /* MOB-02: a door does not swing shut on a creature, a companion, a vendor or an item lying in the doorway. */
 function _doorOccupied(d){return game.enemies.some(e=>e.x===d.x&&e.y===d.y)||game.loot.some(l=>l.x===d.x&&l.y===d.y)||!!(game.ally&&game.ally.x===d.x&&game.ally.y===d.y)||!!(game.vendor&&game.vendor.x===d.x&&game.vendor.y===d.y);}
-function bfsPath(x0,y0,x1,y1){
+/* MOB-17: auto-walk routes around known, unsprung traps (the tapped tile itself is allowed); if that leaves no route, the old path is used. */
+function _knownTrapAt(x,y){return game.traps.some(t=>t.known&&!t.sprung&&t.x===x&&t.y===y);}
+function bfsPath(x0,y0,x1,y1){if(game.traps&&game.traps.some(t=>t.known&&!t.sprung)){const p=_bfsPath(x0,y0,x1,y1,true);if(p)return p;}return _bfsPath(x0,y0,x1,y1,false);}
+function _bfsPath(x0,y0,x1,y1,avoid){
  if(x0===x1&&y0===y1)return [];
  const dist=[];for(let y=0;y<MAP_H;y++)dist.push(new Array(MAP_W).fill(-1));
  dist[y0][x0]=0;const q=[[x0,y0]];
@@ -331,6 +334,7 @@ function bfsPath(x0,y0,x1,y1){
    if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||dist[ny][nx]>=0)continue;
    if(game.floor.grid[ny][nx]===1)continue;
    const d=doorAt(nx,ny);if(d&&!d.open)continue;
+   if(avoid&&!(nx===x1&&ny===y1)&&_knownTrapAt(nx,ny))continue;
    dist[ny][nx]=dist[cy][cx]+1;q.push([nx,ny]);}}
  if(dist[y1][x1]<0)return null;
  const path=[];let cx=x1,cy=y1;
