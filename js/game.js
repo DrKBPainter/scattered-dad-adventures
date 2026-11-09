@@ -401,7 +401,7 @@ function pickupLootAt(idx){const l=game.loot[idx];if(!l)return;if(l.item.kind===
 function tryMove(dx,dy){if(mode!==State.PLAY||pendingConfirm)return;if(napBlocked())return;if(hasStatus("drunk")&&Math.random()<0.30){const rd=[[0,-1],[0,1],[-1,0],[1,0]][Math.floor(Math.random()*4)];dx=rd[0];dy=rd[1];log("Your feet navigate independently.","red");}clearScanMessages();const nx=game.px+dx,ny=game.py+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H)return;if(game.floor.grid[ny][nx]===1)return;
  const d=doorAt(nx,ny);if(d&&!d.open){openDoorMenu(d);return;}
  if(game.vendor&&game.vendor.x===nx&&game.vendor.y===ny){openShop();return;}
- const fn=game.fountains&&game.fountains.find(f=>f.x===nx&&f.y===ny);if(fn){useFountain(fn);return;}
+ const fn=game.fountains&&game.fountains.find(f=>f.x===nx&&f.y===ny);if(fn){/* MOB-25: ask before drinking; an empty fountain just says so */if(fn.charges>0)openConfirm("Drink from the water fountain? It has "+fn.charges+" sip"+(fn.charges===1?"":"s")+" left. It has waited years for someone to ask.",()=>{useFountain(fn);syncUI();},{yes:"Drink",no:"Not now"});else useFountain(fn);return;}
  const hf=game.healFountains&&game.healFountains.find(f=>f.x===nx&&f.y===ny);if(hf){useHealFountain(hf);return;}
  const e=game.enemies.find(e=>e.x===nx&&e.y===ny);if(e){if(e.isDog){dogEncounter(e);return;}if(attack(e))return;endTurn();return;}
  // Reach weapon: check enemies further in the pressed direction
