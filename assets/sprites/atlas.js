@@ -168,5 +168,18 @@ var SPRITE_ATLAS={version:1,sheets:[
   "creature:invisible_server":[264,0,32,32],
   "creature:tip_calculation":[297,0,32,32],
   "creature:comfortable_sectional":[330,0,32,32],
-  "creature:plush_avalanche":[363,0,32,32]}}
+  "creature:plush_avalanche":[363,0,32,32]}},
+ {src:"assets/sprites/creatures-hood-hoa.png",group:"creatures-hood-hoa",sprites:{
+  "creature:lawnmower_peak":[0,0,32,32],
+  "creature:neighborhood_newsletter":[33,0,32,32],
+  "creature:nextdoor_post":[66,0,32,32],
+  "creature:dog_walker":[99,0,32,32],
+  "creature:the_covenant":[132,0,32,32],
+  "creature:violation_notice":[165,0,32,32],
+  "creature:annual_meeting":[198,0,32,32],
+  "creature:extended_wave":[231,0,32,32],
+  "creature:persistent_entrepreneur":[264,0,32,32],
+  "creature:hall_monitor":[297,0,32,32],
+  "creature:motion_sensor_light":[330,0,32,32],
+  "creature:lingering_board_member":[363,0,32,32]}}
 ]};
