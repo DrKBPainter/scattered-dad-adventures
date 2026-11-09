@@ -143,14 +143,14 @@ OPEN ITEMS
 	- Note (2026-11-08, nightly run): KBP's 2026-11-08 note on MOB-07 ("All of these should be flip cards in the codex, just like the bestiary is.") confirms this item for Weapons, Armor and Charms too; hiding unmet gear is tracked in MOB-07 ([!]). Do both in one dedicated run, since both rebuild buildCodex.
 	- NEXT STEP (2026-11-08): Dedicated run (with MOB-07): build Codex cards in the .bc-* style for all 7 tabs with flip-to-back details and recipe name front / ingredients back, unmet entries as "???" cards that do not flip; compact layouts first, desktop unchanged, the Bestiary (protected) untouched.
 
-[-] MOB-16 [BALANCE] Strong weapons and armor should be rare early, more common deeper
+[x] MOB-16 [BALANCE] Strong weapons and armor should be rare early, more common deeper
 	- KBP (2026-11-08): Encountering high level weapons and armor should be very rare at early levels. The further a player progresses the higher the likelihood.
 	- Device: not stated
 	- Summary: Floor loot picks a weapon, armor piece or charm uniformly from the whole list (js/game.js pickLoot), so floor 1 can drop the strongest gear as easily as the weakest. Wanted: high-level gear very rare early and increasingly likely with depth.
 	- Note (2026-11-08, nightly run): Small js/game.js change in pickLoot: weight each weapon/armor/charm by its strength rank against the floor depth (the strongest gear starts near zero weight on early floors and rises toward even odds deep down), keeping one random draw per pick so seeded and Daily floors stay deterministic. Check whether vendor stock, chests and drops use the same picker and treat them the same way.
 	- NEXT STEP (2026-11-08): Rank WEAPONS/ARMORS/CHARMS by power, add the depth weighting to pickLoot, measure the share of top-third gear on floors 1-10, 30, 60 and 90 over many seeds before vs after, and confirm 7/7 clears.
 
-[c] MOB-18 [CONTENT] More story before each level; floor 1 states its objective apart from the Dad choice
+[x] MOB-18 [CONTENT] More story before each level; floor 1 states its objective apart from the Dad choice
 	- KBP (2026-11-09): need to add more of the story prior to each level. Even level 1 should state the slapstick objective separate from the dad selection.
 	- KBP (2026-11-09, from docs/MOBILE NOTES-Workstation.txt, an OneDrive conflict copy): Add more of the story before each level that indicates the objective of the level. Keep the explanations on theme.
 	- Device: not stated
@@ -174,6 +174,7 @@ OPEN ITEMS
 	- Note (2026-11-09, nightly run 3): js/game.js changed again by tonight's MOB-20 and MOB-21 fixes (companion and key placement, lock choice) and sw.js re-stamped (0.11.0-eac10af746 -> 0.11.0-89d24698e2); this item's showBiomeClip and data.js changes kept unchanged. Pushing this block also commits those changes; use the combined block in tonight's report.
 	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
 	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): Close out. KBP
 
 
 [!] MOB-19 [BALANCE] Creatures attack in different styles based on their lore (charge, hit-and-steal, throw-and-run)
@@ -185,7 +186,7 @@ OPEN ITEMS
 	- NEXT STEP (2026-11-09): Dedicated run: add a style (charge | thief | ranged) to CREATURES by lore, build the thief (hit, take a random unequipped item, flee; the item drops on death) and ranged (throws within 4 tiles with line of sight, steps back when adjacent) enemy turns, list each creature's style in this item for KBP review, verify 7/7 clears and the 4 phone profiles.
 
 
-[c] MOB-20 [UX] Don't spawn companions in hallways
+[x] MOB-20 [UX] Don't spawn companions in hallways
 	- KBP (2026-11-09): don't spawn allies in hallways.
 	- KBP (2026-11-09, from docs/MOBILE NOTES-Workstation.txt, an OneDrive conflict copy): Do not spawn allies in hallways, only rooms.
 	- Device: not stated
@@ -204,6 +205,8 @@ OPEN ITEMS
 	    git push origin main
 	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
 	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): Close out. KBP
+
 
 [c] MOB-21 [UX] Keys and locked doors not next to the arrival stairs
 	- KBP (2026-11-09): don't spawn keys or locked doors next to the stairs used to reach that level.
