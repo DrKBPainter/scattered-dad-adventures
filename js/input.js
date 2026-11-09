@@ -47,7 +47,7 @@ function _m7End(){const p=_m7P;if(p&&p.timer)clearTimeout(p.timer);_m7P=null;}
 const M4P_STEP=1.25;const _m4Pts=new Map();let _m4Pinch=null;
 function _m4Dist(){const a=Array.from(_m4Pts.values());return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);}
 function _m4Move(){if(!_m4Pinch||_m4Pts.size!==2||mode!==State.PLAY||_m7Busy()||!game)return;const d=_m4Dist();if(_m4Pinch.d0<1){_m4Pinch.d0=d;return;}const r=d/_m4Pinch.d0;
- if(r>=M4P_STEP){_m4Pinch.d0=d;if(zoomStep<ZOOM_STEPS.length-1)doZoom(1);}else if(r<=1/M4P_STEP){_m4Pinch.d0=d;if(zoomStep>0)doZoom(-1);}}
+ if(r>=M4P_STEP){_m4Pinch.d0=d;if(zoomOut>0||zoomStep<ZOOM_STEPS.length-1)doZoom(1);}else if(r<=1/M4P_STEP){_m4Pinch.d0=d;if(canZoomOut())doZoom(-1);}}
 function _m4Up(ev){if(!_m4Pts.has(ev.pointerId))return;_m4Pts.delete(ev.pointerId);if(_m4Pts.size<2)_m4Pinch=null;}
 canvas.addEventListener("pointermove",(ev)=>{if(!_m4Pts.has(ev.pointerId))return;_m4Pts.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});_m4Move();});
 document.addEventListener("pointerup",_m4Up,true);document.addEventListener("pointercancel",_m4Up,true);
@@ -75,7 +75,7 @@ elStatuses.addEventListener("click",(ev)=>{const chip=ev.target.closest(".st-chi
  if(r.right>vw-4)tip.style.left=(-(r.right-(vw-4)))+"px";r=tip.getBoundingClientRect();if(r.left<4)tip.style.left=((parseFloat(tip.style.left)||0)+(4-r.left))+"px";
  if(r.top<4){tip.style.bottom="auto";tip.style.top="130%";}});
 document.addEventListener("pointerdown",(ev)=>{const t=ev.target;if(!(t&&t.closest&&t.closest(".st-chip")))_m7CloseTips(null);},true);
-canvas.addEventListener("contextmenu",(ev)=>{ev.preventDefault();if(mode===State.PLAY){const {x,y}=tileFromEvent(ev);showInspect(x,y);}});
+canvas.addEventListener("contextmenu",(ev)=>{ev.preventDefault();if(mode===State.PLAY){const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;/* MOB-04: a zoomed-out view can extend past the map */showInspect(x,y);}});
 // click inventory / dadism rows
 oInv.addEventListener("click",(ev)=>{
  // Bag-item action buttons (mouse-only): route to the SAME invAction() branch the keys use. Examine ("x") logs the item's flavor.

@@ -17,6 +17,7 @@
 | BUG-006 | MOB-02: doors auto-close on a creature, companion or item standing in the doorway | `js/game.js` | resolved | 2026-11-06 |
 | BUG-007 | MOB-03: scan pulse (and other effects) freeze after one tap until the next input | `js/render.js` | resolved | 2026-11-06 |
 | BUG-008 | MOB-13: unrecruited companion carried to later floors at stale coordinates (shows inside walls) | `js/game.js` | resolved | 2026-11-06 |
+| BUG-009 | Max zoom-in on a phone switches the map to the tablet tile grid | `js/config.js` | open | 2026-11-09 |
 
 ---
 
@@ -45,6 +46,18 @@
 **Description:** On compact layouts with the Choose-Your-Dad deck open, the document is taller than the viewport (iPhone SE: scrollHeight 975 vs 568) and body overflow is not hidden (the title cover sets it hidden), so window.scrollTo moves the page 407 px under the fixed #dadsel. Nothing visible changes (both layers are fixed), but on iOS a vertical drag on the deck may rubber-band or collapse the address bar. Pre-existing: identical on the pre-N22 build. Protected screen: a fix (overflow hidden while body.m-dadsel) is a bug fix, allowed, but was out of scope for N22.
 
 **Repro steps:** iPhone SE emulation, title cover -> New Adventure -> window.scrollTo(0,1e5); window.scrollY becomes 407.
+
+---
+
+### BUG-009 — Max zoom-in on a phone switches the map to the tablet tile grid
+
+- **File:** `js/config.js`
+- **Status:** open
+- **Logged:** 2026-11-09
+
+**Description:** At the top zoom step (300%) on a portrait phone the canvas is wider than the screen, the page overflows, window.innerWidth grows past 700 and pickViewport() picks the portrait-tablet grid (11x15 instead of 9x13; landscape 15x10 -> 17x12). Pre-existing: same on the build before MOB-04's zoom-out change. Found while verifying MOB-04.
+
+**Repro steps:** Pixel 5 or iPhone 13 landscape: zoom in 8 times (pinch apart or ZOOM +): at the last step VIEW_W x VIEW_H changes from 9x13 to 11x15
 
 ---
 ## Resolved Bugs

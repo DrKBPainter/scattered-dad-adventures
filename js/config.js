@@ -17,6 +17,12 @@ canvas.width=VIEW_W*TILE; canvas.height=VIEW_H*TILE;
 /* Zoom: 9 steps (100%-300%). +/= zooms in, - zooms out. */
 let zoomStep=0;
 const ZOOM_STEPS=[1.0,1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.0];
+/* MOB-04: zooming out past 100% shows MORE tiles (wider view) instead of shrinking the canvas. zoomOut 0 = normal view;
+   each step multiplies the base tile grid by ZOOM_OUT_STEPS[n-1]; the last step always fits the whole 40x30 floor. */
+let zoomOut=0,_vBase=[15,10];const ZOOM_OUT_STEPS=[1.5,2.25,3.25];
+function _zoomOutList(vw,vh){const full=Math.max(MAP_W/vw,MAP_H/vh);const l=ZOOM_OUT_STEPS.filter(f=>f<full-0.05);l.push(full);return l;}
+function canZoomOut(){return zoomStep>0||zoomOut<_zoomOutList(_vBase[0],_vBase[1]).length;}
+function zoomOutIsFull(){return zoomOut>0&&zoomOut>=_zoomOutList(_vBase[0],_vBase[1]).length;}
 /* ===== M5 DYNAMIC VIEWPORT + HiDPI (mobile plan) =====
    pickViewport(w,h) chooses the tile grid from the window shape:
      landscape / desktop      15x10 (unchanged desktop build)
@@ -35,10 +41,11 @@ function pickViewport(w,h){const o=_viewOverride();if(o)return o;
  if(h>w*1.15)return w>=700?[11,15]:[9,13];
  if(_coarsePointer()&&Math.min(w,h)>=600)return[17,12];
  return[15,10];}
-function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const v=pickViewport(iw,ih);VIEW_W=v[0];VIEW_H=v[1];
+function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const v=pickViewport(iw,ih);VIEW_W=v[0];VIEW_H=v[1];_vBase=[v[0],v[1]];
+ if(zoomOut>0){const zl=_zoomOutList(v[0],v[1]);if(zoomOut>zl.length)zoomOut=zl.length;const zf=zl[zoomOut-1];VIEW_W=Math.round(v[0]*zf);VIEW_H=Math.round(v[1]*zf);if(zoomOut===zl.length){VIEW_W=Math.max(VIEW_W,MAP_W);VIEW_H=Math.max(VIEW_H,MAP_H);}}
  const cw=VIEW_W*TILE,ch=VIEW_H*TILE;let maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
  const _l=_m6Layout(iw,ih);if(_l){maxW=Math.max(60,_l.maxW);maxH=Math.max(60,_l.maxH);}
- const s=Math.max(0.5,Math.min(maxW/cw,maxH/ch));const zm=ZOOM_STEPS[zoomStep]||1;
+ const s=Math.max(zoomOut>0?0.05:0.5,Math.min(maxW/cw,maxH/ch));const zm=ZOOM_STEPS[zoomStep]||1;
  canvas.style.width=Math.round(cw*s*zm)+"px";canvas.style.height=Math.round(ch*s*zm)+"px";
  const dpr=(typeof window.devicePixelRatio==="number"&&window.devicePixelRatio>0)?window.devicePixelRatio:1;
  const k=Math.max(1,Math.min(4,Math.ceil(s*zm*dpr-0.01)));

@@ -683,7 +683,13 @@ function showBiomeClip(){
  const clsId=game.cls&&game.cls.id;
  const tag=(typeof CLASS_CLIP_TAGS!=="undefined"&&clsId&&CLASS_CLIP_TAGS[clsId])?CLASS_CLIP_TAGS[clsId]:"";
  const body=(clip.title?('<span class="l-gold">'+clip.title+'</span><br>'):'')+(tag?('<i>'+tag+'</i><br><br>'):'')+clip.intro;
- openMenu(body,[{label:"Onward, then.",fn:function(){}}]);
+ /* MOB-18: the biome objective follows on its own short card (so the story card keeps its old size and its button stays on screen);
+    on floor 1 a third card gives the floor-1 objective, separate from the class backstory shown at Choose. */
+ const f1=(game.depth===1&&!game.ascent&&typeof FLOOR1_OBJECTIVE!=="undefined")?FLOOR1_OBJECTIVE:null;
+ const ob=clip.objective?('<span class="l-gold">'+(clip.title?clip.title+' &middot; ':'')+'OBJECTIVE</span><br>'+clip.objective):'';
+ const f1c=f1?('<span class="l-gold">'+f1.title+'</span><br>'+f1.text+(f1.note?('<br><br><i>'+f1.note+'</i>'):'')):'';
+ const showF1=function(){if(f1c&&typeof openMenu==="function")openMenu(f1c,[{label:"Understood. Mostly.",fn:function(){}}]);};
+ openMenu(body,[{label:"Onward, then.",fn:function(){if(ob&&typeof openMenu==="function")openMenu(ob,[{label:f1c?"Fine. What about today?":"Understood. Mostly.",fn:showF1}]);else showF1();}}]);
 }
 function doDescend(){if(game.ascent&&game.depth>=MAXDEPTH){log("The stairs down end in poured concrete. The Remote hums against your hip. Home is up.","dim");return;}game.floorCache[game.depth]=_cacheCurrentFloor();game.depth++;if(game.depth>MAXDEPTH){win();return;}updatePainChances();log("You descend to Floor "+game.depth+".","gold");const _fb=(typeof FLOORBLURBS!=="undefined")&&FLOORBLURBS[game.depth];if(_fb)log(_fb,"blu");game.moxie=Math.min(game.maxmoxie,game.moxie+2);buildFloor();showBiomeClip();saveRun();syncUI();}
 function die(cause,kind){mode=State.DEAD;
