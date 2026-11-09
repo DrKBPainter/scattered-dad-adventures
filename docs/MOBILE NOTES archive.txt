@@ -4,6 +4,8 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-09 (nightly run). Census: [ ] 0 | [-] 4 | [k] 2 | [c] 7 | [!] 7 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run 3]
+Previously: 2026-11-08 (nightly run). Census: [ ] 0 | [-] 4 | [k] 0 | [c] 4 | [!] 5 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run 2]
 Previously: 2026-11-07 (nightly run). Census: [ ] 0 | [-] 4 | [k] 0 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run]
 Previously: 2026-11-06 (nightly run). Census: [ ] 0 | [-] 5 | [k] 2 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-08 nightly run]
 Previously: 2026-11-06 (setup). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 0 | [!] 0 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-07 nightly run]
@@ -13,6 +15,167 @@ Previously: (none)   [displaced 2026-11-06 nightly run]
 =====================================================================
 COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
+[x] MOB-04 [UX] Pinch to zoom the map
+	- KBP (2026-11-06): Pinch to zoom out and reverse pinch to zoom in
+	- Device: not stated
+	- Summary: Fixed (reworked after your 2026-11-09 note). Two fingers on the map zoom it: pinch together to zoom out, spread apart to zoom in (one step per 25% change in finger spread). Zooming out past the normal view now shows more of the floor instead of stopping: on a portrait phone the view widens from 9x13 tiles through 14x20, 20x29 and 29x42 to the whole floor (40 tiles across, the floor centered with black above and below); landscape and desktop widen from 15x10 to the whole floor (45x30). Tap travel, tap-to-door/wall and press-and-hold work at every zoom level. Zooming in from the whole-floor view steps back to the normal view, then into the old 125%-300% steps. The ZOOM -/+ buttons in MORE and the -/= keys on desktop use the same steps. A pinch never moves Dad or uses a turn.
+	- Note (2026-11-06, nightly run): Small input.js change: track two active pointers on the canvas, compare finger distance at start vs now, and call doZoom(-1)/doZoom(1) once per threshold step; suppress the tap/swipe that would otherwise fire. Not worked tonight.
+	- Note (2026-11-08, nightly run): js/input.js only: new two-finger tracker on the canvas (_m4Pts/_m4Pinch, M4P_STEP = 1.25); the second finger cancels the one-finger gesture and drives doZoom(+1/-1). Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright (cloud Chromium) with CDP two-finger touch on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: spread 50 -> 200 px: before zoom step 0 -> 0, after 0 -> 5; pinch 200 -> 40 px: before 0 -> 0, after 5 -> 0; Dad's tile and the turn counter unchanged in both builds; no page errors. One-finger regression (iPhone SE, iPhone 13): tap-to-travel reaches the tapped tile and a swipe steps one tile, same as the previous build. Desktop 1280x800: title, play and movement frames md5-identical to the previous build; the "=" key still zooms. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build.
+	- Note (2026-11-08, nightly run): MOB-04, MOB-05 and MOB-10 were fixed together and share files (js/input.js: MOB-04 + MOB-05; js/game.js: MOB-05 + MOB-10, plus MOB-09's open fix; sw.js: all, re-stamped BUILD 0.11.0-d305560e20 -> 0.11.0-926e2cd850). Pushing one block commits the others' changes in those files too. sw.js also lists the N25/N26 sprite sheets from today's weekly runs; if those are not pushed yet, a block on its own would leave sw.js naming files GitHub does not have. Use the combined block in tonight's report (recommended).
+	- Note (2026-11-09, weekly PWA build run, N27): sw.js changed again: assets/sprites/creatures-resto-idkea.png added to ASSETS and BUILD re-stamped 0.11.0-926e2cd850 -> 0.11.0-40ea949d85. This item's fix was kept unchanged. Use the combined block in the N27 weekly report (this item's files + the N25, N26 and N27 files).
+	- Note (2026-11-09, nightly run): js/input.js changed again by tonight's MOB-12 fix and sw.js by MOB-12, MOB-15 and MOB-17 (BUILD re-stamped 0.11.0-40ea949d85 -> 0.11.0-6ad8b9124b); this item's pinch code kept unchanged. Pushing one block also commits the other items' changes in the shared files; sw.js also lists the unpushed N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- Asked (2026-11-08): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): We need to allow further zoom out to get the whole map.
+	  -> Actioned 2026-11-09: zoom-out now widens the view in steps up to the whole 40x30 floor (js/config.js zoomOut + _zoomOutList; js/ui.js doZoom; js/input.js pinch; js/render.js centers a view larger than the floor). See the note below.
+	- Note (2026-11-09, nightly run 2): Zoom out used to scale the canvas only down to 100%; the tile grid never grew. js/config.js: new zoomOut level (0 = normal) and _zoomOutList(): steps x1.5, x2.25, x3.25 of the base grid, then "whole floor" (at least 40x30); fitCanvas applies it and lets the canvas shrink below half size so the bigger grid fits the screen; canZoomOut()/zoomOutIsFull(). js/ui.js doZoom: zoom in first undoes zoomOut, zoom out goes past 100% into zoomOut (new deadpan log lines). js/input.js: the pinch uses canZoomOut(); right-click inspect ignores clicks outside the floor. js/render.js drawWorld: a view wider or taller than the floor is centered on it and tiles outside the floor are skipped. No save change. Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright (cloud Chromium, CDP two-finger touch) on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, pinching together left the view at 9x13 (landscape 15x10); after, the view reaches 40x58 (landscape 45x30), the whole floor is drawn and centered (screenshot checked), the canvas stays inside the window with no page overflow, Dad and the turn counter unchanged, a tap on a floor tile 3-14 tiles away walks Dad there while zoomed out, and spreading the fingers returns to 9x13 and then zooms in; desktop 1280x800 "-" key: 15x10 -> 23x15 -> 34x23 -> 45x30, "=" steps back. Desktop and phone title, play and 4 movement frames at normal zoom md5-identical to the previous build. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe changes Dad, Dad card flips, Choose opens the confirm; 5 screenshots per device md5-identical to the previous build. No page errors. Found while testing (pre-existing, also in the previous build): at the top zoom-in step a phone switches to the tablet grid (9x13 -> 11x15); logged as BUG-009 (open), not changed tonight.
+	- Note (2026-11-09, nightly run 2): Shared files: js/render.js is changed by MOB-04 and MOB-15; sw.js by MOB-04, MOB-15 and MOB-18 (BUILD 0.11.0-6ad8b9124b -> 0.11.0-decd471b0d); js/ui.js also carries the done part of [!] MOB-07. Pushing one block also commits the other items' changes in the shared files, and sw.js still lists the N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- Files: js/config.js, js/input.js, js/render.js, js/ui.js, sw.js, bugs/BUG_LOG.md
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/config.js" "js/input.js" "js/render.js" "js/ui.js" "sw.js" "bugs/BUG_LOG.md"
+	    git commit -m "MOB-04: zooming out widens the map view up to the whole floor"
+	    git push origin main
+	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): close out. KBP
+
+[x] MOB-15 [UX] Stairs should look like stairs
+	- KBP (2026-11-08): Make the level transitions look like stairs
+	- Device: not stated
+	- Summary: Fixed. Ordinary stairs are drawn as side-view staircases with a white arrow (yellow = down, cyan = up). Where the stairs cross into another biome they are drawn as a biome gate instead: purple double doors under a gold arch with a white arrow. The gate with a down arrow is the way out on the last floor of each biome (floors 10, 20 ... 100); the gate with an up arrow is the way back on the first floor of each biome (floors 11, 21 ... 91). Every other floor keeps the staircases. Applies to desktop too. Per-biome stairs art is still planned in M14.
+	- Note (2026-11-08, nightly run): Read as the map tiles for the floor exits (the "level transitions"). Small js/sprites.js change: redraw the two 32x32 ASCII sprites as a staircase (steps going down for the down stairs, up for the up stairs), same colors so the two stay easy to tell apart. The stairs are in no PNG atlas group yet, so no sheet changes (tools_make_atlas.js --check still run). M14 (environment tiles) will later redo floor/wall/door/stairs art per biome and can start from this. If you meant an animation when you change floors, say so in a KBP note.
+	- Note (2026-11-09, nightly run): js/sprites.js only: SPR_STAIRS and SPR_STAIRS_UP redrawn (32x32, existing palette). The stairs are in no PNG atlas group, so no sheet changed: tools_make_atlas.js --check OK, harness atlas check 142 keys OK. Verification performed: node --check on all js; harness one class per process, 7/7 clears (sprite check passes); Playwright screenshots with Dad beside the stairs down (floor 1) and the stairs up (floor 2) on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape and desktop 1280x800: frames differ from the previous build only by the stairs tile (inspected on iPhone 13: concentric squares -> staircase with arrow); desktop frames without stairs md5-identical; protected screens unchanged (see MOB-12 note); no page errors; sw.js re-stamped, --check OK in your folder.
+	- Note (2026-11-09, nightly run): Shared files: sw.js is shared by every [c] item. Pushing one block also commits the other items' changes in the shared files; sw.js also lists the unpushed N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- Asked (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): Add doors that look different that the others for the start and end of biomes. This indicates entering/leaving a biome. 
+	  -> Actioned 2026-11-09: read as the stairs that lead into another biome, since floors connect by stairs. New biome-gate sprites drawn there (js/sprites.js SPR_BIOME_GATE / SPR_BIOME_GATE_UP; js/render.js drawWorld). If you meant real room doors, or a different look, add a KBP note. See the note below.
+	- Note (2026-11-09, nightly run 2): js/sprites.js: two new 32x32 ASCII sprites (existing palette; not in any PNG atlas group, so no sheet changed: tools_make_atlas.js --check OK, harness atlas check 142 keys OK). js/render.js drawWorld: down stairs use SPR_BIOME_GATE when depth %10 == 0; up stairs use SPR_BIOME_GATE_UP when depth %10 == 1 and depth > 1 (Ascent runs use the same physical stairs, so the gates still mark the biome edges). No game logic or save change. Verification performed: node --check on all js; harness one class per process, 7/7 clears (sprite check passes); Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape and desktop 1280x800, sprite actually drawn at the stairs tiles on floors 9, 10, 11, 12, 20, 21 and 100: before, staircases on every floor; after, the down gate on 10, 20 and 100, the up gate on 11 and 21, staircases unchanged on 9 and 12; floor 10 and 11 screenshots checked (iPhone 13: gold-arched purple doors with the arrow); normal-floor frames md5-identical to the previous build; protected screens unchanged (see MOB-04 note); no page errors.
+	- Note (2026-11-09, nightly run 2): Shared files: js/render.js is changed by MOB-04 and MOB-15; sw.js by MOB-04, MOB-15 and MOB-18 (BUILD 0.11.0-6ad8b9124b -> 0.11.0-decd471b0d); js/ui.js also carries the done part of [!] MOB-07. Pushing one block also commits the other items' changes in the shared files, and sw.js still lists the N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- Files: js/render.js, js/sprites.js, sw.js
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/render.js" "js/sprites.js" "sw.js"
+	    git commit -m "MOB-15: biome gates mark the stairs into and out of each biome"
+	    git push origin main
+	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): Close out. KBP
+
+[x] MOB-05 [UX] Tapping a wall should walk to the wall
+	- KBP (2026-11-06): If a player touches a wall, that should take the character to the wall
+	- Device: not stated
+	- Summary: Fixed. Tapping (or clicking) a wall you are not next to walks Dad to the nearest floor tile beside it (any of its 8 neighbors, shortest walk). As with other tap travel this works on walls currently in view (shaded tiles are MOB-12), the walk stops if anything interrupts it, and press-and-hold still describes the wall. Tapping a wall you are already next to is unchanged. Applies to desktop clicks too.
+	- Note (2026-11-06, nightly run): Small js/input.js change in canvasTap: when the tapped tile is a wall, pick the closest reachable open neighbor and auto-walk there (press-and-hold still describes). Shares canvasTap with MOB-01 and MOB-12; do them in the same run if possible.
+	- Note (2026-11-07, nightly run): js/input.js canvasTap now carries the MOB-01 door-walk change ([c], not yet pushed); build on that version.
+	- Note (2026-11-08, nightly run): js/game.js: new pathToWall(wx,wy) (shortest path to an open tile beside the wall); js/input.js canvasTap uses it when the tapped visible tile is a wall (built on the MOB-01 door version, which is kept). Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright real tap on a visible wall 3+ tiles away on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, Dad did not move (tile description only); after, Dad ended on a tile beside the wall (seeded floor 1: 19,23 -> 17,20, next to the wall at 16,19); desktop 1280x800 mouse click on a far wall: before no move, after beside the wall (intended change); desktop title, play and movement frames md5-identical; no page errors. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build.
+	- Note (2026-11-08, nightly run): MOB-04, MOB-05 and MOB-10 were fixed together and share files (js/input.js: MOB-04 + MOB-05; js/game.js: MOB-05 + MOB-10, plus MOB-09's open fix; sw.js: all, re-stamped BUILD 0.11.0-d305560e20 -> 0.11.0-926e2cd850). Pushing one block commits the others' changes in those files too. sw.js also lists the N25/N26 sprite sheets from today's weekly runs; if those are not pushed yet, a block on its own would leave sw.js naming files GitHub does not have. Use the combined block in tonight's report (recommended).
+	- Files: js/game.js, js/input.js, sw.js
+	- PUSH (2026-11-08):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "js/input.js" "sw.js"
+	    git commit -m "MOB-05: tapping a wall walks to the nearest tile beside it"
+	    git push origin main
+	- Note (2026-11-09, weekly PWA build run, N27): sw.js changed again: assets/sprites/creatures-resto-idkea.png added to ASSETS and BUILD re-stamped 0.11.0-926e2cd850 -> 0.11.0-40ea949d85. This item's fix was kept unchanged. Use the combined block in the N27 weekly report (this item's files + the N25, N26 and N27 files).
+	- Note (2026-11-09, nightly run): js/game.js changed again by tonight's MOB-17 fix (bfsPath now avoids known traps, which also applies to pathToWall), js/input.js by MOB-12 (shaded walls now use pathToWall too) and sw.js (BUILD 0.11.0-40ea949d85 -> 0.11.0-6ad8b9124b); this item's fix kept unchanged. Pushing one block also commits the other items' changes in the shared files; sw.js also lists the unpushed N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- ASK (2026-11-08): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): close out. KBP
+
+[x] MOB-09 [BALANCE] Scan radius should scale with Perception, from 1 tile to everything you can see
+	- KBP (2026-11-06): Scanning should be dependent on your perception, the lowest perception you scan 1 tile all around the character while the max perception scans  all visible squares the player sees. 
+	- Device: not stated
+	- Summary: Fixed. Scan radius = 1 + floor(Perception / 2), capped at 7 (PER 0-1 = 1 tile, PER 12-13 = 7). From PER 14 the scan also covers every tile currently in view, however far, on top of the 7-tile circle (so nothing close but out of sight is lost at the top step). The log says "Scan covers everything in view" at that level. Applies on desktop too.
+	- Note (2026-11-06, nightly run): Perception has no hard maximum (gear and levels keep adding), so "max" needs a number. Proposal: radius = 1 + floor(PER/2) up to 7, and from PER 14 on, the scan covers every visible tile. Small game.js change once the curve is set.
+	- Asked (2026-11-06): Use the proposed curve (PER 0-1 = 1 tile, +1 tile per 2 PER, full field of view at PER 14), or give the Perception value that should count as max?
+	- Note (2026-11-06): use proposed curve.
+	  -> Actioned 2026-11-07: proposed curve applied in js/game.js scanArea (new constant SCAN_FULL_PER = 14). See the note below.
+	- Note (2026-11-07, nightly run): Design detail: at PER 14+ the scan is the 7-tile circle plus all visible tiles (a literal "visible tiles only" would have skipped hidden tiles right next to you that PER 13 still covers). Verification performed: node --check on all js; harness 7/7 clears; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, scan at PER 0/1/4/10/13/14/20: before radius 2/2/4/7/8/8/8, after 1/1/3/6/7/full/full; with detection forced, a trap on a visible tile 12 tiles away is found at PER 14 (not at PER 13 or in the old build), and a hidden trap 2 tiles away is still found at PER 14; no page errors. Desktop scan changes as intended; other desktop frames md5-identical.
+	- Note (2026-11-07, nightly run): MOB-01, MOB-07 and MOB-09 were fixed together and share files (js/game.js: MOB-01 + MOB-09; sw.js: all three, re-stamped BUILD 0.11.0-a39705d9fc). Pushing one block commits the others' changes in those files too; the combined block in tonight's report pushes all three at once (recommended, so the sw.js BUILD stamp matches the pushed js files).
+	- Note (2026-11-08, weekly PWA build run, N25): sw.js changed again: the new sprite sheet assets/sprites/creatures-park-vastco.png was added to ASSETS and BUILD re-stamped 0.11.0-a39705d9fc -> 0.11.0-fa1f304857 (stamp covers this item's files too). This item's fix was kept unchanged. Pushing this block alone would leave sw.js listing a sheet that is not pushed; use the combined block in the 2026-11-08 weekly report (this item's files + the N25 files).
+	- Note (2026-11-08, weekly PWA build run 2, N26): sw.js changed again: assets/sprites/creatures-soccer-school.png added to ASSETS and BUILD re-stamped 0.11.0-fa1f304857 -> 0.11.0-d305560e20. This item's fix was kept unchanged. Use the combined block in the N26 weekly report (this item's files + the N25 and N26 files).
+	- Files: js/game.js, sw.js
+	- PUSH (2026-11-07):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js"
+	    git commit -m "MOB-09: scan radius 1 + PER/2 up to 7; PER 14+ also scans everything in view"
+	    git push origin main
+	- Note (2026-11-08, nightly run): js/game.js and sw.js changed again by tonight's MOB-05 and MOB-10 fixes ([c]); this item's scanArea fix kept unchanged. Pushing this block also commits those changes; use the combined block in tonight's report.
+	- Note (2026-11-09, weekly PWA build run, N27): sw.js changed again: assets/sprites/creatures-resto-idkea.png added to ASSETS and BUILD re-stamped 0.11.0-926e2cd850 -> 0.11.0-40ea949d85. This item's fix was kept unchanged. Use the combined block in the N27 weekly report (this item's files + the N25, N26 and N27 files).
+	- Note (2026-11-09, nightly run): js/game.js changed again by tonight's MOB-17 fix and sw.js by MOB-12, MOB-15 and MOB-17 (BUILD 0.11.0-40ea949d85 -> 0.11.0-6ad8b9124b); this item's scanArea fix kept unchanged. Pushing one block also commits the other items' changes in the shared files; sw.js also lists the unpushed N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- ASK (2026-11-07): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): close out. KBP
+
+[x] MOB-10 [UX] Companions should stay within 3 tiles of the player unless attacking
+	- KBP (2026-11-06): Companion characters should always stay within 3 tiles of the player unless attacking something.
+	- Device: not stated
+	- Summary: Fixed. When it is not fighting and has no order from you, your companion now keeps within 3 tiles of Dad in any direction. If it falls farther behind, it follows the real walkable route (instead of pushing into a wall) and jogs up to 2 tiles a turn until it is back in range; if it is close but on the other side of a wall, it walks around to you instead of waiting there. Attacking an enemy near you, or carrying out an attack or move order, still takes it farther away as before.
+	- Note (2026-11-06, nightly run): Small js/game.js change in the companion turn (allyTurn): when not engaged with an enemy and farther than 3 tiles (Chebyshev) from you, step back toward you first. Tonight's MOB-13 fix also stops an unrecruited companion from following you to later floors at stale coordinates. Shares js/game.js with MOB-02 and MOB-13 ([c], not yet pushed); build on that version.
+	- Note (2026-11-07, nightly run): js/game.js now carries the MOB-01 and MOB-09 changes ([c], not yet pushed); build on that version.
+	- Note (2026-11-08, nightly run): js/game.js: allyTurn's idle branch calls new allyCatchUp() (uses bfsPath; ALLY_LEASH stays 3; no save change). The MOB-13 fix (unrecruited companion stays on its floor) is kept. Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (seeded floor 1, doors removed, stairs blocked): companion placed 9-12 tiles away, then Dad walks 25 steps: before, 12 of 25 turns more than 3 tiles away; after, 4 (back in range within 4 turns, then never out); after, three long walks (164 turns): 0 turns out of range, max 3 tiles; no page errors. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build.
+	- Note (2026-11-08, nightly run): MOB-04, MOB-05 and MOB-10 were fixed together and share files (js/input.js: MOB-04 + MOB-05; js/game.js: MOB-05 + MOB-10, plus MOB-09's open fix; sw.js: all, re-stamped BUILD 0.11.0-d305560e20 -> 0.11.0-926e2cd850). Pushing one block commits the others' changes in those files too. sw.js also lists the N25/N26 sprite sheets from today's weekly runs; if those are not pushed yet, a block on its own would leave sw.js naming files GitHub does not have. Use the combined block in tonight's report (recommended).
+	- Files: js/game.js, sw.js
+	- PUSH (2026-11-08):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js"
+	    git commit -m "MOB-10: companions stay within 3 tiles of Dad unless fighting"
+	    git push origin main
+	- Note (2026-11-09, weekly PWA build run, N27): sw.js changed again: assets/sprites/creatures-resto-idkea.png added to ASSETS and BUILD re-stamped 0.11.0-926e2cd850 -> 0.11.0-40ea949d85. This item's fix was kept unchanged. Use the combined block in the N27 weekly report (this item's files + the N25, N26 and N27 files).
+	- Note (2026-11-09, nightly run): js/game.js changed again by tonight's MOB-17 fix: allyCatchUp uses bfsPath, so the companion now also steps around known traps when catching up; sw.js re-stamped (0.11.0-40ea949d85 -> 0.11.0-6ad8b9124b). This item's fix kept unchanged. Pushing one block also commits the other items' changes in the shared files; sw.js also lists the unpushed N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- ASK (2026-11-08): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): close out. KBP
+
+[x] MOB-12 [UX] Tap travel to discovered (shaded) tiles, not just visible ones
+	- KBP (2026-11-06): Tap travel should not be limited to visible area to the character. Enable automatic travel to shaded areas that have been discovered as well.
+	- Device: not stated
+	- Summary: Fixed. Tapping (or clicking) any discovered tile, including shaded ones out of view, now auto-walks Dad there. Shaded doors and walls behave like visible ones (walk beside the door, then the door menu; walk beside the wall). Tiles never discovered still only show the description. The walk still stops when an enemy comes into view, HP drops, or a new bad status appears, and it now steps around known traps (MOB-17). Applies to desktop clicks too.
+	- Note (2026-11-06, nightly run): Small js/input.js change: canvasTap checks game.vis; switch to game.seen for travel (paths still avoid closed doors; travel still halts when a new enemy comes into view). Shares canvasTap with MOB-01 and MOB-05.
+	- Note (2026-11-07, nightly run): js/input.js canvasTap now carries the MOB-01 door-walk change ([c], not yet pushed); build on that version. Doors in shaded tiles should use the same pathToDoor path when this is done.
+	- Note (2026-11-08, nightly run): js/input.js canvasTap now also carries the MOB-05 wall-walk change ([c], not yet pushed); build on that version. Walls in shaded tiles should use the same pathToWall path when this is done.
+	- Note (2026-11-09, nightly run): js/input.js canvasTap only: the travel test now accepts game.seen as well as game.vis (one condition; the MOB-01 door, MOB-04 pinch and MOB-05 wall code unchanged). Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright real tap on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (seeded floor 1, Dad moved so part of the first room is shaded but on screen): tapping a shaded floor tile: before, Dad did not move; after, Dad reached the tapped tile on all 4; tapping an undiscovered tile: no movement in either build; desktop 1280x800 mouse click: same before/after. Desktop title, play and 4 movement frames md5-identical to the previous build. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build. No page errors.
+	- Note (2026-11-09, nightly run): Shared files: js/input.js also carries MOB-04 and MOB-05; sw.js is shared by every [c] item (BUILD re-stamped 0.11.0-40ea949d85 -> 0.11.0-6ad8b9124b). Pushing one block also commits the other items' changes in the shared files; sw.js also lists the unpushed N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- Files: js/input.js, sw.js
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/input.js" "sw.js"
+	    git commit -m "MOB-12: tap travel also works on discovered (shaded) tiles"
+	    git push origin main
+	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): close out. KBP
+
+[x] MOB-17 [UX] Auto-walk should go around traps you can see
+	- KBP (2026-11-08): If a trap is visible, the character should automatically avoid it when auto-walking to an area.
+	- Device: not stated
+	- Summary: Fixed. Auto-walk (tap travel, door walks, wall walks) now routes around traps you have spotted or placed that have not gone off. Tapping the trap tile itself still walks onto it. If every route passes a known trap, the old shortest path is used, so tap travel never refuses to move. Hidden traps stay hidden. The companion's catch-up walk (MOB-10) uses the same routing. A detour can be long when the only other route is roundabout.
+	- Note (2026-11-08, nightly run): Small js/game.js change: bfsPath skips tiles holding a known, unsprung trap unless that tile is the tapped destination or there is no other route (then today's path is kept). Covers tap travel, door walks (MOB-01) and wall walks (MOB-05); the companion's catch-up path (MOB-10) uses the same function. Hidden traps stay hidden.
+	- Note (2026-11-09, nightly run): js/game.js: bfsPath first runs a search that skips known, unsprung trap tiles (new _knownTrapAt and _bfsPath(x0,y0,x1,y1,avoid)) and falls back to the old search if that finds no route; save unchanged. Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright real tap on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (seeded floor 1, known trap placed 2 tiles along a straight 3-tile route in an open room): before, Dad walked onto the trap (sprung, walk halted after 2 steps); after, Dad went around it (6 steps) and arrived with the trap unsprung; fallback check (known traps on all 4 sides of a distant target): path length unchanged, so the walk still happens; desktop 1280x800 mouse click: same before/after; desktop title, play and movement frames md5-identical; protected screens unchanged (see MOB-12 note); no page errors.
+	- Note (2026-11-09, nightly run): Shared files: js/game.js also carries MOB-05, MOB-09 and MOB-10; sw.js is shared by every [c] item. Pushing one block also commits the other items' changes in the shared files; sw.js also lists the unpushed N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- Files: js/game.js, sw.js
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js"
+	    git commit -m "MOB-17: auto-walk routes around known traps"
+	    git push origin main
+	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): close out. KBP
+
 [x] MOB-01 [UX] Tapping a distant door should walk to it, then ask what to do
 	- KBP (2026-11-06): When I click on a door that I am not next to, travel to the door, then prompt what to do if the travel is not impeded
 	- Device: not stated
@@ -92,6 +255,25 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-09 (nightly, run 3)
+- Triaged 2 INBOX lines -> MOB-27 CONTENT puzzle floors per biome incl. the bridge-keeper favorite-color question [!]; MOB-28 UX companions: follow through doors, aggressive/neutral/passive stance, helpful abilities [!].
+- No unanswered KBP notes; no [c] reopened. Archived [x] MOB-04, MOB-15 (KBP "close out" lines); no BUG ids to resolve (BUG-009 stays open).
+- Worked (3 UX [-] items, all fixed + verified -> [c]): MOB-20 companions wait in proper rooms; MOB-21 key and locked door away from the arrival stairs, start room never locked; MOB-23 ATTRIBUTES sheet in MORE, stat row off the phone HUD.
+- Files changed: js/game.js, js/input.js, js/ui.js, ShatteredDadAdventure.html, sw.js (BUILD 0.11.0-eac10af746 -> 0.11.0-89d24698e2), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: BUG-010 (resolved): locked door could seal the start room; key always one tile from the arrival stairs.
+- Verification: node --check all js; harness one class per process, 7/7 clears on the final code; vm probes 60 seeds x 100 floors (key/lock and companion placement, descent + Ascent) and 40 old-build saves loading in the new build; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (88/88); desktop 1280x800 + protected screens (40/40, md5-identical); sw stamp --check OK in the folder; folder md5s match the working copy.
+- Still open: [c] MOB-18, 20, 21, 23 | [-] MOB-16, 25 | [!] MOB-06, 07, 08, 11, 14, 19, 22, 24, 26, 27, 28.
+
+RUN 2026-11-09 (nightly, run 2)
+- Triaged 2 INBOX lines -> MOB-25 UX ask before drinking from the water fountain [-]; MOB-26 BALANCE Garage boss throws path-blocking boxes (10 HP) [!].
+- KBP notes actioned: MOB-04 (zoom out to the whole map), MOB-15 (distinct doors at biome start/end -> biome gates on the crossing stairs), MOB-18 ("just each biome"), MOB-24 (base WIS 5 -> recorded, item set to [!] for the save field). KBP had set MOB-04 and MOB-15 from [c] back to [-] with those notes.
+- Archived [x] MOB-05, MOB-09, MOB-10, MOB-12, MOB-17 (KBP "close out" lines); no BUG ids to resolve.
+- Worked (3 KBP-directed items, all fixed + verified -> [c]): MOB-04 zoom-out widens the view up to the whole floor; MOB-15 biome gates; MOB-18 biome objective cards + floor-1 objective card.
+- Files changed: js/config.js, js/data.js, js/game.js, js/input.js, js/render.js, js/sprites.js, js/ui.js, sw.js (BUILD 0.11.0-6ad8b9124b -> 0.11.0-decd471b0d), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: BUG-009 (open, pre-existing): at the top zoom-in step a phone switches to the tablet tile grid (page overflow inflates innerWidth).
+- Verification: node --check all js; harness one class per process, 7/7 clears on the final code; atlas --check + harness atlas OK; sw stamp --check OK; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape + desktop 1280x800 (MOB-04 40/40, MOB-15 20/20, MOB-18 50/50); regression + protected screens 44/44 (title/play/4 movement frames md5-identical on all 5 profiles; protected screens functional and md5-identical on iPhone SE + 13); folder md5s match the working copy.
+- Still open: [c] MOB-04, 15, 18 | [-] MOB-16, 20, 21, 23, 25 | [!] MOB-06, 07, 08, 11, 14, 19, 22, 24, 26.
+
 RUN 2026-11-09 (nightly)
 - Triaged 7 INBOX lines -> MOB-18 CONTENT story/objective before each level [k]; MOB-19 BALANCE creature attack styles [!]; MOB-20 UX no companions in hallways [-]; MOB-21 UX keys/locked doors away from the arrival stairs [-]; MOB-22 BALANCE locked rooms only via their door + key-holder creature [!]; MOB-23 UX ATTRIBUTES button in MORE [-]; MOB-24 BALANCE WIS-based identify on examine [k]. docs/MOBILE NOTES-Workstation.txt (an OneDrive conflict copy, 2026-11-09 01:22) holds other wordings of 6 of the 7 lines; each was copied verbatim into its item as a second KBP line. The conflict copy was left in place.
 - No unanswered KBP notes; no [x] items to archive; no [c] reopened.

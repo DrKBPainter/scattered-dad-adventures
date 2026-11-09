@@ -128,6 +128,7 @@ function barAction(a){
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
  if(a!=="pad")setMoreOpen(false);
  if(a==="wait"){if(game)game.clickPath=[];clearMouseInspect();tryMove(0,0);return;}
+ if(a==="attrs"){if(typeof openAttributes==="function")openAttributes();return;}
  if(a==="scan")scanArea();else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);}
 if(oAct)oAct.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-act]");if(btn)barAction(btn.dataset.act);});
 const oMore=document.getElementById("moresheet");
