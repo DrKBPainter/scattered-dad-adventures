@@ -6,7 +6,7 @@
    A changed sw.js installs in the background and WAITS; the page shows a
    "New version available" banner and only swaps when the player taps Reload,
    so a run in progress is never switched to new code mid-floor. */
-const BUILD="0.11.0-3952eba471";
+const BUILD="0.11.0-fc6135f474";
 const CACHE="sda-shell-"+BUILD;
 const ASSETS=[
  "./",
