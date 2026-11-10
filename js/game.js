@@ -240,10 +240,20 @@ function _settlePlacements(){if(!game||!game.floor)return;const gr=game.floor.gr
  if(game.ally){if(game.ally.following){game.ally.x=game.px;game.ally.y=game.py;}else if(bad(game.ally.x,game.ally.y)){const p=_openFloorNear(game.ally.x,game.ally.y,occ);if(p){game.ally.x=p.x;game.ally.y=p.y;}}}}
 function pickCreature(depth,rng){const bio=depth<=10?"The House":depth<=20?"Lowe & Behold":depth<=30?"The Park":depth<=40?"Vastco":depth<=50?"Soccer Complex":depth<=60?"The School":depth<=70?"The Family Restaurant":depth<=80?"IDKEA":depth<=90?"The Neighborhood":"The HOA Dominion";const pool=CREATURES.filter(c=>c.biome===bio);const src=pool.length?pool:CREATURES;return src[Math.floor(rng()*src.length)];}
 function mkEnemy(t,x,y,boss){const _d=(typeof game!=="undefined"&&game&&game.diff&&!boss)?game.diff:null;let _hp=_d?Math.max(1,Math.round(t.hp*_d.hpMul)):t.hp;let _atk=_d?Math.max(1,Math.round(t.atk*_d.atkMul)):t.atk;if(typeof game!=="undefined"&&game&&game.ascent){_hp=Math.max(1,Math.round(_hp*1.5));_atk=Math.max(1,Math.round(_atk*1.3));}return {def:t,x,y,hp:_hp,maxhp:_hp,scaledAtk:_atk,isBoss:!!boss,shownHP:false,uid:uid(),stun:0,root:0,blind:0};}
+/* MOB-16: floor loot favors weaker gear early. Each template is ranked by strength within its list (0 = weakest,
+   1 = strongest); its weight is (1 - rank*(1-d))^3 with d = how deep the floor is (0 on floor 1, 1 on floor 100),
+   never below LOOT_TIER_MIN. Floor 1: the strongest pieces are very rare; floor 100: every piece is about even.
+   Still one random draw per pick, so seeded and Daily floors stay repeatable. Vendor stock is unchanged. */
+var LOOT_TIER_EXP=3,LOOT_TIER_MIN=0.02,_gearRankCache={};
+function gearScore(t,kind){return kind==="weapon"?(t.atk||0)+(t.reqLevel||0)*0.5:(t.def||0)+(t.atk||0)+(t.per||0)+(t.wis||0)+(t.cap||0)*0.5;}
+function _gearRanks(list,kind){const c=_gearRankCache[kind];if(c&&c.list===list&&c.n===list.length)return c.r;const sc=list.map(t=>gearScore(t,kind));
+ const r=sc.map(s=>{let lo=0,eq=0;for(const o of sc){if(o<s)lo++;else if(o===s)eq++;}return list.length>1?(lo+(eq-1)/2)/(list.length-1):0;});_gearRankCache[kind]={list:list,n:list.length,r:r};return r;}
+function gearWeights(list,kind,depth){const r=_gearRanks(list,kind),d=Math.max(0,Math.min(1,((depth|0)-1)/Math.max(1,MAXDEPTH-1)));return r.map(x=>Math.max(LOOT_TIER_MIN,Math.pow(1-x*(1-d),LOOT_TIER_EXP)));}
+function pickGearTpl(list,kind,depth,u){const w=gearWeights(list,kind,depth);let tot=0;for(const v of w)tot+=v;let a=u*tot;for(let i=0;i<list.length;i++){a-=w[i];if(a<0)return list[i];}return list[list.length-1];}
 function pickLoot(rng,depth){const r=rng();
- if(r<0.22){return mkGear(WEAPONS[Math.floor(rng()*WEAPONS.length)],"weapon",rng,false);}
- if(r<0.46){return mkGear(ARMORS[Math.floor(rng()*ARMORS.length)],"armor",rng,false);}
- if(r<0.56){return mkGear(CHARMS[Math.floor(rng()*CHARMS.length)],"charm",rng,false);}
+ if(r<0.22){return mkGear(pickGearTpl(WEAPONS,"weapon",depth,rng()),"weapon",rng,false);}
+ if(r<0.46){return mkGear(pickGearTpl(ARMORS,"armor",depth,rng()),"armor",rng,false);}
+ if(r<0.56){return mkGear(pickGearTpl(CHARMS,"charm",depth,rng()),"charm",rng,false);}
  if(r<0.78){return mkConsumable(CONSUMABLES[Math.floor(rng()*CONSUMABLES.length)].id);}
  if(r<0.88){return mkObject(OBJECTS[Math.floor(rng()*OBJECTS.length)].id);}
  if(r<0.93){return mkProtip(PROTIPS[Math.floor(rng()*PROTIPS.length)].id);}

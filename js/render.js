@@ -174,10 +174,16 @@ function _jzBegin(){if(!juiceOn())return null;const n=_rNow(),mo=juiceMotion();
  if(_jzShake&&mo){const t=n-_jzShake.t0;if(t<_jzShake.ms){const a=_jzShake.amp*(1-t/_jzShake.ms),k=Math.floor(t/32),h=_tileHash(k,_jzShake.t0|0,5);sx=Math.round(((h%3)-1)*a);sy=Math.round((((h>>>4)%3)-1)*a);if(!sx&&!sy)sx=Math.round(a)*(k&1?1:-1);}else _jzShake=null;}
  ox+=sx;oy+=sy;_jzLast={cam:[ox-sx,oy-sy],dad:[Math.round((dad[0]-game.px)*TILE),Math.round((dad[1]-game.py)*TILE)],shake:[sx,sy]};
  if((ox||oy)&&ctx.translate)ctx.translate(ox,oy);
- const J={n:n,mo:mo,ox:ox,oy:oy,dad:dad,grad:null};
+ const J={n:n,mo:mo,ox:ox,oy:oy,dad:dad,grad:null,md:mo?_jzLast.dad.slice():[0,0]};/* MOB-39: md = Dad glide offset; the light/fog mask is drawn with it */
  if(_jzLightOn()&&typeof ctx.createRadialGradient==="function"){const R=Math.max(4,Math.min(8,4+Math.floor((typeof effPer==="function"?effPer():0)/3)));const cx=(dad[0]-camX)*TILE+TILE/2,cy=(dad[1]-camY)*TILE+TILE/2,rp=(R+0.5)*TILE;
   const g=ctx.createRadialGradient(cx,cy,rp*0.42,cx,cy,rp);g.addColorStop(0,"rgba(4,5,9,0)");g.addColorStop(0.55,"rgba(4,5,9,0.12)");g.addColorStop(1,"rgba(4,5,9,0.36)");J.grad=g;}
  return J;}
+/* MOB-39: while Dad glides, the field-of-view shading (dim for out-of-sight tiles, soft light for the rest) moves
+   with him instead of jumping a tile ahead at the start of each step and sliding back (on phones this read as the
+   light around him flickering during auto-travel). Static frames never call this, so they are unchanged. */
+function _jzMask(J,ext){const ax=J.md[0],ay=J.md[1],e=ext+1;
+ for(let vy=-e;vy<VIEW_H+e;vy++)for(let vx=-e;vx<VIEW_W+e;vx++){const mx=camX+vx,my=camY+vy,px=vx*TILE+ax,py=vy*TILE+ay;
+  if(mx>=0&&my>=0&&mx<MAP_W&&my<MAP_H&&game.vis[my][mx])_jzLight(J,px,py);else{ctx.fillStyle="rgba(4,5,9,0.55)";ctx.fillRect(px,py,TILE,TILE);}}}
 function _jzLight(J,px,py){if(J&&J.grad){ctx.fillStyle=J.grad;ctx.fillRect(px,py,TILE,TILE);_jzStats.lit++;}}
 /* where an entity is drawn this frame (logical px, world space), incl. glide + knockback */
 function _jzPos(J,e,px,py){if(!J||!J.mo)return[px,py];const r=_jzE.get(e);if(!r)return[px,py];let x=px,y=py;if(r.tw){const c=_jzTwAt(r.tw,J.n);x+=Math.round((c[0]-e.x)*TILE);y+=Math.round((c[1]-e.y)*TILE);}
@@ -408,8 +414,9 @@ function drawMenuBackdrop(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;if(typeof mode!=
 function drawWorld(){camX=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,Math.min(MAP_W-VIEW_W,game.px-Math.floor(VIEW_W/2)));camY=VIEW_H>MAP_H?-Math.floor((VIEW_H-MAP_H)/2):Math.max(0,Math.min(MAP_H-VIEW_H,game.py-Math.floor(VIEW_H/2)));/* MOB-04: a view wider/taller than the floor centers it */
  const _J=_jzBegin();/* M15 */
  const [flrSpr,wallSpr]=(typeof getBiomeSprites==="function")?getBiomeSprites(game.depth):[SPR_FLOOR,SPR_WALL];const _tset=_tileSet(game.depth);/* M14 */
- const _ext=_J&&_J.mo?1:0;/* M15: one spare ring of tiles for the camera glide */
- for(let vy=-_ext;vy<VIEW_H+_ext;vy++)for(let vx=-_ext;vx<VIEW_W+_ext;vx++){const mx=camX+vx,my=camY+vy;if(mx<0||my<0||mx>=MAP_W||my>=MAP_H)continue;const px=vx*TILE,py=vy*TILE;if(!game.seen[my][mx]){ctx.fillStyle="#06070b";ctx.fillRect(px,py,TILE,TILE);continue;}const _tg=game.floor.grid[my][mx];if(!_tset||!_drawTileArt(_tset,_tg,mx,my,px,py))drawSprite(_tg===1?wallSpr:_tg===2?SPR_WATER:flrSpr,px,py,1);const dr=doorAt(mx,my);if(dr){if(!dr.open)drawSprite(dr.locked?SPR_DOOR_L:SPR_DOOR,px,py,1);else drawSprite(SPR_DOOR_OPEN,px,py,1);}if(!game.vis[my][mx]){ctx.fillStyle="rgba(4,5,9,0.55)";ctx.fillRect(px,py,TILE,TILE);}else if(_J)_jzLight(_J,px,py);}
+ const _ext=_J&&_J.mo?1:0;/* M15: one spare ring of tiles for the camera glide */const _jzMd=!!(_J&&(_J.md[0]||_J.md[1]));
+ for(let vy=-_ext;vy<VIEW_H+_ext;vy++)for(let vx=-_ext;vx<VIEW_W+_ext;vx++){const mx=camX+vx,my=camY+vy;if(mx<0||my<0||mx>=MAP_W||my>=MAP_H)continue;const px=vx*TILE,py=vy*TILE;if(!game.seen[my][mx]){ctx.fillStyle="#06070b";ctx.fillRect(px,py,TILE,TILE);continue;}const _tg=game.floor.grid[my][mx];if(!_tset||!_drawTileArt(_tset,_tg,mx,my,px,py))drawSprite(_tg===1?wallSpr:_tg===2?SPR_WATER:flrSpr,px,py,1);const dr=doorAt(mx,my);if(dr){if(!dr.open)drawSprite(dr.locked?SPR_DOOR_L:SPR_DOOR,px,py,1);else drawSprite(SPR_DOOR_OPEN,px,py,1);}if(_jzMd)continue;if(!game.vis[my][mx]){ctx.fillStyle="rgba(4,5,9,0.55)";ctx.fillRect(px,py,TILE,TILE);}else if(_J)_jzLight(_J,px,py);}
+ if(_jzMd)_jzMask(_J,_ext);
  const sx=(game.stairs.x-camX)*TILE,sy=(game.stairs.y-camY)*TILE;const _gDn=game.depth%10===0&&typeof SPR_BIOME_GATE!=="undefined",_gUp=game.depth%10===1&&game.depth>1&&typeof SPR_BIOME_GATE_UP!=="undefined";/* MOB-15: biome gates on the floors where the stairs cross into another biome */if(game.seen[game.stairs.y][game.stairs.x])drawSprite(_gDn?SPR_BIOME_GATE:SPR_STAIRS,sx,sy,1);if(game.stairsUp&&game.seen[game.stairsUp.y]&&game.seen[game.stairsUp.y][game.stairsUp.x]){drawSprite(_gUp?SPR_BIOME_GATE_UP:SPR_STAIRS_UP,(game.stairsUp.x-camX)*TILE,(game.stairsUp.y-camY)*TILE,1);}
  for(const t of game.traps){if(t.sprung||!game.vis[t.y][t.x])continue;if(t.known)drawSprite(t.def.sprite||SPR_TRAP,(t.x-camX)*TILE,(t.y-camY)*TILE,1);}
  for(const l of game.loot){if(!game.vis[l.y][l.x])continue;const px=(l.x-camX)*TILE,py=(l.y-camY)*TILE;if(l.item.kind==="gold"){ctx.fillStyle="#f4c430";ctx.fillRect(px+5,py+6,6,5);ctx.fillStyle="#c9a227";ctx.fillRect(px+5,py+10,6,2);}else drawSprite(itemIconSprite(l.item),px,py,1);}

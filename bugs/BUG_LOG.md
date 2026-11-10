@@ -26,7 +26,7 @@
 | BUG-015 | M17: soft-light falloff halves frame rate on a software-rasterised canvas (emulated low-end Android) | `js/render.js` | resolved | 2026-11-10 |
 | BUG-016 | Desktop: page scrolls and the action bar sits below the fold at common laptop sizes | `js/config.js` | open | 2026-11-10 |
 | BUG-017 | Share sheet: game keys dead after closing it with Esc | `js/share.js` | resolved | 2026-11-10 |
-| BUG-018 | MOB-39: screen flickers while moving (phone; not reproduced in emulation) | `js/render.js` | open | 2026-11-10 |
+| BUG-018 | MOB-39: light around Dad flickers during auto-travel with MOTION on | `js/render.js` | resolved | 2026-11-10 |
 
 ---
 
@@ -100,18 +100,25 @@
 
 ---
 
-### BUG-018 — MOB-39: screen flickers while moving (phone; not reproduced in emulation)
+## Resolved Bugs
+
+### BUG-018 — MOB-39: light around Dad flickers during auto-travel with MOTION on
 
 - **File:** `js/render.js`
-- **Status:** open
+- **Status:** resolved
 - **Logged:** 2026-11-10
 
 **Description:** KBP (2026-11-10) reports the screen seems to flicker while Dad moves. Device, what flickers (whole map, walls, Dad, lighting) and whether MOTION off changes it are not stated.
 
 **Repro steps:** Not reproduced: Playwright iPhone 13, iPhone SE, Galaxy S25+ profile, 8 steps with rAF sampling of the map canvas: no single-frame brightness jumps, no canvas resizes during moves.
 
+**Device (KBP 2026-11-10):** Galaxy S25+; only while auto-traveling; the light around Dad flickers; MOTION off stops it.
+
+**Cause:** with MOTION on, each step glides Dad and the camera over 80 ms, but the field of view (which tiles are dimmed and which get the soft light) switched to the new position at once. On screen the lit area jumped a tile ahead of Dad at the start of every step and slid back during the glide; auto-travel steps every 120 ms, so the edge of the light pulsed about 8 times a second.
+
+**Fix:** js/render.js `_jzMask()`: while Dad glides, the dim/light mask is drawn in a second pass shifted by his glide offset, so it moves with him (same on-screen result as MOTION off); frames at rest take the old path unchanged. Measured (flat-tile probe, lit-area centroid over a 13-step auto-travel, Galaxy S25+): direction reversals 13 -> 0, movement 429 -> 157 px (MOTION off: 153). Fixed 2026-11-10 (nightly run 5).
+
 ---
-## Resolved Bugs
 
 ### BUG-001 — Directional movement dead (arrows/WASD)
 
