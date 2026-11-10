@@ -26,6 +26,7 @@ address bar add `?nosw` once and reload, then remove it and reload again; this g
 | 10 | Update banner | After the NEXT push (any later run), open the installed app. | A "new edition" banner appears; tapping Reload keeps the run (Continue resumes it). |
 | 11 | Battery | Leave the app open on a floor, untouched, for 5 minutes. | Phone does not get warm; battery drop similar to a static web page. |
 | 12 | Protected screens | Title cover, Choose Your Dad deck (swipe, flip, Choose), Bestiary cards (flip; "?" cards do not flip). | Look and work as before. |
+| 13 | Share (M18) | Mid-run: MORE > SHARE. Point a second phone's camera at the QR code; tap Copy link; tap Share... (where shown). | Camera opens https://drkbpainter.github.io/scattered-dad-adventures/; Copy says "Link copied"; the phone's share menu opens. Title cover shows v1.0.0. |
 
 Emulated results already covered (no need to repeat unless something looks wrong): layout at 10 device sizes, touch
 targets 44 px or more, idle redraws (3 in 3 s), drawFrame cost, rotation, save/resume after page kill, offline run,

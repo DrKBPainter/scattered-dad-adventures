@@ -101,6 +101,7 @@ function doTitleAction(a){
   else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
   else if(a==="grave"){closeOverlays();ovGrave=true;buildGraveyard();syncOverlays();}
   else if(a==="backup"){if(typeof openSaveBackup==="function")openSaveBackup();}
+  else if(a==="share"){if(typeof openShare==="function")openShare();}
 }
 // Title / class / difficulty / end-screen options: click the same rows the keys trigger.
 elLog.addEventListener("click",(ev)=>{
@@ -110,6 +111,7 @@ elLog.addEventListener("click",(ev)=>{
  if(mode===State.DEAD||mode===State.WIN){const en=ev.target.closest("[data-end]");if(!en)return;const a=en.dataset.end;
   if(a==="title"){mode=State.TITLE;messages=[];syncUI();}
   else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
+  else if(a==="share"){if(typeof openShare==="function")openShare();}
   else if(a==="ascent"&&mode===State.WIN&&!game.ascentDone&&!game.ascent&&typeof startAscent==="function"){startAscent();}
   return;}
 });
@@ -134,6 +136,7 @@ function barAction(a){
  if(mode!==State.PLAY||pendingConfirm||pendingMenu||aiming||placing||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen)return;
  if(a==="more"){setMoreOpen(!_m8More);return;}
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
+ if(a==="share"){setMoreOpen(false);if(typeof openShare==="function")openShare();return;}
  if(a!=="pad")setMoreOpen(false);
  if(a!=="scan"&&scanPick)setScanPick(false);
  if(a==="wait"){if(game)game.clickPath=[];clearMouseInspect();tryMove(0,0);return;}

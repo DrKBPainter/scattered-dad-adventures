@@ -203,6 +203,9 @@ Player, all bosses, and all creatures render from hand-authored image assets wit
 ## PHASE 6b — MOBILE PWA + GRAPHICS
 *Goal: installable browser-based mobile build (no app store) with upgraded graphics.* Full plan, chunk IDs (M1-M18), sequencing with N21-N29, risks, and definition of done: `docs/MOBILE_PWA_PLAN.md` (authored 2026-10-29). Not yet added to NIGHTLY_BUILD_ROADMAP.md.
 
+- [x] (M1-M17, 2026-11-03 to 2026-11-10) All plan chunks built; M17 real-device rows pending KBP (`docs/M17_DEVICE_CHECKLIST.md`).
+- [x] (M18, 2026-11-10) Release v1.0.0: GAME_VERSION 1.0.0, Share the Game sheet with QR code (`js/share.js`, `tools/tools_make_qr.js`, `assets/ui/qr-share.png`), release notes `docs/RELEASE_NOTES.md`. Remaining KBP steps: push, real-device checklist, git tag `v1.0-mobile`; itch.io mirror optional (not done).
+
 ---
 
 ## PHASE 7 — RELEASE & POST-LAUNCH (Week 18+)

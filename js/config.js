@@ -5,7 +5,7 @@
 
 "use strict";
 /* ===== SCATTERED DAD ADVENTURES v0.6 ===== */
-const GAME_VERSION="0.11.0";
+const GAME_VERSION="1.0.0";
 const TILE=32, MAP_W=40, MAP_H=30, MAXDEPTH=100;
 /* M5: VIEW_W/VIEW_H are variables now (dynamic viewport, set by fitCanvas). RENDER_SCALE = integer backing-store factor. */
 let VIEW_W=15, VIEW_H=10, RENDER_SCALE=1;
