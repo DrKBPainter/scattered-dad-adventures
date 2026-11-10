@@ -145,6 +145,7 @@ function barAction(a){
  if(a==="more"){setMoreOpen(!_m8More);return;}
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
  if(a==="share"){setMoreOpen(false);if(typeof openShare==="function")openShare();return;}
+ if(a==="barcfg"){setMoreOpen(false);if(typeof openBarCfg==="function")openBarCfg(true);return;}
  if(a!=="pad")setMoreOpen(false);
  if(a!=="scan"&&scanPick)setScanPick(false);
  if(a==="wait"){if(game)game.clickPath=[];clearMouseInspect();tryMove(0,0);return;}
@@ -152,6 +153,10 @@ function barAction(a){
  if(a==="scan"){if(typeof COMPACT!=="undefined"&&COMPACT&&!scanPick){setScanPick(true);clearMouseInspect();log("Tap something to scan it. Tap SCAN again to scan the whole area.","dim");syncUI();}else{setScanPick(false);scanArea();}}else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);}
 if(oAct)oAct.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-act]");if(btn)barAction(btn.dataset.act);});
 const oMore=document.getElementById("moresheet");
+/* MOB-06: apply the saved bar layout, and wire the Customize bar sheet */
+if(typeof applyBarLayout==="function")applyBarLayout();
+const oBarCfg=document.getElementById("barcfg");
+if(oBarCfg)oBarCfg.addEventListener("click",(ev)=>{barCfgTap(ev.target);});
 if(oMore)oMore.addEventListener("click",(ev)=>{if(ev.target===oMore||ev.target.closest("[data-more=close]")){setMoreOpen(false);return;}const btn=ev.target.closest("[data-act]");if(btn)barAction(btn.dataset.act);});
 // Floating Close button (mouse-only): dismisses any open overlay/shop, same as Esc.
 const oClose=document.getElementById("ovClose");

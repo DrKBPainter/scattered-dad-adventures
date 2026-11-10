@@ -50,7 +50,38 @@ function toggleDpadPref(){const on=!dpadOn();try{localStorage.setItem("sda_dpad"
  log(on?"The D-pad unfolds. Tradition is honored.":"The D-pad folds away. Swipe the map to step; tap your Dad to wait.","dim");syncUI();if(typeof _m6Refit==="function"&&typeof COMPACT!=="undefined"&&COMPACT)_m6Refit();}
 function syncDpad(){if(document.querySelectorAll)document.querySelectorAll('[data-act="pad"]').forEach(pb=>{pb.textContent=dpadOn()?"D-PAD \u2713":"D-PAD";});try{document.body.classList.toggle("m-nopad",!dpadOn());}catch(e){}const dp=document.getElementById("dpad");if(!dp)return;const anyOv=ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen||!!pendingConfirm||!!pendingMenu||aiming||placing;dp.style.display=(mode===State.PLAY&&!anyOv&&dpadOn())?"grid":"none";}
 // On-screen action bar (Scan / Zoom / Menu): same visibility rules as the D-pad.
-function syncActionBar(){const ab=document.getElementById("actionbar");if(!ab)return;const anyOv=ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen||!!pendingConfirm||!!pendingMenu||aiming||placing;const cpt=(typeof COMPACT!=="undefined"&&COMPACT);const vis=mode===State.PLAY&&!anyOv;ab.style.display=vis?(cpt?"grid":"flex"):"none";if(_m8More&&(!vis||!cpt))setMoreOpen(false);}
+function syncActionBar(){const ab=document.getElementById("actionbar");if(!ab)return;const anyOv=ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen||!!pendingConfirm||!!pendingMenu||aiming||placing;const cpt=(typeof COMPACT!=="undefined"&&COMPACT);const vis=mode===State.PLAY&&!anyOv;ab.style.display=vis?(cpt?"grid":"flex"):"none";if(_m8More&&(!vis||!cpt))setMoreOpen(false);if(_barCfgOpen&&(!vis||!cpt))openBarCfg(false);}
+/* MOB-06: compact action bar = 2 rows x 4 buttons: 7 player-chosen slots + MORE (always last). Layout saved in localStorage
+   "sda_bar_v1" as a JSON array of 7 action names; a missing or invalid value falls back to the default. Actions not on the bar
+   stay in the MORE drawer. Desktop: the m-pri class and --mo order only apply under body.m-compact, so the full row is unchanged. */
+const BAR_KEY="sda_bar_v1";
+const BAR_DEFAULT=["inv","scan","wait","throw","dad","map","place"];
+const BAR_POOL=[["inv","BAG"],["scan","SCAN"],["wait","WAIT"],["throw","THROW"],["dad","DADVICE"],["map","MAP"],["place","PLACE TRAP"],["attrs","STATS"],["codex","CODEX"],["instr","HELP"],["zoomin","ZOOM +"],["zoomout","ZOOM \u2212"],["pad","D-PAD"],["mute","SOUND"],["motion","MOTION"],["backup","BACKUP"],["share","SHARE"],["quit","MENU"]];
+var _barCfgOpen=false,_barCfgSel=0,_barCfgChanged=false;
+function barLayout(){let a=null;try{a=JSON.parse(localStorage.getItem(BAR_KEY)||"null");}catch(e){a=null;}
+ if(!Array.isArray(a)||a.length!==7)return BAR_DEFAULT.slice();const ok=BAR_POOL.map(p=>p[0]),seen={};
+ for(const k of a){if(typeof k!=="string"||ok.indexOf(k)<0||seen[k])return BAR_DEFAULT.slice();seen[k]=1;}return a.slice();}
+function applyBarLayout(){if(typeof document==="undefined"||!document.querySelectorAll)return;const L=barLayout();
+ try{document.querySelectorAll("#actionbar [data-act]").forEach(b=>{const a=b.dataset.act;if(a==="more"){b.style.setProperty("--mo","8");return;}const i=L.indexOf(a);b.classList.toggle("m-pri",i>=0);if(i>=0)b.style.setProperty("--mo",String(i+1));else b.style.removeProperty("--mo");});
+  document.querySelectorAll("#moresheet .ms-grid [data-act]").forEach(b=>{b.classList.toggle("ms-onbar",L.indexOf(b.dataset.act)>=0);});}catch(e){}}
+function saveBarLayout(L){try{localStorage.setItem(BAR_KEY,JSON.stringify(L));}catch(e){}applyBarLayout();}
+function _barLbl(a){for(const p of BAR_POOL)if(p[0]===a)return p[1];return a;}
+function openBarCfg(on){on=!!on&&(typeof COMPACT!=="undefined"&&COMPACT)&&mode===State.PLAY;const was=_barCfgOpen;_barCfgOpen=on;
+ try{document.body.classList.toggle("m-barcfg",on);const s=document.getElementById("barcfg");if(s)s.setAttribute("aria-hidden",on?"false":"true");if(on){_barCfgSel=0;_barCfgChanged=false;renderBarCfg();}}catch(e){}
+ if(was&&!on&&_barCfgChanged&&typeof log==="function"){_barCfgChanged=false;log("The tool belt has been rearranged. Nobody else will understand the system. That is the point.","dim");}
+ if(typeof markDirty==="function")markDirty();}
+function renderBarCfg(){const b=document.getElementById("bqBody");if(!b)return;const L=barLayout();
+ let h='<div class="bq-lab">YOUR BAR &middot; tap a slot</div><div class="bq-bar">';
+ L.forEach((a,i)=>{h+='<button type="button" class="bq-slot'+(i===_barCfgSel?' bq-sel':'')+'" data-bqslot="'+i+'">'+_barLbl(a)+'</button>';});
+ h+='<button type="button" class="bq-slot bq-lock" disabled>MORE &#9776;</button></div><div class="bq-lab">PUT IN SLOT '+(_barCfgSel+1)+' &middot; tap a tool</div><div class="bq-pool">';
+ for(const p of BAR_POOL){const i=L.indexOf(p[0]);h+='<button type="button" class="bq-tool'+(i===_barCfgSel?' bq-sel':(i>=0?' bq-used':''))+'" data-bqact="'+p[0]+'">'+p[1]+'<small>'+(i>=0?'slot '+(i+1):'drawer')+'</small></button>';}
+ b.innerHTML=h+'</div>';}
+/* Tap a slot to select it; tap a tool to put it there (a tool already in another slot swaps places with it); selection moves on. */
+function barCfgTap(t){if(!t||!t.closest)return;const s=t.closest("[data-bqslot]"),p=t.closest("[data-bqact]"),c=t.closest("[data-bq]");
+ if(s){_barCfgSel=+s.dataset.bqslot;renderBarCfg();return;}
+ if(p){const L=barLayout(),a=p.dataset.bqact,j=L.indexOf(a);if(j!==_barCfgSel){if(j>=0)L[j]=L[_barCfgSel];L[_barCfgSel]=a;saveBarLayout(L);_barCfgChanged=true;}_barCfgSel=(_barCfgSel+1)%7;renderBarCfg();return;}
+ if(c){if(c.dataset.bq==="reset"){try{localStorage.removeItem(BAR_KEY);}catch(e){}applyBarLayout();_barCfgSel=0;_barCfgChanged=true;renderBarCfg();}else if(c.dataset.bq==="done")openBarCfg(false);return;}
+ if(t.id==="barcfg")openBarCfg(false);}
 /* M8: compact "More" drawer (#moresheet). Opened by the MORE button; closes on backdrop tap, Close, Esc, or any action except SOUND / D-PAD. */
 var _m8More=false;
 /* The sheet sits just above the action bar (portrait) or left of the side column (landscape), so the bar stays visible and tappable. */
@@ -339,6 +370,7 @@ function invAction(k){const e=game.inv[invSel];const COLS=8;
  else if(k==="p"||k==="P"){if(e&&e.it.placeable){startPlace(e);}else log("That item can't be placed. Craft a trap first.","dim");}}
 /* ===== input ===== */
 document.addEventListener("keydown",(e)=>{const k=e.key;
+ if(_barCfgOpen){if(k==="Escape")openBarCfg(false);e.preventDefault();return;}// MOB-06: the Customize bar sheet takes the keys while open
  if(_m8More&&k==="Escape"){setMoreOpen(false);e.preventDefault();return;}// M8: Esc closes the More drawer first
  if(pendingMenu){if(k==="Escape"||k==="n"||k==="N")resolveMenu(-1);else if(/^[1-9]$/.test(k))resolveMenu(parseInt(k,10)-1);e.preventDefault();return;}
  if(pendingConfirm){if(k==="y"||k==="Y"||k==="Enter")resolveConfirm(true);else if(k==="n"||k==="N"||k==="Escape")resolveConfirm(false);e.preventDefault();return;}

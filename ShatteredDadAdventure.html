@@ -343,15 +343,18 @@
   body.m-compact #actionbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;overflow:visible;}
   body.m-compact #actionbar button:not(.m-pri){display:none;}
   body.m-compact #actionbar button.m-pri{min-height:44px;min-width:0;padding:4px 2px;font-size:11.5px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:clip;}
-  body.m-compact #actionbar [data-act="inv"]{order:1;} body.m-compact #actionbar [data-act="scan"]{order:2;} body.m-compact #actionbar [data-act="wait"]{order:3;}
-  body.m-compact #actionbar [data-act="throw"]{order:4;} body.m-compact #actionbar [data-act="more"]{order:5;color:var(--gold);}
+  /* MOB-06: 2 rows x 4 buttons: 7 player-chosen slots + MORE (slot order in --mo, set by applyBarLayout in js/ui.js; saved in "sda_bar_v1") */
+  body.m-compact #actionbar{grid-template-columns:repeat(4,minmax(0,1fr));}
+  body.m-compact #actionbar button.m-pri{order:var(--mo,9);} body.m-compact #actionbar [data-act="more"]{color:var(--gold);}
+  body.m-compact #actionbar [data-act="place"]{line-height:1.15;} body.m-compact #actionbar [data-act="place"]::after{content:"TRAP";display:block;}
   body.m-compact.m-more #actionbar [data-act="more"]{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
   body.m-compact #actionbar [data-act="scan"].scan-armed{background:var(--gold);color:#1a1a1a;border-color:var(--gold);} /* MOB-36: SCAN armed, waiting for a tap on the map */
   #scanpop{display:none;position:fixed;left:50%;top:42%;transform:translate(-50%,-50%);z-index:125;width:max-content;max-width:min(86vw,340px);background:rgba(10,12,20,.97);border:2px solid var(--gold);border-radius:6px;padding:12px 16px;font-size:15px;line-height:1.35;box-shadow:0 6px 24px rgba(0,0,0,.65);pointer-events:auto;} #scanpop.show{display:block;} #scanpop .sp-t{color:var(--gold);font-weight:bold;font-size:18px;margin-bottom:4px;font-family:var(--pix,inherit);letter-spacing:.5px;} #scanpop .sp-h{margin-top:8px;font-size:11px;opacity:.6;text-align:right;} /* MOB-36: SCAN-tap identify pop-up */
   body.m16 #scanpop{border:8px solid transparent;border-image:url(assets/ui/frame-gold.png) 8 / 8px repeat;border-radius:0;background-clip:padding-box;padding:8px 12px;}
   body.m-compact.m-land #actionbar{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none;overflow:visible;align-content:start;}
-  body.m-compact.m-land #actionbar [data-act="more"]{grid-column:span 2;}
-  body.m-compact.m-land.m-nopad #actionbar{grid-template-columns:repeat(3,minmax(0,1fr));}
+  body.m-compact.m-land.m-nopad #actionbar{grid-template-columns:repeat(4,minmax(0,1fr));} /* MOB-06: side column without D-pad: 2 rows x 4; with D-pad: 4 rows x 2 */
+  @media (max-height:600px){body.m-compact:not(.m-land):not(.m-nopad) #dpad{grid-template-rows:repeat(3,40px);} body.m-compact:not(.m-land):not(.m-nopad) #actionbar button.m-pri{min-height:40px;}} /* MOB-06: short portrait screens with the D-pad on: the 2-row bar + pad still fit */
+  body.m-compact.m-land:not(.m-nopad) #actionbar button.m-pri{min-height:38px;} /* MOB-06: landscape with the D-pad on: 4 rows x 2 fit the phone height */
   body.m-compact #dpad{grid-template-rows:repeat(3,44px);gap:3px;} body.m-compact.m-land #actionbar{gap:3px;} /* optional D-pad: 44 px rows keep small phones from overflowing */
   #moresheet{display:none;}
   body.m-compact.m-more #moresheet{display:flex;position:fixed;inset:0;z-index:120;background:rgba(4,6,10,.62);align-items:flex-end;justify-content:center;padding:0 var(--ms-r,0px) var(--ms-b,0px) 0;}
@@ -365,6 +368,25 @@
   #moresheet .ms-grid button{font-family:inherit;font-size:12px;font-weight:bold;letter-spacing:.4px;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:5px;min-height:48px;padding:6px 4px;cursor:pointer;}
   #moresheet .ms-grid button:active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
   #moresheet .ms-grid .ms-menu{color:#ff9a8a;}
+  #moresheet .ms-grid button.ms-onbar{display:none;} #moresheet .ms-grid .ms-cfg{color:var(--gold);} /* MOB-06: actions already on the bar are hidden here */
+  /* MOB-06: "Customize bar" sheet (compact only) */
+  #barcfg{display:none;}
+  body.m-compact.m-barcfg #barcfg{display:flex;position:fixed;inset:0;z-index:130;background:rgba(4,6,10,.72);align-items:flex-end;justify-content:center;}
+  #barcfg .bq-panel{width:100%;max-width:560px;max-height:calc(100% - 8px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:10px 10px 0 0;padding:10px max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));box-shadow:0 -10px 30px rgba(0,0,0,.8);}
+  #barcfg .bq-head{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;margin-bottom:6px;}
+  #barcfg .bq-head b{color:var(--gold);font-size:15px;letter-spacing:1px;}
+  #barcfg .bq-sub{flex:1 1 140px;font-size:11px;color:var(--dim);}
+  #barcfg .bq-lab{font-size:11px;color:var(--dim);letter-spacing:.5px;margin:8px 2px 4px;}
+  #barcfg .bq-bar,#barcfg .bq-pool{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;}
+  #barcfg .bq-pool{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));}
+  #barcfg button{font-family:inherit;font-size:11px;font-weight:bold;letter-spacing:.3px;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:5px;min-height:44px;padding:4px 2px;cursor:pointer;overflow:hidden;}
+  #barcfg button small{display:block;font-size:9px;font-weight:normal;color:var(--dim);}
+  #barcfg .bq-slot.bq-sel,#barcfg .bq-tool.bq-sel{background:var(--gold);color:#1a1a1a;border-color:var(--gold);} #barcfg .bq-tool.bq-sel small{color:#1a1a1a;}
+  #barcfg .bq-tool.bq-used{border-style:dashed;}
+  #barcfg .bq-lock{opacity:.55;color:var(--gold);cursor:default;}
+  #barcfg .bq-foot{display:flex;gap:6px;justify-content:flex-end;margin-top:10px;} #barcfg .bq-foot button{min-width:96px;padding:4px 12px;}
+  #barcfg .bq-foot [data-bq="done"]{color:var(--gold);border-color:var(--gold);}
+  #barcfg .bq-note{margin:10px 2px 0;font-size:12px;line-height:1.4;color:#f0c86a;font-style:italic;transform:rotate(-1deg);}
   #moresheet .ms-note{margin:10px 2px 0;font-size:12px;line-height:1.4;color:#f0c86a;font-style:italic;transform:rotate(-1deg);}
   #moresheet .ms-note:empty{display:none;}
   .cf-btn.cf-single{min-width:160px;}
@@ -553,11 +575,11 @@ body.m-compact .m18-howto button{min-height:44px}
     <button type="button" data-act="zoomin" title="Zoom in (+)">ZOOM +</button>
     <button type="button" data-act="zoomout" title="Zoom out (-)">ZOOM &minus;</button>
     <button type="button" class="m-pri" data-act="throw" title="Throw an item, then click a tile to aim (T)">THROW</button>
-    <button type="button" data-act="place" title="Place a trap, then click an adjacent tile (P)">PLACE</button>
+    <button type="button" class="m-pri" data-act="place" title="Place a trap, then click an adjacent tile (P)">PLACE</button>
     <button type="button" class="m-pri" data-act="inv" title="Open inventory (I)">BAG</button>
     <button type="button" class="m-only m-pri" data-act="wait" title="Wait / pass a turn (Space)">WAIT</button>
-    <button type="button" data-act="dad" title="Open Book of Dadvice (K)">DADVICE</button>
-    <button type="button" data-act="map" title="Open floor map (M)">MAP</button>
+    <button type="button" class="m-pri" data-act="dad" title="Open Book of Dadvice (K)">DADVICE</button>
+    <button type="button" class="m-pri" data-act="map" title="Open floor map (M)">MAP</button>
     <button type="button" data-act="best" title="Discovered creatures (B)">BESTIARY</button>
     <button type="button" data-act="codex" title="Open the Codex (J)">CODEX</button>
     <button type="button" data-act="grave" title="View the Graveyard (G)">GRAVEYARD</button>
@@ -566,6 +588,9 @@ body.m-compact .m18-howto button{min-height:44px}
     <button type="button" id="btnMute" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
     <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
     <button type="button" data-act="quit" title="Save &amp; quit to main menu (Q)">MENU</button>
+    <button type="button" class="m-only" data-act="attrs" title="Your stats and what each one does">STATS</button>
+    <button type="button" class="m-only" data-act="backup" title="Back up or restore your saves">BACKUP</button>
+    <button type="button" class="m-only" data-act="share" title="Share the game: QR code and link">SHARE</button>
     <button type="button" class="m-only m-pri" data-act="more" title="More actions" aria-haspopup="dialog" aria-controls="moresheet">MORE &#9776;</button>
   </div>
   <div id="aimbar" aria-label="Aim controls" style="display:none">
@@ -578,6 +603,10 @@ body.m-compact .m18-howto button{min-height:44px}
     <div class="ms-panel" role="dialog" aria-label="More actions">
       <div class="ms-head"><b>THE JUNK DRAWER</b><span class="ms-sub">Everything else lives here. As it always has.</span><button type="button" class="ms-close" data-more="close" title="Close">&#10005; Close</button></div>
       <div class="ms-grid">
+        <button type="button" data-act="inv" title="Open inventory (I)">BAG</button>
+        <button type="button" data-act="scan" title="Scan the area (X)">SCAN</button>
+        <button type="button" data-act="wait" title="Wait / pass a turn (Space)">WAIT</button>
+        <button type="button" data-act="throw" title="Throw an item, then tap a tile to aim (T)">THROW</button>
         <button type="button" data-act="dad" title="Open Book of Dadvice (K)">DADVICE</button>
         <button type="button" data-act="map" title="Open floor map (M)">MAP</button>
         <button type="button" data-act="attrs" title="Your stats and what each one does">ATTRIBUTES</button>
@@ -591,9 +620,19 @@ body.m-compact .m18-howto button{min-height:44px}
         <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
         <button type="button" data-act="backup" title="Back up or restore your saves">BACKUP</button>
         <button type="button" data-act="share" title="Share the game: QR code and link">SHARE</button>
+        <button type="button" class="ms-cfg" data-act="barcfg" title="Choose and arrange the buttons on the bar">CUSTOMIZE BAR</button>
         <button type="button" class="ms-menu" data-act="quit" title="Save &amp; quit to main menu (Q)">SAVE &amp; MENU</button>
       </div>
       <p class="ms-note" id="msNote"></p>
+    </div>
+  </div>
+  <!-- MOB-06: compact-only "Customize bar" sheet (contents built by renderBarCfg in js/ui.js). Hidden on desktop. -->
+  <div id="barcfg" aria-hidden="true">
+    <div class="bq-panel" role="dialog" aria-label="Customize the action bar">
+      <div class="bq-head"><b>THE TOOL BELT</b><span class="bq-sub">Seven slots. Pick a slot, then the tool. MORE stays put; it has seniority.</span></div>
+      <div id="bqBody"></div>
+      <div class="bq-foot"><button type="button" data-bq="reset" title="Back to BAG, SCAN, WAIT, THROW / DADVICE, MAP, PLACE TRAP">RESET</button><button type="button" data-bq="done" title="Close">DONE</button></div>
+      <p class="bq-note">Written on the tool belt in marker: &quot;Dad always knows where everything is. We don't know how.&quot;</p>
     </div>
   </div>
   <div id="hint">arrows/WASD or on-screen D-pad move &middot; Space/center WAIT &middot; click=inspect/move &middot; on-screen SCAN / ZOOM / THROW / PLACE / MENU buttons &middot; after THROW/PLACE click a tile to aim (CANCEL aborts) &middot; I inventory &middot; K Book of Dadvice &middot; X scan &middot; T throw &middot; P place trap &middot; M map &middot; H help &middot; B bestiary &middot; J codex</div>

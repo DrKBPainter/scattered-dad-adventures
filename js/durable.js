@@ -13,7 +13,7 @@
    Hooks: syncDurable() from syncUI (ui.js); openSaveBackup() from the desktop title row [S],
    How To, and the MORE drawer (BACKUP). ======================================================= */
 "use strict";
-const M12_KEYS=[SAVE_KEY,BESTIARY_KEY,GRAVEYARD_KEY,DAILY_KEY,"sda_mute","sda_dpad"];
+const M12_KEYS=[SAVE_KEY,BESTIARY_KEY,GRAVEYARD_KEY,DAILY_KEY,"sda_mute","sda_dpad","sda_bar_v1"];
 const M12_SNOOZE_KEY="sda_install_snooze",M12_IOS_KEY="sda_a2hs_seen";
 let _m12SaveOpen=false,_m12Pending=null;
 let _m12Prompt=null,_m12Installed=false,_m12Persist=null,_m12PersistAsked=false,_m12BarHidden=false,_m12IosShown=false;
@@ -106,7 +106,7 @@ function m12Summary(o){
  try{if(k[GRAVEYARD_KEY]){const n=JSON.parse(k[GRAVEYARD_KEY]).length;out.push(n+" grave"+(n===1?"":"s"));}}catch(e){}
  return out.length?out.join(", "):"settings only";}
 function m12Apply(o){for(const k of Object.keys(o.keys))_m12Set(k,o.keys[k]);
- try{if(typeof SFX_MUTED!=="undefined"&&o.keys.sda_mute!=null)SFX_MUTED=o.keys.sda_mute==="1";if(typeof syncMuteBtn==="function")syncMuteBtn();}catch(e){}
+ try{if(typeof SFX_MUTED!=="undefined"&&o.keys.sda_mute!=null)SFX_MUTED=o.keys.sda_mute==="1";if(typeof syncMuteBtn==="function")syncMuteBtn();}catch(e){}try{if(typeof applyBarLayout==="function")applyBarLayout();}catch(e){}/* MOB-06 */
  try{if(typeof discovered!=="undefined"&&typeof loadBestiary==="function"){const b=loadBestiary();for(const x of Object.keys(discovered))delete discovered[x];Object.assign(discovered,b);}}catch(e){}}
 
 /* ---------- the Save Backup sheet ---------- */
