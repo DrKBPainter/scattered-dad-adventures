@@ -68,6 +68,7 @@ All files are plain-text mirrors of the arrays in `js/data.js`. Edit `js/data.js
 | `GAME_DESIGN_REFERENCE.md` | Master GDD. Classes, mechanics, tone, world rules, and design philosophy. Start here. |
 | `BUILD_PLAN.md` | Phased development roadmap with acceptance criteria per phase. |
 | `NIGHTLY_BUILD_ROADMAP.md` | Sprint-level task tracking and nightly build targets. |
+| `M17_DEVICE_CHECKLIST.md` | M17: 12-step real-device QA list (install, safe areas, touch, sound, smoothness, rotation, app kill, offline, update banner) for KBP's phones. |
 | `LEVEL_DESIGN.md` | Floor biome layout, boss placement, vendor floors, and encounter scaling notes. |
 | `LEVEL_DESIGN.html` | Visual/interactive version of the level design document. |
 | `SHATTERED DAD Adventure notes.txt` | Desktop-era notes and directives (superseded 2026-11-06 by `MOBILE NOTES.txt`; history only). |

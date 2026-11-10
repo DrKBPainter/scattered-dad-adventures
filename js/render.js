@@ -226,7 +226,23 @@ function renderStats(){return{frames:_rFrames,skipped:_rSkipped,dirty:_rDirty,an
  if(typeof document!=="undefined"&&document&&typeof document.addEventListener==="function")document.addEventListener("visibilitychange",h,true);
 }catch(e){}})();
 function drawFrame(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;try{if(ctx.setTransform)ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle="#06070b";ctx.fillRect(0,0,CW,CH);if(mode===State.PLAY&&game&&game.floor&&game.seen&&game.vis&&isFinite(game.px)&&isFinite(game.py))drawWorld();else drawMenuBackdrop();}catch(err){/* A draw error must never kill the loop (prevents the frozen-map / vanished-dad freeze). */if(typeof console!=="undefined")console.warn("render skipped frame:",err);}}
-function render(){const n=_rNow();/* MOB-03: effects advance one step per drawn frame, so keep drawing while any are playing (the scan pulse used to wait for the next tap) */const _fxOn=typeof game!=="undefined"&&game&&game.fx&&game.fx.length>0&&typeof mode!=="undefined"&&mode===State.PLAY;if(_rDirty||_fxOn||n<_rAnimUntil||n-_rLastDraw>=RENDER_IDLE_MS){_rDirty=false;_rLastDraw=n;_rFrames++;drawFrame();}else _rSkipped++;requestAnimationFrame(render);}
+function render(){const n=_rNow();/* MOB-03: effects advance one step per drawn frame, so keep drawing while any are playing (the scan pulse used to wait for the next tap) */const _fxOn=typeof game!=="undefined"&&game&&game.fx&&game.fx.length>0&&typeof mode!=="undefined"&&mode===State.PLAY;if(_rDirty||_fxOn||n<_rAnimUntil||n-_rLastDraw>=RENDER_IDLE_MS){_rGovern(n);_rDirty=false;_rLastDraw=n;_rFrames++;drawFrame();}else _rSkipped++;requestAnimationFrame(render);}
+
+/* M17: frame-rate governor. The M15 soft-light falloff is a radial-gradient fill on every lit tile; on a
+   software-rasterised canvas (low-end Android, GPU blocklisted) it halves the frame rate during animation.
+   While frames are drawn back to back, the average interval over 45 frames is measured; if it stays above
+   RENDER_GOV_MS the lighting is switched off for this page load only (nothing saved; same as ?nolight).
+   Fast devices never trip it, so their frames are unchanged. ?nogov disables the governor. */
+const RENDER_GOV_MS=26,RENDER_GOV_N=45;
+var _rGov={n:0,sum:0,off:null,tripped:false,avg:0};
+function _rGovern(n){if(_rGov.tripped)return;if(_rGov.off===null){_rGov.off=(typeof _jzQ==="function")&&_jzQ(/[?&]nogov(?:[=&]|$)/);}if(_rGov.off)return;
+ if(typeof _jzLightOn!=="function"||!_jzLightOn()){_rGov.n=0;_rGov.sum=0;return;}
+ const dt=n-_rLastDraw;let vis=true;try{vis=typeof document==="undefined"||!document.visibilityState||document.visibilityState==="visible";}catch(e){}
+ if(!vis||dt<=0||dt>=250){_rGov.n=0;_rGov.sum=0;return;}
+ _rGov.n++;_rGov.sum+=dt;if(_rGov.n<RENDER_GOV_N)return;
+ _rGov.avg=_rGov.sum/_rGov.n;_rGov.n=0;_rGov.sum=0;
+ if(_rGov.avg>RENDER_GOV_MS){_rGov.tripped=true;_jzNoLight=true;try{console.info("[M17] slow frames (avg "+_rGov.avg.toFixed(1)+" ms): soft lighting off for this session");}catch(e){}}}
+function renderGovStats(){return{tripped:_rGov.tripped,avg:_rGov.avg,off:!!_rGov.off,light:typeof _jzLightOn==="function"?_jzLightOn():null};}
 
 /* ===== CLASS SELECT PORTRAITS =====
    Per-class illustrated backdrop drawn at 6× sprite scale (192×192) centered
