@@ -113,6 +113,10 @@ function consAlias(id){return CONS_ALIASES[consHash(id)%CONS_ALIASES.length];}
 function consKnown(it){return !it||it.kind!=="consumable"||((typeof game!=="undefined"&&game&&game.knownConsumables)||[]).includes(it.id);}
 function revealConsumable(id){if(typeof game==="undefined"||!game||!id)return;if(!game.knownConsumables)game.knownConsumables=[];if(!game.knownConsumables.includes(id))game.knownConsumables.push(id);}
 function itemDisplayName(it){return (it&&it.kind==="consumable"&&!consKnown(it))?consAlias(it.id):(it?it.name:"");}
+// MOB-38: equippable items show where they go, e.g. "Spatula (weapon)", "Fleece Vest (torso)". Display only; saved names unchanged.
+function itemSlotLabel(it){if(!it)return "";if(it.kind==="weapon")return "weapon";if(it.kind==="charm")return "charm";if(it.kind==="armor")return it.slot||"";return "";}
+function itemSlotSuffix(it){const s=itemSlotLabel(it);return s?" ("+s+")":"";}
+function itemNameSlot(it){return itemDisplayName(it)+itemSlotSuffix(it);}
 /* ===== run / floor ===== */
 function newRun(cls,diff,dailySeed){const isDaily=typeof dailySeed==="number";const seed=isDaily?dailySeed:(Math.random()*1e9)|0;diff=diff||(typeof DIFFICULTY_MODES!=="undefined"?DIFFICULTY_MODES[1]:null);
  // Daily Challenge: every dad who plays today gets the identical dungeon. Route all
@@ -402,17 +406,19 @@ function hasKneeRelief(){return eqList().some(g=>g&&g.kneeRelief);}
 // No per-step escalation, no reset on each twinge — the floor sets the toll. Meds (line ~162) can still buy relief for the current floor.
 function painChanceForFloor(depth){return Math.min(0.95,0.05+0.012*((depth||1)-1));}
 function updatePainChances(){const c=painChanceForFloor(game.depth);game.kneeChance=c;game.backChance=c;}
+var KNEE_BUCKLE_GAP=20;
 function kneePainTick(){
  if(hasKneeRelief())return; // Knee Sleeves spare the knees their cracks and their toll
  if(Math.random()<0.10){log("*knee crack* (Dad Noise)","dim");if(typeof sfxKneeCrack==="function")sfxKneeCrack();}
- if(Math.random()<(game.kneeChance||0.05)){game.hp=Math.max(0,game.hp-1);log("The knee buckles. -1 HP. It comes when it comes.","red");if(game.hp<=0){die("a knee that finally filed for early retirement, mid-step, on a floor that did nothing to deserve the blame","knee");return;}}}
+ // MOB-33: at most one buckle per KNEE_BUCKLE_GAP turns unless The Knee status is active. The roll is always made so seeded/Daily floors keep the same random sequence; _kneeLast is not saved (Continue resets it).
+ if(Math.random()<(game.kneeChance||0.05)&&(hasStatus("knee")||!(game._kneeLast>=0)||game.turn-game._kneeLast>=KNEE_BUCKLE_GAP)){game._kneeLast=game.turn;game.hp=Math.max(0,game.hp-1);log("The knee buckles. -1 HP. It comes when it comes.","red");if(game.hp<=0){die("a knee that finally filed for early retirement, mid-step, on a floor that did nothing to deserve the blame","knee");return;}}}
 function backPainTick(){
  if(Math.random()<(game.backChance||0.05)){game.hp=Math.max(0,game.hp-1);log("Your back goes out as you straighten up. -1 HP. Of course it's now.","red");if(game.hp<=0){die("a back that gave out while bending down to pick up something that, in hindsight, was not worth it","back");return;}
   if(Math.random()<0.10){applyStatus("backlock",3);log("It SEIZES. You are paralyzed for 3 turns. You do not call for help. A man does not.","red");}}}
 function waitTurn(){if(mode!==State.PLAY||pendingConfirm)return;log("You wait. The dread accumulates.","dim");endTurn();}
 // Pick up a specific loot-array entry by index. Split out of tryMove so a tile piled with
 // multiple items can offer a choice menu instead of silently grabbing whatever is first in the array.
-function pickupLootAt(idx){const l=game.loot[idx];if(!l)return;if(l.item.kind==="note"){game.loot.splice(idx,1);readFridgeNote(l.item);if(typeof sfxPickup==="function")sfxPickup();syncUI();return;}/* M16 */if(l.item.kind==="gold"){game.gold+=l.item.amount;game.moolahEarned=(game.moolahEarned||0)+l.item.amount;log("Picked up "+l.item.amount+" moolah.","gold");game.loot.splice(idx,1);syncUI();return;}openConfirm("Pick up "+itemDisplayName(l.item)+"?",()=>{if(addItem(l.item)){log("Picked up "+itemDisplayName(l.item)+".","grn");if(typeof sfxPickup==="function")sfxPickup();game.itemsFound=(game.itemsFound||0)+1;tryCompleteFetchQuest(l.item);game.loot.splice(idx,1);backPainTick();}syncUI();});}
+function pickupLootAt(idx){const l=game.loot[idx];if(!l)return;if(l.item.kind==="note"){game.loot.splice(idx,1);readFridgeNote(l.item);if(typeof sfxPickup==="function")sfxPickup();syncUI();return;}/* M16 */if(l.item.kind==="gold"){game.gold+=l.item.amount;game.moolahEarned=(game.moolahEarned||0)+l.item.amount;log("Picked up "+l.item.amount+" moolah.","gold");game.loot.splice(idx,1);syncUI();return;}openConfirm("Pick up "+itemNameSlot(l.item)+"?",()=>{if(addItem(l.item)){log("Picked up "+itemNameSlot(l.item)+".","grn");if(typeof sfxPickup==="function")sfxPickup();game.itemsFound=(game.itemsFound||0)+1;tryCompleteFetchQuest(l.item);game.loot.splice(idx,1);backPainTick();}syncUI();});}
 function tryMove(dx,dy){if(mode!==State.PLAY||pendingConfirm)return;if(napBlocked())return;if(hasStatus("drunk")&&Math.random()<0.30){const rd=[[0,-1],[0,1],[-1,0],[1,0]][Math.floor(Math.random()*4)];dx=rd[0];dy=rd[1];log("Your feet navigate independently.","red");}clearScanMessages();const nx=game.px+dx,ny=game.py+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H)return;if(game.floor.grid[ny][nx]===1)return;
  const d=doorAt(nx,ny);if(d&&!d.open){openDoorMenu(d);return;}
  if(game.vendor&&game.vendor.x===nx&&game.vendor.y===ny){openShop();return;}
@@ -442,7 +448,7 @@ function tryMove(dx,dy){if(mode!==State.PLAY||pendingConfirm)return;if(napBlocke
  game.px=nx;game.py=ny;kneePainTick();if(game.hp<=0)return;
  if(game.floor.grid[ny][nx]===2){applyStatus("soaked",3);log("You wade into the water. Socks: ruined.","blu");}
  const lMatches=[];for(let _i=0;_i<game.loot.length;_i++)if(game.loot[_i].x===nx&&game.loot[_i].y===ny)lMatches.push(_i);
- if(lMatches.length>1){openMenu("Several things are piled here. Grab which one?",lMatches.map(_i=>({label:itemDisplayName(game.loot[_i].item)+(game.loot[_i].item.kind==="gold"?" ("+game.loot[_i].item.amount+"g)":""),fn:function(){pickupLootAt(_i);}})));}
+ if(lMatches.length>1){openMenu("Several things are piled here. Grab which one?",lMatches.map(_i=>({label:itemNameSlot(game.loot[_i].item)+(game.loot[_i].item.kind==="gold"?" ("+game.loot[_i].item.amount+"g)":""),fn:function(){pickupLootAt(_i);}})));}
  else if(lMatches.length===1)pickupLootAt(lMatches[0]);
  // Traps ALWAYS trigger when stepped on — visible or not — unless the Light Step talent spares you.
  const ti=game.traps.findIndex(t=>t.x===nx&&t.y===ny&&!t.sprung);if(ti>=0){const t=game.traps[ti];if(game.lightStep)log("You step clean over the "+t.def.name+" without breaking stride. Light Step earns its keep.","dim");else springTrap(t);}

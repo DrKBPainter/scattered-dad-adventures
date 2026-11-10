@@ -12,6 +12,7 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  if(aiming){const t=tileFromEvent(ev);const dx=Math.sign(t.x-game.px),dy=Math.sign(t.y-game.py);if(dx===0&&dy===0){log("Aim away from yourself — click a tile in the throw direction.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();doThrow(dx,dy);return;}
  if(placing){const t=tileFromEvent(ev);const dx=t.x-game.px,dy=t.y-game.py;if(Math.max(Math.abs(dx),Math.abs(dy))!==1){log("Traps go on an adjacent tile — click a square right next to you.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();placeTrap(dx,dy);return;}
  if(pendingConfirm||pendingMenu||ovInv||ovDad||ovBest||ovInstr||ovMap)return;const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;
+ if(scanPick){setScanPick(false);if(game){game.clickPath=[];game.clickDoor=null;}inspectKb=false;showInspect(x,y);return;}// MOB-36: armed SCAN, this tap identifies the tile (no turn)
  // Shift+click directs the active companion: shift+click an enemy = attack it, shift+click a tile = move there.
  if(ev.shiftKey&&game&&game.ally&&game.ally.following){game.clickPath=[];orderAlly(x,y);return;}
  if(game){game.clickPath=[];game.clickDoor=null;}// cancel any existing path
@@ -39,6 +40,7 @@ function _m7Busy(){return !!(pendingConfirm||pendingMenu||ovInv||ovDad||ovBest||
 function _m7Dir(dx,dy){const o=Math.round(Math.atan2(dy,dx)/(Math.PI/4));const D=[[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];return D[(o+8)%8];}
 function _m7SetAim(dx,dy,tx,ty){aimTgt={dx:dx,dy:dy,x:tx,y:ty};clearMouseInspect();if(typeof markDirty==="function")markDirty();syncAimBar();}
 function _m7Swipe(dx,dy){if(mode!==State.PLAY||_m7Busy()||!game)return;
+ if(scanPick)setScanPick(false);
  if(aiming||placing){_m7SetAim(dx,dy,game.px+dx,game.py+dy);return;}
  game.clickPath=[];clearMouseInspect();tryMove(dx,dy);}
 function _m7End(){const p=_m7P;if(p&&p.timer)clearTimeout(p.timer);_m7P=null;}
@@ -120,6 +122,10 @@ const oAct=document.getElementById("actionbar");
 // Keep the SOUND button label in sync with the mute state (mirrors the [U] key).
 function syncMuteBtn(){const muted=(typeof SFX_MUTED!=="undefined"&&SFX_MUTED);if(document.querySelectorAll)document.querySelectorAll('[data-act="mute"]').forEach(b=>{b.textContent=muted?"SOUND ✕":"SOUND";b.title=(muted?"Unmute":"Mute")+" sound (U)";});}
 // M8: one dispatcher shared by the action bar and the compact MORE drawer.
+/* MOB-36: on phones SCAN arms a one-thing scan: the next map tap shows what is there (no turn, like press-and-hold).
+   Tapping SCAN again while armed runs the area scan (one turn, as before). Any other button or a swipe disarms it. Desktop SCAN is unchanged. */
+var scanPick=false;// var, not let: syncUI (ui.js) may read it before this line runs
+function setScanPick(on){scanPick=!!on;try{document.querySelectorAll('#actionbar [data-act="scan"]').forEach(b=>b.classList.toggle("scan-armed",scanPick));}catch(e){}if(typeof markDirty==="function")markDirty();}
 function barAction(a){
  // Mute is a global toggle (like its key) — handle it BEFORE the play-mode guard so it always works when the bar is visible.
  if(a==="mute"){if(typeof sfxToggleMute==="function"){sfxToggleMute();syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". Click SOUND or press [U] to toggle.","dim");}return;}
@@ -129,9 +135,10 @@ function barAction(a){
  if(a==="more"){setMoreOpen(!_m8More);return;}
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
  if(a!=="pad")setMoreOpen(false);
+ if(a!=="scan"&&scanPick)setScanPick(false);
  if(a==="wait"){if(game)game.clickPath=[];clearMouseInspect();tryMove(0,0);return;}
  if(a==="attrs"){if(typeof openAttributes==="function")openAttributes();return;}
- if(a==="scan")scanArea();else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);}
+ if(a==="scan"){if(typeof COMPACT!=="undefined"&&COMPACT&&!scanPick){setScanPick(true);clearMouseInspect();log("Tap something to scan it. Tap SCAN again to scan the whole area.","dim");syncUI();}else{setScanPick(false);scanArea();}}else if(a==="zoomin")doZoom(1);else if(a==="zoomout")doZoom(-1);else if(a==="quit")quitToMenu();else if(a==="throw")quickThrow();else if(a==="pad")toggleDpadPref();else if(a==="place")quickPlace();else if(a==="inv"||a==="dad"||a==="map"||a==="best"||a==="codex"||a==="instr"||a==="grave")openOverlayByName(a);}
 if(oAct)oAct.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-act]");if(btn)barAction(btn.dataset.act);});
 const oMore=document.getElementById("moresheet");
 if(oMore)oMore.addEventListener("click",(ev)=>{if(ev.target===oMore||ev.target.closest("[data-more=close]")){setMoreOpen(false);return;}const btn=ev.target.closest("[data-act]");if(btn)barAction(btn.dataset.act);});

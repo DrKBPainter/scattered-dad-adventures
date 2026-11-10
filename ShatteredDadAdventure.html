@@ -184,6 +184,18 @@
   body.m-compact #confirm .cf-btn{flex:1 1 130px;min-height:44px;margin:0;font-size:13px;padding:8px 10px;}
   body.m-compact #confirm .cf-btn.cf-yes{background:var(--gold);color:#1a1a1a;border-color:var(--gold);font-weight:bold;}
   body.m-compact #confirm .cf-menu{min-height:42px;}
+  /* MOB-34: ATTRIBUTES comic card (inside the shared #confirm box; look modeled on the Bestiary cards, which stay untouched) */
+  .atc{--comic:Impact,Haettenschweiler,'Avenir Next Condensed','Arial Narrow Bold',sans-serif-condensed,'Arial Black',sans-serif;font-weight:normal;text-align:left;margin:2px 4px 10px 0;border:2.5px solid #000;border-radius:8px;overflow:hidden;box-shadow:4px 4px 0 #000;background:radial-gradient(circle,rgba(0,0,0,.07) 1px,transparent 1.5px) 0 0/6px 6px,#f4ead2;color:#1b1b1b;}
+  .atc-mast{display:flex;justify-content:space-between;align-items:center;gap:6px;background:#fff4d6;border-bottom:2px solid #000;padding:4px 8px;font-weight:bold;font-size:11px;white-space:nowrap;}
+  .atc-mast span:first-child{font-family:var(--comic);font-weight:900;color:#d0021b;font-size:18px;letter-spacing:1px;}
+  .atc-who{overflow:hidden;text-overflow:ellipsis;min-width:0;text-transform:uppercase;letter-spacing:.3px;}
+  .atc-body{padding:7px 8px 8px;font-size:12px;line-height:1.35;}
+  .atc-sub{font-style:italic;color:#4a4436;margin-bottom:6px;}
+  .atc-row{background:#fff;border:1.5px solid #000;box-shadow:2px 2px 0 #000;padding:4px 7px 5px;margin:0 2px 7px 0;}
+  .atc-eq{display:inline-block;background:#ffe14a;border:2px solid #000;transform:rotate(-1.5deg);font-family:var(--comic);font-weight:900;font-size:16px;letter-spacing:.5px;padding:1px 7px;margin:0 0 3px -2px;color:#111;}
+  .atc-eq i{font-style:normal;} .atc-up{color:#0b7a2a;} .atc-dn{color:#d0021b;}
+  .atc-t{font-size:11.5px;color:#222;}
+  .atc-flav{background:#ffe14a;border:1.5px solid #000;box-shadow:1.5px 1.5px 0 #000;padding:4px 6px;font-style:italic;font-size:11.5px;margin-top:2px;}
   body.m-compact:not(.m-play) #log [data-class],body.m-compact:not(.m-play) #log [data-diff]{border:1px solid var(--border);background:var(--panel2);border-radius:4px;padding:7px 8px;margin:5px 0;line-height:1.4;}
   body.m-compact:not(.m-play) #log [data-class].l-gold,body.m-compact:not(.m-play) #log [data-diff].l-gold{border-color:var(--gold);}
   body.m-compact #statuses [data-skin="prev"],body.m-compact #statuses [data-skin="next"]:not([title]){display:inline-block;min-width:44px;min-height:34px;line-height:32px;text-align:center;border:1px solid var(--border);border-radius:4px;background:var(--panel2);margin:2px 3px;}
@@ -334,6 +346,7 @@
   body.m-compact #actionbar [data-act="inv"]{order:1;} body.m-compact #actionbar [data-act="scan"]{order:2;} body.m-compact #actionbar [data-act="wait"]{order:3;}
   body.m-compact #actionbar [data-act="throw"]{order:4;} body.m-compact #actionbar [data-act="more"]{order:5;color:var(--gold);}
   body.m-compact.m-more #actionbar [data-act="more"]{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
+  body.m-compact #actionbar [data-act="scan"].scan-armed{background:var(--gold);color:#1a1a1a;border-color:var(--gold);} /* MOB-36: SCAN armed, waiting for a tap on the map */
   body.m-compact.m-land #actionbar{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none;overflow:visible;align-content:start;}
   body.m-compact.m-land #actionbar [data-act="more"]{grid-column:span 2;}
   body.m-compact.m-land.m-nopad #actionbar{grid-template-columns:repeat(3,minmax(0,1fr));}
@@ -543,9 +556,7 @@ body.m-compact .m12-howto button{min-height:44px}
         <button type="button" data-act="dad" title="Open Book of Dadvice (K)">DADVICE</button>
         <button type="button" data-act="map" title="Open floor map (M)">MAP</button>
         <button type="button" data-act="attrs" title="Your stats and what each one does">ATTRIBUTES</button>
-        <button type="button" data-act="best" title="Discovered creatures (B)">BESTIARY</button>
         <button type="button" data-act="codex" title="Open the Codex (J)">CODEX</button>
-        <button type="button" data-act="grave" title="View the Graveyard (G)">GRAVEYARD</button>
         <button type="button" data-act="instr" title="How to play (H)">HELP</button>
         <button type="button" data-act="place" title="Place a trap, then tap an adjacent tile (P)">PLACE TRAP</button>
         <button type="button" data-act="zoomin" title="Zoom in (+)">ZOOM +</button>
