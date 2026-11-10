@@ -115,7 +115,7 @@ function revealConsumable(id){if(typeof game==="undefined"||!game||!id)return;if
 function itemDisplayName(it){return (it&&it.kind==="consumable"&&!consKnown(it))?consAlias(it.id):(it?it.name:"");}
 // MOB-38: equippable items show where they go, e.g. "Spatula (weapon)", "Fleece Vest (torso)". Display only; saved names unchanged.
 function itemSlotLabel(it){if(!it)return "";if(it.kind==="weapon")return "weapon";if(it.kind==="charm")return "charm";if(it.kind==="armor")return it.slot||"";return "";}
-function itemSlotSuffix(it){const s=itemSlotLabel(it);return s?" ("+s+")":"";}
+function itemSlotSuffix(it){const s=itemSlotLabel(it);return s?" ["+s+"]":"";}/* MOB-38 (KBP 2026-11-10): slot in brackets, e.g. "Spatula [weapon]" */
 function itemNameSlot(it){return itemDisplayName(it)+itemSlotSuffix(it);}
 /* ===== run / floor ===== */
 function newRun(cls,diff,dailySeed){const isDaily=typeof dailySeed==="number";const seed=isDaily?dailySeed:(Math.random()*1e9)|0;diff=diff||(typeof DIFFICULTY_MODES!=="undefined"?DIFFICULTY_MODES[1]:null);

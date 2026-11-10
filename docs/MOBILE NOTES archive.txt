@@ -4,6 +4,9 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-10 (nightly run 2). Census: [ ] 0 | [-] 2 | [k] 1 | [c] 6 | [!] 12 | [x] awaiting archive 1 (MOB-16, no KBP line). INBOX: 0 lines.   [displaced 2026-11-10 nightly run 4]
+Previously: 2026-11-10 (nightly run). Census: [ ] 0 | [-] 5 | [k] 1 | [c] 3 | [!] 12 | [x] awaiting archive 1 (MOB-16, no KBP line). INBOX: 0 lines.   [displaced 2026-11-10 nightly run 3]
+Previously: 2026-11-09 (nightly run 4). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 2 | [!] 11 | [x] awaiting archive 1 (MOB-16, no KBP line). INBOX: 0 lines.   [displaced 2026-11-10 nightly run 2]
 Previously: 2026-11-09 (nightly run 3). Census: [ ] 0 | [-] 2 | [k] 0 | [c] 4 | [!] 11 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-10 nightly run]
 Previously: 2026-11-09 (nightly run 2). Census: [ ] 0 | [-] 5 | [k] 0 | [c] 3 | [!] 9 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run 4]
 Previously: 2026-11-09 (nightly run). Census: [ ] 0 | [-] 4 | [k] 2 | [c] 7 | [!] 7 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run 3]
@@ -17,6 +20,132 @@ Previously: (none)   [displaced 2026-11-06 nightly run]
 =====================================================================
 COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
+[x] MOB-35 [BUG] Hunger and Thirst stopped working after Continue; label turns red at 90% (BUG-014)
+	- KBP (2026-11-10): Hunger and thirst do not seem to be consistently working. On a play through, my character had full bars and no damage and consuming food and drink did not affect them. Additionally, when Hunger or Thirst are close to causing damage (90% there) the text should turn red for which ever is at that point.
+	- Device: not stated
+	- Summary: Fixed. After Continue (including reopening the app, which resumes the auto-save) both meters were broken: drawn full, never hurt, food and drink did nothing. They now work after Continue, and the Hunger or Thirst label turns red (bold) once its meter is 90% full. Remaining: Continue restarts both meters at empty, because the save never stored them; see the last note.
+	- Note (2026-11-10, nightly run): Cause: saveRun() never stored the meter values and continueRun() never set them, so after Continue they were NaN: the bar width became "NaN%" (ignored by the browser, so the bar drew full), NaN never reaches the damage threshold, and eating or drinking left NaN. New runs were fine until the first Continue. Fix: js/game.js continueRun starts Hunger at 0 and Thirst at the class start value; survivalTick resets any broken meter to 0; js/ui.js _survLbl() turns the label red at 90% or more (CSS #statline .surv-warn in ShatteredDadAdventure.html). Logged BUG-014 (resolved).
+	- Note (2026-11-10, nightly run): Verification performed: node --check on all js; harness one class per process, 7/7 clears; atlas 275 keys OK; sw.js re-stamped 0.11.0-fc6135f474 -> 0.11.0-1043c2f306, --check OK in your folder; folder md5s match the working copy. Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop 1280x800: start, 4 turns, save, reload, Continue: before, both meters NaN and bar widths invalid (drawn full); after, 0 / 0, then 1 / 1.4 after 4 turns with valid widths; Hunger at 95% shows a red Hunger label (Thirst at 50% does not); both full -> 2 HP lost on the next turn; food and drink lower both meters; screenshot checked (iPhone SE, both labels red at 95%). Desktop play frames identical to the previous build. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; no page errors.
+	- Note (2026-11-10, nightly run): Storing the meter values (and the Camel Mode / Snack Logistics talent caps, also lost on Continue) needs 4 new fields in sda_save_v4; old saves would still load with the defaults above. The RULES treat any save-format change as a LARGE item, so it was not done tonight. To have it done as a small follow-up, add "KBP note: store the meters in the save" on this item.
+	- Note (2026-11-10, nightly run): Shared files: MOB-29, MOB-31 and MOB-35 were fixed together. ShatteredDadAdventure.html and sw.js carry all three; bugs/BUG_LOG.md carries MOB-29 and MOB-35. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 2): Shared files: MOB-32, MOB-34 and MOB-36 were fixed tonight (nightly run 2) on top of this item. ShatteredDadAdventure.html and sw.js carry all six; js/ui.js carries MOB-34, MOB-35 and MOB-36; js/input.js carries MOB-29 and MOB-36. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 3): Shared files: MOB-33 and MOB-38 were fixed tonight (nightly run 3) on top of the unpushed MOB-29/31/32/34/35/36. sw.js carries all eight; js/game.js carries MOB-33, MOB-35 and MOB-38; js/ui.js carries MOB-34, MOB-35, MOB-36 and MOB-38; js/render.js carries MOB-31 and MOB-38. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Files: ShatteredDadAdventure.html, js/game.js, js/ui.js, sw.js, bugs/BUG_LOG.md
+	- PUSH (2026-11-10):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "ShatteredDadAdventure.html" "js/game.js" "js/ui.js" "sw.js" "bugs/BUG_LOG.md"
+	    git commit -m "MOB-35: Hunger/Thirst work after Continue; red label at 90%"
+	    git push origin main
+	- ASK (2026-11-10): Push with the block above, check on your phone (Continue a saved run, take some turns, eat and drink; the label turns red near full), then mark [x] + KBP.
+	- Note (2026-11-10): Close out. KBP
+
+[x] MOB-34 [UX] ATTRIBUTES sheet as a comic card showing base and bonus (ATK = 4 [+10])
+	- KBP (2026-11-10): Attributes Should look more like a comic card and show the base and the added buffs in parentheses (e.g., ATK = 4 [+10])
+	- Device: not stated
+	- Summary: Fixed. MORE > ATTRIBUTES is now a comic card (cream halftone card, red ATTRIBUTES masthead with your Dad and level, each stat in a white panel with a yellow tilted label) and each stat reads base plus bonus, e.g. "ATK = 6 [+10]"; green [+n] for bonuses, red [-n] for penalties, no bracket when the bonus is 0. Desktop opens the same card.
+	- Note (2026-11-10, nightly run): openAttributes() (js/ui.js) uses the shared menu modal with the effective values. Plan: its own sheet styled with new classes modeled on the Bestiary cards (the Bestiary itself is protected and stays untouched); base = the stat without gear or statuses (STR for ATK), bonus = effective minus base, shown as "[+n]" or "[-n]", omitted when 0. Not worked tonight.
+	- Note (2026-11-10, nightly run 2): js/ui.js openAttributes() rebuilt (new helper _atcVal); still uses the shared confirm box, so Cancel/Esc closes it as before. Base: STR for STR and ATK, the Dad's own DEF/PER/WIS for the rest; bonus = effective value (gear, statuses, thirst) minus base. New CSS classes .atc-* in ShatteredDadAdventure.html modeled on the Bestiary card look; the Bestiary itself (protected) is untouched. STR has no bonus source in the game, so it never shows a bracket.
+	- Note (2026-11-10, nightly run 2): Verification performed: node --check on all js; harness one class per process, 7/7 clears; atlas 275 keys OK; sw.js re-stamped 0.11.0-1043c2f306 -> 0.11.0-bc5d8f3502, --check OK in your folder; folder md5s match the working copy. Desktop 1280x800 and the 4 phone profiles: title screenshot, play-frame canvas and play screenshot md5-identical to the previous build. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, GRAVEYARD opens from the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build; no page errors. Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape and desktop with a test weapon (+10 ATK) and cap (-1 DEF, +2 PER) equipped: before, "ATK 16" etc.; after, STR = 6 / ATK = 6 [+10] / DEF = 2 / PER = 3 [+2] / WIS = 4 [+1] (DEF and WIS include the Grillmaster's starting gear), matching effAtk/effDef/effPer/effWis; Cancel on screen and closes the card on all 5; no horizontal overflow; iPhone SE and landscape screenshots checked. Limit: the cloud browser has no Impact font, so the comic lettering was checked by layout only; check the look on the phone.
+	- Note (2026-11-10, nightly run 2): Shared files: MOB-32, MOB-34 and MOB-36 were fixed together tonight on top of MOB-29/31/35 (still unpushed). ShatteredDadAdventure.html and sw.js carry all six; js/ui.js carries MOB-34, MOB-35 and MOB-36; js/input.js carries MOB-29 and MOB-36. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 3): Shared files: MOB-33 and MOB-38 were fixed tonight (nightly run 3) on top of the unpushed MOB-29/31/32/34/35/36. sw.js carries all eight; js/game.js carries MOB-33, MOB-35 and MOB-38; js/ui.js carries MOB-34, MOB-35, MOB-36 and MOB-38; js/render.js carries MOB-31 and MOB-38. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Files: ShatteredDadAdventure.html, js/ui.js, sw.js
+	- PUSH (2026-11-10):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "ShatteredDadAdventure.html" "js/ui.js" "sw.js"
+	    git commit -m "MOB-34: ATTRIBUTES as a comic card showing base [bonus] per stat"
+	    git push origin main
+	- ASK (2026-11-10): Push with the block above, check on your phone (MORE > ATTRIBUTES with some gear on), then mark [x] + KBP.
+	- Note (2026-11-10): Close out. KBP
+
+[x] MOB-33 [BALANCE] Knee buckle at most once per 20 turns unless a status or curse causes it
+	- KBP (2026-11-10): The knee buckles pain should never happen more than once within 20 turns unless there is a status effect or curse causing it.
+	- Device: not stated
+	- Summary: Fixed. "The knee buckles. -1 HP." now happens at most once in any 20 turns. The exception is The Knee status (from stepping on Scattered Building Bricks): while it is active the old odds apply with no cooldown. The harmless "*knee crack* (Dad Noise)" line is not limited. Continue (or reopening the app) resets the cooldown.
+	- Note (2026-11-10, nightly run): Small: remember the turn of the last buckle (kept in memory only, so no save change; a reload resets the cooldown) and skip the damage for 20 turns, keeping the random roll so seeded and Daily runs stay the same; first check which statuses and curses add knee pain and let those bypass the cooldown. The harmless "*knee crack* (Dad Noise)" line is not limited. Not worked tonight.
+	- Note (2026-11-10, nightly run 3): js/game.js kneePainTick: new var KNEE_BUCKLE_GAP=20 and game._kneeLast (turn of the last buckle; kept in memory only, so sda_save_v4 is unchanged). The random roll is still made every move, so seeded and Daily runs keep the same random sequence. What bypasses the cooldown: no curse or hindering enchantment in the game affects the knee today (the only knee modifier is the Suspiciously Good Knees talent, which halves the odds), so the bypass is The Knee status (game.statuses.knee, applied by the Scattered Building Bricks trap; its card says "It acts up"). If a future knee curse is added, it should bypass the same way.
+	- Note (2026-11-10, nightly run 3): Verification performed: node --check on all js; harness one class per process, 7/7 clears; atlas 275 keys OK; sw.js re-stamped 0.11.0-bc5d8f3502 -> 0.11.0-1d7e8f9bc6, --check OK in your folder; folder md5s match the working copy. Desktop 1280x800 and the 4 phone profiles: title screenshot, play-frame canvas and play screenshot md5-identical to the previous build. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, GRAVEYARD opens from the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build; no page errors. Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape and desktop, seeded 500-move walk with the knee chance forced to 30% (enemies, loot and traps cleared, HP refilled each step): before, 157 buckles (154 desktop), shortest gap 1 turn; after, 23 buckles, shortest gap exactly 20 turns; with The Knee status active, after = before (157 / 154 buckles, gap 1), which also confirms the random sequence is unchanged.
+	- Note (2026-11-10, nightly run 3): Shared files: MOB-33 and MOB-38 were fixed together tonight on top of the unpushed MOB-29/31/32/34/35/36. sw.js carries all eight; js/game.js carries MOB-33, MOB-35 and MOB-38; js/ui.js carries MOB-34, MOB-35, MOB-36 and MOB-38; js/render.js carries MOB-31 and MOB-38. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Files: js/game.js, sw.js
+	- PUSH (2026-11-10):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js"
+	    git commit -m "MOB-33: knee buckle at most once per 20 turns unless The Knee status is active"
+	    git push origin main
+	- ASK (2026-11-10): Push with the block above, check on your phone (walk a while on a deep floor: no two "The knee buckles" lines within 20 turns), then mark [x] + KBP.
+	- Note (2026-11-10): Close out. KBP
+
+[x] MOB-32 [UX] Graveyard and Bestiary out of the junk drawer
+	- KBP (2026-11-10): Take the grave yard and bestiary out of the junk drawer.
+	- Device: not stated
+	- Summary: Fixed. GRAVEYARD and BESTIARY are no longer in the junk drawer (MORE). Both still open from the title cover; on desktop the action-bar buttons and the B / G keys are unchanged.
+	- Note (2026-11-10, nightly run): Read as "remove from the drawer": the title cover already has BESTIARY and GRAVEYARD buttons. Small: ShatteredDadAdventure.html #moresheet only; the desktop action bar and the keyboard keys (B, G) stay. If you meant moving them somewhere else, add a KBP note. Not worked tonight (budget went to the two bugs and the font).
+	- Note (2026-11-10, nightly run 2): ShatteredDadAdventure.html #moresheet: the data-act="best" and data-act="grave" buttons removed (13 buttons left). The desktop #actionbar copies (hidden on phones) were kept.
+	- Note (2026-11-10, nightly run 2): Verification performed: node --check on all js; harness one class per process, 7/7 clears; atlas 275 keys OK; sw.js re-stamped 0.11.0-1043c2f306 -> 0.11.0-bc5d8f3502, --check OK in your folder; folder md5s match the working copy. Desktop 1280x800 and the 4 phone profiles: title screenshot, play-frame canvas and play screenshot md5-identical to the previous build. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, GRAVEYARD opens from the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build; no page errors. Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, the drawer listed BESTIARY and GRAVEYARD (15 buttons); after, neither (13 buttons), drawer panel inside the screen on all 4 (scrolls internally on iPhone SE and landscape, as before); drawer screenshots checked.
+	- Note (2026-11-10, nightly run 2): Shared files: MOB-32, MOB-34 and MOB-36 were fixed together tonight on top of MOB-29/31/35 (still unpushed). ShatteredDadAdventure.html and sw.js carry all six; js/ui.js carries MOB-34, MOB-35 and MOB-36; js/input.js carries MOB-29 and MOB-36. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 3): Shared files: MOB-33 and MOB-38 were fixed tonight (nightly run 3) on top of the unpushed MOB-29/31/32/34/35/36. sw.js carries all eight; js/game.js carries MOB-33, MOB-35 and MOB-38; js/ui.js carries MOB-34, MOB-35, MOB-36 and MOB-38; js/render.js carries MOB-31 and MOB-38. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Files: ShatteredDadAdventure.html, sw.js
+	- PUSH (2026-11-10):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "ShatteredDadAdventure.html" "sw.js"
+	    git commit -m "MOB-32: Bestiary and Graveyard removed from the junk drawer (still on the title cover)"
+	    git push origin main
+	- ASK (2026-11-10): Push with the block above, check on your phone (MORE drawer has no BESTIARY/GRAVEYARD; both still open from the title cover), then mark [x] + KBP.
+	- Note (2026-11-10): Close out. KBP
+
+[x] MOB-31 [UX] Back to the comic font: pixel font removed
+	- KBP (2026-11-10): Revert all text back to the comic font. I do not like the pixel font.
+	- Device: not stated
+	- Summary: Fixed. The Silkscreen pixel font is gone. The title cover, Choose Your Dad deck and Bestiary cards are back to their comic lettering at the original sizes (identical to before the M16 skin). The places that used the pixel font (overlay headings, action-bar and drawer buttons, the HUD name, slot labels, biome title cards, the desktop Dad card) now use the same comic face as the cards. Body text is unchanged.
+	- Note (2026-11-10, nightly run): Read "back to the comic font" as: wherever the pixel font appeared, use the comic display face of the protected cards (Impact; on iPhone it falls back to Avenir Next Condensed and on Android to the condensed system face, exactly as the cards do). If you meant the plain pre-skin monospace for buttons and headings instead, add a KBP note. Changes: ShatteredDadAdventure.html (m16css: --pix set to the comic stack; the protected-screen font block added 2026-11-10 removed), js/render.js (M16_PIX for the desktop Dad card). The font files stay in assets/fonts (still in the offline cache list, no longer used).
+	- Note (2026-11-10, nightly run): Verification performed: node --check on all js; harness one class per process, 7/7 clears; atlas 275 keys OK; sw.js re-stamped 0.11.0-fc6135f474 -> 0.11.0-1043c2f306, --check OK in your folder; folder md5s match the working copy. Playwright: computed font of the action-bar buttons, HUD name and overlay heading was Silkscreen and is now the comic stack on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape and desktop 1280x800; play-frame canvases identical to the previous build on all 5; inventory (iPhone SE) and desktop Dad card screenshots checked. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; no page errors. Cover, Bestiary and deck screenshots md5-identical to ?noskin (the pre-M16 look) on both phones, and different from the previous build (pixel font), as intended. Limit: the cloud browser has no Impact font, so letter shapes were checked by computed style only; check the look on the phone.
+	- Note (2026-11-10, nightly run): Shared files: MOB-29, MOB-31 and MOB-35 were fixed together. ShatteredDadAdventure.html and sw.js carry all three; bugs/BUG_LOG.md carries MOB-29 and MOB-35. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 2): Shared files: MOB-32, MOB-34 and MOB-36 were fixed tonight (nightly run 2) on top of this item. ShatteredDadAdventure.html and sw.js carry all six; js/ui.js carries MOB-34, MOB-35 and MOB-36; js/input.js carries MOB-29 and MOB-36. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 3): Shared files: MOB-33 and MOB-38 were fixed tonight (nightly run 3) on top of the unpushed MOB-29/31/32/34/35/36. sw.js carries all eight; js/game.js carries MOB-33, MOB-35 and MOB-38; js/ui.js carries MOB-34, MOB-35, MOB-36 and MOB-38; js/render.js carries MOB-31 and MOB-38. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Files: ShatteredDadAdventure.html, js/render.js, sw.js
+	- PUSH (2026-11-10):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "ShatteredDadAdventure.html" "js/render.js" "sw.js"
+	    git commit -m "MOB-31: comic font everywhere; Silkscreen pixel font removed"
+	    git push origin main
+	- ASK (2026-11-10): Push with the block above, check on your phone (title cover, Dad deck, Bestiary, BAG and junk drawer headings and buttons), then mark [x] + KBP.
+	- Note (2026-11-10): Close out. KBP
+
+[x] MOB-29 [BUG] Zooming in on phones pushed the buttons off the screen (BUG-013)
+	- KBP (2026-11-10): On Galaxy S25+, when zooming in, The buttons are affected and I have trouble accessing some of them, even when going to my bag or junk drawer. Zooming should only affect the map area and nothing else.
+	- Device: Galaxy S25+ (orientation and version not stated)
+	- Summary: Fixed. On phones and tablets, zooming in (pinch on the map, or ZOOM + in the junk drawer) now shows fewer, larger tiles inside the same map box; the HUD, the action bar, BAG and the junk drawer stay where they are and the page no longer grows past the screen. Pinching outside the map no longer zooms the whole page. Zooming out (MOB-04) and desktop zoom are unchanged.
+	- Note (2026-11-10, nightly run): Cause: on phones fitCanvas() (js/config.js) multiplied the map canvas size by the zoom factor, so the map grew taller than its slot, the page overflowed, and the browser shrank the page to fit it, pushing BAG/SCAN/WAIT/THROW/MORE below the screen (also while BAG or the drawer was open). The same overflow caused BUG-009 (the top zoom step flipped the grid to 11x15). The page also allowed the browser's own pinch-zoom. Fix: js/config.js fitCanvas: on compact layouts zoom-in divides the tile grid by the zoom factor (portrait 9x13 -> 7x10 -> 6x9 ... -> 3x4 at the top step; landscape 15x10 -> 5x3) and keeps the canvas in its box; ShatteredDadAdventure.html viewport adds maximum-scale=1, user-scalable=no; js/input.js blocks the iOS Safari page pinch (gesturestart). Logged BUG-013 (resolved); BUG-009 marked resolved with it.
+	- Note (2026-11-10, nightly run): Verification performed: node --check on all js; harness one class per process, 7/7 clears; atlas 275 keys OK; sw.js re-stamped 0.11.0-fc6135f474 -> 0.11.0-1043c2f306, --check OK in your folder; folder md5s match the working copy. Playwright (cloud Chromium): Galaxy S25+ profile (384x832, touch, Android Chrome UA), iPhone SE, iPhone 13 landscape: before, zoom-in pushed all 5 action-bar buttons off the screen (S25+ from step 4, page height 832 -> 1255 px and up; iPhone SE from step 1) and the top step switched to 11x15; after, all zoom steps keep the page height equal to the screen, 0 buttons off screen, no 11x15 switch. S25+, iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: after 3 zoom steps, a real touch tap on the tile next to Dad moves him there, BAG opens with Close on screen and no horizontal overflow, zooming back out returns to 9x13 and then the wider views; zoomed S25+ screenshot checked. Desktop 1280x800: zoomed canvas size identical to the previous build (1305x870 at step 2); play-frame canvases identical. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; no page errors. Not testable in the cloud browser: the phone's own page pinch; check by pinching over the HUD.
+	- Note (2026-11-10, nightly run): Shared files: MOB-29, MOB-31 and MOB-35 were fixed together. ShatteredDadAdventure.html and sw.js carry all three; bugs/BUG_LOG.md carries MOB-29 and MOB-35. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 2): Shared files: MOB-32, MOB-34 and MOB-36 were fixed tonight (nightly run 2) on top of this item. ShatteredDadAdventure.html and sw.js carry all six; js/ui.js carries MOB-34, MOB-35 and MOB-36; js/input.js carries MOB-29 and MOB-36. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Note (2026-11-10, nightly run 3): Shared files: MOB-33 and MOB-38 were fixed tonight (nightly run 3) on top of the unpushed MOB-29/31/32/34/35/36. sw.js carries all eight; js/game.js carries MOB-33, MOB-35 and MOB-38; js/ui.js carries MOB-34, MOB-35, MOB-36 and MOB-38; js/render.js carries MOB-31 and MOB-38. Pushing one block also commits the others' changes in those files, so use the combined block in tonight's report (recommended; the sw.js BUILD stamp then matches the pushed files).
+	- Files: ShatteredDadAdventure.html, js/config.js, js/input.js, sw.js, bugs/BUG_LOG.md
+	- PUSH (2026-11-10):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "ShatteredDadAdventure.html" "js/config.js" "js/input.js" "sw.js" "bugs/BUG_LOG.md"
+	    git commit -m "MOB-29: zoom on phones enlarges the map tiles only; buttons stay on screen; no page pinch-zoom"
+	    git push origin main
+	- ASK (2026-11-10): Push with the block above, check on the Galaxy S25+ (zoom in and out, open BAG and the junk drawer), then mark [x] + KBP.
+	- Note (2026-11-10): Close out. KBP
+
 [x] MOB-25 [UX] Ask before drinking from the water fountain
 	- KBP (2026-11-09): Confirm if the player wants to drink from the fountain of hydration before the player drinks.
 	- Device: not stated
@@ -366,6 +495,31 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-10 (nightly, run 4)
+- Triaged 3 INBOX lines -> MOB-39 BUG screen flickers while moving [k] (BUG-018, not reproduced; asked for details); MOB-40 CONTENT expanded crafting with hints and a YallTube gate [!]; MOB-41 UX flash-card combine screen [!]. Next unused MOB-42.
+- Archived [x] MOB-29, 31, 32, 33, 34, 35 (KBP "Close out" lines; BUG-013/014 already resolved). MOB-16 still [x] without a KBP line (ASK unchanged).
+- KBP notes actioned: MOB-30 (keep all 50, rate rolled per run) -> [!]; MOB-36 (SCAN tap needs a real pop-up) -> fixed [c]; MOB-38 (slot shown twice) -> fixed [c].
+- Files changed: ShatteredDadAdventure.html, js/input.js, js/game.js, js/ui.js, sw.js (BUILD 1.0.0-96d71c30d3 -> 1.0.0-51433d76e7), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: BUG-018 (open) screen flicker while moving (MOB-39).
+- Verification: node --check all js; harness one class per process, 7/7 clears + atlas 275 keys; Playwright touch before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, Galaxy S25+ profile; desktop + 4 phones title/play frames md5-identical to the previous build; protected screens functional and md5-identical; sw stamp --check OK in the folder; folder md5s match.
+- Still open: [c] MOB-36, 38 | [k] MOB-39 | [-] none | [x] MOB-16 (awaiting KBP answer) | [!] MOB-06, 07, 08, 11, 14, 19, 22, 24, 26, 27, 28, 30, 37, 40, 41.
+
+RUN 2026-11-10 (nightly, run 3)
+- INBOX empty; nothing triaged. No unanswered KBP notes; no [c] reopened; nothing archived (MOB-16 still [x] without a KBP line, ASK unchanged).
+- Worked (UX before BALANCE): MOB-38 equippable items show their slot in parentheses; MOB-33 knee buckle at most once per 20 turns (The Knee status bypasses). Both fixed + verified -> [c].
+- Files changed: js/game.js, js/ui.js, js/render.js, sw.js (BUILD 0.11.0-bc5d8f3502 -> 0.11.0-1d7e8f9bc6), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. Shared-file notes added to MOB-29/31/32/34/35/36.
+- Bugs logged: none.
+- Verification: node --check all js; harness one class per process, 7/7 clears + atlas 275 keys; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop 1280x800 (slot tags in BAG detail/pickup/vendor lists; seeded 500-move knee walk); title/play frames md5-identical to the previous build on all 5; protected screens functional and md5-identical; folder md5s match.
+- Still open: [c] MOB-29, 31, 32, 33, 34, 35, 36, 38 | [k] MOB-30 | [-] none | [x] MOB-16 (awaiting KBP answer) | [!] MOB-06, 07, 08, 11, 14, 19, 22, 24, 26, 27, 28, 37.
+
+RUN 2026-11-10 (nightly, run 2)
+- INBOX empty; nothing triaged. No unanswered KBP notes; no [c] reopened; nothing archived (MOB-16 still [x] without a KBP line, ASK unchanged).
+- Worked (UX, lowest MOB first): MOB-32 Graveyard/Bestiary removed from the junk drawer; MOB-34 ATTRIBUTES comic card with base [bonus]; MOB-36 SCAN arm-then-tap identify, double tap = area scan. All fixed + verified -> [c].
+- Files changed: ShatteredDadAdventure.html, js/input.js, js/ui.js, sw.js (BUILD 0.11.0-1043c2f306 -> 0.11.0-bc5d8f3502), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. Shared-file notes added to MOB-29/31/35.
+- Bugs logged: none.
+- Verification: node --check all js; harness one class per process, 7/7 clears + atlas 275 keys; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop 1280x800; title/play frames md5-identical to the previous build on all 5; protected screens functional and md5-identical; sw stamp --check OK in the folder; folder md5s match the working copy.
+- Still open: [c] MOB-29, 31, 32, 34, 35, 36 | [k] MOB-30 | [-] MOB-33, 38 | [x] MOB-16 (awaiting KBP answer) | [!] MOB-06, 07, 08, 11, 14, 19, 22, 24, 26, 27, 28, 37.
+
 RUN 2026-11-10 (nightly)
 - Triaged 10 INBOX lines -> MOB-29 BUG zoom pushes buttons off screen [c]; MOB-30 CONTENT comedy-break encounters, 50 suggestions [k]; MOB-31 UX comic font back, pixel font removed [c]; MOB-32 UX Graveyard/Bestiary out of the junk drawer [-]; MOB-33 BALANCE knee buckle cooldown [-]; MOB-34 UX Attributes comic card with base [bonus] [-]; MOB-35 BUG Hunger/Thirst broken after Continue + red label at 90% [c]; MOB-36 UX SCAN tap-to-identify / double-tap area scan [-]; MOB-37 CONTENT Park doors/gates [!]; MOB-38 UX slot labels on equippable items [-].
 - No unanswered KBP notes; no [c] reopened. Archived [x] MOB-23, MOB-25 (KBP "Close out" lines; no BUG ids). MOB-16 still [x] without a KBP line (ASK unchanged).

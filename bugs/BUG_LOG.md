@@ -26,6 +26,7 @@
 | BUG-015 | M17: soft-light falloff halves frame rate on a software-rasterised canvas (emulated low-end Android) | `js/render.js` | resolved | 2026-11-10 |
 | BUG-016 | Desktop: page scrolls and the action bar sits below the fold at common laptop sizes | `js/config.js` | open | 2026-11-10 |
 | BUG-017 | Share sheet: game keys dead after closing it with Esc | `js/share.js` | resolved | 2026-11-10 |
+| BUG-018 | MOB-39: screen flickers while moving (phone; not reproduced in emulation) | `js/render.js` | open | 2026-11-10 |
 
 ---
 
@@ -96,6 +97,18 @@
 **Description:** Non-compact layout: at 1280x800 the document is 1026 px tall and #actionbar starts at y=934; 1366x768 -> 984 px (bar at 892); 1920x1080 -> 1278 px (bar at 1186). The canvas is sized to the viewport height but HUD/log/aim bar/action bar stack below it. Pre-existing (identical on the pre-M17 build); mobile/compact layouts are unaffected.
 
 **Repro steps:** Desktop Chrome 1280x800, start a run: the action buttons are only reachable by scrolling the page
+
+---
+
+### BUG-018 — MOB-39: screen flickers while moving (phone; not reproduced in emulation)
+
+- **File:** `js/render.js`
+- **Status:** open
+- **Logged:** 2026-11-10
+
+**Description:** KBP (2026-11-10) reports the screen seems to flicker while Dad moves. Device, what flickers (whole map, walls, Dad, lighting) and whether MOTION off changes it are not stated.
+
+**Repro steps:** Not reproduced: Playwright iPhone 13, iPhone SE, Galaxy S25+ profile, 8 steps with rAF sampling of the map canvas: no single-frame brightness jumps, no canvas resizes during moves.
 
 ---
 ## Resolved Bugs

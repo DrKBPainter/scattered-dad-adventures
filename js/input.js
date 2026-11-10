@@ -12,12 +12,12 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  if(aiming){const t=tileFromEvent(ev);const dx=Math.sign(t.x-game.px),dy=Math.sign(t.y-game.py);if(dx===0&&dy===0){log("Aim away from yourself — click a tile in the throw direction.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();doThrow(dx,dy);return;}
  if(placing){const t=tileFromEvent(ev);const dx=t.x-game.px,dy=t.y-game.py;if(Math.max(Math.abs(dx),Math.abs(dy))!==1){log("Traps go on an adjacent tile — click a square right next to you.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();placeTrap(dx,dy);return;}
  if(pendingConfirm||pendingMenu||ovInv||ovDad||ovBest||ovInstr||ovMap)return;const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;
- if(scanPick){setScanPick(false);if(game){game.clickPath=[];game.clickDoor=null;}inspectKb=false;showInspect(x,y);return;}// MOB-36: armed SCAN, this tap identifies the tile (no turn)
+ if(scanPick){setScanPick(false);if(game){game.clickPath=[];game.clickDoor=null;}clearMouseInspect();showScanPop(x,y);return;}// MOB-36: armed SCAN, this tap identifies the tile in a pop-up (no turn)
  // Shift+click directs the active companion: shift+click an enemy = attack it, shift+click a tile = move there.
  if(ev.shiftKey&&game&&game.ally&&game.ally.following){game.clickPath=[];orderAlly(x,y);return;}
  if(game){game.clickPath=[];game.clickDoor=null;}// cancel any existing path
  // Doors auto-close; clicking an open door inspects it
- const _dr=doorAt(x,y);if(_dr&&_dr.open){showInspect(x,y);return;}
+ const _dr=doorAt(x,y);if(_dr&&_dr.open&&!touchy){showInspect(x,y);return;}// MOB-36: on touch only SCAN identifies things; tapping an open door walks to it
  // Adjacency = Chebyshev distance 1, so all 8 neighbours (orthogonal AND diagonal) route to tryMove.
  // tryMove attacks an occupying enemy or steps into an empty tile — this gives click-to-attack on diagonals.
  if(touchy&&x===game.px&&y===game.py){clearMouseInspect();tryMove(0,0);return;}// M7: tap your own tile = wait (or take the stairs you stand on)
@@ -28,8 +28,8 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
   // MOB-01: a closed door is never a path tile, so walk to the tile beside it, then ask what to do.
   const _cd=(_dr&&!_dr.open)?_dr:null;const _wl=!_cd&&game.floor.grid[y][x]===1;/* MOB-05: a tapped wall walks to the nearest floor tile beside it */const path=_cd?pathToDoor(_cd):_wl?pathToWall(x,y):bfsPath(game.px,game.py,x,y);
   if(path&&path.length){game.clickPath=path;if(_cd)game.clickDoor={x:_cd.x,y:_cd.y};continueClickPath();}
-  else{showInspect(x,y);}
- }else{showInspect(x,y);}}
+  else if(touchy)_m36NoWay();else{showInspect(x,y);}
+ }else if(touchy)_m36NoWay();else{showInspect(x,y);}}
 /* ===== M7 touch input layer =====
    Pointer Events give mouse, touch and pen one code path on the canvas.
    Mouse: left button = canvasTap (same as the old click). Right button stays on contextmenu (inspect).
@@ -60,7 +60,7 @@ canvas.addEventListener("pointerdown",(ev)=>{
  _m7End();const p={id:ev.pointerId,type:ev.pointerType,x0:ev.clientX,y0:ev.clientY,t0:Date.now(),moved:false,long:false,timer:null};_m7P=p;
  try{canvas.setPointerCapture(ev.pointerId);}catch(e){}
  if(ev.pointerType!=="mouse"){p.timer=setTimeout(()=>{p.timer=null;if(_m7P!==p||p.moved)return;p.long=true;
-  if(mode===State.PLAY&&!_m7Busy()&&game){const t=tileFromEvent({clientX:p.x0,clientY:p.y0});if(t.x>=0&&t.y>=0&&t.x<MAP_W&&t.y<MAP_H){inspectKb=false;showInspect(t.x,t.y);try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}}}},M7_LONG);}});
+  /* MOB-36 (KBP 2026-11-10): on touch, SCAN then tap is the only way to identify a thing, so press-and-hold no longer opens the inspect box; it just does nothing (no move). */},M7_LONG);}});
 canvas.addEventListener("pointermove",(ev)=>{const p=_m7P;if(!p||ev.pointerId!==p.id||p.moved)return;
  if(Math.hypot(ev.clientX-p.x0,ev.clientY-p.y0)>M7_SLOP){p.moved=true;if(p.timer){clearTimeout(p.timer);p.timer=null;}}});
 canvas.addEventListener("pointerup",(ev)=>{const p=_m7P;if(!p||ev.pointerId!==p.id)return;_m7End();if(p.long)return;
@@ -127,6 +127,14 @@ function syncMuteBtn(){const muted=(typeof SFX_MUTED!=="undefined"&&SFX_MUTED);i
 /* MOB-36: on phones SCAN arms a one-thing scan: the next map tap shows what is there (no turn, like press-and-hold).
    Tapping SCAN again while armed runs the area scan (one turn, as before). Any other button or a swipe disarms it. Desktop SCAN is unchanged. */
 var scanPick=false;// var, not let: syncUI (ui.js) may read it before this line runs
+/* MOB-36 (KBP 2026-11-10): the armed SCAN tap shows what is there in a pop-up card (#scanpop) in the middle of the map, e.g. "A Wall / Load-bearing. Probably. Do not test this.".
+   The next tap anywhere (or any key) closes it; a closing tap on the map does nothing else. This is the only identify pop-up on touch screens. */
+var elScanPop=document.getElementById("scanpop");
+function showScanPop(x,y){if(!elScanPop||!game)return;const r=inspectAt(x,y)||{t:"Too Dark to Tell",b:"Dad squints at it. It squints back. Get a little closer first."};const t=elScanPop.querySelector(".sp-t"),b=elScanPop.querySelector(".sp-b");if(t)t.innerHTML=r.t;if(b)b.innerHTML=r.b;elScanPop.classList.add("show");if(typeof markDirty==="function")markDirty();}
+function hideScanPop(){if(elScanPop&&elScanPop.classList&&elScanPop.classList.contains("show")){elScanPop.classList.remove("show");if(typeof markDirty==="function")markDirty();return true;}return false;}
+function _m36NoWay(){log("Dad cannot find a way there. To see what it is, tap SCAN, then tap it.","dim");syncUI();}
+document.addEventListener("pointerdown",(ev)=>{if(!hideScanPop())return;const t=ev.target;if(t===canvas||(elScanPop&&elScanPop.contains&&elScanPop.contains(t))){ev.stopPropagation();ev.preventDefault();}},true);
+document.addEventListener("keydown",()=>{hideScanPop();},true);
 function setScanPick(on){scanPick=!!on;try{document.querySelectorAll('#actionbar [data-act="scan"]').forEach(b=>b.classList.toggle("scan-armed",scanPick));}catch(e){}if(typeof markDirty==="function")markDirty();}
 function barAction(a){
  // Mute is a global toggle (like its key) — handle it BEFORE the play-mode guard so it always works when the bar is visible.
