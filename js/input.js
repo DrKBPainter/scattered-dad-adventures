@@ -153,5 +153,7 @@ if(oDpad)oDpad.addEventListener("click",(ev)=>{const btn=ev.target.closest("[dat
  if(game)game.clickPath=[];clearMouseInspect();
  tryMove(parseInt(btn.dataset.dx,10),parseInt(btn.dataset.dy,10));});
 
+/* MOB-29: iOS Safari ignores user-scalable=no; block its page pinch so only the map zooms (canvas pinch = doZoom, MOB-04). */
+try{document.addEventListener("gesturestart",e=>{e.preventDefault();},{passive:false});}catch(e){}
 /* ===== boot ===== */
 fitCanvas();render();syncUI();if(typeof syncMuteBtn==="function")syncMuteBtn();if(typeof syncMotionBtn==="function")syncMotionBtn();

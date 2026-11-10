@@ -43,9 +43,13 @@ function pickViewport(w,h){const o=_viewOverride();if(o)return o;
  return[15,10];}
 function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const v=pickViewport(iw,ih);VIEW_W=v[0];VIEW_H=v[1];_vBase=[v[0],v[1]];
  if(zoomOut>0){const zl=_zoomOutList(v[0],v[1]);if(zoomOut>zl.length)zoomOut=zl.length;const zf=zl[zoomOut-1];VIEW_W=Math.round(v[0]*zf);VIEW_H=Math.round(v[1]*zf);if(zoomOut===zl.length){VIEW_W=Math.max(VIEW_W,MAP_W);VIEW_H=Math.max(VIEW_H,MAP_H);}}
- const cw=VIEW_W*TILE,ch=VIEW_H*TILE;let maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
+ let cw=VIEW_W*TILE,ch=VIEW_H*TILE;let maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
  const _l=_m6Layout(iw,ih);if(_l){maxW=Math.max(60,_l.maxW);maxH=Math.max(60,_l.maxH);}
- const s=Math.max(zoomOut>0?0.05:0.5,Math.min(maxW/cw,maxH/ch));const zm=ZOOM_STEPS[zoomStep]||1;
+ let zm=ZOOM_STEPS[zoomStep]||1;
+ /* MOB-29: on phones/tablets zooming in shows fewer, larger tiles inside the same map box (the canvas never grows past
+    its slot, so the HUD and buttons stay put and the page never overflows). Desktop keeps the enlarged canvas. */
+ if(_l&&zm>1&&zoomOut===0){VIEW_W=Math.max(3,Math.round(v[0]/zm));VIEW_H=Math.max(3,Math.round(v[1]/zm));cw=VIEW_W*TILE;ch=VIEW_H*TILE;zm=1;}
+ const s=Math.max(zoomOut>0?0.05:0.5,Math.min(maxW/cw,maxH/ch));
  canvas.style.width=Math.round(cw*s*zm)+"px";canvas.style.height=Math.round(ch*s*zm)+"px";
  const dpr=(typeof window.devicePixelRatio==="number"&&window.devicePixelRatio>0)?window.devicePixelRatio:1;
  const k=Math.max(1,Math.min(4,Math.ceil(s*zm*dpr-0.01)));

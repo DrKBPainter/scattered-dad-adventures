@@ -341,7 +341,7 @@ function drawPortraitScene(id,CW,CH){
    halftone in his PORTRAIT_CFG colours, stat strip, issue number, and arrows hinting at the other Dads. Text in the Silkscreen pixel font
    (falls back to monospace until the font loads; ui.js redraws when it does). ?noskin keeps the pre-M16 portrait. */
 function m16On(){try{return !(typeof location!=="undefined"&&location&&/[?&]noskin\b/.test(location.search||""));}catch(e){return true;}}
-const M16_PIX='"Silkscreen",Consolas,monospace';
+const M16_PIX='Impact,Haettenschweiler,"Arial Black",sans-serif'; /* MOB-31: comic face, no pixel font */
 function _m16Txt(t,x,y,size,col,align,maxW,shadow){let z=size;ctx.font=z+'px '+M16_PIX;while(maxW&&z>8&&ctx.measureText(t).width>maxW){z-=4;ctx.font=z+'px '+M16_PIX;}ctx.textAlign=align||'center';ctx.textBaseline='top';if(shadow){ctx.fillStyle=shadow;ctx.fillText(t,x+1,y+1);}ctx.fillStyle=col;ctx.fillText(t,x,y);return z;}
 /* the card shows the Dad and skin being chosen (dadSprite()/skinColorMap() prefer a finished run's game.cls/game.skin, BUG-012) */
 function _m16ClsSprite(cls){const m={grill:SPR_DAD_GRILL,diy:SPR_DAD_DIY,tech:SPR_DAD_TECH,gym:SPR_DAD_GYM,tactical:SPR_DAD_TACTICAL,sports:SPR_DAD_SPORTS,yard:SPR_DAD_YARD};return (cls&&m[cls.id])||SPR_DAD;}

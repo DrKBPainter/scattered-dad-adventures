@@ -4,6 +4,8 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-09 (nightly run 3). Census: [ ] 0 | [-] 2 | [k] 0 | [c] 4 | [!] 11 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-10 nightly run]
+Previously: 2026-11-09 (nightly run 2). Census: [ ] 0 | [-] 5 | [k] 0 | [c] 3 | [!] 9 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run 4]
 Previously: 2026-11-09 (nightly run). Census: [ ] 0 | [-] 4 | [k] 2 | [c] 7 | [!] 7 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run 3]
 Previously: 2026-11-08 (nightly run). Census: [ ] 0 | [-] 4 | [k] 0 | [c] 4 | [!] 5 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run 2]
 Previously: 2026-11-07 (nightly run). Census: [ ] 0 | [-] 4 | [k] 0 | [c] 3 | [!] 4 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-09 nightly run]
@@ -15,6 +17,115 @@ Previously: (none)   [displaced 2026-11-06 nightly run]
 =====================================================================
 COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
+[x] MOB-25 [UX] Ask before drinking from the water fountain
+	- KBP (2026-11-09): Confirm if the player wants to drink from the fountain of hydration before the player drinks.
+	- Device: not stated
+	- Summary: Fixed. Walking (or tapping) into a working water fountain now asks first: "Drink from the water fountain? It has N sips left. It has waited years for someone to ask." [Drink] uses one of its 5 charges and a turn, as before; [Not now] costs nothing. An empty fountain still just says it is empty, with no question. The red Cooler of Restoration is unchanged.
+	- Note (2026-11-09, nightly run 2): Small js/game.js change in tryMove: bumping a fountain with charges left opens a confirm ("Drink from the fountain?") whose Yes calls useFountain(fn); No costs nothing; an empty fountain keeps its message without a question. Read as the water fountain only; the red Cooler of Restoration (healing fountain) would stay as it is unless you add a KBP note. Not worked tonight (budget went to the three KBP-directed items).
+	- Note (2026-11-09, nightly run 4): js/game.js tryMove: bumping a fountain with charges left opens openConfirm(..., {yes:"Drink", no:"Not now"}) whose Yes calls the unchanged useFountain(fn); an empty fountain calls useFountain directly (its "empty" message). No save change. Verification performed: node --check on all js; harness one class per process, 7/7 clears; atlas check 274 keys OK; Playwright (cloud Chromium) on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape and desktop 1280x800 with a fountain placed next to Dad: before, one bump drank at once (charges 5 -> 4, turn 0 -> 1); after, the question appears with both buttons fully on screen (screenshot checked on iPhone SE), Not now leaves charges 5 and turn 0, Drink gives charges 4, turn 1 and hydration restored, an empty fountain shows no question; desktop title and 4 movement frames identical to the previous build; protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens; cover, Bestiary and deck screenshots md5-identical to the previous build; no page errors. sw.js re-stamped (0.11.0-c377444bf0 -> 0.11.0-76f3ebc062), --check OK in your folder; folder md5s match the working copy.
+	- Files: js/game.js, sw.js
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js"
+	    git commit -m "MOB-25: ask before drinking from the water fountain"
+	    git push origin main
+	- ASK (2026-11-09): Push with the block above, check on your phone (walk into a water fountain), then mark [x] + KBP.
+	- Note (2026-11-09): Close out. KBP
+
+[x] MOB-23 [UX] ATTRIBUTES button in MORE: the stats and what each one does
+	- KBP (2026-11-09): Move the player stats, like STR, to a Attributes button in the More tab. This should also indicate what they help with.
+	- KBP (2026-11-09, from docs/MOBILE NOTES-Workstation.txt, an OneDrive conflict copy): Move the player stats (STR, DEF, etc.) to an Attributes button in the More tab. This should also indicate what each attribute can help with, generally.
+	- Device: not stated
+	- Summary: Fixed and already live (reopened by KBP; rechecked 2026-11-09, no code change needed). On phones the stat row (STR, ATK, DEF, PER, WIS) is gone from the HUD, and the MORE drawer has an ATTRIBUTES button (after MAP) that opens a sheet with the live STR, ATK, DEF, PER and WIS and what each one does. The live site serves this build (sw.js BUILD 0.11.0-c377444bf0, which includes openAttributes and the ATTRIBUTES button). Your Galaxy S25+ was most likely still running the edition it had cached before the push: the app keeps the old edition until you tap Reload on the "new edition" banner. Desktop keeps its HUD stats.
+	- Note (2026-11-09, nightly run): Small change: ShatteredDadAdventure.html (button in the MORE drawer + a sheet), js/ui.js (drawer wiring; sheet built from the live values; compact HUD without the stat row). Explanations come from the game rules as coded (for example PER: scan radius and trap spotting, per MOB-09; WIS: Dadism damage). Desktop keeps its HUD. The MORE drawer is not a protected screen. If the stats should also stay in the phone HUD, add a KBP note.
+	- Note (2026-11-09, nightly run 3): ShatteredDadAdventure.html: ATTRIBUTES button in #moresheet (data-act=attrs); js/input.js barAction routes it; js/ui.js: new openAttributes() (uses the existing confirm/menu modal, which scrolls inside on small screens) and the compact HUD skips the stat row. No save change. First version had a second close button inside the text that dropped below the fold on iPhone SE and landscape; removed, so the always-visible Cancel closes it. Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape: before, HUD shows the stat row and MORE has no ATTRIBUTES; after, HUD has no stat row (Hunger/moolah intact), ATTRIBUTES is visible in MORE, the sheet shows the live values (Grillmaster STR 6 / ATK 10 / DEF 3 / PER 3 / WIS 5), its Cancel button is fully on screen on all 4 profiles, the drawer closes behind it, Cancel closes it without using a turn (screenshots checked on iPhone SE and iPhone 13 landscape); no page errors. Desktop 1280x800: title, play, 4 movement frames and the HUD html md5-identical to the previous build. Protected screens (iPhone SE + iPhone 13, ?ascii): cover shown, Bestiary 76 cards / 75 undiscovered, discovered card flips and unflips, undiscovered shows "?" and does not flip, Close returns to the cover, New opens the deck, swipe next/back, Dad card flips, Choose opens the confirm; cover, Bestiary and deck screenshots md5-identical to the previous build. sw.js re-stamped, --check OK in your folder.
+	- Note (2026-11-09, nightly run 3): Shared files: js/game.js is changed by MOB-18, MOB-20 and MOB-21; sw.js by MOB-18, MOB-20, MOB-21 and MOB-23 (BUILD 0.11.0-eac10af746 -> 0.11.0-89d24698e2; it also carries the N28 sheet entry); js/ui.js also carries the done part of [!] MOB-07. Pushing one block also commits the other items' changes in the shared files, so use the combined block in tonight's report (recommended).
+	- Files: ShatteredDadAdventure.html, js/input.js, js/ui.js, sw.js
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "ShatteredDadAdventure.html" "js/input.js" "js/ui.js" "sw.js"
+	    git commit -m "MOB-23: ATTRIBUTES sheet in MORE; stat row removed from the phone HUD"
+	    git push origin main
+	- Asked (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): On my Galaxy S25+, the attributes of STR, ATK, DEF, PER, and WIS still show in the main play HUD and I do not see the ATTRIBUTES sheet in MORE.
+	  -> Actioned 2026-11-09: rechecked; no change needed. The live site and your folder both have the fix; on an emulated Galaxy S25+ (384x832, Android Chrome, portrait and landscape) the HUD has no stat row and MORE shows ATTRIBUTES. Most likely the phone was still on the cached edition from before the push. See the note below.
+	- Note (2026-11-09, nightly run 4): Checked the live site: sw.js BUILD 0.11.0-c377444bf0, js/ui.js contains openAttributes, the page has the ATTRIBUTES button in the junk drawer, so the MOB-23 push is on GitHub. Verification performed (current folder build, cloud Playwright): Galaxy S25+ profile (384x832, DPR 2.81, touch, Android Chrome UA) portrait and landscape and Pixel 5: new run -> compact mode on, HUD text has no STR/ATK/DEF/PER/WIS, MORE opens with ATTRIBUTES visible inside the screen (S25+ portrait at y 342-390 of 832; screenshot checked); a saved run continued after a reload also has no stat row; no page errors. No files changed for this item tonight; the PUSH block above is already on GitHub (git status will not list these files unless something else changed them). Tonight's MOB-25 push changes sw.js, so the phone will show a "new edition" banner after it.
+	- ASK (2026-11-09): After pushing MOB-25, close and reopen the app on the Galaxy S25+, tap Reload on the "new edition" banner, check the HUD and MORE > ATTRIBUTES, then mark [x] + KBP.
+	- Notes (2026-11-09): Close out. KBP
+
+[x] MOB-18 [CONTENT] More story before each level; floor 1 states its objective apart from the Dad choice
+	- KBP (2026-11-09): need to add more of the story prior to each level. Even level 1 should state the slapstick objective separate from the dad selection.
+	- KBP (2026-11-09, from docs/MOBILE NOTES-Workstation.txt, an OneDrive conflict copy): Add more of the story before each level that indicates the objective of the level. Keep the explanations on theme.
+	- Device: not stated
+	- Summary: Fixed (each biome, per your note). Entering a biome still shows its story card (unchanged), and "Onward, then." now opens a short OBJECTIVE card for that biome, naming its boss floor in the narrator's voice (example, The House: "Reach the basement stairs on every floor, get past whatever has been living in the Garage since 2019 (Floor 10), and pick up the Remote's trail. The thermostat is not to be touched. He will touch the thermostat."). On floor 1 a third card follows: "FLOOR 1 - TODAY'S OBJECTIVE" (find the basement stairs before anyone asks him to do something; avoid the back of the fridge and the family group text) with a crayon note from the kids. This is separate from the class backstory shown at Choose. Esc/Cancel still skips the cards.
+	- Note (2026-11-09, nightly run): Today: Choose shows the class backstory; the first floor of each biome shows a one-time story clip (STORY_CLIPS, 10 biomes, class-flavored); every floor writes one FLOORBLURBS line (100 floors) to the log on arrival, which is easy to miss in the 2-line phone log. Options: (a) every floor: an arrival card with a 2-3 line objective (example: "Floor 1: The Kitchen. Objective: reach the basement stairs before the smoke detector reaches you."), 100 new objectives written to the tone rules plus a card UI: a [!] dedicated run; (b) each biome: expand the 10 biome clips with an objective, plus a separate floor-1 objective card: a small item. The Choose Your Dad deck (protected) does not change in either option.
+	- Asked (2026-11-09): Should "each level" mean every floor (an objective card on all 100 floors, done as a large item) or each biome (10 expanded biome intros plus a separate floor-1 objective card)?
+	- Note (2026-11-09): just each biome.
+	  -> Actioned 2026-11-09: option (b): an objective for each of the 10 biomes plus a separate floor-1 objective card (js/data.js STORY_CLIPS objective fields + FLOOR1_OBJECTIVE; js/game.js showBiomeClip). See the note below.
+	- Note (2026-11-09, nightly run 2): js/data.js: objective text added to all 10 STORY_CLIPS entries (each names the biome boss and its floor, checked against BOSSES) and new FLOOR1_OBJECTIVE (title, text, crayon note; tone rules followed, no real store names). js/game.js showBiomeClip: story card unchanged; its button opens the objective card; on floor 1 (not Ascent) that card's button ("Fine. What about today?") opens the floor-1 card ("Understood. Mostly."). First tried the objective inside the story card: on iPhone SE the button dropped below the screen, so it was split into its own card. STORY_CLIPS is not exported, so no mirror changed. No save change. Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape and desktop 1280x800: before, the House card had no objective and no further card; after, the House story text is identical to before and its button stays in the same place, Onward opens the House objective card, its button opens the floor-1 card with the crayon note, dismissing returns to play on floor 1, both new cards' buttons are fully on screen on all 5 profiles (screenshots checked on iPhone SE); for all 10 biomes the story card is followed by an objective card and the floor-1 card appears only on floor 1; descending 10 -> 11 shows the Lowe & Behold clip then its objective card; protected screens unchanged (see MOB-04 note); no page errors.
+	- Note (2026-11-09, nightly run 2): Shared files: js/render.js is changed by MOB-04 and MOB-15; sw.js by MOB-04, MOB-15 and MOB-18 (BUILD 0.11.0-6ad8b9124b -> 0.11.0-decd471b0d); js/ui.js also carries the done part of [!] MOB-07. Pushing one block also commits the other items' changes in the shared files, and sw.js still lists the N25-N27 sprite sheets, so use the combined block in tonight's report (recommended).
+	- Files: js/data.js, js/game.js, sw.js
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/data.js" "js/game.js" "sw.js"
+	    git commit -m "MOB-18: objective card for each biome plus a floor-1 objective card"
+	    git push origin main
+	- Note (2026-11-09, weekly PWA run, N28): sw.js changed again for chunk N28 (new sheet assets/sprites/creatures-hood-hoa.png added to ASSETS; BUILD 0.11.0-decd471b0d -> 0.11.0-eac10af746). The MOB-18 sw.js content is kept; js/data.js and js/game.js are unchanged. Pushing this block also commits the N28 sw.js, which lists the new sheet, so use the combined block in the weekly report (it adds the sheet, atlas.js and the docs).
+	- Note (2026-11-09, nightly run 3): js/game.js changed again by tonight's MOB-20 and MOB-21 fixes (companion and key placement, lock choice) and sw.js re-stamped (0.11.0-eac10af746 -> 0.11.0-89d24698e2); this item's showBiomeClip and data.js changes kept unchanged. Pushing this block also commits those changes; use the combined block in tonight's report.
+	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
+	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): Close out. KBP
+
+[x] MOB-20 [UX] Don't spawn companions in hallways
+	- KBP (2026-11-09): don't spawn allies in hallways.
+	- KBP (2026-11-09, from docs/MOBILE NOTES-Workstation.txt, an OneDrive conflict copy): Do not spawn allies in hallways, only rooms.
+	- Device: not stated
+	- Summary: Fixed. A companion you have not recruited yet now waits in a proper room: never the start room, the stairs room, the locked room or a flooded room, preferring rooms at least 5x5, on a tile with open floor all around (no doorway, no corridor mouth). Only when a floor has no such room does it fall back to a smaller middle room. Floors are otherwise unchanged.
+	- Note (2026-11-09, nightly run): Small js/game.js change: pick the companion's room from rooms with an interior of at least 3x3 that are not the start room, the stairs room or the locked room, and place it on a tile that is not a doorway or corridor tile; an unrecruited companion does not move, so placement is the whole fix. Shares buildFloor with MOB-21.
+	- Note (2026-11-09, nightly run 3): Reproduction: in the current build a companion always stood at the center of the second generated room; probe 60 seeds x 100 floors with a companion forced on every floor: 2,072 of 6,000 stood in a 4-tile-wide room (reads as a hallway; the corridors cross the room center), 22 behind the locked door and 192 in a flooded room; none on an actual corridor tile. js/game.js: new _allyRoom(f) (no RNG, so seeded floors keep every other placement) used by the companion spawn in buildFloor. Probe after: 77 of 6,000 in a 4-wide room (floors with no larger middle room), 0 locked, 0 flooded, 0 on a corridor or doorway. Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright (cloud Chromium) on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, in-page probe 30 seeds x 20 floors: before 201/600 narrow-room and 22 locked/flooded placements, after 5/600 narrow and 0 locked/flooded; no page errors. Desktop 1280x800 and protected screens: see MOB-23.
+	- Note (2026-11-09, nightly run 3): Shared files: js/game.js is changed by MOB-18, MOB-20 and MOB-21; sw.js by MOB-18, MOB-20, MOB-21 and MOB-23 (BUILD 0.11.0-eac10af746 -> 0.11.0-89d24698e2; it also carries the N28 sheet entry); js/ui.js also carries the done part of [!] MOB-07. Pushing one block also commits the other items' changes in the shared files, so use the combined block in tonight's report (recommended).
+	- Files: js/game.js, sw.js
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js"
+	    git commit -m "MOB-20: companions wait in proper rooms, not narrow hallway rooms"
+	    git push origin main
+	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
+	- ASK (2026-11-09): Push with the block above, check on your phone, then mark [x] + KBP.
+	- Note (2026-11-09): Close out. KBP
+
+[x] MOB-21 [UX] Keys and locked doors not next to the arrival stairs
+	- KBP (2026-11-09): don't spawn keys or locked doors next to the stairs used to reach that level.
+	- Device: not stated
+	- Summary: Fixed (BUG-010, resolved). The floor key is now placed in a different room, at least 8 tiles from both stairs and from the locked door when the floor allows (otherwise as far as it can), never inside the locked room. A locked door is never on the room you arrive in (the start room; the stairs room in an Ascent) and never within 5 tiles of the arrival stairs. The floor's log line now says the key is somewhere on the floor rather than nearby. Locked rooms are rarer as a result: about 8% of floors instead of 13%, because the old rule mostly locked the start room or the stairs room.
+	- Note (2026-11-09, nightly run): Small js/game.js change in buildFloor: place the key in a room other than the start room and the locked room, well away from the arrival stairs, and skip a door within a few tiles of the arrival stairs when choosing which door to lock. The Workstation copy of the locked-room line (MOB-22) also asks for keys not close to the locked door; the key will be kept well away from it too. Seeded and Daily floors will lay out differently after this change; a run saved mid-floor must still load (check). Keys held by a tougher creature are MOB-22.
+	- Note (2026-11-09, nightly run 3): Reproduction (60 seeds x 100 floors): 780 locked floors; the key was one tile from Dad on every one of them; 314 locked the start room itself (Dad starts inside the locked room; on about half of those the lock was hidden, so Dad started in a room whose only exit was a hidden wall), and in an Ascent 693 of 780 left the key unreachable. Logged BUG-010 (resolved). js/game.js: genFloor skips the arrival room and doors within 5 tiles of the arrival stairs when choosing the lock, keeping the same RNG calls so the rest of each floor is unchanged; new _keySpot(f) places the key (own hash RNG); _restoreFloorFromCache keeps each cached floor's own doors and hidden locks, so floors visited before this change still match; new log wording. Probe after: descent 478 locked floors, Ascent 407; 0 keys or locked doors within 5 tiles of the arrival stairs, 0 keys within 5 tiles of the locked door, 0 keys in the locked room, 0 unreachable keys (median key distance 13-15 tiles). Save check: 40 runs saved by the previous build on floors 2-7 (half of them on a floor restored from the cache) load in the new build with Dad, every door, enemy and item on open floor and the stairs reachable. Verification performed: node --check on all js; harness one class per process, 7/7 clears; Playwright on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, in-page probe 30 seeds x 20 floors: before key next to Dad on 80/80 locked floors and 33 start rooms locked, after 0 and 0; iPhone 13 screenshots checked (before: key under Dad, lock on the start room's doorway; after: no key or lock in the start room); no page errors. Seeded and Daily floors with a lock lay out their key and lock differently from before (other placements unchanged). Desktop and protected screens: see MOB-23.
+	- Note (2026-11-09, nightly run 3): Shared files: js/game.js is changed by MOB-18, MOB-20 and MOB-21; sw.js by MOB-18, MOB-20, MOB-21 and MOB-23 (BUILD 0.11.0-eac10af746 -> 0.11.0-89d24698e2; it also carries the N28 sheet entry); js/ui.js also carries the done part of [!] MOB-07. Pushing one block also commits the other items' changes in the shared files, so use the combined block in tonight's report (recommended).
+	- Files: js/game.js, sw.js, bugs/BUG_LOG.md
+	- PUSH (2026-11-09):
+	    cd "C:\Users\keith\OneDrive\Documents\Claude\Projects\Shattered Dad Adventure"
+	    git fetch origin
+	    git reset --mixed origin/main
+	    git status --short
+	    git add "js/game.js" "sw.js" "bugs/BUG_LOG.md"
+	    git commit -m "MOB-21: key and locked door kept away from the arrival stairs; start room never locked (BUG-010)"
+	    git push origin main
+	- Note (2026-11-09, weekly PWA build run 3): M14 environment tiles also changed sw.js (added assets/sprites/tiles.png to ASSETS, re-stamped BUILD 0.11.0-89d24698e2 -> 0.11.0-c377444bf0); this item's sw.js content is kept. Pushing either this item's block or the M14 block commits both, so push the M14 files together with it (combined block in the M14 run report).
+	- ASK (2026-11-09): Push with the block above, check on your phone (a floor with a locked door), then mark [x] + KBP.
+	- Note (2026-11-09): Close out. KBP
+
 [x] MOB-04 [UX] Pinch to zoom the map
 	- KBP (2026-11-06): Pinch to zoom out and reverse pinch to zoom in
 	- Device: not stated
@@ -255,6 +366,25 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-10 (nightly)
+- Triaged 10 INBOX lines -> MOB-29 BUG zoom pushes buttons off screen [c]; MOB-30 CONTENT comedy-break encounters, 50 suggestions [k]; MOB-31 UX comic font back, pixel font removed [c]; MOB-32 UX Graveyard/Bestiary out of the junk drawer [-]; MOB-33 BALANCE knee buckle cooldown [-]; MOB-34 UX Attributes comic card with base [bonus] [-]; MOB-35 BUG Hunger/Thirst broken after Continue + red label at 90% [c]; MOB-36 UX SCAN tap-to-identify / double-tap area scan [-]; MOB-37 CONTENT Park doors/gates [!]; MOB-38 UX slot labels on equippable items [-].
+- No unanswered KBP notes; no [c] reopened. Archived [x] MOB-23, MOB-25 (KBP "Close out" lines; no BUG ids). MOB-16 still [x] without a KBP line (ASK unchanged).
+- Worked: MOB-29 and MOB-35 (BUG) and MOB-31 (UX, KBP's direct request), all fixed + verified -> [c].
+- Files changed: ShatteredDadAdventure.html, js/config.js, js/input.js, js/game.js, js/ui.js, js/render.js, sw.js (BUILD 0.11.0-fc6135f474 -> 0.11.0-1043c2f306), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: BUG-013 (resolved) phone zoom enlarged the page and pushed the buttons off screen; BUG-014 (resolved) Hunger/Thirst NaN after Continue. BUG-009 marked resolved (same cause as BUG-013).
+- Verification: node --check all js; harness one class per process, 7/7 clears + atlas 275 keys; Playwright before/after on Galaxy S25+ profile, iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop 1280x800; desktop play frames identical; protected screens functional and md5-identical to the pre-M16 look; sw stamp --check OK in the folder; folder md5s match the working copy.
+- Still open: [c] MOB-29, 31, 35 | [k] MOB-30 | [-] MOB-32, 33, 34, 36, 38 | [x] MOB-16 (awaiting KBP answer) | [!] MOB-06, 07, 08, 11, 14, 19, 22, 24, 26, 27, 28, 37.
+
+RUN 2026-11-09 (nightly, run 4)
+- INBOX empty; nothing triaged.
+- Archived [x] MOB-18, MOB-20, MOB-21 (KBP "Close out" lines); BUG-010 already resolved. MOB-16 is [x] without a KBP line and was never fixed: left in place with an ASK.
+- KBP note actioned: MOB-23 (Galaxy S25+ still showed the HUD stats, no ATTRIBUTES in MORE): live site and folder both carry the fix; reproduced nothing on an emulated S25+ (portrait, landscape, continued run); most likely the cached pre-push edition. No code change; item back to [c] with a re-check ASK.
+- Worked: MOB-25 (UX) ask before drinking from the water fountain -> fixed + verified [c].
+- Files changed: js/game.js, sw.js (BUILD 0.11.0-c377444bf0 -> 0.11.0-76f3ebc062), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs logged: none.
+- Verification: node --check all js; harness one class per process, 7/7 clears + atlas 274 keys; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop 1280x800; desktop frames and protected screens md5-identical and functional; sw stamp --check OK in the folder; folder md5s match the working copy.
+- Still open: [c] MOB-23, 25 | [x] MOB-16 (awaiting KBP answer) | [!] MOB-06, 07, 08, 11, 14, 19, 22, 24, 26, 27, 28.
+
 RUN 2026-11-09 (nightly, run 3)
 - Triaged 2 INBOX lines -> MOB-27 CONTENT puzzle floors per biome incl. the bridge-keeper favorite-color question [!]; MOB-28 UX companions: follow through doors, aggressive/neutral/passive stance, helpful abilities [!].
 - No unanswered KBP notes; no [c] reopened. Archived [x] MOB-04, MOB-15 (KBP "close out" lines); no BUG ids to resolve (BUG-009 stays open).
