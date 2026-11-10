@@ -401,6 +401,46 @@
 #swup .sw-go{background:#f4c430;color:#07080c}
 #swup .sw-later{background:transparent;color:#f4c430}
 </style>
+<style id="m16css">/* M16 UI skin: OFL pixel font (Silkscreen, assets/fonts, OFL.txt), 9-slice panel frames (assets/ui, made by tools/tools_make_ui.js),
+   rarity-coloured item borders, biome title cards on the STORY_CLIPS cards. Everything is scoped to body.m16 (set by ui.js unless ?noskin),
+   and none of it matches the protected deck (#dadsel), title cover (#titlecov) or Bestiary cards (#ovBest.bc-host). */
+  @font-face{font-family:"Silkscreen";src:url(assets/fonts/Silkscreen-Regular.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:"Silkscreen";src:url(assets/fonts/Silkscreen-Bold.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap;}
+  :root{--pix:"Silkscreen",Consolas,'DejaVu Sans Mono',monospace;}
+  /* pixel font: headings, buttons, labels (body text stays in the readable monospace) */
+  body.m16 .ov:not(.bc-host) h1{font-family:var(--pix);font-weight:700;font-size:16px;letter-spacing:1px;line-height:1.3;text-shadow:2px 2px 0 #000;}
+  body.m16 .ov:not(.bc-host) h2{font-family:var(--pix);font-weight:400;font-size:16px;letter-spacing:.5px;line-height:1.3;text-shadow:1px 1px 0 #000;}
+  body.m16 #actionbar button,body.m16 #aimbar button,body.m16 #moresheet .ms-grid button,body.m16 #moresheet .ms-close,body.m16 .cf-btn,body.m16 .cdx-tab,body.m16 .detail button{font-family:var(--pix);font-weight:400;letter-spacing:.5px;}
+  body.m16:not(.m-compact) #actionbar button,body.m16:not(.m-compact) #aimbar button{font-size:12px;}
+  body.m16 #moresheet .ms-grid button{font-weight:700;}
+  body.m16:not(:has(#ovBest.bc-host.show)) #ovClose{font-family:var(--pix);letter-spacing:.5px;}
+  body.m16 .slot .sl,body.m16 .keyring .sl{font-family:var(--pix);font-size:8px;letter-spacing:1px;}
+  body.m16 #statline>b:first-child{font-family:var(--pix);font-weight:700;letter-spacing:.5px;}
+  /* 9-slice frames (the art is drawn at 2x, so slice 8 = 4 art pixels; the panel's own background stays inside the frame) */
+  body.m16:not(.m-compact) .ov:not(.bc-host){border:8px solid transparent;border-image:url(assets/ui/frame-panel.png) 8 / 8px repeat;background-clip:padding-box;image-rendering:pixelated;}
+  body.m16 #confirm .box{border:8px solid transparent;border-image:url(assets/ui/frame-gold.png) 8 / 8px repeat;border-radius:0;background-clip:padding-box;image-rendering:pixelated;}
+  body.m16 #inspectbox{border:8px solid transparent;border-image:url(assets/ui/frame-gold.png) 8 / 8px repeat;border-radius:0;background-clip:padding-box;padding:4px 6px;}
+  body.m16 .detail{border:8px solid transparent;border-image:url(assets/ui/frame-panel.png) 8 / 8px repeat;border-radius:0;background-clip:padding-box;}
+  body.m16 #moresheet .ms-panel{border:8px solid transparent;border-image:url(assets/ui/frame-panel.png) 8 / 8px repeat;border-radius:0;background-clip:padding-box;}
+  /* rarity-coloured borders on bag cells and worn slots (unidentified gear reads as Common) */
+  body.m16 .cell.rb-Uncommon{border-color:#7fd060;box-shadow:inset 0 -3px 0 rgba(127,208,96,.55);}
+  body.m16 .cell.rb-Rare{border-color:#5fa8e0;box-shadow:inset 0 -3px 0 rgba(95,168,224,.6);}
+  body.m16 .cell.rb-Epic{border-color:#b87fd0;box-shadow:inset 0 -3px 0 rgba(184,127,208,.65),0 0 5px rgba(184,127,208,.45);}
+  body.m16 .cell.rb-Legendary{border-color:#f4c430;box-shadow:inset 0 -3px 0 rgba(244,196,48,.7),0 0 7px rgba(244,196,48,.55);}
+  body.m16 .cell.rb-Mythic{border-color:#ff6f9c;box-shadow:inset 0 -3px 0 rgba(255,111,156,.7),0 0 8px rgba(255,111,156,.6);}
+  body.m16 .cell.sel{border-color:#fff;outline:2px solid var(--gold);outline-offset:1px;}
+  body.m16 .cell.mark{outline:2px solid #b87fd0;outline-offset:1px;}
+  body.m16 .slot.rb-Uncommon{border-color:#7fd060;} body.m16 .slot.rb-Rare{border-color:#5fa8e0;} body.m16 .slot.rb-Epic{border-color:#b87fd0;}
+  body.m16 .slot.rb-Legendary{border-color:#f4c430;box-shadow:0 0 6px rgba(244,196,48,.45);} body.m16 .slot.rb-Mythic{border-color:#ff6f9c;box-shadow:0 0 6px rgba(255,111,156,.5);}
+  /* biome title card at the top of each STORY_CLIPS card */
+  .m16-tc{display:block;margin:-2px 0 10px;background:var(--tcb,#11131a);border:2px solid #000;box-shadow:0 0 0 2px var(--tca,#f4c430),3px 3px 0 2px #000;text-align:center;font-weight:normal;}
+  .m16-tch{display:flex;justify-content:space-between;gap:6px;padding:4px 6px 3px;background:#000;color:var(--tca,#f4c430);font-family:var(--pix);font-size:8px;letter-spacing:1px;line-height:1.2;}
+  .m16-strip{display:block;width:100%;height:auto;aspect-ratio:5/1;image-rendering:pixelated;image-rendering:crisp-edges;background:#06070b;}
+  .m16-tct{padding:5px 6px 6px;font-family:var(--pix);font-weight:700;font-size:16px;line-height:1.15;letter-spacing:1px;color:#fff;text-shadow:2px 2px 0 #000;border-top:2px solid #000;}
+  .m16-tct small{display:block;margin-top:2px;font-family:Consolas,'DejaVu Sans Mono',monospace;font-weight:normal;font-size:11px;letter-spacing:0;color:var(--tca,#f4c430);text-shadow:none;font-style:italic;}
+  /* short screens (phone landscape): drop the tile strip so the story card's Onward button stays on screen */
+  @media (max-height:500px){.m16-strip{display:none;}.m16-tc{margin:0 0 6px;}.m16-tct{padding:3px 6px 4px;}}
+</style>
 <style id="m12css">/* M12: install banner, iOS Add-to-Home-Screen sheet, Save Backup sheet. Own fixed layers; protected screens untouched. */
 #m12inst{display:none;position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:390;width:min(440px,calc(100vw - 16px));box-sizing:border-box;background:#11131a;color:#eef0e2;border:2px solid #f4c430;border-radius:8px;padding:10px 12px;font:13px/1.4 monospace;box-shadow:0 6px 24px rgba(0,0,0,.6)}
 #m12inst.show{display:block}
@@ -440,7 +480,7 @@ body.m-compact .m12-howto button{min-height:44px}
 </head>
 <body>
 <div id="splash" aria-hidden="true"><div class="sp-mast">DAD COMICS PRESENTS</div><img src="icons/icon-192.png" alt=""><div class="sp-title"><em>SCATTERED</em>DAD ADVENTURES</div><div class="sp-bar"><i></i></div><div class="sp-load" id="spLoad">Locating reading glasses...</div><div class="sp-note" id="spNote">Dad, you can do this. You fixed the sink. Mostly. &mdash; the kids</div></div>
-<script>(function(){var L=["Locating reading glasses...","Lowering the thermostat to 68...","Untangling the extension cord...","Checking the weather. Again...","Searching the couch for the Remote...","Reading the instructions (just this once)..."],N=["Dad, you can do this. You fixed the sink. Mostly. &mdash; the kids","You're the best dad. Even when we get lost in the hardware store. &mdash; the kids","We believe in you! Also we ate the last popsicle. &mdash; the kids","Thanks for always coming to our games. You are loud but good. &mdash; the kids"];try{var t=Date.now();document.getElementById("spLoad").textContent=L[t%L.length];document.getElementById("spNote").innerHTML=N[Math.floor(t/7)%N.length];}catch(e){}})();</script>
+<script>(function(){var L=["Locating reading glasses...","Lowering the thermostat to 68...","Untangling the extension cord...","Checking the weather. Again...","Searching the couch for the Remote...","Reading the instructions (just this once)..."],N=["Dad, you can do this. You fixed the sink. Mostly. &mdash; the kids","You're the best dad. Even when we get lost in the hardware store. &mdash; the kids","We believe in you! Also we ate the last popsicle. &mdash; the kids","Thanks for always coming to our games. You are loud but good. &mdash; the kids","You are the strongest dad. Even stronger than the lawnmower. &mdash; the kids","You work really hard. You are allowed to nap. We will guard the remote. &mdash; the kids","Thanks for teaching me to ride my bike. You let go at the right time. &mdash; your oldest","Whatever is down there, you can do it. Come home for dinner. &mdash; everyone"];try{var t=Date.now(),i=Math.floor(t/7)%N.length,j=t%L.length,n=document.getElementById("spNote"),l=document.getElementById("spLoad");l.textContent=L[j];n.innerHTML=N[i];/* M16: rotate the loading line and the crayon note while the game loads (stops when the splash is removed) */var iv=setInterval(function(){if(!document.getElementById("splash")){clearInterval(iv);return;}i=(i+1)%N.length;j=(j+1)%L.length;n.innerHTML=N[i];l.textContent=L[j];},2400);}catch(e){}})();</script>
 <div id="wrap">
   <div id="stage">
     <canvas id="screen" width="240" height="160"></canvas>

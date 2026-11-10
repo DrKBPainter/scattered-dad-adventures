@@ -84,7 +84,8 @@ var SPRITE_ATLAS={version:1,sheets:[
   "SPR_Q_FLASK":[396,99,32,32],
   "SPR_Q_PAMPHLET":[429,99,32,32],
   "SPR_Q_BINDER":[462,99,32,32],
-  "SPR_Q_IBUPROFEN":[495,99,32,32]}},
+  "SPR_Q_IBUPROFEN":[495,99,32,32],
+  "SPR_FRIDGE_NOTE":[0,132,32,32]}},
  {src:"assets/sprites/heroes.png",group:"heroes",sprites:{
   "SPR_DAD":[0,0,32,32],
   "SPR_DAD_GRILL":[33,0,32,32],

@@ -1169,6 +1169,23 @@ const CLASS_CLIP_TAGS={
 /* MOB-18 (2026-11-09 KBP "just each biome"): every STORY_CLIPS entry has an objective (shown under its intro), and floor 1 gets
    its own objective card after the House clip, separate from the class backstory shown when you choose your Dad. */
 const FLOOR1_OBJECTIVE={title:"FLOOR 1 &middot; TODAY'S OBJECTIVE",text:"Find the basement stairs before anyone notices he is up and asks him to do something. Eat nothing from the back of the fridge. Do not open the family group text.",note:"On the fridge, in crayon: \"GOOD LUK DAD. YOU ARE THE BEST AT FINDING STUF.\" He folds it into his wallet."};
+/* M16: encouragement notes from the kids ("Fridge Drawing" floor pickups, game.js _placeFridgeNote). pic = what the crayon drawing shows. */
+const FRIDGE_NOTES=[
+ {pic:"a stick-figure Dad, three times the size of the house, holding a spatula like a sword.",text:"You are the strongest dad. Even stronger than the lawnmower.",from:"the kids"},
+ {pic:"a man in cargo shorts standing on a mountain of mulch. A sun with sunglasses gives a thumbs up.",text:"Thank you for fixing my bike. It is the fastest bike now. I love you.",from:"your youngest"},
+ {pic:"the family car, every window full of faces, one of them clearly asleep.",text:"Best road trip ever. Even the part where we got lost. ESPECIALLY that part.",from:"the kids"},
+ {pic:"a grill emitting a heroic column of smoke. Underneath, in careful capitals: DAD.",text:"You make the best burgers in the whole world and maybe space.",from:"the middle one"},
+ {pic:"a soccer field. On the sideline, one very large figure is labeled LOUDEST.",text:"Thanks for coming to every game. I can always hear you. Every. Single. Time.",from:"your goalie"},
+ {pic:"a dad asleep in a recliner, with ZZZ drawn so large it leaves the page.",text:"You work really hard. You are allowed to nap. We will guard the remote.",from:"the kids"},
+ {pic:"a lightbulb, a ladder, and a man on the ladder who has visibly forgotten why.",text:"You can fix anything. You told us so. We believe you.",from:"the twins"},
+ {pic:"a dad and a kid holding hands. The dad is drawn wearing a cape.",text:"Thank you for teaching me to ride without training wheels. You let go at the right time.",from:"your oldest"},
+ {pic:"a thermostat with an angry face. A small heart is drawn next to Dad.",text:"We will not touch the thermostat. Probably. We love you anyway.",from:"the kids"},
+ {pic:"a hardware store the size of a city, and a tiny dad inside, smiling.",text:"Thanks for taking me with you. I like the aisle with the bolts best too.",from:"your helper"},
+ {pic:"a pancake stack taller than the refrigerator, crowned with a single blueberry.",text:"Saturday pancakes are the best part of the week. You are the second best part. Kidding. You are the first.",from:"the kids"},
+ {pic:"a backyard tent under a sky with forty-one stars, each one numbered.",text:"Camping in the yard counts. It was the best trip ever.",from:"both of us"},
+ {pic:"a dad lifting a car over his head. The car is labeled MOM'S CAR.",text:"You are a good dad. Mom said so too. She meant it.",from:"the kids"},
+ {pic:"a portrait of Dad. It has seven fingers on one hand and is clearly drawn with love.",text:"Whatever is down there, you can do it. Come home for dinner.",from:"everyone"}
+];
 const STORY_CLIPS={
  "House":{title:"FLOORS 1-10 &middot; THE HOUSE",intro:"It began, as these things do, with the Remote of Ultimate Authority going missing and the thermostat locking at 81 degrees. The basement stairs are longer than he remembers. They keep going. He descends, because a man does not simply live at 81 degrees.",objective:"Reach the basement stairs on every floor, get past whatever has been living in the Garage since 2019 (Floor 10), and pick up the Remote's trail. The thermostat is not to be touched. He will touch the thermostat."},
  "Lowe & Behold":{title:"FLOORS 11-20 &middot; LOWE &amp; BEHOLD",intro:"The house, it turns out, was only the foyer. Beneath it sprawls Lowe &amp; Behold, the great hardware labyrinth, where he once came for a single washer and left, four hours later, the owner of a table saw. The Remote's trail runs straight through the plumbing aisle. Naturally.",objective:"Cross ten floors of aisles without once being asked if he needs help, and get past the Floor Manager on Floor 20. He needs one washer. He knows exactly which one. He does not."},

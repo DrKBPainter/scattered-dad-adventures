@@ -203,7 +203,7 @@ function _jzScreenFx(J){if(!J)return;const n=J.n,CW=VIEW_W*TILE,CH=VIEW_H*TILE;
   ctx.fillStyle="#f4c430";ctx.fillText(B.title,x+CW/2,y+13);let ss=9;ctx.font=ss+"px monospace";while(ss>6&&ctx.measureText&&ctx.measureText(B.sub).width>CW-10){ss--;ctx.font=ss+"px monospace";}ctx.fillStyle="#f4f1e8";ctx.fillText(B.sub,x+CW/2,y+27);
   ctx.globalAlpha=1;ctx.textAlign="start";ctx.textBaseline="alphabetic";}}
 function _jzEnd(J){if(!J)return;if((J.ox||J.oy)&&ctx.setTransform)ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);_jzScreenFx(J);}
-function lootSprite(it){return it.kind==="weapon"?SPR_GEAR_W:it.kind==="armor"?SPR_GEAR_A:it.kind==="charm"?SPR_CHARM:it.kind==="key"?SPR_KEY:it.kind==="object"?SPR_OBJECT:SPR_POTION;}
+function lootSprite(it){return it.kind==="note"&&typeof SPR_FRIDGE_NOTE!=="undefined"?SPR_FRIDGE_NOTE:it.kind==="weapon"?SPR_GEAR_W:it.kind==="armor"?SPR_GEAR_A:it.kind==="charm"?SPR_CHARM:it.kind==="key"?SPR_KEY:it.kind==="object"?SPR_OBJECT:SPR_POTION;}
 /* itemIconSprite: returns 32x32 sprite for inventory icon if available, else 16x16 fallback */
 function itemIconSprite(it){return(it&&it.sprite)?it.sprite:lootSprite(it);}
 function showEnemyHP(e){return game.globalReveal||e.shownHP||effPer()>=SHOW_HP_PER;}
@@ -336,9 +336,44 @@ function drawPortraitScene(id,CW,CH){
       break;}
   }
 }
+/* ===== M16: illustrated class-select card (desktop only; the compact Choose-Your-Dad deck is protected and draws its own cards) =====
+   A comic-style trading card over the dimmed procedural scene: name banner, the Dad (PNG art when loaded, live skin) on a sunburst +
+   halftone in his PORTRAIT_CFG colours, stat strip, issue number, and arrows hinting at the other Dads. Text in the Silkscreen pixel font
+   (falls back to monospace until the font loads; ui.js redraws when it does). ?noskin keeps the pre-M16 portrait. */
+function m16On(){try{return !(typeof location!=="undefined"&&location&&/[?&]noskin\b/.test(location.search||""));}catch(e){return true;}}
+const M16_PIX='"Silkscreen",Consolas,monospace';
+function _m16Txt(t,x,y,size,col,align,maxW,shadow){let z=size;ctx.font=z+'px '+M16_PIX;while(maxW&&z>8&&ctx.measureText(t).width>maxW){z-=4;ctx.font=z+'px '+M16_PIX;}ctx.textAlign=align||'center';ctx.textBaseline='top';if(shadow){ctx.fillStyle=shadow;ctx.fillText(t,x+1,y+1);}ctx.fillStyle=col;ctx.fillText(t,x,y);return z;}
+/* the card shows the Dad and skin being chosen (dadSprite()/skinColorMap() prefer a finished run's game.cls/game.skin, BUG-012) */
+function _m16ClsSprite(cls){const m={grill:SPR_DAD_GRILL,diy:SPR_DAD_DIY,tech:SPR_DAD_TECH,gym:SPR_DAD_GYM,tactical:SPR_DAD_TACTICAL,sports:SPR_DAD_SPORTS,yard:SPR_DAD_YARD};return (cls&&m[cls.id])||SPR_DAD;}
+function _m16SkinMap(){const L=(typeof SKIN_SWATCHES!=='undefined')?SKIN_SWATCHES:null;if(!L)return null;const i=(typeof skinCursor==='number')?skinCursor:0;const sw=L[((i%L.length)+L.length)%L.length];return sw?{'f':sw.f,'F':sw.F}:null;}
+function m16ClassCard(cls,CW,CH,cfg){if(!m16On()||(typeof COMPACT!=="undefined"&&COMPACT))return false;
+  const bg=ctx.createLinearGradient(0,0,0,CH);bg.addColorStop(0,cfg.top);bg.addColorStop(1,cfg.bot);ctx.fillStyle=bg;ctx.fillRect(0,0,CW,CH);
+  drawPortraitScene(cls.id,CW,CH);ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(0,0,CW,CH);
+  const ch=Math.min(CH-20,Math.round(CW*0.9)),cw=Math.round(ch*0.7),x0=Math.floor((CW-cw)/2),y0=Math.floor((CH-ch)/2);
+  ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(x0+6,y0+6,cw,ch);
+  ctx.fillStyle='#000';ctx.fillRect(x0,y0,cw,ch);ctx.fillStyle=cfg.accent;ctx.fillRect(x0+2,y0+2,cw-4,ch-4);ctx.fillStyle='#f3ecd6';ctx.fillRect(x0+5,y0+5,cw-10,ch-10);
+  /* name banner */
+  const bx=x0+9,bw=cw-18,by=y0+9,bh=26;ctx.fillStyle='#000';ctx.fillRect(bx,by,bw,bh);ctx.fillStyle='#ffe14a';ctx.fillRect(bx+2,by+2,bw-4,bh-4);
+  const nm=String(cls.name||'').toUpperCase();_m16Txt(nm,x0+cw/2,by+6,16,'#111','center',bw-12,null);
+  /* art window: sunburst + halftone, Dad at 4x standing on the bottom edge */
+  const wx=bx,wy=by+bh+4,ww=bw,wh=Math.max(64,ch-(wy-y0)-50);ctx.fillStyle='#000';ctx.fillRect(wx,wy,ww,wh);ctx.save();ctx.beginPath();ctx.rect(wx+2,wy+2,ww-4,wh-4);ctx.clip();
+  ctx.fillStyle=cfg.bot;ctx.fillRect(wx+2,wy+2,ww-4,wh-4);const ccx=wx+ww/2,ccy=wy+wh*0.55,R=Math.max(ww,wh);ctx.fillStyle=cfg.accent;ctx.globalAlpha=0.35;
+  for(let i=0;i<16;i+=2){const a0=i*Math.PI/8,a1=(i+1)*Math.PI/8;ctx.beginPath();ctx.moveTo(ccx,ccy);ctx.lineTo(ccx+Math.cos(a0)*R,ccy+Math.sin(a0)*R);ctx.lineTo(ccx+Math.cos(a1)*R,ccy+Math.sin(a1)*R);ctx.closePath();ctx.fill();}
+  ctx.globalAlpha=0.18;ctx.fillStyle='#000';for(let yy=wy+4;yy<wy+wh;yy+=6)for(let xx=wx+4+((yy/6)%2?3:0);xx<wx+ww;xx+=6)ctx.fillRect(xx,yy,2,2);ctx.globalAlpha=1;
+  const SC=Math.max(2,Math.min(5,Math.floor(Math.min(ww-8,wh-6)/SPR_SIZE))),SW=SPR_SIZE*SC,spx=Math.floor(ccx-SW/2),spy=wy+wh-2-SW;
+  ctx.fillStyle='rgba(0,0,0,0.35)';ctx.fillRect(spx+8,wy+wh-8,SW-16,6);drawSpriteRemap(_m16ClsSprite(cls),spx,spy,SC,null,_m16SkinMap());ctx.restore();
+  /* stat strip */
+  const sy=wy+wh+6;_m16Txt('HP '+cls.hp+'  MOXIE '+(cls.moxie||0),x0+cw/2,sy,8,'#d0021b','center',bw,null);
+  _m16Txt('STR '+cls.str+'  DEF '+cls.def+'  PER '+cls.per+'  WIS '+cls.wis,x0+cw/2,sy+12,8,'#111','center',bw,null);
+  const idx=(typeof CLASSES!=='undefined')?Math.max(0,CLASSES.indexOf(cls)):0,tot=(typeof CLASSES!=='undefined')?CLASSES.length:1;
+  ctx.fillStyle='#111';ctx.fillRect(bx,y0+ch-21,bw,12);_m16Txt('NO. '+(idx+1)+' OF '+tot,bx+4,y0+ch-19,8,'#ffe14a','left',0,null);_m16Txt(String(cls.craft||'').toUpperCase(),bx+bw-4,y0+ch-19,8,'#ffe14a','right',bw/2,null);
+  /* arrows */
+  if(tot>1){const ay=y0+ch/2-8;_m16Txt('<',x0-22,ay,16,cfg.accent,'center',0,'#000');_m16Txt('>',x0+cw+22,ay,16,cfg.accent,'center',0,'#000');}
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';return true;}
 /* Main portrait compositor: gradient BG → scene → 6× sprite → accent frame */
 function drawClassPortrait(cls,CW,CH){
   const cfg=PORTRAIT_CFG[cls.id]||{top:'#0d1b2a',bot:'#1b263b',accent:'#f4c430'};
+  if(m16ClassCard(cls,CW,CH,cfg))return;
   const bg=ctx.createLinearGradient(0,0,0,CH);
   bg.addColorStop(0,cfg.top);bg.addColorStop(1,cfg.bot);
   ctx.fillStyle=bg;ctx.fillRect(0,0,CW,CH);
@@ -390,7 +425,7 @@ function inspectAt(x,y){if(x<0||y<0||x>=MAP_W||y>=MAP_H||!game.seen[y][x])return
  if(game.vendor&&game.vendor.x===x&&game.vendor.y===y)return {t:game.vendor.def.name,b:game.vendor.def.greet+" Walk into the stall to shop."};
  const fn=game.fountains&&game.fountains.find(f=>f.x===x&&f.y===y);if(fn)return {t:fn.charges>0?"Water Fountain":"Water Fountain (Empty)",b:fn.charges>0?"Working fountain. "+fn.charges+" charge(s). Walk into it to interact.":"It tried its best. It gave all "+5+" charges. It has no more to give."};
  const hfn=game.healFountains&&game.healFountains.find(f=>f.x===x&&f.y===y);if(hfn)return {t:hfn.charges>0?"The Cooler of Restoration":"The Cooler (Empty)",b:hfn.charges>0?"A roadside cooler of humming red liquid. "+hfn.charges+" sip(s) left. Walk into it to drink and heal.":"Empty. Whatever it was, it's gone. The cooler keeps its secrets."};
- const lStack=game.loot.filter(l=>l.x===x&&l.y===y);if(lStack.length){growPerception("l"+x+","+y);if(lStack.length>1)return {t:lStack.length+" items piled here",b:"Walk onto the tile to choose which to grab: "+lStack.map(l=>l.item.name||"Gold").join(", ")+"."};const it=lStack[0].item;return {t:it.name||"Gold",b:(it.desc||"")+(it.rarity?" \xb7 "+it.rarity:"")};}
+ const lStack=game.loot.filter(l=>l.x===x&&l.y===y);if(lStack.length){growPerception("l"+x+","+y);if(lStack.length>1)return {t:lStack.length+" items piled here",b:"Walk onto the tile to choose which to grab: "+lStack.map(l=>l.item.name||"Gold").join(", ")+"."};const it=lStack[0].item;if(it.kind==="note")return {t:"Fridge Drawing",b:"Crayon on construction paper, signed by the kids. Walk over it to read it. It weighs nothing and carries a great deal."};/* M16 */return {t:it.name||"Gold",b:(it.desc||"")+(it.rarity?" \xb7 "+it.rarity:"")};}
  const t=game.traps.find(t=>t.x===x&&t.y===y&&!t.sprung);if(t){growPerception("t"+x+","+y);if(trapDetected(t)){t.known=true;return {t:"TRAP: "+t.def.name,b:t.def.desc+" (Throw an object at it to disarm.)"};}return {t:"The floor here",b:"Looks... fine? Your Perception isn't sharp enough to be sure."};}
  const dr=doorAt(x,y);if(dr)return {t:dr.locked?"A Locked Door":"A Door",b:dr.locked?"You'll need a key.":(dr.open?"Open. Left-click it to close (costs 1 turn).": "Closed. Bump it to open.")};
  if(x===game.stairs.x&&y===game.stairs.y)return {t:"The Stairs Down",b:"Deeper suburban peril. Step on them to descend."};if(game.stairsUp&&x===game.stairsUp.x&&y===game.stairsUp.y)return game.ascent&&game.depth===1?{t:"The Basement Door",b:"Daylight leaks under it. Home. The thermostat. Destiny."}:{t:"The Stairs Up",b:"Floor "+(game.depth-1)+" awaits above. Whatever you left behind is still there. Step on them to ascend."};

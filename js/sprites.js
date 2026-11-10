@@ -1340,6 +1340,41 @@ const SPR_DOOR=S(["dddddddddddddddddddddddddddddddd","dddddddddddddddddddddddddd
 const SPR_DOOR_L=S(["dddddddddddddddddddddddddddddddd","dddddddddddddddddddddddddddddddd","ddDDDDDDDDDDdDDDDDDdDDDDDDDDDDdd","ddDDDDDDDDDDdDDDDDDdDDDDDDDDDDdd","ddDDDDDDDDDDdDDDDDDdDDDDDDDDDDdd","ddDDDddddddddddddddddddddddDDDdd","ddDDDdDDDDDDdDDDDDDdDDDDDDdDDDdd","ddDDDdDDDDDDdDDDDDDdDDDDDDdDDDdd","ddDDDdDDDDDDdDDDDDDdDDDDDDdDDDdd","ddDDDdDDDDDDSSSSSSSSDDDDDDdDDDdd","ddddddddddddSSSSSSSSdddddddddddd","ddDDDdDDDDDDSSDDDDSSDDDDDDdDDDdd","ddDDDdDDDDDDSSDDDDSSDDDDDDdDDDdd","ddDDDdDDDDDDSSDDDDSSDDDDDDdDDDdd","ddDDDdDDDDSSSSSSSSSSSSDDDDdDDDdd","ddDDDdDDDDSSSSSSSSSSSSDDDDdDDDdd","ddDDDdDDDDSSSSSkkSSSSSDDDDdDDDdd","ddDDDdDDDDSSSSkSSkSSSSDDDDdDDDdd","ddDDDdDDDDSSSSkSSkSSSSDDDDdDDDdd","ddDDDdDDDDSSSSSkkSSSSSDDDDdDDDdd","ddddddddddSSSSSkkSSSSSdddddddddd","ddDDDdDDDDSSSSkkkkSSSSDDDDdDDDdd","ddDDDdDDDDSSSSSSSSSSSSDDDDdDDDdd","ddDDDdDDDDDDdDDDDDDdDDDDDDdDDDdd","ddDDDdDDDDDDdDDDDDDdDDDDDDdDDDdd","ddDDDdDDDDDDdDDDDDDdDDDDDDdDDDdd","ddDDDddddddddddddddddddddddDDDdd","ddDDDDDDDDDDdDDDDDDdDDDDDDDDDDdd","ddDDDDDDDDDDdDDDDDDdDDDDDDDDDDdd","ddDDDDDDDDDDdDDDDDDdDDDDDDDDDDdd","dddddddddddddddddddddddddddddddd","dddddddddddddddddddddddddddddddd"]);
 const SPR_DOOR_OPEN=S(["dddddddddddddddddddddddddddddddd","dddddddddddddddddddddddddddddddd","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDmM00000011111111111111111111","dddDmM00000011111111111111111111","dddDmM00000011111111111111111111","dddDmM00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDmM00000011111111111111111111","dddDmM00000011111111111111111111","dddDmM00000011111111111111111111","dddDmM00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddDDD00000011111111111111111111","dddddddddddddddddddddddddddddddd","dddddddddddddddddddddddddddddddd"]);
 /* SPR_KEY: classic key (opens doors, solves problems, gets lost in cargo shorts) */
+/* M16: Fridge Drawing (encouragement note from the kids; floor pickup) */
+const SPR_FRIDGE_NOTE=S([
+  "...............gg...............",
+  "...............GG...............",
+  ".............kyyyyk.............",
+  ".............kYYYYk.............",
+  "......kkkkkkkkYYYYkkkkkkk.......",
+  "......kwwwwwwkyYYykwwwSSks......",
+  "......kwwwwwwwwwwwwwwwwSks......",
+  "......kwwwOwwwwwwwwwwwwwks......",
+  "......kwwYYYwwwwwwwRwRwwks......",
+  "......kwOYYYOwwwwwRRRRRwks......",
+  "......kwwYYYwwwwwwwRRRwwks......",
+  "......kwwwOwwwwwwwwwRwwwks......",
+  "......kwwwwwwwwwwwwwwwwwks......",
+  "......kwwwwkkkwwwwwwwwwwks......",
+  "......kwwwwkFkwwwwwwwwwwks......",
+  "......kwwwwkkkwSSwwwwwwwks......",
+  "......kwwwwwkwwswwoowwwwks......",
+  "......kwwwkkkkkwwwkkwwwwks......",
+  "......kwwwwwkwwwwwkkwwwwks......",
+  "......kwwwwwkwwwkwkwwwwwks......",
+  "......kwwwwwkwwwwkkkwwwwks......",
+  "......kwwwwwkwwwwwkwwwwwks......",
+  "......kwwwwkwkwwwwkwwwwwks......",
+  "......kwwgkwwgkwwGwkwgwwks......",
+  "......kwGGGGGGGGGGGGGGGwks......",
+  "......kwwwwwwwwwwwwwwwwwks......",
+  "......kSSSSSSSSSSSSSSSSSks......",
+  "......kkkkkkkkkkkkkkkkkkks......",
+  ".......sssssssssssssssssss......",
+  "................................",
+  "................................",
+  "................................"
+]);
 const SPR_KEY=S(["................................","................................","................................","...........oyyyyy...............","..........oyYYYYyo..............",".........oyYY...YYyo............",".........oYY.....YYo............",".........oYY.....YYo............",".........oyYY...YYyo............","..........oyYyyyYyo.............","...........oyyyyyo..............","............oYYyo...............","............oYYyo...............","............oYYyo...............","............oYYyo...............","............oYYyo...............","............oYYyo...............","............oYYyoooo............","............oYYyoooo............","............oYYyo...............","............oYYyo...............","............oYYyoo..............","............oYYyoo..............","............oYYyo...............","............oYYyo...............","............oYYyo...............","............oYYyo...............","............oYYyo...............","............ooooo...............","................................","................................","................................"]);
 /* SPR_CHARM: lucky horseshoe (found in the garage; provenance unknown; probably matters) */
 const SPR_CHARM=S(["................................","................k...............","...............k.k..............","..............k...k.............",".............k.....k............",".............k.....k............","..............kkkkk.............","..............ooooo.............",".............oOOOOOo............","............oOYYYYYOo...........","...........oOYYcCCYYOo..........","..........oOYYcCCCCCYYOo........","..........oOYYCCCCCCCYYo........","..........oOYYCCCWCCCYYo........","..........oOYYCCCCCCCYYo........","..........oOYYcCCCCCYYOo........","...........oOYYcCCYYOo..........","............oOYYYYYOo...........",".............oOOOOOo............","..............ooooo.............","................................","................................","................................","................................","................................","................................","................................","................................","................................","................................","................................","................................"]);

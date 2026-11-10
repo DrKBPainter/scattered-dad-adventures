@@ -20,6 +20,7 @@
 | BUG-009 | Max zoom-in on a phone switches the map to the tablet tile grid | `js/config.js` | open | 2026-11-09 |
 | BUG-010 | MOB-21: locked door could seal the start room (Dad starts inside the locked room, or walled in by a hidden lock); key always one tile from the arrival stairs | `js/game.js` | resolved | 2026-11-09 |
 | BUG-011 | M15 hit-flash silhouette aborted the frame | `js/render.js` | resolved | 2026-11-10 |
+| BUG-012 | Desktop Choose-Your-Dad portrait shows the previous run's Dad and skin | `js/render.js` | resolved | 2026-11-10 |
 
 ---
 
@@ -60,6 +61,21 @@
 **Description:** At the top zoom step (300%) on a portrait phone the canvas is wider than the screen, the page overflows, window.innerWidth grows past 700 and pickViewport() picks the portrait-tablet grid (11x15 instead of 9x13; landscape 15x10 -> 17x12). Pre-existing: same on the build before MOB-04's zoom-out change. Found while verifying MOB-04.
 
 **Repro steps:** Pixel 5 or iPhone 13 landscape: zoom in 8 times (pinch apart or ZOOM +): at the last step VIEW_W x VIEW_H changes from 9x13 to 11x15
+
+---
+
+### BUG-012 — Desktop Choose-Your-Dad portrait shows the previous run's Dad and skin
+
+- **File:** `js/render.js`
+- **Status:** resolved
+- **Logged:** 2026-11-10
+
+**Description:** drawClassPortrait() used dadSprite()/skinColorMap(), which prefer game.cls/game.skin; game is not cleared when a run ends, so after a run the desktop CLASS screen drew the last run's Dad and skin whatever the cursor. Compact deck unaffected (draws its own cards).
+
+**Repro steps:** Desktop: start a run as Tech Dad, return to the title, choose New Adventure, move the cursor: the portrait stays the Tech Dad.
+
+
+**Fix:** M16 (2026-11-10): the desktop class card m16ClassCard() draws the Dad for the class under the cursor (_m16ClsSprite) with skinCursor (_m16SkinMap). The pre-M16 portrait, still used under ?noskin, keeps the old behaviour.
 
 ---
 ## Resolved Bugs
