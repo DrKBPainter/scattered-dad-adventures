@@ -78,7 +78,7 @@ function drawDad(dx,dy,sc){sc=sc||1;const spr=dadSprite();const remap=(typeof ga
    idle frame is the unchanged drawDad(). Off with ?noanim or prefers-reduced-motion. dadAnimStats() for tests. */
 const DAD_STEP_MS=110,DAD_WALK_MS=200,DAD_LUNGE_MS=130,DAD_ATK_MS=200,DAD_SLASH_MS=90;
 const _daGeo=new WeakMap();let _daOff=null,_daLast=null,_daWalk=null,_daAtk=null,_daStep=0,_daWalks=0,_daAtks=0,_daFrames=0;
-function _daOn(){if(_daOff===null){_daOff=false;try{if(typeof location!=="undefined"&&location&&/[?&]noanim(?:[=&]|$)/.test(location.search||""))_daOff=true;else if(typeof matchMedia==="function"&&matchMedia("(prefers-reduced-motion: reduce)").matches)_daOff=true;}catch(e){}}return !_daOff;}
+function _daOn(){if(_daOff===null){_daOff=false;try{if(typeof location!=="undefined"&&location&&/[?&]noanim(?:[=&]|$)/.test(location.search||""))_daOff=true;}catch(e){}}return !_daOff&&juiceMotion();}/* M15: the MOTION toggle / prefers-reduced-motion (juiceMotion) also governs the walk + attack frames */
 function _daLegs(spr){let g=_daGeo.get(spr);if(g)return g;const H=spr.length;let top=-1,mid=0,n=0;
  for(let y=H-1;y>=0;y--){const row=spr[y]||"";let a=-1,b=-1;for(let x=0;x<row.length;x++)if(row[x]!=="."){if(a<0)a=x;b=x;}
   if(a<0){if(top<0)continue;break;}let best=null;for(let x=a+1;x<b;x++){if(row[x]!==".")continue;let e=x;while(e+1<b&&row[e+1]===".")e++;const m=(x+e)/2;if(!best||Math.abs(m-15.5)<Math.abs(best-15.5))best=m;x=e;}
@@ -104,6 +104,105 @@ function drawDadAnim(dx,dy,sc){sc=sc||1;_daTrack();const f=_daFrame();if(!f){dra
  if(game.equip&&game.equip.weapon){ctx.fillStyle=PAL['y'];ctx.fillRect(bx+24*sc,by+18*sc,sc,sc);ctx.fillRect(bx+24*sc,by+19*sc,sc,sc);}
  if(f.slash&&(f.slash.dx||f.slash.dy)){const a=f.slash,cx=dx+16*sc+a.dx*22*sc,cy=dy+16*sc+a.dy*22*sc,px=-a.dy,py=a.dx;ctx.fillStyle="#f4f1e8";
   for(let i=-3;i<=3;i++){const bend=-Math.abs(i);ctx.fillRect(Math.round(cx+(px*i*2+a.dx*bend)*sc)-sc,Math.round(cy+(py*i*2+a.dy*bend)*sc)-sc,2*sc,2*sc);}}}
+/* ===== M15 GAME FEEL ("juice", mobile plan) =====
+   Purely visual: no game state is changed and Math.random is never called (all jitter comes from _tileHash), so
+   seeded runs and the harness are unaffected. Everything is detected at draw time in drawWorld by comparing each
+   entity with what the previous drawn frame saw (position, hp, presence), so every damage source is covered
+   without hooks in game.js:
+   - tweened movement (JUICE_TWEEN_MS): Dad, camera, enemies and the companion glide one tile instead of jumping;
+   - hit flash (white silhouette) + knockback nudge on enemies, floating numbers (-n red/white, +n green, KO gold);
+   - death puff particles when a visible enemy disappears (gold and bigger for bosses);
+   - small screen shake on big hits, boss kills and HOA phase changes; red edge vignette when the Dad is hurt;
+   - boss banner when a boss first comes into view, and on each HOA finale phase change;
+   - smooth FOV falloff: a radial darkening toward the edge of the Dad's sight radius (not motion; stays on).
+   Motion (everything except lighting and a static banner) follows juiceMotion(): the in-game MOTION toggle
+   (localStorage sda_motion "1"/"0"), else off under prefers-reduced-motion. N29's walk/attack frames use the same
+   switch. ?nojuice turns all of M15 off (frames identical to the pre-M15 build); ?nolight turns off only the
+   lighting. juiceStats() for tests. */
+const JUICE_TWEEN_MS=80,JUICE_FLASH_MS=110,JUICE_KNOCK_MS=120,JUICE_FLOAT_MS=650,JUICE_PUFF_MS=450,JUICE_VIG_MS=280,JUICE_BANNER_MS=1800;
+const JUICE_BOSS_SUBS=["It has been expecting you. It has a clipboard.","It has read the reviews. It wrote some of them.","There is no appointment. It does not need one.","It knows about the garage. Everyone knows about the garage.","It was here first. It will remind you of this."];
+let _jzOff=null,_jzNoLight=null,_jzKey=null,_jzE=new WeakMap(),_jzPrev=[],_jzCam=null,_jzDad=null,_jzAlly=null,_jzFx=[],_jzShake=null,_jzVig=null,_jzBanner=null,_jzBossSeen=new WeakSet();
+const _jzStats={tweens:0,flashes:0,floats:0,puffs:0,shakes:0,banners:0,vignettes:0,knocks:0,lit:0};let _jzLast={cam:[0,0],dad:[0,0],shake:[0,0]};
+const _jzSilC=new WeakMap();
+function _jzQ(re){try{return typeof location!=="undefined"&&location&&re.test(location.search||"");}catch(e){return false;}}
+function juiceOn(){if(_jzOff===null)_jzOff=_jzQ(/[?&]nojuice(?:[=&]|$)/);return !_jzOff;}
+function _jzLightOn(){if(_jzNoLight===null)_jzNoLight=_jzQ(/[?&]nolight(?:[=&]|$)/);return juiceOn()&&!_jzNoLight;}
+function juiceMotion(){let p=null;try{p=localStorage.getItem("sda_motion");}catch(e){}if(p==="1")return true;if(p==="0")return false;
+ try{if(typeof matchMedia==="function"&&matchMedia("(prefers-reduced-motion: reduce)").matches)return false;}catch(e){}return true;}
+function setJuiceMotion(on){try{localStorage.setItem("sda_motion",on?"1":"0");}catch(e){}if(!on){_jzFx=[];_jzShake=null;_jzVig=null;_jzCam=null;_jzDad=null;_jzAlly=null;_daWalk=null;_daAtk=null;}if(typeof syncMotionBtn==="function")syncMotionBtn();markDirty();}
+function toggleJuiceMotion(){const on=!juiceMotion();setJuiceMotion(on);return on;}
+function syncMotionBtn(){try{if(typeof document==="undefined"||!document.querySelectorAll)return;const on=juiceMotion();document.querySelectorAll('[data-act="motion"]').forEach(b=>{b.textContent=on?"MOTION":"MOTION ✕";b.title=(on?"Turn off":"Turn on")+" motion effects (screen shake, sliding, damage numbers)";});}catch(e){}}
+function juiceStats(){return{on:juiceOn(),motion:juiceMotion(),light:_jzLightOn(),active:_jzFx.length,banner:_jzBanner?_jzBanner.title:null,cam:_jzLast.cam.slice(),dad:_jzLast.dad.slice(),shake:_jzLast.shake.slice(),..._jzStats};}
+function _jzEase(p){p=Math.max(0,Math.min(1,p));return 1-(1-p)*(1-p);}
+/* a glide from (fx,fy) to (x,y) in tiles; restarting mid-glide starts from where it is drawn now */
+function _jzTw(rec,x,y,n,max){if(!rec)return{x:x,y:y,fx:x,fy:y,t0:-1e9};if(rec.x!==x||rec.y!==y){const c=_jzTwAt(rec,n);const far=Math.abs(x-rec.x)>max||Math.abs(y-rec.y)>max;rec.fx=far?x:c[0];rec.fy=far?y:c[1];rec.x=x;rec.y=y;rec.t0=n;if(!far){_jzStats.tweens++;requestAnim(JUICE_TWEEN_MS+30);}}return rec;}
+function _jzTwAt(rec,n){if(!rec)return[0,0];const p=(n-rec.t0)/JUICE_TWEEN_MS;if(p>=1)return[rec.x,rec.y];const e=_jzEase(p);return[rec.fx+(rec.x-rec.fx)*e,rec.fy+(rec.y-rec.fy)*e];}
+function _jzAdd(f){_jzFx.push(f);if(_jzFx.length>80)_jzFx.splice(0,_jzFx.length-80);requestAnim((f.ms||600)+40);}
+function _jzFloat(x,y,txt,col,n){let k=0;for(const f of _jzFx)if(f.k==="float"&&f.x===x&&f.y===y&&n-f.t0<JUICE_FLOAT_MS)k++;_jzAdd({k:"float",x:x,y:y,txt:txt,col:col,t0:n,ms:JUICE_FLOAT_MS,dy:k*11});_jzStats.floats++;}
+function _jzShakeAt(amp,ms,n){if(!_jzShake||n-_jzShake.t0>=_jzShake.ms||amp>=_jzShake.amp){_jzShake={amp:amp,ms:ms,t0:n};}_jzStats.shakes++;requestAnim(ms+30);}
+function _jzBannerAt(title,sub,n){_jzBanner={title:title,sub:sub||"",t0:n,ms:JUICE_BANNER_MS};_jzStats.banners++;requestAnim(JUICE_BANNER_MS+40);}
+function _jzSil(cv,col){let m=_jzSilC.get(cv);if(!m){m=new Map();_jzSilC.set(cv,m);}let s=m.get(col);if(s)return s;const d=_sprImgDims(cv);const nc=_sprNewCanvas(d.w,d.h);if(!nc)return null;const x=nc.x;x.drawImage(cv,0,0);x.globalCompositeOperation="source-in";x.fillStyle=col;x.fillRect(0,0,d.w,d.h);s=nc.c;m.set(col,s);return s;}
+/* called once per drawWorld after the camera is known: updates trackers, spawns effects, applies the world offset */
+function _jzBegin(){if(!juiceOn())return null;const n=_rNow(),mo=juiceMotion();
+ if(!_jzKey||_jzKey.g!==game||_jzKey.f!==game.floor||_jzKey.w!==VIEW_W||_jzKey.h!==VIEW_H){const fresh=!_jzKey||_jzKey.g!==game||_jzKey.f!==game.floor;_jzKey={g:game,f:game.floor,w:VIEW_W,h:VIEW_H};_jzCam=null;_jzDad=null;if(fresh){_jzE=new WeakMap();_jzPrev=[];_jzAlly=null;_jzFx=[];_jzDad=null;_jzKey.hp=game.hp;}}
+ /* Dad + camera glides */
+ if(mo){_jzCam=_jzTw(_jzCam,camX,camY,n,1);_jzDad=_jzTw(_jzDad,game.px,game.py,n,1);}else{_jzCam=null;_jzDad=null;}
+ const cam=mo?_jzTwAt(_jzCam,n):[camX,camY],dad=mo?_jzTwAt(_jzDad,n):[game.px,game.py];
+ /* Dad hp */
+ if(typeof _jzKey.hp!=="number")_jzKey.hp=game.hp;const dh=game.hp-_jzKey.hp;
+ if(dh&&mo){if(dh<0){_jzFloat(game.px,game.py,String(dh),"#ff5a4a",n);_jzVig={t0:n,ms:JUICE_VIG_MS,a:Math.min(0.55,0.25+(-dh)/Math.max(1,game.maxhp))};_jzStats.vignettes++;requestAnim(JUICE_VIG_MS+30);if(-dh>=Math.max(8,game.maxhp*0.25))_jzShakeAt(3,200,n);}else _jzFloat(game.px,game.py,"+"+dh,"#7be36a",n);}
+ _jzKey.hp=game.hp;
+ /* enemies: glide, hit flash, knockback, numbers, boss banners */
+ const cur=[];for(const e of game.enemies){let r=_jzE.get(e);const v=!!(game.vis[e.y]&&game.vis[e.y][e.x]);
+  if(!r){r={tw:null,hp:e.hp,fl:-1e9,kn:null,ph:e.hoaPhase};_jzE.set(e,r);}
+  if(mo)r.tw=_jzTw(r.tw,e.x,e.y,n,2);else r.tw=null;
+  if(e.hp!==r.hp&&v&&mo){const d=e.hp-r.hp;if(d<0){r.fl=n;_jzStats.flashes++;_jzFloat(e.x,e.y,String(d),"#ffffff",n);requestAnim(JUICE_FLASH_MS+30);
+    const kx=Math.sign(e.x-game.px),ky=Math.sign(e.y-game.py);if((kx||ky)&&Math.abs(e.x-game.px)<=1&&Math.abs(e.y-game.py)<=1){r.kn={dx:kx,dy:ky,t0:n};_jzStats.knocks++;requestAnim(JUICE_KNOCK_MS+30);}
+    if(-d>=Math.max(6,(e.maxhp||1)*0.4))_jzShakeAt(e.isBoss?3:2,150,n);}else _jzFloat(e.x,e.y,"+"+d,"#7be36a",n);}
+  r.hp=e.hp;
+  if(e.isBoss&&v&&!_jzBossSeen.has(e)){_jzBossSeen.add(e);_jzBannerAt("BOSS: "+(e.def.name||"Something Large").toUpperCase(),JUICE_BOSS_SUBS[_tileHash(game.depth|0,7,3)%JUICE_BOSS_SUBS.length],n);}
+  if(e.hoaPhase!==r.ph){if(r.ph!==undefined&&e.hoaPhase>r.ph&&typeof HOA_PHASES!=="undefined"&&HOA_PHASES[e.hoaPhase-1]){const P=HOA_PHASES[e.hoaPhase-1];_jzBannerAt("PHASE "+e.hoaPhase+": "+String(P.name||"").toUpperCase(),"The meeting is not over. The meeting is never over.",n);if(mo)_jzShakeAt(4,350,n);}r.ph=e.hoaPhase;}
+  cur.push({e:e,x:e.x,y:e.y,boss:!!e.isBoss,v:v});}
+ /* a visible enemy that vanished from the same floor was defeated: puff + KO */
+ if(_jzPrev.length){const now=new Set(game.enemies);for(const p of _jzPrev){if(now.has(p.e)||!p.v)continue;if(mo){_jzAdd({k:"puff",x:p.x,y:p.y,boss:p.boss,t0:n,ms:JUICE_PUFF_MS*(p.boss?1.5:1),seed:_tileHash(p.x,p.y,(game.turn|0)+(game.depth|0)*977)});_jzStats.puffs++;_jzFloat(p.x,p.y,"KO","#f4c430",n);if(p.boss)_jzShakeAt(4,400,n);}}}
+ _jzPrev=cur;
+ /* companion glide + hp */
+ const A=game.ally;if(A&&typeof A.x==="number"){if(!_jzAlly||_jzAlly.a!==A)_jzAlly={a:A,tw:null,hp:A.hp};if(mo)_jzAlly.tw=_jzTw(_jzAlly.tw,A.x,A.y,n,2);else _jzAlly.tw=null;
+  if(typeof A.hp==="number"&&A.hp!==_jzAlly.hp&&mo&&game.vis[A.y]&&game.vis[A.y][A.x]){const d=A.hp-_jzAlly.hp;_jzFloat(A.x,A.y,d<0?String(d):"+"+d,d<0?"#ffa64a":"#7be36a",n);}_jzAlly.hp=A.hp;}else _jzAlly=null;
+ /* world offset = camera glide + shake (whole logical px, so tiles never get seams) */
+ let ox=Math.round((camX-cam[0])*TILE),oy=Math.round((camY-cam[1])*TILE),sx=0,sy=0;
+ if(_jzShake&&mo){const t=n-_jzShake.t0;if(t<_jzShake.ms){const a=_jzShake.amp*(1-t/_jzShake.ms),k=Math.floor(t/32),h=_tileHash(k,_jzShake.t0|0,5);sx=Math.round(((h%3)-1)*a);sy=Math.round((((h>>>4)%3)-1)*a);if(!sx&&!sy)sx=Math.round(a)*(k&1?1:-1);}else _jzShake=null;}
+ ox+=sx;oy+=sy;_jzLast={cam:[ox-sx,oy-sy],dad:[Math.round((dad[0]-game.px)*TILE),Math.round((dad[1]-game.py)*TILE)],shake:[sx,sy]};
+ if((ox||oy)&&ctx.translate)ctx.translate(ox,oy);
+ const J={n:n,mo:mo,ox:ox,oy:oy,dad:dad,grad:null};
+ if(_jzLightOn()&&typeof ctx.createRadialGradient==="function"){const R=Math.max(4,Math.min(8,4+Math.floor((typeof effPer==="function"?effPer():0)/3)));const cx=(dad[0]-camX)*TILE+TILE/2,cy=(dad[1]-camY)*TILE+TILE/2,rp=(R+0.5)*TILE;
+  const g=ctx.createRadialGradient(cx,cy,rp*0.42,cx,cy,rp);g.addColorStop(0,"rgba(4,5,9,0)");g.addColorStop(0.55,"rgba(4,5,9,0.12)");g.addColorStop(1,"rgba(4,5,9,0.36)");J.grad=g;}
+ return J;}
+function _jzLight(J,px,py){if(J&&J.grad){ctx.fillStyle=J.grad;ctx.fillRect(px,py,TILE,TILE);_jzStats.lit++;}}
+/* where an entity is drawn this frame (logical px, world space), incl. glide + knockback */
+function _jzPos(J,e,px,py){if(!J||!J.mo)return[px,py];const r=_jzE.get(e);if(!r)return[px,py];let x=px,y=py;if(r.tw){const c=_jzTwAt(r.tw,J.n);x+=Math.round((c[0]-e.x)*TILE);y+=Math.round((c[1]-e.y)*TILE);}
+ if(r.kn){const t=(J.n-r.kn.t0)/JUICE_KNOCK_MS;if(t<1){const s=Math.round(3*Math.sin(Math.PI*t));x+=r.kn.dx*s;y+=r.kn.dy*s;}else r.kn=null;}return[x,y];}
+function _jzAllyPos(J,px,py){if(!J||!J.mo||!_jzAlly||!_jzAlly.tw||!game.ally)return[px,py];const c=_jzTwAt(_jzAlly.tw,J.n);return[px+Math.round((c[0]-game.ally.x)*TILE),py+Math.round((c[1]-game.ally.y)*TILE)];}
+function _jzDadPos(J,px,py){if(!J||!J.mo)return[px,py];return[px+Math.round((J.dad[0]-game.px)*TILE),py+Math.round((J.dad[1]-game.py)*TILE)];}
+function _jzFlash(J,e,x,y){if(!J||!J.mo)return;const r=_jzE.get(e);if(!r)return;const t=(J.n-r.fl)/JUICE_FLASH_MS;if(t<0||t>=1)return;if(_sprCacheOK===null)_sprCacheOK=!!_sprNewCanvas(1,1);if(!_sprCacheOK)return;
+ const c=_sprCached(e.def.sprite,null,null);if(!c||!c.cv)return;const s=_jzSil(c.cv,"#ffffff");if(!s)return;ctx.globalAlpha=0.85*(1-t);ctx.drawImage(s,x,y,c.w,c.h);ctx.globalAlpha=1;}
+/* world-space effects (after drawFX): puffs and floating numbers */
+function _jzWorldFx(J){if(!J)return;const n=J.n;
+ for(let i=_jzFx.length-1;i>=0;i--){const f=_jzFx[i],t=(n-f.t0)/f.ms;if(t>=1){_jzFx.splice(i,1);continue;}if(t<0)continue;const bx=(f.x-camX)*TILE+TILE/2,by=(f.y-camY)*TILE+TILE/2;
+  if(f.k==="puff"){const N=f.boss?18:10,sp=(f.boss?22:16)*_jzEase(t),sz=Math.max(2,Math.round((f.boss?5:4)*(1-t*0.6)));ctx.globalAlpha=Math.max(0,0.9*(1-t));
+   for(let q=0;q<N;q++){const h=_tileHash(q,f.seed&0xffff,f.seed>>>16),ang=(q/N)*Math.PI*2+((h%100)/100-0.5)*0.7,v=0.6+((h>>>8)%40)/100;ctx.fillStyle=(q%3===0)?(f.boss?"#fff2b0":"#ffffff"):(f.boss?"#f4c430":"#cfc9bb");
+    ctx.fillRect(Math.round(bx+Math.cos(ang)*sp*v)-1,Math.round(by+Math.sin(ang)*sp*v-4*t)-1,sz,sz);}ctx.globalAlpha=1;}
+  else if(f.k==="float"){const y=Math.round(by-17-12*_jzEase(t)-f.dy),a=t<0.6?1:Math.max(0,1-(t-0.6)/0.4);ctx.globalAlpha=a;ctx.font="bold 11px monospace";ctx.textAlign="center";ctx.textBaseline="middle";ctx.lineWidth=3;ctx.strokeStyle="#0b0b10";ctx.strokeText(f.txt,Math.round(bx),y);ctx.fillStyle=f.col;ctx.fillText(f.txt,Math.round(bx),y);ctx.globalAlpha=1;ctx.textAlign="start";ctx.textBaseline="alphabetic";}}}
+/* screen-space effects (after the world offset is undone): hurt vignette and the boss banner */
+function _jzScreenFx(J){if(!J)return;const n=J.n,CW=VIEW_W*TILE,CH=VIEW_H*TILE;
+ if(_jzVig&&J.mo&&typeof ctx.createRadialGradient==="function"){const t=(n-_jzVig.t0)/_jzVig.ms;if(t<1){const g=ctx.createRadialGradient(CW/2,CH/2,Math.min(CW,CH)*0.32,CW/2,CH/2,Math.max(CW,CH)*0.72);g.addColorStop(0,"rgba(200,30,30,0)");g.addColorStop(1,"rgba(200,30,30,"+(_jzVig.a*(1-t)).toFixed(3)+")");ctx.fillStyle=g;ctx.fillRect(0,0,CW,CH);}else _jzVig=null;}
+ if(_jzBanner){const B=_jzBanner,t=n-B.t0;if(t>=B.ms||t<0){_jzBanner=null;return;}const H=36,y=Math.round(CH*0.16);let x=0,a=1;
+  if(J.mo){if(t<180)x=-Math.round(CW*(1-_jzEase(t/180)));if(t>B.ms-300)a=Math.max(0,(B.ms-t)/300);}
+  ctx.globalAlpha=a*0.9;ctx.fillStyle="#2a0b0b";ctx.fillRect(x,y,CW,H);ctx.globalAlpha=a;ctx.fillStyle="#f4c430";ctx.fillRect(x,y,CW,2);ctx.fillRect(x,y+H-2,CW,2);
+  ctx.textAlign="center";ctx.textBaseline="middle";let fs=14;ctx.font="bold "+fs+"px monospace";while(fs>8&&ctx.measureText&&ctx.measureText(B.title).width>CW-12){fs--;ctx.font="bold "+fs+"px monospace";}
+  ctx.fillStyle="#f4c430";ctx.fillText(B.title,x+CW/2,y+13);let ss=9;ctx.font=ss+"px monospace";while(ss>6&&ctx.measureText&&ctx.measureText(B.sub).width>CW-10){ss--;ctx.font=ss+"px monospace";}ctx.fillStyle="#f4f1e8";ctx.fillText(B.sub,x+CW/2,y+27);
+  ctx.globalAlpha=1;ctx.textAlign="start";ctx.textBaseline="alphabetic";}}
+function _jzEnd(J){if(!J)return;if((J.ox||J.oy)&&ctx.setTransform)ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);_jzScreenFx(J);}
 function lootSprite(it){return it.kind==="weapon"?SPR_GEAR_W:it.kind==="armor"?SPR_GEAR_A:it.kind==="charm"?SPR_CHARM:it.kind==="key"?SPR_KEY:it.kind==="object"?SPR_OBJECT:SPR_POTION;}
 /* itemIconSprite: returns 32x32 sprite for inventory icon if available, else 16x16 fallback */
 function itemIconSprite(it){return(it&&it.sprite)?it.sprite:lootSprite(it);}
@@ -256,23 +355,25 @@ function drawClassPortrait(cls,CW,CH){
 }
 function drawMenuBackdrop(){const CW=VIEW_W*TILE,CH=VIEW_H*TILE;if(typeof mode!=="undefined"&&mode===State.CLASS&&typeof classCursor!=="undefined"&&typeof CLASSES!=="undefined"&&CLASSES[classCursor]){drawClassPortrait(CLASSES[classCursor],CW,CH);}else{ctx.fillStyle="#11131a";ctx.fillRect(0,0,CW,CH);for(let i=0;i<80;i++){ctx.fillStyle="#1c2030";ctx.fillRect((i*53)%CW,(i*37)%CH,2,2);}drawDad(Math.floor(CW/2)-16,Math.floor(CH/2)-16,1);}}
 function drawWorld(){camX=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,Math.min(MAP_W-VIEW_W,game.px-Math.floor(VIEW_W/2)));camY=VIEW_H>MAP_H?-Math.floor((VIEW_H-MAP_H)/2):Math.max(0,Math.min(MAP_H-VIEW_H,game.py-Math.floor(VIEW_H/2)));/* MOB-04: a view wider/taller than the floor centers it */
+ const _J=_jzBegin();/* M15 */
  const [flrSpr,wallSpr]=(typeof getBiomeSprites==="function")?getBiomeSprites(game.depth):[SPR_FLOOR,SPR_WALL];const _tset=_tileSet(game.depth);/* M14 */
- for(let vy=0;vy<VIEW_H;vy++)for(let vx=0;vx<VIEW_W;vx++){const mx=camX+vx,my=camY+vy;if(mx<0||my<0||mx>=MAP_W||my>=MAP_H)continue;const px=vx*TILE,py=vy*TILE;if(!game.seen[my][mx]){ctx.fillStyle="#06070b";ctx.fillRect(px,py,TILE,TILE);continue;}const _tg=game.floor.grid[my][mx];if(!_tset||!_drawTileArt(_tset,_tg,mx,my,px,py))drawSprite(_tg===1?wallSpr:_tg===2?SPR_WATER:flrSpr,px,py,1);const dr=doorAt(mx,my);if(dr){if(!dr.open)drawSprite(dr.locked?SPR_DOOR_L:SPR_DOOR,px,py,1);else drawSprite(SPR_DOOR_OPEN,px,py,1);}if(!game.vis[my][mx]){ctx.fillStyle="rgba(4,5,9,0.55)";ctx.fillRect(px,py,TILE,TILE);}}
+ const _ext=_J&&_J.mo?1:0;/* M15: one spare ring of tiles for the camera glide */
+ for(let vy=-_ext;vy<VIEW_H+_ext;vy++)for(let vx=-_ext;vx<VIEW_W+_ext;vx++){const mx=camX+vx,my=camY+vy;if(mx<0||my<0||mx>=MAP_W||my>=MAP_H)continue;const px=vx*TILE,py=vy*TILE;if(!game.seen[my][mx]){ctx.fillStyle="#06070b";ctx.fillRect(px,py,TILE,TILE);continue;}const _tg=game.floor.grid[my][mx];if(!_tset||!_drawTileArt(_tset,_tg,mx,my,px,py))drawSprite(_tg===1?wallSpr:_tg===2?SPR_WATER:flrSpr,px,py,1);const dr=doorAt(mx,my);if(dr){if(!dr.open)drawSprite(dr.locked?SPR_DOOR_L:SPR_DOOR,px,py,1);else drawSprite(SPR_DOOR_OPEN,px,py,1);}if(!game.vis[my][mx]){ctx.fillStyle="rgba(4,5,9,0.55)";ctx.fillRect(px,py,TILE,TILE);}else if(_J)_jzLight(_J,px,py);}
  const sx=(game.stairs.x-camX)*TILE,sy=(game.stairs.y-camY)*TILE;const _gDn=game.depth%10===0&&typeof SPR_BIOME_GATE!=="undefined",_gUp=game.depth%10===1&&game.depth>1&&typeof SPR_BIOME_GATE_UP!=="undefined";/* MOB-15: biome gates on the floors where the stairs cross into another biome */if(game.seen[game.stairs.y][game.stairs.x])drawSprite(_gDn?SPR_BIOME_GATE:SPR_STAIRS,sx,sy,1);if(game.stairsUp&&game.seen[game.stairsUp.y]&&game.seen[game.stairsUp.y][game.stairsUp.x]){drawSprite(_gUp?SPR_BIOME_GATE_UP:SPR_STAIRS_UP,(game.stairsUp.x-camX)*TILE,(game.stairsUp.y-camY)*TILE,1);}
  for(const t of game.traps){if(t.sprung||!game.vis[t.y][t.x])continue;if(t.known)drawSprite(t.def.sprite||SPR_TRAP,(t.x-camX)*TILE,(t.y-camY)*TILE,1);}
  for(const l of game.loot){if(!game.vis[l.y][l.x])continue;const px=(l.x-camX)*TILE,py=(l.y-camY)*TILE;if(l.item.kind==="gold"){ctx.fillStyle="#f4c430";ctx.fillRect(px+5,py+6,6,5);ctx.fillStyle="#c9a227";ctx.fillRect(px+5,py+10,6,2);}else drawSprite(itemIconSprite(l.item),px,py,1);}
  if(game.vendor&&game.seen[game.vendor.y][game.vendor.x])drawSprite(SPR_VENDOR,(game.vendor.x-camX)*TILE,(game.vendor.y-camY)*TILE,1);
  if(game.fountains)for(const fn of game.fountains){if(game.seen[fn.y][fn.x]){if(fn.charges>0)drawSprite(SPR_FOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1);else drawSpriteRemap(SPR_FOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1,{'B':'S','b':'s','C':'m'});}}
  if(game.healFountains)for(const fn of game.healFountains){if(game.seen[fn.y][fn.x]){if(fn.charges>0)drawSprite(SPR_HEALFOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1);else drawSpriteRemap(SPR_HEALFOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1,{'r':'m','R':'M','O':'s','o':'m'});}}
- for(const e of game.enemies){if(!game.vis[e.y][e.x])continue;const px=(e.x-camX)*TILE,py=(e.y-camY)*TILE;drawSprite(e.def.sprite,px,py,1);if(showEnemyHP(e)){const w=TILE-2;ctx.fillStyle="#3a0d0d";ctx.fillRect(px+1,py-3,w,2);ctx.fillStyle=e.isBoss?"#f0a040":"#5fbf4f";ctx.fillRect(px+1,py-3,Math.max(0,w*e.hp/e.maxhp),2);}}
+ for(const e of game.enemies){if(!game.vis[e.y][e.x])continue;const [px,py]=_jzPos(_J,e,(e.x-camX)*TILE,(e.y-camY)*TILE);drawSprite(e.def.sprite,px,py,1);_jzFlash(_J,e,px,py);if(showEnemyHP(e)){const w=TILE-2;ctx.fillStyle="#3a0d0d";ctx.fillRect(px+1,py-3,w,2);ctx.fillStyle=e.isBoss?"#f0a040":"#5fbf4f";ctx.fillRect(px+1,py-3,Math.max(0,w*e.hp/e.maxhp),2);}}
  // Draw unrecruited ally on map (solid cyan bar = friendly)
- if(game.ally&&!game.ally.following){const ax=(game.ally.x-camX)*TILE,ay=(game.ally.y-camY)*TILE;if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef)drawSprite(adef.sprite,ax,ay,1);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,TILE-2,2);}}
+ if(game.ally&&!game.ally.following){const [ax,ay]=_jzAllyPos(_J,(game.ally.x-camX)*TILE,(game.ally.y-camY)*TILE);if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef)drawSprite(adef.sprite,ax,ay,1);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,TILE-2,2);}}
  // Draw active following ally with HP bar
- if(game.ally&&game.ally.following){const ax=(game.ally.x-camX)*TILE,ay=(game.ally.y-camY)*TILE;if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef){drawSprite(adef.sprite,ax,ay,1);const w=TILE-2;ctx.fillStyle="#1a3a1a";ctx.fillRect(ax+1,ay-3,w,2);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,Math.max(0,w*game.ally.hp/game.ally.maxhp),2);}}}
- drawDadAnim((game.px-camX)*TILE,(game.py-camY)*TILE,1);/* N29 */
- drawFX();
+ if(game.ally&&game.ally.following){const [ax,ay]=_jzAllyPos(_J,(game.ally.x-camX)*TILE,(game.ally.y-camY)*TILE);if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef){drawSprite(adef.sprite,ax,ay,1);const w=TILE-2;ctx.fillStyle="#1a3a1a";ctx.fillRect(ax+1,ay-3,w,2);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,Math.max(0,w*game.ally.hp/game.ally.maxhp),2);}}}
+ {const _dp=_jzDadPos(_J,(game.px-camX)*TILE,(game.py-camY)*TILE);drawDadAnim(_dp[0],_dp[1],1);}/* N29 + M15 glide */
+ drawFX();_jzWorldFx(_J);
  if(inspectOn){const px=(insX-camX)*TILE,py=(insY-camY)*TILE;ctx.strokeStyle="#f4c430";ctx.lineWidth=1;ctx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);}
- drawAimPreview();}
+ drawAimPreview();_jzEnd(_J);}
 /* M7: touch aiming preview. aimTgt is set by a tap/swipe while aiming/placing; the aim bar CONFIRM fires it. */
 function drawAimPreview(){if(typeof aimTgt==="undefined"||!aimTgt||!(aiming||placing)||!game)return;
  ctx.fillStyle="rgba(244,196,48,0.22)";ctx.strokeStyle="#f4c430";ctx.lineWidth=2;let last=null;

@@ -123,6 +123,8 @@ function syncMuteBtn(){const muted=(typeof SFX_MUTED!=="undefined"&&SFX_MUTED);i
 function barAction(a){
  // Mute is a global toggle (like its key) — handle it BEFORE the play-mode guard so it always works when the bar is visible.
  if(a==="mute"){if(typeof sfxToggleMute==="function"){sfxToggleMute();syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". Click SOUND or press [U] to toggle.","dim");}return;}
+ // M15: MOTION (screen shake, glides, damage numbers, walk frames) is a global preference like SOUND; the drawer stays open.
+ if(a==="motion"){if(typeof toggleJuiceMotion==="function"){const on=toggleJuiceMotion();if(mode===State.PLAY)log(on?"Motion effects on. The world resumes its theatrics.":"Motion effects off. The world holds still, as you have always asked it to.","dim");}return;}
  if(mode!==State.PLAY||pendingConfirm||pendingMenu||aiming||placing||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen)return;
  if(a==="more"){setMoreOpen(!_m8More);return;}
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
@@ -152,4 +154,4 @@ if(oDpad)oDpad.addEventListener("click",(ev)=>{const btn=ev.target.closest("[dat
  tryMove(parseInt(btn.dataset.dx,10),parseInt(btn.dataset.dy,10));});
 
 /* ===== boot ===== */
-fitCanvas();render();syncUI();if(typeof syncMuteBtn==="function")syncMuteBtn();
+fitCanvas();render();syncUI();if(typeof syncMuteBtn==="function")syncMuteBtn();if(typeof syncMotionBtn==="function")syncMotionBtn();
