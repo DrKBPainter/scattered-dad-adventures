@@ -206,10 +206,18 @@ function buildCodex(){
  h+='<div class="cdx-tabs">';
  CODEX_TABS.forEach((t,i)=>h+='<button class="cdx-tab'+(i===codexTab?' cdx-tab-sel':'')+'" data-tab="'+i+'">['+((i+1))+'] '+t+'</button>');
  h+='</div><div class="cdx-body">';
+ /* MOB-07: Weapons/Armor/Charms list only gear ever held (lifetime, like the Bestiary); the rest are "???" cards. Gear held right now is recorded first (covers runs saved before the record existed). */
+ if(typeof game!=="undefined"&&game&&typeof noteGearSeen==="function"){(game.inv||[]).forEach(e=>noteGearSeen(e&&e.it));if(game.equip)Object.keys(game.equip).forEach(s=>noteGearSeen(game.equip[s]));}
+ const _gs=(typeof loadCodexSeen==="function")?loadCodexSeen():{};
+ const _gHas=(kind,id)=>!!_gs[kind+":"+id];
+ const _gHead=(list,kind)=>'<p class="dim">Found: '+list.filter(x=>_gHas(kind,x.id)).length+' / '+list.length+'. Retained across all runs, as in the Bestiary.</p>';
+ const _gUnk=(what,line)=>'<div class="cdx-card cdx-unk" style="opacity:.5"><canvas class="cdx-ic" width="64" height="64"></canvas><div class="cdx-nm">??? ? ?</div><div class="cdx-st">'+what+' not yet found</div><div class="cdx-ds">'+line+'</div></div>';
  /* ---- content per tab ---- */
  if(codexTab===0){/* Weapons */
+  h+=_gHead(WEAPONS,"weapon");
   h+='<div class="cdx-grid cdx-grid-item">';
   WEAPONS.forEach(w=>{
+   if(!_gHas("weapon",w.id)){h+=_gUnk('Weapon','Somewhere out there, in a garage, it waits.');return;}
    const extra=[];
    if(w.reach&&w.reach>1)extra.push('Reach '+w.reach);
    if(w.throw)extra.push('Throw '+w.throw.dmg+' dmg / '+((w.throw.range||8))+' tiles');
@@ -223,8 +231,10 @@ function buildCodex(){
   });
   h+='</div>';
  }else if(codexTab===1){/* Armor */
+  h+=_gHead(ARMORS,"armor");
   h+='<div class="cdx-grid cdx-grid-item">';
   ARMORS.forEach(a=>{
+   if(!_gHas("armor",a.id)){h+=_gUnk('Armor','Possibly in the back of a closet. Possibly still in the box.');return;}
    const stats=[]; if(a.def)stats.push('DEF +'+a.def); if(a.atk)stats.push('ATK +'+a.atk); if(a.per)stats.push('PER +'+a.per); if(a.wis)stats.push('WIS +'+a.wis); if(a.cap)stats.push('Slots +'+a.cap);
    h+='<div class="cdx-card">'
     +'<canvas class="cdx-ic" width="64" height="64" data-spr-item="'+a.id+'"></canvas>'
@@ -235,8 +245,10 @@ function buildCodex(){
   });
   h+='</div>';
  }else if(codexTab===2){/* Charms */
+  h+=_gHead(CHARMS,"charm");
   h+='<div class="cdx-grid cdx-grid-item">';
   CHARMS.forEach(c=>{
+   if(!_gHas("charm",c.id)){h+=_gUnk('Charm','Rumored to exist. So is a clean junk drawer.');return;}
    const stats=[]; if(c.def)stats.push('DEF +'+c.def); if(c.atk)stats.push('ATK +'+c.atk); if(c.per)stats.push('PER +'+c.per); if(c.wis)stats.push('WIS +'+c.wis);
    h+='<div class="cdx-card">'
     +'<canvas class="cdx-ic" width="64" height="64" data-spr-item="'+c.id+'"></canvas>'

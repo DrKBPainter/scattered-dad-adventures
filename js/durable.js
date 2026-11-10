@@ -13,7 +13,7 @@
    Hooks: syncDurable() from syncUI (ui.js); openSaveBackup() from the desktop title row [S],
    How To, and the MORE drawer (BACKUP). ======================================================= */
 "use strict";
-const M12_KEYS=[SAVE_KEY,BESTIARY_KEY,GRAVEYARD_KEY,DAILY_KEY,"sda_mute","sda_dpad","sda_bar_v1"];
+const M12_KEYS=[SAVE_KEY,BESTIARY_KEY,GRAVEYARD_KEY,DAILY_KEY,"sda_mute","sda_dpad","sda_bar_v1","sda_codex_v1"];
 const M12_SNOOZE_KEY="sda_install_snooze",M12_IOS_KEY="sda_a2hs_seen";
 let _m12SaveOpen=false,_m12Pending=null;
 let _m12Prompt=null,_m12Installed=false,_m12Persist=null,_m12PersistAsked=false,_m12BarHidden=false,_m12IosShown=false;

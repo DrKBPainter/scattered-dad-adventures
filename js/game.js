@@ -7,6 +7,11 @@
 /* ===== bestiary ===== */
 function loadBestiary(){try{return JSON.parse(localStorage.getItem(BESTIARY_KEY))||{};}catch(e){return {};}}
 function saveBestiary(b){try{localStorage.setItem(BESTIARY_KEY,JSON.stringify(b));}catch(e){}}
+/* MOB-07: lifetime record of gear ever held, like the Bestiary. localStorage sda_codex_v1 = {"weapon:<id>":1,"armor:<id>":1,"charm:<id>":1}. Read fresh each time so a Save Backup restore needs no reload. */
+var CODEX_KEY="sda_codex_v1",_codexMem=null;
+function loadCodexSeen(){try{const o=JSON.parse(localStorage.getItem(CODEX_KEY));if(o&&typeof o==="object"&&!Array.isArray(o))return o;}catch(e){}return _codexMem||{};}
+function codexSeenKey(kind,id){return kind+":"+id;}
+function noteGearSeen(it){if(!it||!it.id||(it.kind!=="weapon"&&it.kind!=="armor"&&it.kind!=="charm"))return;const k=codexSeenKey(it.kind,it.id);const o=loadCodexSeen();if(o[k])return;o[k]=1;_codexMem=o;try{localStorage.setItem(CODEX_KEY,JSON.stringify(o));}catch(e){}}
 let discovered=loadBestiary();
 function discover(t,floor){if(!discovered[t.id]){discovered[t.id]={count:0,firstFloor:floor};log("NEW CREATURE LOGGED: "+t.name,"gold");}discovered[t.id].count++;saveBestiary(discovered);}
 /* ===== state ===== */
@@ -269,7 +274,7 @@ function computeVis(){for(let y=0;y<MAP_H;y++)for(let x=0;x<MAP_W;x++)game.vis[y
 /* ===== inventory ===== */
 function stackable(it){return it.kind==="consumable"||it.kind==="object"||it.kind==="key"||it.kind==="protip";}
 function maxStack(it){if(it.societyItem)return 9;if(it.placeable)return 5;if(it.throw)return 9;if(it.kind==="consumable")return 5;return Infinity;}
-function addItem(it){if(it.kind==="gold"){game.gold+=it.amount;return true;}if(it.kind==="key"){if(!game.keyring)game.keyring=[];if(it.floor&&game.keyring.some(k=>k.floor===it.floor))return true;game.keyring.push(it);return true;}if(stackable(it)){const ms=maxStack(it);const e=game.inv.find(e=>e.it.kind===it.kind&&e.it.id===it.id&&e.qty<ms);if(e){e.qty++;return true;}}if(game.inv.length>=invCap()){log("Inventory full ("+invCap()+" slots). Drop something.","red");return false;}game.inv.push({it,qty:1});return true;}
+function addItem(it){noteGearSeen(it);/* MOB-07 */if(it.kind==="gold"){game.gold+=it.amount;return true;}if(it.kind==="key"){if(!game.keyring)game.keyring=[];if(it.floor&&game.keyring.some(k=>k.floor===it.floor))return true;game.keyring.push(it);return true;}if(stackable(it)){const ms=maxStack(it);const e=game.inv.find(e=>e.it.kind===it.kind&&e.it.id===it.id&&e.qty<ms);if(e){e.qty++;return true;}}if(game.inv.length>=invCap()){log("Inventory full ("+invCap()+" slots). Drop something.","red");return false;}game.inv.push({it,qty:1});return true;}
 function removeEntry(e,n){n=n||1;e.qty-=n;if(e.qty<=0){const i=game.inv.indexOf(e);if(i>=0)game.inv.splice(i,1);}}
 function equip(itOrE,silent){const it=itOrE.it?itOrE.it:itOrE;let slot;if(it.kind==="weapon")slot="weapon";else if(it.kind==="armor")slot=it.slot;else if(it.kind==="charm"){slot=!game.equip.charm1?"charm1":(!game.equip.charm2?"charm2":"charm1");}else return;
  if(it.reqLevel&&game.level<it.reqLevel&&!silent){const bonus=(game.cls&&game.cls.id==="tactical"&&it.reqLevel>1)?1:0;if(game.level<it.reqLevel-bonus){log("Requires Level "+it.reqLevel+(bonus?" (Tactical: "+( it.reqLevel-bonus)+")":"")+" to wield "+it.name+". (You are Level "+game.level+".)","red");return;}}
