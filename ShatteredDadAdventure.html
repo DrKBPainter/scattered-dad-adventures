@@ -390,7 +390,8 @@ body.m-land #tgtbox .tb-go{display:none;} #scanpop .sp-t{color:var(--gold);font-
   #moresheet .ms-grid button{font-family:inherit;font-size:12px;font-weight:bold;letter-spacing:.4px;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:5px;min-height:48px;padding:6px 4px;cursor:pointer;}
   #moresheet .ms-grid button:active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);}
   #moresheet .ms-grid .ms-menu{color:#ff9a8a;}
-  #moresheet .ms-grid button.ms-onbar{display:none;} #moresheet .ms-grid .ms-cfg{color:var(--gold);} /* MOB-06: actions already on the bar are hidden here */
+  #moresheet .ms-grid button.ms-onbar{display:none;}
+  #actionbar .ally-only,#moresheet .ms-grid button.ally-only{display:none;} body.has-ally:not(.m-compact) #actionbar .ally-only{display:inline-block;} body.has-ally #moresheet .ms-grid button.ally-only{display:block;} /* MOB-28 */ #moresheet .ms-grid .ms-cfg{color:var(--gold);} /* MOB-06: actions already on the bar are hidden here */
   /* MOB-06: "Customize bar" sheet (compact only) */
   #barcfg{display:none;}
   body.m-compact.m-barcfg #barcfg{display:flex;position:fixed;inset:0;z-index:130;background:rgba(4,6,10,.72);align-items:flex-end;justify-content:center;}
@@ -619,6 +620,7 @@ body.m-compact .m18-howto button{min-height:44px}
     <button type="button" id="btnPad" class="m-only" data-act="pad" title="Show or hide the on-screen D-pad">D-PAD</button>
     <button type="button" id="btnMute" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
     <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
+    <button type="button" class="ally-only" data-act="stance" title="Companion stance: aggressive, neutral or passive (O)">COMPANION</button>
     <button type="button" data-act="quit" title="Save &amp; quit to main menu (Q)">MENU</button>
     <button type="button" class="m-only" data-act="attrs" title="Your stats and what each one does">STATS</button>
     <button type="button" class="m-only" data-act="backup" title="Back up or restore your saves">BACKUP</button>
@@ -652,6 +654,7 @@ body.m-compact .m18-howto button{min-height:44px}
         <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
         <button type="button" data-act="backup" title="Back up or restore your saves">BACKUP</button>
         <button type="button" data-act="share" title="Share the game: QR code and link">SHARE</button>
+        <button type="button" class="ally-only" data-act="stance" title="Companion stance: aggressive, neutral or passive">COMPANION</button>
         <button type="button" class="ms-cfg" data-act="barcfg" title="Choose and arrange the buttons on the bar">CUSTOMIZE BAR</button>
         <button type="button" class="ms-menu" data-act="quit" title="Save &amp; quit to main menu (Q)">SAVE &amp; MENU</button>
       </div>

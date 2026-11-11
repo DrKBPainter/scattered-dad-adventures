@@ -350,7 +350,7 @@ function enemyTurn(){for(const e of game.enemies){if(e.isDog)continue;
   if(e.def&&e.def.isDogWalker){
     if(e.stun>0){e.stun--;continue;}
     const dist=Math.abs(e.x-game.px)+Math.abs(e.y-game.py);
-    if(dist===1){if(hasStatus("invincible")){continue;}const dmg=Math.max(1,roll(e.scaledAtk||e.def.atk)-Math.floor(effDef()/2));game.hp-=dmg;if(typeof sfxOof==="function")sfxOof();log(e.def.name+" hits you for "+dmg+".","red");if(game.hp<=0){die(e.def.name+", who he insists he was about to defeat",e.isBoss?"boss":"creature");return;}}
+    if(dist===1){e.hitDad=true;/* MOB-28 */if(hasStatus("invincible")){continue;}const dmg=Math.max(1,roll(e.scaledAtk||e.def.atk)-Math.floor(effDef()/2));game.hp-=dmg;if(typeof sfxOof==="function")sfxOof();log(e.def.name+" hits you for "+dmg+".","red");if(game.hp<=0){die(e.def.name+", who he insists he was about to defeat",e.isBoss?"boss":"creature");return;}}
     else if(dist<=7&&e.root<=0){
       const ox=e.x,oy=e.y;
       const sx=e.x+Math.sign(game.px-e.x),sy=e.y+Math.sign(game.py-e.y);
@@ -365,7 +365,7 @@ function enemyTurn(){for(const e of game.enemies){if(e.isDog)continue;
     continue;
   }
   if(e.stun>0){e.stun--;continue;}const dist=Math.abs(e.x-game.px)+Math.abs(e.y-game.py);
-  if(dist===1){if(hasStatus("invincible")){log(e.def.name+" cannot touch you. Maximum Dad Relief is in effect.","gold");continue;}if(e.blind>0){e.blind--;if(Math.random()<0.6){log(e.def.name+" swings wildly and misses.","dim");continue;}}const dmg=Math.max(1,roll(e.scaledAtk||e.def.atk)-Math.floor(effDef()/2));game.hp-=dmg;if(typeof sfxOof==="function")sfxOof();log(e.def.name+" hits you for "+dmg+".","red");if(game.hp<=0){die(e.def.name+", who he insists he was about to defeat",e.isBoss?"boss":"creature");return;}}
+  if(dist===1){e.hitDad=true;/* MOB-28 */if(hasStatus("invincible")){log(e.def.name+" cannot touch you. Maximum Dad Relief is in effect.","gold");continue;}if(e.blind>0){e.blind--;if(Math.random()<0.6){log(e.def.name+" swings wildly and misses.","dim");continue;}}const dmg=Math.max(1,roll(e.scaledAtk||e.def.atk)-Math.floor(effDef()/2));game.hp-=dmg;if(typeof sfxOof==="function")sfxOof();log(e.def.name+" hits you for "+dmg+".","red");if(game.hp<=0){die(e.def.name+", who he insists he was about to defeat",e.isBoss?"boss":"creature");return;}}
   else if(dist<=7&&e.root<=0){const _ox=e.x,_oy=e.y;const sx=e.x+Math.sign(game.px-e.x),sy=e.y+Math.sign(game.py-e.y);if(canMoveEnemy(e,sx,e.y))e.x=sx;else if(canMoveEnemy(e,e.x,sy))e.y=sy;if(e.x!==_ox||e.y!==_oy){const _dd=doorAt(e.x,e.y);e.justCameThruDoor=!!(_dd&&_dd.open);}}else if(e.root>0)e.root--;
   const _pt=game.traps.find(t=>!t.sprung&&t.fromPlayer&&t.x===e.x&&t.y===e.y);if(_pt)springTrapOn(e,_pt);}}
 /* ===== BFS click-to-move pathfinding ===== */
@@ -374,7 +374,7 @@ function _doorOccupied(d){return game.enemies.some(e=>e.x===d.x&&e.y===d.y)||gam
 /* MOB-17: auto-walk routes around known, unsprung traps (the tapped tile itself is allowed); if that leaves no route, the old path is used. */
 function _knownTrapAt(x,y){return game.traps.some(t=>t.known&&!t.sprung&&t.x===x&&t.y===y);}
 function bfsPath(x0,y0,x1,y1){if(game.traps&&game.traps.some(t=>t.known&&!t.sprung)){const p=_bfsPath(x0,y0,x1,y1,true);if(p)return p;}return _bfsPath(x0,y0,x1,y1,false);}
-function _bfsPath(x0,y0,x1,y1,avoid){
+function _bfsPath(x0,y0,x1,y1,avoid,doorsOk){
  if(x0===x1&&y0===y1)return [];
  const dist=[];for(let y=0;y<MAP_H;y++)dist.push(new Array(MAP_W).fill(-1));
  dist[y0][x0]=0;const q=[[x0,y0]];
@@ -382,7 +382,7 @@ function _bfsPath(x0,y0,x1,y1,avoid){
   for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0]]){const nx=cx+dx,ny=cy+dy;
    if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||dist[ny][nx]>=0)continue;
    if(game.floor.grid[ny][nx]===1)continue;
-   const d=doorAt(nx,ny);if(d&&!d.open)continue;
+   const d=doorAt(nx,ny);if(d&&!d.open&&!(doorsOk&&!d.locked))continue;/* MOB-28: a companion may route through closed, unlocked doors */
    if(avoid&&!(nx===x1&&ny===y1)&&_knownTrapAt(nx,ny))continue;
    dist[ny][nx]=dist[cy][cx]+1;q.push([nx,ny]);}}
  if(dist[y1][x1]<0)return null;
@@ -655,6 +655,7 @@ function allyTurn(){
  const A=game.ally;
  // Little Timmy asks the questions every dad knows. You do not have to answer.
  if(def.id==="little_timmy"&&typeof TIMMY_QUESTIONS!=="undefined"&&Math.random()<0.12){log("Little Timmy: \""+TIMMY_QUESTIONS[Math.floor(Math.random()*TIMMY_QUESTIONS.length)]+"\"","dim");}
+ allyAbilityTick(def);/* MOB-28 */
  // Validate any active order
  let order=game.allyOrder;
  if(order){
@@ -665,19 +666,55 @@ function allyTurn(){
  if(order&&order.type==="attack"){const t=order.target;if(Math.abs(t.x-A.x)+Math.abs(t.y-A.y)===1){allyHit(def,t);return;}allyStepToward(t.x,t.y);allySufferAdjacent(def);return;}
  // 2) Move order — walk to the spot, ignore the leash
  if(order&&order.type==="move"){allyStepToward(order.x,order.y);allySufferAdjacent(def);return;}
- // 3) Default leash AI — engage only within ALLY_LEASH tiles of the player, otherwise stay close
- const adj=game.enemies.find(en=>Math.abs(en.x-A.x)+Math.abs(en.y-A.y)===1&&!en.isDog);
+ // 3) MOB-28: stance AI. Aggressive: anything Dad can see (within ALLY_AGGRO_RANGE) or anything close to the companion. Neutral: only a creature that has attacked Dad. Passive: never attacks, keeps clear of creatures.
+ const st=allyStance();
+ if(st==="passive"){if(!allyKeepClear())allyCatchUp();allySufferAdjacent(def);return;}
+ const foes=allyFoes(st);
+ const adj=foes.find(en=>Math.abs(en.x-A.x)+Math.abs(en.y-A.y)===1);
  if(adj){allyHit(def,adj);return;}
- const tgt=game.enemies.filter(en=>!en.isDog&&(Math.abs(en.x-game.px)+Math.abs(en.y-game.py))<=ALLY_LEASH).sort((a,b)=>(Math.abs(a.x-A.x)+Math.abs(a.y-A.y))-(Math.abs(b.x-A.x)+Math.abs(b.y-A.y)))[0];
+ const tgt=foes.sort((a,b)=>(Math.abs(a.x-A.x)+Math.abs(a.y-A.y))-(Math.abs(b.x-A.x)+Math.abs(b.y-A.y)))[0];
  if(tgt){allyStepToward(tgt.x,tgt.y);allySufferAdjacent(def);return;}
  allyCatchUp();
  allySufferAdjacent(def);}
+/* ===== MOB-28: companion stance, door following, abilities ===== */
+const ALLY_AGGRO_RANGE=6,ALLY_PASSIVE_GAP=2,ALLY_ABILITY_GAP=[20,30];
+const ALLY_STANCES=[["aggressive","Aggressive","attacks anything you can see, or anything that gets close"],["neutral","Neutral","only fights a creature that attacks you"],["passive","Passive","stays back and keeps out of fights"]];
+const ALLY_STANCE_LINES={aggressive:'{name}: "Say no more." Stance: Aggressive. Anything you can see is now a personal matter.',neutral:'{name}: "I\'ve got your back." Stance: Neutral. They fight whatever fights you.',passive:'{name}: "I\'ll be over here. Supportively." Stance: Passive. They stay out of the fight.'};
+// New companions and companions from older saves start Neutral.
+function allyStance(){const s=game&&game.ally&&game.ally.stance;return s==="aggressive"||s==="passive"?s:"neutral";}
+function allyStanceLabel(){const s=allyStance();return (ALLY_STANCES.find(x=>x[0]===s)||ALLY_STANCES[1])[1];}
+function allyFoes(st){const A=game.ally;return game.enemies.filter(en=>{if(en.isDog||en.hp<=0)return false;const md=Math.abs(en.x-A.x)+Math.abs(en.y-A.y);
+ if(st==="aggressive"){const seen=!!(game.vis&&game.vis[en.y]&&game.vis[en.y][en.x]);return (seen&&md<=ALLY_AGGRO_RANGE)||Math.max(Math.abs(en.x-A.x),Math.abs(en.y-A.y))<=2;}
+ return !!en.hitDad&&md<=ALLY_AGGRO_RANGE;});}
+// Passive: when a creature is within ALLY_PASSIVE_GAP tiles, step to the free neighbouring tile farthest from creatures (ties: closer to Dad); true = it handled its turn.
+function allyKeepClear(){const A=game.ally;const foes=game.enemies.filter(en=>!en.isDog&&en.hp>0);if(!foes.length)return false;
+ const gap=(x,y)=>Math.min.apply(null,foes.map(en=>Math.max(Math.abs(en.x-x),Math.abs(en.y-y))));
+ const cur=gap(A.x,A.y);if(cur>ALLY_PASSIVE_GAP)return false;
+ let best=null,bg=cur,bd=Infinity;for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0]]){const nx=A.x+dx,ny=A.y+dy;if(!canStep(nx,ny))continue;const g=gap(nx,ny),dd=Math.max(Math.abs(nx-game.px),Math.abs(ny-game.py));if(g>bg||(g===bg&&g>cur&&dd<bd)){best=[nx,ny];bg=g;bd=dd;}}
+ if(best){A.x=best[0];A.y=best[1];}return true;}
+// Path for a following companion: like bfsPath, but closed unlocked doors count as passable (it opens them on the way).
+function _allyPath(x0,y0,x1,y1){if(game.traps&&game.traps.some(t=>t.known&&!t.sprung)){const p=_bfsPath(x0,y0,x1,y1,true,true);if(p)return p;}return _bfsPath(x0,y0,x1,y1,false,true);}
+function _allyOpenDoor(d){d.open=true;d.openTurn=game.turn;d.playerWasOn=false;computeVis();if(game.vis&&game.vis[d.y]&&game.vis[d.y][d.x])log(allyName()+" opens the door to keep up. Nobody in this family has ever closed a door behind them.","dim");}
+// Each companion's own helpful ability, tried roughly every 20-30 turns while following (free action; waits until it would actually help).
+function allyAbilityTick(def){const A=game.ally,ab=def.ability;if(!A||!ab)return;
+ if(!(A.abCd>=0))A.abCd=12;if(A.abCd>0){A.abCd--;return;}
+ const inView=en=>!en.isDog&&en.hp>0&&!!(game.vis&&game.vis[en.y]&&game.vis[en.y][en.x]);let used=false;
+ if(ab.kind==="heal"){if(game.hp<game.maxhp*0.7){const n=Math.max(1,Math.round(game.maxhp*ab.pct));game.hp=Math.min(game.maxhp,game.hp+n);log(ab.text.replace("{n}",n),"grn");used=true;}}
+ else if(ab.kind==="snack"){if(Number.isFinite(game.hunger)&&game.hunger>=(game.hungerCap||100)*0.4){game.hunger=Math.max(0,game.hunger-ab.amount);log(ab.text,"grn");used=true;}}
+ else if(ab.kind==="status"){if(game.enemies.some(inView)&&!hasStatus(ab.status)){applyStatus(ab.status,ab.turns);log(ab.text,"grn");used=true;}}
+ else if(ab.kind==="stun"){const t=game.enemies.filter(en=>inView(en)&&!en.isBoss).sort((a,b)=>(Math.abs(a.x-game.px)+Math.abs(a.y-game.py))-(Math.abs(b.x-game.px)+Math.abs(b.y-game.py)))[0];if(t){t.stun=Math.max(t.stun||0,ab.turns);log(ab.text.replace("{foe}",t.def.name),"grn");used=true;}}
+ if(used)A.abCd=ALLY_ABILITY_GAP[0]+Math.floor(Math.random()*(ALLY_ABILITY_GAP[1]-ALLY_ABILITY_GAP[0]+1));}
+// Stance chooser: MORE > COMPANION on phones, the COMPANION button or the O key on desktop. Costs no turn.
+function openStanceMenu(){if(!game||!game.ally||!game.ally.following){log("No companion to brief right now. You give the pep talk to yourself. It goes fine.","dim");syncUI();return;}
+ const cur=allyStance();
+ openMenu("COMPANION STANCE &mdash; "+allyName()+'<br><span class="dim">Now: '+allyStanceLabel()+". Changing it costs no turn.</span>",ALLY_STANCES.map(s=>({label:"<b>"+s[1].toUpperCase()+"</b> &mdash; "+s[2]+(s[0]===cur?" (current)":""),fn:function(){setAllyStance(s[0]);}})));}
+function setAllyStance(s){if(!game||!game.ally||!game.ally.following)return;game.ally.stance=(s==="aggressive"||s==="passive")?s:"neutral";log(ALLY_STANCE_LINES[allyStance()].replace("{name}",allyName()),"grn");saveRun();syncUI();}
 /* MOB-10: when not fighting, the companion stays within ALLY_LEASH tiles (8-way count) of Dad: farther than that, it follows the walkable path
    (not a straight line into a wall) and jogs up to 2 tiles a turn until it is back in range. In range but more than ALLY_LEASH walking steps away
    (the other side of a wall), it takes one step along the path so it does not get left behind the next time Dad moves. */
 function allyCatchUp(){const A=game.ally;const far=()=>Math.max(Math.abs(A.x-game.px),Math.abs(A.y-game.py));
- const step=()=>{const p=bfsPath(A.x,A.y,game.px,game.py);const s=p&&p[0];if(s&&p.length>1&&canStep(A.x+s[0],A.y+s[1])){A.x+=s[0];A.y+=s[1];return true;}return allyStepToward(game.px,game.py);};
- if(far()<=ALLY_LEASH){const p=bfsPath(A.x,A.y,game.px,game.py);if(p?p.length>ALLY_LEASH:Math.abs(A.x-game.px)+Math.abs(A.y-game.py)>ALLY_LEASH)step();return;}
+ const step=()=>{const p=_allyPath(A.x,A.y,game.px,game.py);const s=p&&p[0];if(s&&p.length>1){const nx=A.x+s[0],ny=A.y+s[1],d=doorAt(nx,ny);if(d&&!d.open&&!d.locked){_allyOpenDoor(d);return true;}/* MOB-28 */if(canStep(nx,ny)){A.x=nx;A.y=ny;return true;}}return allyStepToward(game.px,game.py);};
+ if(far()<=ALLY_LEASH){const p=bfsPath(A.x,A.y,game.px,game.py);if(p?p.length>ALLY_LEASH:(Math.abs(A.x-game.px)+Math.abs(A.y-game.py)>ALLY_LEASH||!!_allyPath(A.x,A.y,game.px,game.py)))step();return;}/* MOB-28: a closed door between them in range: keep coming */
  for(let i=0;i<2&&far()>ALLY_LEASH;i++){if(!step())break;}}
 
 
@@ -801,7 +838,7 @@ function hoaFinaleTick(){
   if(R)for(const t of R)log(t,"gold");
  }
 }
-function saveRun(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({clsId:game.cls.id,skin:game.skin||0,seed:game.seed,isDaily:!!game.isDaily,ascent:!!game.ascent,ascentDone:!!game.ascentDone,dailyDate:game.dailyDate||null,depth:game.depth,diffId:game.diff?game.diff.id:"weekend_warrior",hp:game.hp,maxhp:game.maxhp,str:game.str,def:game.def,per:game.per,wis:game.wis,moxie:game.moxie,maxmoxie:game.maxmoxie,level:game.level,xp:game.xp,xpNext:game.xpNext,gold:game.gold,equip:game.equip,inv:game.inv,dadisms:game.dadisms,statuses:game.statuses,inspectPts:game.inspectPts,hydraSlow:game.hydraSlow,kneeChance:game.kneeChance,backChance:game.backChance,px:game.px,py:game.py,ally:game.ally?{defId:game.ally.defId,hp:game.ally.hp,maxhp:game.ally.maxhp,x:game.ally.x,y:game.ally.y,following:!!game.ally.following,questDone:!!game.ally.questDone,questOffered:!!game.ally.questOffered}:null,allyMet:game.allyMet||[],biomesSeen:game.biomesSeen||[],knownRecipes:game.knownRecipes||[],knownConsumables:game.knownConsumables||[],keyring:game.keyring||[],floorCache:game.floorCache||{},kills:game.kills||0,consumed:game.consumed||0,talentPicks:game.talentPicks||0,talents:game.talents||[],foodLuck:game.foodLuck||0,lightStep:!!game.lightStep,foodEaten:game.foodEaten||0,drinksTaken:game.drinksTaken||0,moolahEarned:game.moolahEarned||0,itemsFound:game.itemsFound||0,notesFound:game.notesFound||0,hoaSeen:!!game.hoaSeen,hoaDone:!!game.hoaDone}));}catch(e){}}
+function saveRun(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({clsId:game.cls.id,skin:game.skin||0,seed:game.seed,isDaily:!!game.isDaily,ascent:!!game.ascent,ascentDone:!!game.ascentDone,dailyDate:game.dailyDate||null,depth:game.depth,diffId:game.diff?game.diff.id:"weekend_warrior",hp:game.hp,maxhp:game.maxhp,str:game.str,def:game.def,per:game.per,wis:game.wis,moxie:game.moxie,maxmoxie:game.maxmoxie,level:game.level,xp:game.xp,xpNext:game.xpNext,gold:game.gold,equip:game.equip,inv:game.inv,dadisms:game.dadisms,statuses:game.statuses,inspectPts:game.inspectPts,hydraSlow:game.hydraSlow,kneeChance:game.kneeChance,backChance:game.backChance,px:game.px,py:game.py,ally:game.ally?{defId:game.ally.defId,hp:game.ally.hp,maxhp:game.ally.maxhp,x:game.ally.x,y:game.ally.y,following:!!game.ally.following,questDone:!!game.ally.questDone,questOffered:!!game.ally.questOffered,stance:allyStance()}:null,allyMet:game.allyMet||[],biomesSeen:game.biomesSeen||[],knownRecipes:game.knownRecipes||[],knownConsumables:game.knownConsumables||[],keyring:game.keyring||[],floorCache:game.floorCache||{},kills:game.kills||0,consumed:game.consumed||0,talentPicks:game.talentPicks||0,talents:game.talents||[],foodLuck:game.foodLuck||0,lightStep:!!game.lightStep,foodEaten:game.foodEaten||0,drinksTaken:game.drinksTaken||0,moolahEarned:game.moolahEarned||0,itemsFound:game.itemsFound||0,notesFound:game.notesFound||0,hoaSeen:!!game.hoaSeen,hoaDone:!!game.hoaDone}));}catch(e){}}
 function clearRun(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 function hasSave(){try{return !!localStorage.getItem(SAVE_KEY);}catch(e){return false;}}
 function continueRun(){let s;try{s=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){return false;}if(!s)return false;
