@@ -133,7 +133,7 @@ var elScanPop=document.getElementById("scanpop");
 function showScanPop(x,y){if(!elScanPop||!game)return;const r=inspectAt(x,y)||{t:"Too Dark to Tell",b:"Dad squints at it. It squints back. Get a little closer first."};const t=elScanPop.querySelector(".sp-t"),b=elScanPop.querySelector(".sp-b");if(t)t.innerHTML=r.t;if(b)b.innerHTML=r.b;elScanPop.classList.add("show");if(typeof markDirty==="function")markDirty();}
 function hideScanPop(){if(elScanPop&&elScanPop.classList&&elScanPop.classList.contains("show")){elScanPop.classList.remove("show");if(typeof markDirty==="function")markDirty();return true;}return false;}
 function _m36NoWay(){log("Dad cannot find a way there. To see what it is, tap SCAN, then tap it.","dim");syncUI();}
-document.addEventListener("pointerdown",(ev)=>{if(!hideScanPop())return;const t=ev.target;if(t===canvas||(elScanPop&&elScanPop.contains&&elScanPop.contains(t))){ev.stopPropagation();ev.preventDefault();}},true);
+document.addEventListener("pointerdown",(ev)=>{if(!hideScanPop())return;const t=ev.target;if(t===canvas||(elScanPop&&elScanPop.contains&&elScanPop.contains(t))||(t&&t.closest&&t.closest("#tgtbox"))){/* MOB-08: a tap on the target box only closes the card too */ev.stopPropagation();ev.preventDefault();}},true);
 document.addEventListener("keydown",()=>{hideScanPop();},true);
 function setScanPick(on){scanPick=!!on;try{document.querySelectorAll('#actionbar [data-act="scan"]').forEach(b=>b.classList.toggle("scan-armed",scanPick));}catch(e){}if(typeof markDirty==="function")markDirty();}
 function barAction(a){
@@ -180,3 +180,16 @@ if(oDpad)oDpad.addEventListener("click",(ev)=>{const btn=ev.target.closest("[dat
 try{document.addEventListener("gesturestart",e=>{e.preventDefault();},{passive:false});}catch(e){}
 /* ===== boot ===== */
 fitCanvas();render();syncUI();if(typeof syncMuteBtn==="function")syncMuteBtn();if(typeof syncMotionBtn==="function")syncMotionBtn();
+/* MOB-08: target box. Horizontal swipe (>= M7_SWIPE px) = choose the next (left) or previous (right) enemy;
+   a tap on an arrow does the same; any other tap attacks the chosen enemy (tgtAttack in ui.js). The box sits over
+   the canvas but outside it, so the map's tap/swipe/pinch handlers never see these touches. */
+(function(){const b=document.getElementById("tgtbox");if(!b||!b.addEventListener)return;let p=null;
+ b.addEventListener("pointerdown",(ev)=>{ev.stopPropagation();if(ev.pointerType==="mouse"&&ev.button!==0){p=null;return;}if(!ev.isPrimary){p=null;return;}
+  const ar=ev.target&&ev.target.closest?ev.target.closest("[data-tb]"):null;p={id:ev.pointerId,x:ev.clientX,y:ev.clientY,ar:ar?ar.dataset.tb:null};try{b.setPointerCapture(ev.pointerId);}catch(e){}});
+ b.addEventListener("pointerup",(ev)=>{ev.stopPropagation();const q=p;p=null;if(!q||q.id!==ev.pointerId)return;const dx=ev.clientX-q.x,dy=ev.clientY-q.y;
+  if(Math.abs(dx)>=M7_SWIPE&&Math.abs(dx)>Math.abs(dy)){tgtCycle(dx<0?1:-1);return;}
+  if(Math.hypot(dx,dy)>M7_SLOP*2)return;
+  if(q.ar){tgtCycle(q.ar==="next"?1:-1);return;}
+  tgtAttack();});
+ b.addEventListener("pointercancel",()=>{p=null;});
+ b.addEventListener("contextmenu",(ev)=>{ev.preventDefault();});})();

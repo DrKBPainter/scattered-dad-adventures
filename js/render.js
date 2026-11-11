@@ -423,7 +423,7 @@ function drawWorld(){camX=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,
  if(game.vendor&&game.seen[game.vendor.y][game.vendor.x])drawSprite(SPR_VENDOR,(game.vendor.x-camX)*TILE,(game.vendor.y-camY)*TILE,1);
  if(game.fountains)for(const fn of game.fountains){if(game.seen[fn.y][fn.x]){if(fn.charges>0)drawSprite(SPR_FOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1);else drawSpriteRemap(SPR_FOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1,{'B':'S','b':'s','C':'m'});}}
  if(game.healFountains)for(const fn of game.healFountains){if(game.seen[fn.y][fn.x]){if(fn.charges>0)drawSprite(SPR_HEALFOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1);else drawSpriteRemap(SPR_HEALFOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1,{'r':'m','R':'M','O':'s','o':'m'});}}
- for(const e of game.enemies){if(!game.vis[e.y][e.x])continue;const [px,py]=_jzPos(_J,e,(e.x-camX)*TILE,(e.y-camY)*TILE);drawSprite(e.def.sprite,px,py,1);_jzFlash(_J,e,px,py);if(showEnemyHP(e)){const w=TILE-2;ctx.fillStyle="#3a0d0d";ctx.fillRect(px+1,py-3,w,2);ctx.fillStyle=e.isBoss?"#f0a040":"#5fbf4f";ctx.fillRect(px+1,py-3,Math.max(0,w*e.hp/e.maxhp),2);}}
+ for(const e of game.enemies){if(!game.vis[e.y][e.x])continue;const [px,py]=_jzPos(_J,e,(e.x-camX)*TILE,(e.y-camY)*TILE);drawSprite(e.def.sprite,px,py,1);_jzFlash(_J,e,px,py);if(typeof _tgtMark!=="undefined"&&_tgtMark===e)_tgtDrawMark(px,py);/* MOB-08 */if(showEnemyHP(e)){const w=TILE-2;ctx.fillStyle="#3a0d0d";ctx.fillRect(px+1,py-3,w,2);ctx.fillStyle=e.isBoss?"#f0a040":"#5fbf4f";ctx.fillRect(px+1,py-3,Math.max(0,w*e.hp/e.maxhp),2);}}
  // Draw unrecruited ally on map (solid cyan bar = friendly)
  if(game.ally&&!game.ally.following){const [ax,ay]=_jzAllyPos(_J,(game.ally.x-camX)*TILE,(game.ally.y-camY)*TILE);if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef)drawSprite(adef.sprite,ax,ay,1);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,TILE-2,2);}}
  // Draw active following ally with HP bar
@@ -461,3 +461,5 @@ function inspectAt(x,y){if(x<0||y<0||x>=MAP_W||y>=MAP_H||!game.seen[y][x])return
   "There is a rainbow sheen on this. Someone has been meaning to look into that. That someone is you. You have not looked into it."];return {t:"Standing Water",b:notes[(x*7+y*13)%4]+" You search for the source of the leak. You do not find the source. The search has become the point."};}
  if(game.floor.grid[y][x]===1)return {t:"A Wall",b:"Load-bearing. Probably. Do not test this."};
  return {t:"Floor",b:"Suspiciously ordinary linoleum."};}
+/* MOB-08: gold corner marks on the enemy chosen in the target box (compact layouts only; _tgtMark is null otherwise). */
+function _tgtDrawMark(x,y){const t=TILE,l=4;ctx.fillStyle="#f4c430";ctx.fillRect(x,y,l,1);ctx.fillRect(x,y,1,l);ctx.fillRect(x+t-l,y,l,1);ctx.fillRect(x+t-1,y,1,l);ctx.fillRect(x,y+t-1,l,1);ctx.fillRect(x,y+t-l,1,l);ctx.fillRect(x+t-l,y+t-1,l,1);ctx.fillRect(x+t-1,y+t-l,1,l);}

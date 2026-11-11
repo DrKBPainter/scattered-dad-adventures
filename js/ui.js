@@ -29,7 +29,7 @@ function syncUI(){
 /* ===== overlays ===== */
 const oI=document.getElementById("ovInstr"),oInv=document.getElementById("ovInv"),oD=document.getElementById("ovDad"),oShop=document.getElementById("ovShop"),oB=document.getElementById("ovBest"),oMap=document.getElementById("ovMap"),oCodex=document.getElementById("ovCodex"),oGrave=document.getElementById("ovGrave"),cf=document.getElementById("confirm"),cfT=document.getElementById("cf-text"),cfBtns=document.getElementById("cf-btns");
 const elStat=document.getElementById("statline"),elStatuses=document.getElementById("statuses"),elLog=document.getElementById("log");
-function syncOverlays(){oI.classList.toggle("show",ovInstr);oInv.classList.toggle("show",ovInv);oD.classList.toggle("show",ovDad);oShop.classList.toggle("show",shopOpen);oB.classList.toggle("show",ovBest);oMap.classList.toggle("show",ovMap);oCodex.classList.toggle("show",ovCodex);oGrave.classList.toggle("show",ovGrave);cf.classList.toggle("show",!!pendingConfirm||!!pendingMenu);const _oc=document.getElementById("ovClose");if(_oc)_oc.style.display=(ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave)&&!pendingConfirm&&!pendingMenu?"block":"none";syncDpad();syncActionBar();syncAimBar();_m9Body();}
+function syncOverlays(){oI.classList.toggle("show",ovInstr);oInv.classList.toggle("show",ovInv);oD.classList.toggle("show",ovDad);oShop.classList.toggle("show",shopOpen);oB.classList.toggle("show",ovBest);oMap.classList.toggle("show",ovMap);oCodex.classList.toggle("show",ovCodex);oGrave.classList.toggle("show",ovGrave);cf.classList.toggle("show",!!pendingConfirm||!!pendingMenu);const _oc=document.getElementById("ovClose");if(_oc)_oc.style.display=(ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave)&&!pendingConfirm&&!pendingMenu?"block":"none";syncDpad();syncActionBar();syncAimBar();_m9Body();syncTgtBox();/* MOB-08 */}
 // Overlay-open shared by the I/K/M/H/B/J keys and the on-screen action-bar panel buttons.
 // Opens the named overlay via the SAME closeOverlays()+build+syncOverlays() path the keys use, so behaviour is identical.
 function openOverlayByName(name){
@@ -468,3 +468,54 @@ function m16PaintStrips(root){try{if(!root||!root.querySelectorAll)return;root.q
   const dad=(typeof dadSprite==="function")?dadSprite():null;spr(dad,32,32,(typeof skinColorMap==="function")?skinColorMap():null);
   const boss=(typeof BOSSES!=="undefined")?BOSSES.find(function(b){return b.floor===d+9;}):null;if(boss)spr(boss.sprite,256,32);
   const g=cx.createLinearGradient(0,0,0,64);g.addColorStop(0,"rgba(0,0,0,.35)");g.addColorStop(.5,"rgba(0,0,0,0)");cx.fillStyle=g;cx.fillRect(0,0,320,64);});}catch(e){}}
+/* ===== MOB-08: target box (compact layouts only) =====
+   Lists the enemies Dad can hit right now with his weapon: whatever stands on one of the 8 neighbouring tiles, plus
+   reach-weapon targets further along a straight line. The rules mirror tryMove() exactly (walls, closed doors, the
+   vendor, fountains and an enemy in between all block), so tapping the box attacks with the same step a swipe in that
+   direction would make. Swipe the box left/right (or tap its arrows) to choose; tap it to attack. Visible enemies only;
+   the family dog is never a target. The chosen enemy gets gold corner marks on the map (render.js _tgtDrawMark).
+   Desktop never shows the box. Nothing here is saved. */
+var _tgtSel=null,_tgtMark=null,_tgtKey="";
+const TGT_DIRS=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+function tgtTargets(){if(!game||!game.floor||!game.enemies||!game.enemies.length)return[];const G=game.floor.grid,out=[],wr=weaponReach();
+ for(const D of TGT_DIRS){const dx=D[0],dy=D[1],nx=game.px+dx,ny=game.py+dy;
+  if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||G[ny][nx]===1)continue;
+  const dr=doorAt(nx,ny);if(dr&&!dr.open)continue;
+  if(game.vendor&&game.vendor.x===nx&&game.vendor.y===ny)continue;
+  if(game.fountains&&game.fountains.some(f=>f.x===nx&&f.y===ny))continue;
+  if(game.healFountains&&game.healFountains.some(f=>f.x===nx&&f.y===ny))continue;
+  let hit=game.enemies.find(z=>z.x===nx&&z.y===ny),r=1;
+  if(!hit&&wr>1){for(let k=2;k<=wr;k++){const rx=game.px+dx*k,ry=game.py+dy*k;
+    if(rx<0||ry<0||rx>=MAP_W||ry>=MAP_H||G[ry][rx]===1)break;
+    if(k>2){const mx=game.px+dx*(k-1),my=game.py+dy*(k-1);if(G[my][mx]===1)break;const md=doorAt(mx,my);if(md&&!md.open)break;if(game.enemies.some(z=>z.x===mx&&z.y===my))break;}
+    const re=game.enemies.find(z=>z.x===rx&&z.y===ry);if(re){hit=re;r=k;break;}}}
+  if(!hit||hit.isDog)continue;
+  if(!(game.vis&&game.vis[hit.y]&&game.vis[hit.y][hit.x]))continue;
+  out.push({e:hit,dx:dx,dy:dy,r:r});}
+ out.sort((a,b)=>a.r-b.r);/* nearest first; ties keep clockwise-from-north order */
+ return out;}
+function _tgtBusy(){return !!(ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen||pendingConfirm||pendingMenu||aiming||placing);}
+function _tgtSpr(cv,spr){if(!cv||!cv.getContext||!spr)return;const cx=cv.getContext("2d");if(!cx)return;cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.height);if(_uiSprImg(cx,spr,cv.width,cv.height))return;
+ const s=Math.max(1,Math.floor(cv.width/spr.length));for(let y=0;y<spr.length;y++){const row=spr[y];for(let x=0;x<row.length;x++){const col=PAL[row[x]];if(!col)continue;cx.fillStyle=col;cx.fillRect(x*s,y*s,s,s);}}}
+function syncTgtBox(){const b=document.getElementById("tgtbox");if(!b||!b.classList)return;
+ const on=(typeof COMPACT!=="undefined"&&COMPACT)&&mode===State.PLAY&&!!game&&!_tgtBusy();
+ const L=on?tgtTargets():[];const was=_tgtMark;
+ if(!L.length){_tgtMark=null;b.classList.toggle("show",false);_tgtKey="";if(was&&typeof markDirty==="function")markDirty();return;}
+ let i=L.findIndex(t=>t.e===_tgtSel);if(i<0){i=0;_tgtSel=L[0].e;}
+ const e=L[i].e;_tgtMark=e;const known=showEnemyHP(e),hp=Math.max(0,e.hp),mx=e.maxhp||1;
+ const key=[i,L.length,e.def.id,known?hp:"?",mx,e.isBoss?1:0].join("|");
+ if(key!==_tgtKey){_tgtKey=key;const many=L.length>1;
+  b.classList.toggle("tb-boss",!!e.isBoss);
+  b.innerHTML='<div class="tb-h">'+(e.isBoss?'BOSS IN REACH':'IN REACH')+(many?' <span class="tb-n">'+(i+1)+'/'+L.length+'</span>':'')+'</div>'
+   +'<div class="tb-row">'+(many?'<span class="tb-ar" data-tb="prev" aria-label="Previous target">&#8249;</span>':'')+'<canvas class="tb-spr" width="32" height="32"></canvas>'+(many?'<span class="tb-ar" data-tb="next" aria-label="Next target">&#8250;</span>':'')+'</div>'
+   +'<div class="tb-nm">'+e.def.name+'</div>'
+   +'<div class="tb-hp"><i style="width:'+(known?Math.round(100*hp/mx):100)+'%"'+(known?'':' class="tb-unk"')+'></i></div>'
+   +'<div class="tb-hpt">HP '+(known?hp+'/'+mx:'?')+'</div>'
+   +'<div class="tb-go">TAP TO ATTACK'+(many?' &middot; SWIPE TO CHOOSE':'')+'</div>';
+  if(b.querySelector)_tgtSpr(b.querySelector(".tb-spr"),e.def.sprite);}
+ b.classList.toggle("show",true);
+ if(was!==e&&typeof markDirty==="function")markDirty();}
+function tgtCycle(n){const L=tgtTargets();if(L.length<2){syncTgtBox();return;}let i=L.findIndex(t=>t.e===_tgtSel);if(i<0)i=0;_tgtSel=L[((i+n)%L.length+L.length)%L.length].e;syncTgtBox();}
+function tgtAttack(){if(mode!==State.PLAY||!game||_tgtBusy())return;const L=tgtTargets();const t=L.find(x=>x.e===_tgtSel)||L[0];if(!t){syncTgtBox();return;}_tgtSel=t.e;
+ if(typeof scanPick!=="undefined"&&scanPick&&typeof setScanPick==="function")setScanPick(false);
+ game.clickPath=[];game.clickDoor=null;clearMouseInspect();tryMove(t.dx,t.dy);syncUI();}
