@@ -449,6 +449,14 @@ body.m-land #tgtbox .tb-go{display:none;} #scanpop .sp-t{color:var(--gold);font-
   body.m-compact .cdx-tabs{gap:6px;}
   body.m-compact .cdx-tab{min-height:40px;padding:4px 10px;font-size:12px;}
   body.m-compact .cdx-ds{overflow-wrap:anywhere;}
+  /* MOB-14: Codex flip cards on phones (built by ui.js _m14Body; reuses the Bestiary .bc-* card CSS above, js/bestcards.js unchanged) */
+  #ovCodex .cdx-bc{--comic:Impact,Haettenschweiler,'Avenir Next Condensed','Arial Narrow Bold',sans-serif-condensed,'Arial Black',sans-serif;margin-top:4px;}
+  #ovCodex .cx-hint{font-size:11px;margin:-4px 0 8px;}
+  #ovCodex .cx-combo{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px 4px;margin:0 0 5px;text-align:center;}
+  #ovCodex .cx-combo b{background:#fff;border:1.5px solid #000;padding:1px 4px;line-height:1.15;}
+  #ovCodex .cx-combo b.cx-out{background:#ffe14a;}
+  #ovCodex .cx-combo i{font-style:normal;font-family:var(--comic);font-weight:900;font-size:1.3em;}
+  #ovCodex .bc-stats{margin-bottom:2px;}
   /* Map fits the phone width. */
   body.m-compact #mapcv{max-width:100%;height:auto;}
 </style>

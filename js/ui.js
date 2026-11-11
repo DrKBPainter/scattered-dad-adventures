@@ -207,6 +207,66 @@ function buildShop(){const v=game.vendor.def;let h='<h1>'+v.name+'</h1><p class=
 
 /* ===== DAD'S COMPENDIUM (Codex) ===== */
 const CODEX_TABS=["Weapons","Armor","Charms","Consumables","Creatures","Bosses","Recipes"];
+/* MOB-14: on phones (compact layouts) every Codex tab is a grid of comic flip cards in the Bestiary look (.bc-* CSS;
+   js/bestcards.js itself is not changed). Front: number, tag, picture, name banner. Tap flips to the back: stat boxes,
+   details, description. Recipes: the result's name on the front, the combination on the back. Entries not yet met
+   (MOB-07 rules) are dark "?" cards that do not flip. Desktop keeps the original Codex list. Nothing is saved. */
+var _m14Sprs=[];
+var M14_PAL={weapon:{top:'#2a1a10',bot:'#4a2c18',acc:'#d97a2b'},armor:{top:'#0a1a2e',bot:'#14304e',acc:'#5fa8e0'},charm:{top:'#1a0a2a',bot:'#341650',acc:'#b06fd0'},cons:{top:'#062a10',bot:'#0e4a1e',acc:'#9be88a'},recipe:{top:'#2a2008',bot:'#4a3810',acc:'#f4c430'},beast:{top:'#2a1a10',bot:'#4a2c18',acc:'#d97a2b'}};
+function _m14On(){return typeof COMPACT!=="undefined"&&!!COMPACT;}
+function _m14Stats(st){if(!st.length)return '';const n=Math.min(4,st.length);const wide=st.some(s=>String(s[0]).length>4);const cols=wide?Math.min(2,n):n;
+ return '<div class="bc-stats" style="grid-template-columns:repeat('+cols+',1fr)">'+st.map(s=>'<div class="bc-st"><b>'+s[1]+'</b><span>'+s[0]+'</span></div>').join('')+'</div>';}
+function _m14Card(e,i){const no='No. '+(i+1);
+ if(!e.met)return '<div class="bc-card bc-und"><div class="bc-face bc-front"><div class="bc-mast"><span>'+no+'</span><span>'+(e.utag||'???')+'</span></div><div class="bc-art"><span class="bc-q">?</span><span class="bc-stamp">'+e.stamp+'</span></div><div class="bc-name">? ? ?</div></div></div>';
+ const p=e.pal||M14_PAL.weapon;const k=_m14Sprs.length;_m14Sprs.push(e.spr||null);
+ return '<div class="bc-card'+(e.boss?' bc-boss':'')+'" data-cx="'+i+'" style="--dc-top:'+p.top+';--dc-bot:'+p.bot+';--dc-acc:'+p.acc+'"><div class="bc-inner">'
+  +'<div class="bc-face bc-front"><div class="bc-mast"><span>'+no+'</span><span class="bc-where">'+e.tag+'</span></div>'
+   +'<div class="bc-art"><canvas class="bc-spr" width="64" height="64" data-cxspr="'+k+'"></canvas>'+(e.boss?'<div class="bc-burst"><span>BOSS!</span></div>':'')+'</div>'
+   +'<div class="bc-name">'+e.name+'</div></div>'
+  +'<div class="bc-face bc-back"><div class="bc-bhead">'+e.name+'</div><div class="bc-bbody">'
+   +(e.combo||'')+_m14Stats(e.stats||[])
+   +(e.lines&&e.lines.length?'<div class="bc-seen">'+e.lines.join(' &middot; ')+'</div>':'')
+   +(e.flav?'<div class="bc-flav">'+e.flav+'</div>':'')+'</div></div>'
+ +'</div></div>';}
+function _m14ItemName(id){const f=x=>x.id===id;const it=(typeof CONSUMABLES!=="undefined"&&CONSUMABLES.find(f))||(typeof OBJECTS!=="undefined"&&OBJECTS.find(f))||WEAPONS.find(f)||ARMORS.find(f)||CHARMS.find(f);return it?it.name:id;}
+function _m14OutSpr(o){if(o.sprite)return o.sprite;const f=x=>x.id===o.id;const src=o.kind==="weapon"?WEAPONS:o.kind==="armor"?ARMORS:o.kind==="charm"?CHARMS:(typeof CONSUMABLES!=="undefined"?CONSUMABLES:[]);const it=src.find(f);
+ if(it&&it.sprite)return it.sprite;return typeof lootSprite==="function"?lootSprite(o):null;}
+function _m14Body(tab,gHas){_m14Sprs=[];let list=[],head='';
+ const cnt=(arr,fn)=>arr.filter(fn).length;
+ if(tab===0){head='Found: '+cnt(WEAPONS,w=>gHas("weapon",w.id))+' / '+WEAPONS.length+'. Retained across all runs, as in the Bestiary. The rest: somewhere out there, in a garage, they wait.';
+  list=WEAPONS.map(w=>{if(!gHas("weapon",w.id))return {met:false,stamp:'NOT YET<br>FOUND',utag:'WEAPON'};
+   const st=[['ATK',w.atk]];if(w.reach&&w.reach>1)st.push(['REACH',w.reach]);if(w.throw){st.push(['THROW',w.throw.dmg]);st.push(['TILES',(w.throw.range||8)]);}
+   const rar=w.baseRarity||'Common';return {met:true,pal:M14_PAL.weapon,tag:'WEAPON',name:w.name,spr:w.sprite,stats:st,lines:[rar+(w.throw?' &middot; throwable':'')],flav:w.desc,boss:false};});}
+ else if(tab===1||tab===2){const arm=tab===1,arr=arm?ARMORS:CHARMS,kind=arm?"armor":"charm";
+  head='Found: '+cnt(arr,x=>gHas(kind,x.id))+' / '+arr.length+'. Retained across all runs, as in the Bestiary. '+(arm?'The rest: possibly in the back of a closet. Possibly still in the box.':'The rest: rumored to exist. So is a clean junk drawer.');
+  list=arr.map(a=>{if(!gHas(kind,a.id))return {met:false,stamp:'NOT YET<br>FOUND',utag:arm?'ARMOR':'CHARM'};
+   const st=[];if(a.def)st.push(['DEF','+'+a.def]);if(a.atk)st.push(['ATK','+'+a.atk]);if(a.per)st.push(['PER','+'+a.per]);if(a.wis)st.push(['WIS','+'+a.wis]);if(a.cap)st.push(['SLOTS','+'+a.cap]);
+   const where=arm?a.slot:a.wear;const ln=[(arm?'Slot: ':'Worn: ')+where];if(st.length>4)ln.push(st.slice(4).map(s=>s[0]+' '+s[1]).join(', '));
+   return {met:true,pal:arm?M14_PAL.armor:M14_PAL.charm,tag:(arm?'ARMOR':'CHARM')+' &middot; '+String(where||'').toUpperCase(),name:a.name,spr:a.sprite||(typeof lootSprite==="function"?lootSprite(a):null),stats:st.slice(0,4),lines:ln,flav:a.desc};});}
+ else if(tab===3){const kc=(typeof game!=="undefined"&&game&&game.knownConsumables)||[];
+  head='Identified this run: '+cnt(CONSUMABLES,c=>kc.includes(c.id))+' / '+CONSUMABLES.length+'. Forgotten at the start of every run, like the grocery list. Consume one or read the manual. Nobody reads the manual.';
+  list=CONSUMABLES.map(c=>{if(!kc.includes(c.id))return {met:false,stamp:'NOT YET<br>IDENTIFIED',utag:'CONSUMABLE'};
+   const st=[];if(c.heal)st.push(['HP','+'+c.heal]);if(c.nourish)st.push(['NOURISH',c.nourish]);if(c.hydrate)st.push(['HYDRATE',c.hydrate]);if(c.moxie)st.push(['PATIENCE','+'+c.moxie]);
+   const ln=[];if(c.cures)ln.push('Cures: '+c.cures.join('/'));if(c.causes)ln.push('Causes: '+c.causes);if(c.alcohol)ln.push('Alcohol');if(c.throw)ln.push('Throwable ('+c.throw.dmg+' dmg)');if(!st.length&&!ln.length)ln.push('No effect');
+   return {met:true,pal:M14_PAL.cons,tag:'CONSUMABLE',name:c.name,spr:c.sprite||(typeof lootSprite==="function"?lootSprite(c):null),stats:st,lines:ln,flav:c.desc};});}
+ else if(tab===4||tab===5){const boss=tab===5,arr=boss?BOSSES:CREATURES;
+  head='Logged: '+cnt(arr,c=>discovered[c.id])+' / '+arr.length+'. Retained across all runs, as in the Bestiary.';
+  list=arr.map(c=>{const d=discovered[c.id];if(!d)return {met:false,stamp:'NOT YET<br>ENCOUNTERED',utag:boss?'BOSS':'???'};
+   const cfg=(typeof _bcCfg==="function")?_bcCfg(c):M14_PAL.beast;
+   return {met:true,boss:boss,pal:cfg,tag:boss?('FLOOR '+c.floor):(cfg.tag||esc(c.biome||'')),name:esc(c.name),spr:c.sprite,stats:[['HP',c.hp],['ATK',c.atk],['DEF',c.def],['XP',c.xp]],
+    lines:['Seen <b>'+d.count+'&times;</b>','first on floor <b>'+d.firstFloor+'</b>'].concat(c.pack?['travels in packs']:[]),flav:esc(c.flavor||'')};});}
+ else{const known=(typeof game!=="undefined"&&game&&game.knownRecipes)?game.knownRecipes:[];const R=(typeof RECIPES!=="undefined"&&RECIPES)||[];
+  const shown=r=>known.includes(r.a+"+"+r.b)||r.desc.includes("(Grillmaster")||!!r.classes||!!r.lock;
+  head='Known: '+cnt(R,shown)+' / '+R.length+'. The rest are hidden until you find a YallTube DIY Video.';
+  list=R.map(r=>{if(!shown(r))return {met:false,stamp:'FIND A<br>YALLTUBE VIDEO',utag:'RECIPE'};
+   const o=r.out,ln=[];const who=r.lock?CLASSES.find(c=>c.id===r.lock).name:r.classes?r.classes.map(id=>CLASSES.find(c=>c.id===id).name).join('/'):'';
+   if(who)ln.push(who+' only');ln.push('Makes: '+(o.kind||'item'));
+   const st=[];if(o.atk)st.push(['ATK',o.atk]);if(o.def)st.push(['DEF','+'+o.def]);if(o.heal)st.push(['HP','+'+o.heal]);if(o.throw)st.push(['THROW',o.throw.dmg]);
+   return {met:true,pal:M14_PAL.recipe,tag:who?'RECIPE &middot; '+who.toUpperCase():'RECIPE',name:o.name,spr:_m14OutSpr(o),
+    combo:'<div class="cx-combo"><b>'+_m14ItemName(r.a)+'</b><i>+</i><b>'+_m14ItemName(r.b)+'</b><i>=</i><b class="cx-out">'+o.name+'</b></div>',stats:st.slice(0,4),lines:ln,flav:o.desc||r.desc};});}
+ return '<p class="dim">'+head+'</p><p class="dim cx-hint">Tap a card to flip it.</p><div class="bc-grid cdx-bc">'+list.map(_m14Card).join('')+'</div>';}
+function _m14Paint(host,draw){host.querySelectorAll('canvas[data-cxspr]').forEach(cv=>{const s=_m14Sprs[+cv.dataset.cxspr];if(s)draw(cv,s);});
+ if(!host._cxWired){host._cxWired=true;host.addEventListener('click',ev=>{const card=ev.target.closest&&ev.target.closest('.bc-card[data-cx]');if(card&&host.contains(card))card.classList.toggle('flipped');});}}
 function buildCodex(){
  /* ---- sprite renderer helper (works for 16x16 and 32x32) ---- */
  function renderSpr(cv,spr){
@@ -229,7 +289,9 @@ function buildCodex(){
  const _gHead=(list,kind)=>'<p class="dim">Found: '+list.filter(x=>_gHas(kind,x.id)).length+' / '+list.length+'. Retained across all runs, as in the Bestiary.</p>';
  const _gUnk=(what,line)=>'<div class="cdx-card cdx-unk" style="opacity:.5"><canvas class="cdx-ic" width="64" height="64"></canvas><div class="cdx-nm">??? ? ?</div><div class="cdx-st">'+what+' not yet found</div><div class="cdx-ds">'+line+'</div></div>';
  /* ---- content per tab ---- */
- if(codexTab===0){/* Weapons */
+ const _m14=_m14On();
+ if(_m14){h+=_m14Body(codexTab,_gHas);}
+ else if(codexTab===0){/* Weapons */
   h+=_gHead(WEAPONS,"weapon");
   h+='<div class="cdx-grid cdx-grid-item">';
   WEAPONS.forEach(w=>{
@@ -349,8 +411,9 @@ function buildCodex(){
   });}
   h+='</div>';
  }
- h+='</div><p class="dim" style="margin-top:8px">1-7 switch tab &bull; J or Esc close &bull; Scroll to browse</p>';
+ h+=_m14?'</div>':'</div><p class="dim" style="margin-top:8px">1-7 switch tab &bull; J or Esc close &bull; Scroll to browse</p>';
  oCodex.innerHTML=h;
+ if(_m14)_m14Paint(oCodex,renderSpr);
  /* ---- render weapon sprites (32x32) ---- */
  oCodex.querySelectorAll('canvas[data-spr-wpn]').forEach(cv=>{
   const w=WEAPONS.find(x=>x.id===cv.dataset.sprWpn);
