@@ -435,11 +435,12 @@ function drawWorld(){camX=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,
 /* M7: touch aiming preview. aimTgt is set by a tap/swipe while aiming/placing; the aim bar CONFIRM fires it. */
 function drawAimPreview(){if(typeof aimTgt==="undefined"||!aimTgt||!(aiming||placing)||!game)return;
  ctx.fillStyle="rgba(244,196,48,0.22)";ctx.strokeStyle="#f4c430";ctx.lineWidth=2;let last=null;
- if(aiming){const rg=(throwRef&&throwRef.it&&throwRef.it.throw&&throwRef.it.throw.range)||8;let x=game.px,y=game.py;
-  for(let i=0;i<rg;i++){x+=aimTgt.dx;y+=aimTgt.dy;if(x<0||y<0||x>=MAP_W||y>=MAP_H||game.floor.grid[y][x]===1)break;const dr=doorAt(x,y);if(dr&&!dr.open)break;
+ let _over=false;if(aiming){const _tl=throwRef?throwLine(throwRef.it,aimTgt.dx,aimTgt.dy,aimTgt.x,aimTgt.y):{cells:[],over:false};_over=_tl.over;let x=game.px,y=game.py;
+  for(const _c of _tl.cells){x=_c.x;y=_c.y;if(x<0||y<0||x>=MAP_W||y>=MAP_H||game.floor.grid[y][x]===1)break;const dr=doorAt(x,y);if(dr&&!dr.open)break;
    ctx.fillRect((x-camX)*TILE,(y-camY)*TILE,TILE,TILE);last={x:x,y:y};if(game.vis[y]&&game.vis[y][x]&&game.enemies.some(e=>e.x===x&&e.y===y))break;}}
  else{const x=game.px+aimTgt.dx,y=game.py+aimTgt.dy;ctx.fillRect((x-camX)*TILE,(y-camY)*TILE,TILE,TILE);last={x:x,y:y};}
- if(last)ctx.strokeRect((last.x-camX)*TILE+1,(last.y-camY)*TILE+1,TILE-2,TILE-2);}
+ if(last)ctx.strokeRect((last.x-camX)*TILE+1,(last.y-camY)*TILE+1,TILE-2,TILE-2);
+ if(_over&&aimTgt.x!==undefined){ctx.strokeStyle="#e05050";ctx.strokeRect((aimTgt.x-camX)*TILE+3,(aimTgt.y-camY)*TILE+3,TILE-6,TILE-6);}}
 function drawFX(){for(let i=game.fx.length-1;i>=0;i--){const f=game.fx[i];if(f.kind==="proj"){const idx=Math.min(Math.floor(f.i/2),f.cells.length-1);const c=f.cells[idx];if(c)drawSprite(f.spr,(c.x-camX)*TILE,(c.y-camY)*TILE,1);f.i++;if(f.i>=f.life)game.fx.splice(i,1);}else if(f.kind==="pulse"){const prog=f.t/f.life;const rad=prog*f.r;ctx.globalAlpha=Math.max(0,0.85*(1-prog));ctx.fillStyle="#7fd0ff";for(let a=0;a<360;a+=10){const x=f.cx+Math.cos(a*Math.PI/180)*rad,y=f.cy+Math.sin(a*Math.PI/180)*rad;ctx.fillRect((x-camX)*TILE+TILE/2-1,(y-camY)*TILE+TILE/2-1,2,2);}ctx.globalAlpha=1;f.t++;if(f.t>=f.life)game.fx.splice(i,1);}else{const a=0.5*(1-f.t/f.life);ctx.fillStyle=f.color;ctx.globalAlpha=Math.max(0,a);for(const c of f.cells){if(c.x>=camX&&c.y>=camY)ctx.fillRect((c.x-camX)*TILE,(c.y-camY)*TILE,TILE,TILE);}ctx.globalAlpha=1;f.t++;if(f.t>=f.life)game.fx.splice(i,1);}}}
 /* ===== inspect ===== */
 function qualHP(e){const f=e.hp/e.maxhp;return f>0.75?"barely scratched":f>0.4?"roughed up":f>0.15?"badly hurt":"about to drop";}

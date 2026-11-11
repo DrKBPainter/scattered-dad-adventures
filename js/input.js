@@ -9,7 +9,7 @@ function tileFromEvent(ev){const r=canvas.getBoundingClientRect();const sx=(VIEW
 function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  // Mouse aiming (handled BEFORE the overlay guard). Click a tile to set throw direction / trap tile.
  // Esc or the on-screen CANCEL button aborts; keyboard aiming path stays intact.
- if(aiming){const t=tileFromEvent(ev);const dx=Math.sign(t.x-game.px),dy=Math.sign(t.y-game.py);if(dx===0&&dy===0){log("Aim away from yourself — click a tile in the throw direction.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();doThrow(dx,dy);return;}
+ if(aiming){const t=tileFromEvent(ev);const dx=Math.sign(t.x-game.px),dy=Math.sign(t.y-game.py);if(dx===0&&dy===0){log("Aim away from yourself — click a tile in the throw direction.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();doThrow(dx,dy,t.x,t.y);return;}
  if(placing){const t=tileFromEvent(ev);const dx=t.x-game.px,dy=t.y-game.py;if(Math.max(Math.abs(dx),Math.abs(dy))!==1){log("Traps go on an adjacent tile — click a square right next to you.","dim");return;}if(touchy){_m7SetAim(dx,dy,t.x,t.y);return;}clearMouseInspect();placeTrap(dx,dy);return;}
  if(pendingConfirm||pendingMenu||ovInv||ovDad||ovBest||ovInstr||ovMap)return;const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;
  if(scanPick){setScanPick(false);if(game){game.clickPath=[];game.clickDoor=null;}clearMouseInspect();showScanPop(x,y);return;}// MOB-36: armed SCAN, this tap identifies the tile in a pop-up (no turn)
@@ -41,7 +41,7 @@ function _m7Dir(dx,dy){const o=Math.round(Math.atan2(dy,dx)/(Math.PI/4));const D
 function _m7SetAim(dx,dy,tx,ty){aimTgt={dx:dx,dy:dy,x:tx,y:ty};clearMouseInspect();if(typeof markDirty==="function")markDirty();syncAimBar();}
 function _m7Swipe(dx,dy){if(mode!==State.PLAY||_m7Busy()||!game)return;
  if(scanPick)setScanPick(false);
- if(aiming||placing){_m7SetAim(dx,dy,game.px+dx,game.py+dy);return;}
+ if(aiming||placing){const _r=(aiming&&throwRef)?throwRange(throwRef.it):1;_m7SetAim(dx,dy,game.px+dx*_r,game.py+dy*_r);return;}
  game.clickPath=[];clearMouseInspect();tryMove(dx,dy);}
 function _m7End(){const p=_m7P;if(p&&p.timer)clearTimeout(p.timer);_m7P=null;}
 /* MOB-04: two fingers on the map = pinch zoom. Fingers together = zoom out, apart = zoom in (one ZOOM_STEPS step per 25% change in spread).
@@ -164,7 +164,7 @@ if(oClose)oClose.addEventListener("click",()=>{closeOverlays();if(inspectOn&&typ
 // Aim/place CANCEL bar: clears aiming/placing (same effect as pressing Esc) and refreshes the HUD.
 const oAim=document.getElementById("aimbar");
 if(oAim)oAim.addEventListener("click",(ev)=>{const btn=ev.target.closest("[data-aim]");if(!btn)return;
- if(btn.dataset.aim==="confirm"){const t=aimTgt;aimTgt=null;if(t){clearMouseInspect();if(aiming)doThrow(t.dx,t.dy);else if(placing)placeTrap(t.dx,t.dy);}syncUI();return;}// M7: fire the tapped target
+ if(btn.dataset.aim==="confirm"){const t=aimTgt;aimTgt=null;if(t){clearMouseInspect();if(aiming)doThrow(t.dx,t.dy,t.x,t.y);else if(placing)placeTrap(t.dx,t.dy);}syncUI();return;}// M7: fire the tapped target
  if(aiming){aiming=false;throwRef=null;log("Throw cancelled.","dim");}
  else if(placing){placing=false;placeRef=null;log("Placement cancelled.","dim");}
  syncUI();});
