@@ -51,6 +51,7 @@ All files are plain-text mirrors of the arrays in `js/data.js`. Edit `js/data.js
 | `game.js` | Core game logic: floor generation, combat, creature spawning, turn management, save/load. |
 | `input.js` | Keyboard and mouse input handlers. |
 | `share.js` | M18: Share the Game sheet (QR code + link + Copy/Share), `openShare()`. Loaded after durable.js. |
+| `feedback.js` | MOB-42: Send Feedback sheet, `openFeedback()`: opens the Google Form with game version, build, floor, Dad class and screen size prefilled (`FEEDBACK_FORM`). Loaded after share.js. |
 | `render.js` | Tile-based canvas renderer. Handles map drawing, fog of war, and visual effects. |
 | `sprites.js` | Sprite definitions and ASCII/tile character mappings. |
 | `spriteimg.js` | N21: loads PNG sprite sheets listed in `assets/sprites/atlas.js` and registers them with the renderer (ASCII sprites stay the fallback; `?ascii` forces ASCII). |
@@ -107,6 +108,7 @@ All files are plain-text mirrors of the arrays in `js/data.js`. Edit `js/data.js
 | `tools_export_data.js` | Export script: reads `js/data.js` arrays and writes the mirrored `.txt` files in `/data/`. Run via Node.js when data arrays change. |
 | `tools_make_atlas.js` | M13: generates the upgraded PNG sprite sheets (outline + shading from the ASCII sprites) and `assets/sprites/atlas.js`. `--check` verifies, `--list` shows groups, `--preview DIR` writes before/after images. M14 adds the `tiles` group (per-biome floor/wall variants, wall edge + floor shade overlays, water, doors/stairs). |
 | `tools_make_qr.js` | M18: writes the Share sheet QR code `assets/ui/qr-share.png` for the public URL (pure Node QR encoder, deterministic). `--check` verifies the PNG and that `js/share.js` uses the same URL. |
+| `tools_feedback_form.gs` | MOB-42: Google Apps Script that rebuilds the feedback Google Form + response Sheet and logs the `FEEDBACK_FORM` config (backup only; the live form already exists). |
 | `tools_make_ui.js` | M16: writes the 9-slice UI frames `assets/ui/frame-panel.png` and `frame-gold.png` (pure Node, deterministic). `--check` verifies. |
 
 ---

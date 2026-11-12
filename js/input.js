@@ -102,6 +102,7 @@ function doTitleAction(a){
   else if(a==="grave"){closeOverlays();ovGrave=true;buildGraveyard();syncOverlays();}
   else if(a==="backup"){if(typeof openSaveBackup==="function")openSaveBackup();}
   else if(a==="share"){if(typeof openShare==="function")openShare();}
+  else if(a==="feedback"){if(typeof openFeedback==="function")openFeedback();}
 }
 // Title / class / difficulty / end-screen options: click the same rows the keys trigger.
 elLog.addEventListener("click",(ev)=>{
@@ -112,6 +113,7 @@ elLog.addEventListener("click",(ev)=>{
   if(a==="title"){mode=State.TITLE;messages=[];syncUI();}
   else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
   else if(a==="share"){if(typeof openShare==="function")openShare();}
+  else if(a==="feedback"){if(typeof openFeedback==="function")openFeedback();}
   else if(a==="ascent"&&mode===State.WIN&&!game.ascentDone&&!game.ascent&&typeof startAscent==="function"){startAscent();}
   return;}
 });
@@ -145,6 +147,7 @@ function barAction(a){
  if(a==="more"){setMoreOpen(!_m8More);return;}
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
  if(a==="share"){setMoreOpen(false);if(typeof openShare==="function")openShare();return;}
+ if(a==="feedback"){setMoreOpen(false);if(typeof openFeedback==="function")openFeedback();return;}
  if(a==="barcfg"){setMoreOpen(false);if(typeof openBarCfg==="function")openBarCfg(true);return;}
  if(a!=="pad")setMoreOpen(false);
  if(a!=="scan"&&scanPick)setScanPick(false);

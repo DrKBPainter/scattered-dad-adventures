@@ -567,6 +567,28 @@ body.m-compact .m12-howto button{min-height:44px}
 #m18share input{width:100%;box-sizing:border-box;margin-top:6px;background:#0c0e14;color:var(--ink);border:1px solid var(--border);border-radius:4px;font:12px/1.3 monospace;padding:8px 6px;user-select:text;-webkit-user-select:text}
 #m18share .m18-note{color:#f0c86a;font-style:italic;transform:rotate(-1deg);margin:10px 2px 0}
 #m18share .m18-ver{margin-top:8px;font-size:11px}
+/* MOB-42: Send Feedback sheet (js/feedback.js); same look as the Share sheet */
+#m42fb{display:none;position:fixed;inset:0;z-index:210;background:rgba(4,6,10,.72);align-items:center;justify-content:center;padding:max(8px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));box-sizing:border-box}
+#m42fb.show{display:flex}
+#m42fb .m42-panel{width:100%;max-width:560px;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box;background:var(--panel);color:var(--ink);border:1px solid var(--border);border-radius:10px;padding:0 14px 14px;font:13px/1.45 monospace}
+#m42fb .m42-head{position:sticky;top:0;display:flex;align-items:center;gap:8px;background:var(--panel);padding:12px 0 8px;border-bottom:1px solid var(--gold);margin-bottom:6px;z-index:1}
+#m42fb .m42-head b{flex:1;color:var(--gold);font-size:15px;letter-spacing:1px}
+#m42fb h2{font-size:13px;color:var(--gold);margin:12px 0 4px}
+#m42fb p{margin:4px 0}
+#m42fb .m42-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+#m42fb .m42-btn,#m42fb .m42-close{font:bold 12px monospace;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:5px;min-height:44px;min-width:44px;padding:4px 12px;cursor:pointer;touch-action:manipulation;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box}
+#m42fb .m42-pri{background:var(--gold);color:#1a1a1a;border-color:var(--gold)}
+#m42fb .m42-msg{display:block;min-height:1.4em;margin-top:8px}
+#m42fb .warn{color:#ff9a8a}
+#m42fb .dim{color:var(--dim)}
+#m42fb .ok{color:var(--grn)}
+#m42fb .m42-note{color:#f0c86a;font-style:italic;transform:rotate(-1deg);margin:10px 2px 0}
+#m42fb a.m42-btn{text-decoration:none}
+#m42fb .m42-list{margin:4px 0 4px 18px;padding:0}
+#m42fb .m42-list li{margin:2px 0}
+#m42fb .m42-list b{color:var(--ink)}
+.m42-howto button{font:bold 12px monospace;color:#1a1a1a;background:var(--gold);border:1px solid var(--gold);border-radius:5px;min-height:36px;padding:4px 12px;cursor:pointer}
+body.m-compact .m42-howto button{min-height:44px}
 .m18-howto button{font:bold 12px monospace;color:#1a1a1a;background:var(--gold);border:1px solid var(--gold);border-radius:5px;min-height:36px;padding:4px 12px;cursor:pointer}
 body.m-compact .m18-howto button{min-height:44px}
 </style>
@@ -625,6 +647,7 @@ body.m-compact .m18-howto button{min-height:44px}
     <button type="button" class="m-only" data-act="attrs" title="Your stats and what each one does">STATS</button>
     <button type="button" class="m-only" data-act="backup" title="Back up or restore your saves">BACKUP</button>
     <button type="button" class="m-only" data-act="share" title="Share the game: QR code and link">SHARE</button>
+    <button type="button" class="m-only" data-act="feedback" title="Report a bug or idea (opens a short form)">FEEDBACK</button>
     <button type="button" class="m-only m-pri" data-act="more" title="More actions" aria-haspopup="dialog" aria-controls="moresheet">MORE &#9776;</button>
   </div>
   <div id="aimbar" aria-label="Aim controls" style="display:none">
@@ -654,6 +677,7 @@ body.m-compact .m18-howto button{min-height:44px}
         <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
         <button type="button" data-act="backup" title="Back up or restore your saves">BACKUP</button>
         <button type="button" data-act="share" title="Share the game: QR code and link">SHARE</button>
+        <button type="button" data-act="feedback" title="Report a bug or idea (opens a short form)">FEEDBACK</button>
         <button type="button" class="ally-only" data-act="stance" title="Companion stance: aggressive, neutral or passive">COMPANION</button>
         <button type="button" class="ms-cfg" data-act="barcfg" title="Choose and arrange the buttons on the bar">CUSTOMIZE BAR</button>
         <button type="button" class="ms-menu" data-act="quit" title="Save &amp; quit to main menu (Q)">SAVE &amp; MENU</button>
@@ -695,6 +719,8 @@ body.m-compact .m18-howto button{min-height:44px}
 <script src="js/durable.js"></script>  <!-- M12: install prompt, iOS instructions, save on background, Save Backup export/import, audio unlock -->
 <div id="m18share" role="dialog" aria-modal="true" aria-label="Share the Game"><div class="m18-panel"><div class="m18-head"><b>SHARE THE GAME</b><button type="button" class="m18-close" data-m18="close" title="Close (Esc)">&#10005; Close</button></div><div id="m18body"></div><span id="m18msg" class="m18-msg" role="status" aria-live="polite"></span></div></div>
 <script src="js/share.js"></script>   <!-- M18: Share the Game sheet (QR code + link) -->
+<div id="m42fb" role="dialog" aria-modal="true" aria-label="Send Feedback"><div class="m42-panel"><div class="m42-head"><b>SEND FEEDBACK</b><button type="button" class="m42-close" data-m42="close" title="Close (Esc)">&#10005; Close</button></div><div id="m42body"></div><span id="m42msg" class="m42-msg" role="status" aria-live="polite"></span></div></div>
+<script src="js/feedback.js"></script> <!-- MOB-42: Send Feedback sheet (opens the Google Form with game details filled in) -->
 <div id="swup" role="status" aria-live="polite"><b>A NEW EDITION HAS ARRIVED.</b> Fresh patch notes have been delivered to the garage. Reload when ready<span id="swupRun"> (your run is saved first)</span>.<div class="sw-row"><button class="sw-later" id="swLater">Later</button><button class="sw-go" id="swGo">Reload</button></div></div>
 <script>/* M11: register the offline service worker (sw.js). A new version installs in the background and waits;
    the banner lets the player reload when convenient, so a run is never swapped to new code mid-floor.
