@@ -4,6 +4,10 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-11 (nightly run 4). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 10 | [!] 11 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-12 nightly run]
+Previously: 2026-11-11 (nightly run 3). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 9 | [!] 12 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-11 nightly run 5]
+Previously: 2026-11-11 (nightly run 2). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 8 | [!] 13 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-11 nightly run 4]
+Previously: 2026-11-11 (nightly run). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 7 | [!] 14 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-11 nightly run 3]
 Previously: 2026-11-10 (nightly run 7). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 4 | [!] 13 | [x] awaiting archive 0. INBOX: 7 lines.   [displaced 2026-11-11 nightly run 2]
 Previously: 2026-11-10 (nightly run 6). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 3 | [!] 14 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-11 nightly run]
 Previously: 2026-11-10 (nightly run 5). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 2 | [!] 15 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-10 nightly run 7]
@@ -555,6 +559,39 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-12 (nightly)
+- INBOX empty; nothing triaged; no [x] to archive; no unanswered KBP notes; no [c] reopened. Ran because 10 [!] items were open and no [-] items were waiting: worked one [!] item.
+- Census correction: the run-5 status line said [k] 3 / [c] 11, but MOB-42 had since moved [k] -> [c] in a chat session (2026-11-11); tonight's line counts it.
+- Worked: MOB-30 (CONTENT, KBP-directed by his 2026-11-10 note; MOB-41, the only UX [!], waits on the MOB-40 recipe list) comedy-break encounters: all 50 lines in js/data.js COMEDY_ENCOUNTERS; per-run rate 1 in 10 to 1 in 3 rolled from the run seed; never boss floors, never with a creature in view, one per floor, no repeats; story card with one Carry on. button, no turn spent; comedyFloors/comedyShown optional run-save fields. Verified -> [c].
+- Files changed: js/data.js, js/game.js, sw.js (BUILD 1.0.0-d89c4e5b6e -> 1.0.0-58a45c6531), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none logged (CONTENT item).
+- Verification: node --check all js; harness one class per process 7/7 clears; atlas 275 keys; vm check (200 seeds: rate 0.103-0.333, 0 boss floors, deterministic, save round trip, old save loads); Playwright old vs new on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop 72/72; protected screens 40/40 (md5-identical).
+- Still open: [c] MOB-06, 07, 08, 11, 14, 16, 28, 30, 39, 42, 44, 46, 48 (share js/game.js, js/ui.js, sw.js and more; push together) | [k] MOB-43, 47 | [-] none | [!] MOB-19, 22, 24, 26, 27, 37, 40, 41, 45.
+
+RUN 2026-11-11 (nightly, run 5)
+- INBOX empty; nothing triaged; no [x] to archive; no unanswered KBP notes; no [c] reopened. Ran because 11 [!] items were open and no [-] items were waiting: worked one [!] item.
+- Worked: MOB-28 (UX, first [!] in order) companions open closed unlocked doors to follow; stance AGGRESSIVE / NEUTRAL (default, old saves) / PASSIVE via MORE > COMPANION, desktop COMPANION button or O, shown on the status line and saved; one ability each (Chad +3 ATK, Sharon Hunger -30, Uncle Ron +2 DEF, Little Timmy +20% HP, Officer Doug stun 2), every 20-30 turns when it would help. Verified -> [c].
+- Files changed: js/game.js, js/data.js, js/ui.js, js/input.js, ShatteredDadAdventure.html, sw.js (BUILD 1.0.0-bb72bd6bb8 -> 1.0.0-ad07b538dd), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none logged (UX item).
+- Verification: node --check all js; harness one class per process 7/7 clears; atlas 275 keys; Playwright old vs new on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop 157/157 (door follow, stances, abilities, UI, save/continue, old save loads) + regression/protected 86/86 (md5-identical with no companion; protected screens md5-identical).
+- Still open: [c] MOB-06, 07, 08, 11, 14, 16, 28, 39, 44, 46, 48 (share js/game.js, js/ui.js, sw.js and more; push together) | [k] MOB-42, 43, 47 | [-] none | [!] MOB-19, 22, 24, 26, 27, 30, 37, 40, 41, 45.
+
+RUN 2026-11-11 (nightly, run 4)
+- INBOX empty; nothing triaged; no [x] to archive; no unanswered KBP notes; no [c] reopened. Ran because 12 [!] items were open and no [-] items were waiting: worked one [!] item.
+- Worked: MOB-14 (UX, first [!] in order) Codex on phones: all 7 tabs as Bestiary-style comic flip cards (front number/tag/picture/name, back stats/details/description); recipes show the result's name on the front and the combination on the back; unmet entries are "?" cards that do not flip (MOB-07 rules). Desktop and the Bestiary unchanged. Verified -> [c].
+- Files changed: js/ui.js, ShatteredDadAdventure.html, sw.js (BUILD 1.0.0-a0bc0af3fc -> 1.0.0-bb72bd6bb8), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none logged (UX item).
+- Verification: node --check all js; harness one class per process 7/7 clears; atlas 275 keys; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (7 tabs each: counts, pictures, flip/no-flip, overflow, errors); desktop title/play/Codex md5- and HTML-identical; protected screens md5-identical; old-build save continues.
+- Still open: [c] MOB-06, 07, 08, 11, 14, 16, 39, 44, 46, 48 (share js/ui.js, sw.js and more; push together) | [k] MOB-42, 43, 47 | [-] none | [!] MOB-19, 22, 24, 26, 27, 28, 30, 37, 40, 41, 45.
+
+RUN 2026-11-11 (nightly, run 3)
+- INBOX empty; nothing triaged; no [x] to archive; no unanswered KBP notes; no [c] reopened. Ran because 13 [!] items were open and no [-] items were waiting: worked one [!] item.
+- Worked: MOB-11 (UX, first [!] in order) THROW opens a pick list of throwables (damage + range), then a target tile; STR sets reach (2 + STR/2, capped by the item's range); aiming past it lands at reach with one of 8 overreach log lines; aim label + red preview box warn first; T key on desktop uses the same list. Verified -> [c].
+- Files changed: js/game.js, js/ui.js, js/input.js, js/render.js, sw.js (BUILD 1.0.0-3826774a9b -> 1.0.0-a0bc0af3fc), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none logged (UX item).
+- Verification: node --check all js; harness one class per process 7/7 clears; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (80/80 after) + desktop/protected 59/59; desktop title/play and protected screenshots md5-identical; old-build save continues.
+- Still open: [c] MOB-06, 07, 08, 11, 16, 39, 44, 46, 48 (share js/ui.js, sw.js and more; push together) | [k] MOB-42, 43, 47 | [-] none | [!] MOB-14, 19, 22, 24, 26, 27, 28, 30, 37, 40, 41, 45.
+
 RUN 2026-11-11 (nightly, run 2)
 - INBOX empty; nothing triaged; no [x] to archive; no unanswered KBP notes; no [c] reopened. Ran because 14 [!] items were open and no [-] items were waiting: worked one [!] item.
 - Worked: MOB-08 (UX, first [!] in order) target box on phones: enemies within weapon reach (same rules as tryMove, reach weapons included) shown lower right of the map; swipe/arrows choose, tap attacks via tryMove; gold corner marks on the chosen enemy. Verified -> [c].
