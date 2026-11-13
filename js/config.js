@@ -42,9 +42,10 @@ function pickViewport(w,h){const o=_viewOverride();if(o)return o;
  if(_coarsePointer()&&Math.min(w,h)>=600)return[17,12];
  return[15,10];}
 function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const _l=_m6Layout(iw,ih);const v=pickViewport(iw,ih);
- /* MOB-55: phone/tablet landscape: the map fills the left half of the screen, so its tile count follows that half's shape
-    (rows stay as picked; columns = rows x half width / height, never more than picked). ?view=WxH still wins. */
- if(_l&&_l.land&&!_viewOverride()&&_l.maxH>0)v[0]=Math.max(5,Math.min(v[0],Math.round(v[1]*_l.maxW/_l.maxH)));
+ /* MOB-55: phone/tablet landscape: the map fills the left column, so its tile count follows that column's shape
+    (rows stay as picked; columns = rows x column width / height, at most 20, so a wide column shows more tiles instead of
+    black bars). ?view=WxH still wins. */
+ if(_l&&_l.land&&!_viewOverride()&&_l.maxH>0)v[0]=Math.max(5,Math.min(20,Math.round(v[1]*_l.maxW/_l.maxH)));
  VIEW_W=v[0];VIEW_H=v[1];_vBase=[v[0],v[1]];
  if(zoomOut>0){const zl=_zoomOutList(v[0],v[1]);if(zoomOut>zl.length)zoomOut=zl.length;const zf=zl[zoomOut-1];VIEW_W=Math.round(v[0]*zf);VIEW_H=Math.round(v[1]*zf);if(zoomOut===zl.length){VIEW_W=Math.max(VIEW_W,MAP_W);VIEW_H=Math.max(VIEW_H,MAP_H);}}
  let cw=VIEW_W*TILE,ch=VIEW_H*TILE;let maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
@@ -79,10 +80,14 @@ function _m6Layout(iw,ih){
  let pt=4,pr=4,pb=4,pl=4,gap=4;
  try{const cs=getComputedStyle(document.getElementById("wrap"));pt=parseFloat(cs.paddingTop)||0;pr=parseFloat(cs.paddingRight)||0;pb=parseFloat(cs.paddingBottom)||0;pl=parseFloat(cs.paddingLeft)||0;gap=parseFloat(cs.rowGap)||0;}catch(e){}
  const bord=2;
- /* MOB-55: landscape: the map column is exactly the left half of the screen (the column gap straddles the middle);
-    HUD, log, D-pad and buttons take the right half. The column width goes to CSS as --m55-mapw on #wrap. */
+ /* MOB-55: landscape: map column on the left, HUD, log, buttons and D-pad in a column on the right.
+    The map column width goes to CSS as --m55-mapw on #wrap. */
  if(LANDSCAPE_UI){let cg=6;try{cg=parseFloat(getComputedStyle(document.getElementById("wrap")).columnGap)||6;}catch(e){}
-  const colW=Math.max(60,Math.floor(iw/2-pl-cg/2));try{document.getElementById("wrap").style.setProperty("--m55-mapw",colW+"px");}catch(e){}
+  /* MOB-55 (KBP note 2026-11-13): the right column is only as wide as its controls need (2 button columns + the D-pad to
+     their right; at least 300 px (271 px on narrow screens) and 36% of the width so the HUD text fits, at most 360 px) and the map takes everything left of it.
+     Same width with the D-pad on or off, so toggling it does not resize the map. */
+  const padW=iw<700?126:144,sideW=Math.min(360,Math.max(iw<700?padW+cg+2*68+3:300,Math.round(iw*0.36)));
+  const colW=Math.max(60,Math.floor(iw-pl-pr-cg-sideW));try{document.getElementById("wrap").style.setProperty("--m55-mapw",colW+"px");}catch(e){}
   return{land:true,maxW:colW-bord,maxH:ih-pt-pb-bord};}
  let hud=_m6H("hud"),ctl=0;const dp=_m6H("dpad"),ab=_m6H("actionbar"),am=_m6H("aimbar");
  if(dp)ctl+=dp+gap;if(ab)ctl+=ab+gap;if(am&&!dp&&!ab)ctl=am+gap;

@@ -57,7 +57,7 @@
   .st-chip:hover .st-tip{display:block;}
   .st-chip.st-open .st-tip{display:block;} /* M7: tap-to-open tooltip */
   #actionbar .m-only{display:none;} body.m-compact #actionbar .m-only{display:block;} /* M7: D-pad toggle is compact-only */
-  body.m-compact.m-land.m-nopad #actionbar{grid-column:2 / span 2;} /* M7: landscape without D-pad: buttons use the whole side column */
+  body.m-compact.m-land.m-nopad #actionbar{grid-column:2 / -1;} /* M7: landscape without D-pad: buttons use the whole side column */
   #log{margin-top:5px;min-height:74px;font-size:12.5px;}
   #log .l-gold{color:var(--gold);} #log .l-red{color:#ff8a7a;} #log .l-grn{color:var(--grn);} #log .l-dim{color:var(--dim);} #log .l-blu{color:var(--blu);}
   #hint{color:var(--dim);font-size:11.5px;text-align:center;max-width:720px;}
@@ -167,11 +167,13 @@
   body.m-compact #actionbar button{flex:0 0 auto;min-height:40px;padding:6px 10px;font-size:11px;}
   body.m-compact #aimbar{margin:0 auto;} body.m-compact #aimbar button{min-height:40px;}
   body.m-compact .ov{padding:10px 12px;font-size:12.5px;}
-  body.m-compact.m-land #wrap{display:grid;grid-template-columns:var(--m55-mapw,50%) 146px minmax(0,1fr);grid-auto-rows:min-content;align-items:start;justify-items:stretch;column-gap:6px;row-gap:4px;}
-  body.m-compact.m-land #stage{grid-column:1;grid-row:1 / span 6;justify-self:center;} /* MOB-55: map centered in the left half */
-  body.m-compact.m-land #hud,body.m-compact.m-land #aimbar{grid-column:2 / span 2;}
-  body.m-compact.m-land #dpad{grid-column:2;grid-row:2;}
-  body.m-compact.m-land #actionbar{grid-column:3;grid-row:2;flex-direction:column;flex-wrap:nowrap;overflow-x:hidden;overflow-y:auto;max-height:146px;}
+  body.m-compact.m-land #wrap{display:grid;grid-template-columns:var(--m55-mapw,60%) minmax(0,1fr) 144px;grid-auto-rows:min-content;align-items:start;justify-items:stretch;column-gap:6px;row-gap:4px;}
+  body.m-compact.m-land #stage{grid-column:1;grid-row:1 / span 3;justify-self:center;} /* MOB-55: map centered in the left column; 3 rows (HUD, buttons + D-pad, spare) so empty rows add no gaps below the buttons */
+  body.m-compact.m-land.m-nopad #wrap{grid-template-columns:var(--m55-mapw,60%) minmax(0,1fr);} /* MOB-55: no D-pad column */
+  @media (max-width:699px){body.m-compact.m-land #wrap{grid-template-columns:var(--m55-mapw,60%) minmax(0,1fr) 126px;} body.m-compact.m-land.m-nopad #wrap{grid-template-columns:var(--m55-mapw,60%) minmax(0,1fr);} body.m-compact.m-land #dpad{grid-template-columns:repeat(3,40px);grid-template-rows:repeat(3,40px);}} /* MOB-55: narrow landscape: 40 px D-pad */
+  body.m-compact.m-land #hud,body.m-compact.m-land #aimbar{grid-column:2 / -1;}
+  body.m-compact.m-land #dpad{grid-column:3;grid-row:2;margin:0;} /* MOB-55: D-pad to the right of the buttons */
+  body.m-compact.m-land #actionbar{grid-column:2;grid-row:2;flex-direction:column;flex-wrap:nowrap;overflow-x:hidden;overflow-y:auto;max-height:146px;}
   body.m-compact.m-land #actionbar button{width:100%;padding:6px 4px;}
   body.m-compact.m-land #hud{border-top:none;border-left:1px solid var(--border);}
   /* ===== Mobile confirm dialog + Dad/difficulty select (fix: popup cut off, buttons unreachable) =====
@@ -374,9 +376,9 @@ body.m-land #tgtbox .tb-ar{line-height:32px;}
 body.m-land #tgtbox .tb-go{display:none;} #scanpop .sp-t{color:var(--gold);font-weight:bold;font-size:18px;margin-bottom:4px;font-family:var(--pix,inherit);letter-spacing:.5px;} #scanpop .sp-h{margin-top:8px;font-size:11px;opacity:.6;text-align:right;} /* MOB-36: SCAN-tap identify pop-up */
   body.m16 #scanpop{border:8px solid transparent;border-image:url(assets/ui/frame-gold.png) 8 / 8px repeat;border-radius:0;background-clip:padding-box;padding:8px 12px;}
   body.m-compact.m-land #actionbar{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none;overflow:visible;align-content:start;}
-  body.m-compact.m-land.m-nopad #actionbar{grid-template-columns:repeat(4,minmax(0,1fr));} /* MOB-06: side column without D-pad: 2 rows x 4; with D-pad: 4 rows x 2 */
+  /* MOB-55: landscape: buttons always stack 4 rows x 2 columns (MORE last), with or without the D-pad */
   @media (max-height:600px){body.m-compact:not(.m-land):not(.m-nopad) #dpad{grid-template-rows:repeat(3,40px);} body.m-compact:not(.m-land):not(.m-nopad) #actionbar button.m-pri{min-height:40px;}} /* MOB-06: short portrait screens with the D-pad on: the 2-row bar + pad still fit */
-  body.m-compact.m-land:not(.m-nopad) #actionbar button.m-pri{min-height:38px;} /* MOB-06: landscape with the D-pad on: 4 rows x 2 fit the phone height */
+  body.m-compact.m-land #actionbar button.m-pri{min-height:38px;} /* MOB-06/MOB-55: landscape: 4 rows x 2 fit the phone height */
   body.m-compact #dpad{grid-template-rows:repeat(3,44px);gap:3px;} body.m-compact.m-land #actionbar{gap:3px;} /* optional D-pad: 44 px rows keep small phones from overflowing */
   #moresheet{display:none;}
   body.m-compact.m-more #moresheet{display:flex;position:fixed;inset:0;z-index:120;background:rgba(4,6,10,.62);align-items:flex-end;justify-content:center;padding:0 var(--ms-r,0px) var(--ms-b,0px) 0;}
