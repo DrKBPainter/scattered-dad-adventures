@@ -4,6 +4,8 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-12 (nightly run). Census: [ ] 0 | [-] 0 | [k] 2 | [c] 13 | [!] 9 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-13 nightly run]
+Previously: 2026-11-11 (nightly run 5). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 11 | [!] 10 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-12 nightly run 2]
 Previously: 2026-11-11 (nightly run 4). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 10 | [!] 11 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-12 nightly run]
 Previously: 2026-11-11 (nightly run 3). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 9 | [!] 12 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-11 nightly run 5]
 Previously: 2026-11-11 (nightly run 2). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 8 | [!] 13 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-11 nightly run 4]
@@ -559,6 +561,22 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-13 (nightly)
+- Form import: 2 responses from the feedback Sheet (sent 11/11/2026 19:54:20 and 21:16:42; both Galaxy S25+, build 1.0.0-58a45c6531, The DIY Dad): target box disappears/inconsistent with the 4-tile hose; item on the stairs cannot be picked up. Added to INBOX as FORM lines (1-day hold, eligible 2026-11-14). FORM SYNC -> 11/11/2026 21:16:42. No contact given.
+- No eligible INBOX lines; no [x] to archive; no [c] reopened.
+- KBP notes answered: MOB-22 (plan confirmed, stays [!]), MOB-43 (approved -> built tonight), MOB-47 (list kept; new [!] MOB-51 background music; MOB-47 asks to close), MOB-49 (approved -> [!] with NEXT STEP), MOB-50 (keep as built, no change). Answered older ASK lines on MOB-16/39/42 renamed "Asked" so each [c] ends in one ASK.
+- Worked: [!] MOB-43 -> [c]. THE DAD MANUAL: page buttons per section opening comic-card pop-ups (#m43man), Backup/Share/Feedback buttons, HELP -> MANUAL labels, cover chip "THE DAD / Manual" (KBP-approved). Verified: 7/7 clears, Playwright 169 checks (1 intended text diff), protected screens md5-identical except the approved chip label.
+- Files changed: js/ui.js, ShatteredDadAdventure.html, js/titlecover.js, sw.js (BUILD 1.0.0-6823ecf784 -> 1.0.0-5e12b9c654), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. No bugs logged.
+
+RUN 2026-11-12 (nightly, run 2)
+- Triaged 2 INBOX lines: MOB-49 [UX] floor-by-floor list of notable things per biome -> [k] (proposal + ASK; will be [!] once approved: new run-save field); MOB-50 [BUG] biome boss must be defeated before moving on -> [-] -> worked tonight.
+- No [x] to archive; no unanswered KBP notes; no [c] reopened.
+- Worked: MOB-50 -> [c]. js/game.js bossBarsStairs(): on floors 10, 20 ... 100 (descent only) the stairs step logs a line instead of the Descend prompt while a boss lives; boss arrival line extended. Floors 15/25 and the Ascent unchanged; no RNG, no save change.
+- Files changed: js/game.js, sw.js (BUILD 1.0.0-58a45c6531 -> 1.0.0-6823ecf784), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: BUG-019 logged and resolved (MOB-50).
+- Verification: node --check all js; harness one class per process 7/7 clears; Playwright before/after on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (real WAIT taps) and desktop 1280x800; protected screens on iPhone SE + iPhone 13 OK; folder md5s match.
+- Still open: [c] MOB-06, 07, 08, 11, 14, 16, 28, 30, 39, 42, 44, 46, 48, 50 (shared files; push together) | [k] MOB-43, 47, 49 | [-] none | [!] MOB-19, 22, 24, 26, 27, 37, 40, 41, 45.
+
 RUN 2026-11-12 (nightly)
 - INBOX empty; nothing triaged; no [x] to archive; no unanswered KBP notes; no [c] reopened. Ran because 10 [!] items were open and no [-] items were waiting: worked one [!] item.
 - Census correction: the run-5 status line said [k] 3 / [c] 11, but MOB-42 had since moved [k] -> [c] in a chat session (2026-11-11); tonight's line counts it.

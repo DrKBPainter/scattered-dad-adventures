@@ -1,6 +1,6 @@
 /* ===== SCATTERED DAD ADVENTURES -- titlecover.js =====
    Mobile title screen (Concept A, "The Cover"): one full-screen comic cover with a random Dad,
-   then New Adventure / Continue / Daily Challenge / How To / Bestiary / Graveyard buttons.
+   then New Adventure / Continue / Daily Challenge / The Dad Manual (MOB-43) / Bestiary / Graveyard buttons.
    Active only on compact layouts (body.m-compact) while mode===State.TITLE; desktop keeps the
    canvas + HUD menu. Buttons call doTitleAction() (input.js), the same path as the HUD rows.
    Reuses the comic card styles from the Dad-select deck (.dc-face, .dc-mast, .dc-burst, ...).
@@ -27,7 +27,7 @@ function _tcBuild(){if(_tcEl||typeof document==="undefined")return;const el=docu
   +'<div class="tc-menu"><button type="button" class="tc-btn tc-new" data-tc="new">&#9654; New Adventure</button>'
   +'<div class="tc-row"><button type="button" class="tc-btn tc-cont" data-tc="continue">Continue<small class="tc-cont-s"></small></button>'
   +'<button type="button" class="tc-btn tc-daily" data-tc="daily">Daily Challenge<small class="tc-daily-s"></small></button></div>'
-  +'<div class="tc-row"><button type="button" class="tc-chip" data-tc="help"><b>How To</b>play</button><button type="button" class="tc-chip" data-tc="best"><b>Bestiary</b><span class="tc-best-s"></span></button><button type="button" class="tc-chip" data-tc="grave"><b>Graveyard</b><span class="tc-grave-s"></span></button></div></div>';
+  +'<div class="tc-row"><button type="button" class="tc-chip" data-tc="help"><b>The Dad</b>Manual</button><button type="button" class="tc-chip" data-tc="best"><b>Bestiary</b><span class="tc-best-s"></span></button><button type="button" class="tc-chip" data-tc="grave"><b>Graveyard</b><span class="tc-grave-s"></span></button></div></div>';
  document.body.appendChild(el);_tcEl=el;
  el.addEventListener("click",ev=>{const b=ev.target.closest("[data-tc]");if(!b||mode!==State.TITLE)return;if(typeof doTitleAction==="function")doTitleAction(b.dataset.tc);});}
 

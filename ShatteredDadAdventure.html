@@ -548,6 +548,29 @@ body.m-land #tgtbox .tb-go{display:none;} #scanpop .sp-t{color:var(--gold);font-
 .m12-howto button{font:bold 12px monospace;color:#1a1a1a;background:var(--gold);border:1px solid var(--gold);border-radius:5px;min-height:36px;padding:4px 12px;cursor:pointer}
 body.m-compact .m12-howto button{min-height:44px}
 /* M18: Share the Game sheet (js/share.js); same look as the Save Backup sheet */
+/* MOB-43: THE DAD MANUAL (#ovInstr page buttons + #m43man pop-up with a comic card) */
+.m43-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:10px 4px 6px 0}
+body.m-compact .m43-grid{grid-template-columns:1fr 1fr;gap:9px}
+.m43-pg{font:12px/1.3 monospace;text-align:left;cursor:pointer;touch-action:manipulation;min-height:64px;margin:0;padding:7px 9px 8px;border:2.5px solid #000;border-radius:8px;box-shadow:3px 3px 0 #000;background:radial-gradient(circle,rgba(0,0,0,.07) 1px,transparent 1.5px) 0 0/6px 6px,#f4ead2;color:#1b1b1b;display:flex;flex-direction:column;justify-content:flex-start;gap:3px;min-width:0}
+.m43-pg b{font-family:Impact,Haettenschweiler,'Avenir Next Condensed','Arial Narrow Bold',sans-serif-condensed,'Arial Black',sans-serif;font-weight:900;font-size:17px;letter-spacing:.5px;color:#d0021b;text-transform:uppercase;line-height:1.05;overflow-wrap:anywhere}
+.m43-pg small{font-size:11px;font-style:italic;color:#4a4436;line-height:1.25}
+.m43-pg:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+.m43-pg.m43-util{background:#ffe14a}
+.m43-pg.m43-util b{color:#111}
+.m43-pg:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.m43-note{color:#f0c86a;font-style:italic;transform:rotate(-1deg);margin:12px 2px 6px}
+#m43man{display:none;position:fixed;inset:0;z-index:210;background:rgba(4,6,10,.72);align-items:center;justify-content:center;padding:max(8px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));box-sizing:border-box}
+#m43man.show{display:flex}
+#m43man .m43-panel{width:100%;max-width:560px;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box;background:var(--panel);color:var(--ink);border:1px solid var(--border);border-radius:10px;padding:0 14px 14px;font:13px/1.45 monospace}
+#m43man .m43-head{position:sticky;top:0;display:flex;align-items:center;gap:8px;background:var(--panel);padding:12px 0 8px;border-bottom:1px solid var(--gold);margin-bottom:10px;z-index:1}
+#m43man .m43-head b{flex:1;color:var(--gold);font-size:15px;letter-spacing:1px;text-transform:uppercase}
+#m43man .m43-close{font:bold 12px monospace;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:5px;min-height:44px;min-width:44px;padding:4px 12px;cursor:pointer;touch-action:manipulation}
+#m43man .m43-card .atc-body{font-size:13px;line-height:1.45}
+#m43man .m43-card p{margin:0 0 7px}
+#m43man .m43-card b{color:#111}
+#m43man .m43-card .key{color:#b5121b;font-weight:bold}
+#m43man .m43-card .dim{color:#5a5240}
+#m43man .m43-card i{color:#4a4436}
 #m18share{display:none;position:fixed;inset:0;z-index:210;background:rgba(4,6,10,.72);align-items:center;justify-content:center;padding:max(8px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));box-sizing:border-box}
 #m18share.show{display:flex}
 #m18share .m18-panel{width:100%;max-width:560px;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box;background:var(--panel);color:var(--ink);border:1px solid var(--border);border-radius:10px;padding:0 14px 14px;font:13px/1.45 monospace}
@@ -638,7 +661,7 @@ body.m-compact .m18-howto button{min-height:44px}
     <button type="button" data-act="best" title="Discovered creatures (B)">BESTIARY</button>
     <button type="button" data-act="codex" title="Open the Codex (J)">CODEX</button>
     <button type="button" data-act="grave" title="View the Graveyard (G)">GRAVEYARD</button>
-    <button type="button" data-act="instr" title="How to play (H)">HELP</button>
+    <button type="button" data-act="instr" title="The Dad Manual (H)">MANUAL</button>
     <button type="button" id="btnPad" class="m-only" data-act="pad" title="Show or hide the on-screen D-pad">D-PAD</button>
     <button type="button" id="btnMute" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
     <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
@@ -668,7 +691,7 @@ body.m-compact .m18-howto button{min-height:44px}
         <button type="button" data-act="map" title="Open floor map (M)">MAP</button>
         <button type="button" data-act="attrs" title="Your stats and what each one does">ATTRIBUTES</button>
         <button type="button" data-act="codex" title="Open the Codex (J)">CODEX</button>
-        <button type="button" data-act="instr" title="How to play (H)">HELP</button>
+        <button type="button" data-act="instr" title="The Dad Manual (H)">MANUAL</button>
         <button type="button" data-act="place" title="Place a trap, then tap an adjacent tile (P)">PLACE TRAP</button>
         <button type="button" data-act="zoomin" title="Zoom in (+)">ZOOM +</button>
         <button type="button" data-act="zoomout" title="Zoom out (-)">ZOOM &minus;</button>
@@ -694,7 +717,7 @@ body.m-compact .m18-howto button{min-height:44px}
       <p class="bq-note">Written on the tool belt in marker: &quot;Dad always knows where everything is. We don't know how.&quot;</p>
     </div>
   </div>
-  <div id="hint">arrows/WASD or on-screen D-pad move &middot; Space/center WAIT &middot; click=inspect/move &middot; on-screen SCAN / ZOOM / THROW / PLACE / MENU buttons &middot; after THROW/PLACE click a tile to aim (CANCEL aborts) &middot; I inventory &middot; K Book of Dadvice &middot; X scan &middot; T throw &middot; P place trap &middot; M map &middot; H help &middot; B bestiary &middot; J codex</div>
+  <div id="hint">arrows/WASD or on-screen D-pad move &middot; Space/center WAIT &middot; click=inspect/move &middot; on-screen SCAN / ZOOM / THROW / PLACE / MENU buttons &middot; after THROW/PLACE click a tile to aim (CANCEL aborts) &middot; I inventory &middot; K Book of Dadvice &middot; X scan &middot; T throw &middot; P place trap &middot; M map &middot; H manual &middot; B bestiary &middot; J codex</div>
 </div>
 
 <!-- Load order matters: each file depends on those above it -->
@@ -714,9 +737,10 @@ body.m-compact .m18-howto button{min-height:44px}
 <script>/* M10: fade out and remove the loading screen once every script and image has loaded (10 s fallback) */
 (function(){var gone=false;function done(){if(gone)return;gone=true;var s=document.getElementById("splash");if(!s)return;s.classList.add("sp-out");setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},350);}if(document.readyState==="complete")done();else window.addEventListener("load",done);setTimeout(done,10000);})();</script>
 <div id="m12inst" role="status" aria-live="polite" data-m12i-host="1"><b>TAKE THE GAME HOME.</b> Install Scattered Dad Adventures: it plays offline and your saves stay put.<div class="m12i-row"><button type="button" data-m12i="later">Not now</button><button type="button" class="m12i-go" id="m12instGo" data-m12i="go">Install</button></div></div>
-<div id="m12ios" role="dialog" aria-modal="true" aria-label="Add to Home Screen"><div class="m12i-panel"><h2>PUT THE GAME ON YOUR HOME SCREEN</h2><p>Safari tidies away website saves after a while. A Home Screen game keeps them, and plays without Wi-Fi.</p><ol><li>Tap <span class="m12-share">Share &#8679;</span> in Safari's toolbar.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>, then open the game from its new icon.</li></ol><p>Your saves here do not move by themselves: use <b>Save Backup</b> (How To screen) to carry them over.</p><p class="m12-note">A crayon note on the fridge: &ldquo;Dad you are good at installing things. Like the shelf. Mostly.&rdquo;</p><div class="m12i-row"><button type="button" class="m12i-go" data-m12ios="ok">Got it</button></div></div></div>
+<div id="m12ios" role="dialog" aria-modal="true" aria-label="Add to Home Screen"><div class="m12i-panel"><h2>PUT THE GAME ON YOUR HOME SCREEN</h2><p>Safari tidies away website saves after a while. A Home Screen game keeps them, and plays without Wi-Fi.</p><ol><li>Tap <span class="m12-share">Share &#8679;</span> in Safari's toolbar.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>, then open the game from its new icon.</li></ol><p>Your saves here do not move by themselves: use <b>Save Backup</b> (in The Dad Manual) to carry them over.</p><p class="m12-note">A crayon note on the fridge: &ldquo;Dad you are good at installing things. Like the shelf. Mostly.&rdquo;</p><div class="m12i-row"><button type="button" class="m12i-go" data-m12ios="ok">Got it</button></div></div></div>
 <div id="m12save" role="dialog" aria-modal="true" aria-label="Save Backup"><div class="m12-panel"><div class="m12-head"><b>SAVE BACKUP</b><button type="button" class="m12-close" data-m12="close" title="Close (Esc)">&#10005; Close</button></div><div id="m12body"></div><span id="m12msg" class="m12-msg" role="status" aria-live="polite"></span></div></div>
 <script src="js/durable.js"></script>  <!-- M12: install prompt, iOS instructions, save on background, Save Backup export/import, audio unlock -->
+<div id="m43man" role="dialog" aria-modal="true" aria-label="The Dad Manual"><div class="m43-panel"><div class="m43-head"><b id="m43title">THE DAD MANUAL</b><button type="button" class="m43-close" data-m43c="close" title="Close (Esc)">&#10005; Close</button></div><div id="m43body"></div></div></div>
 <div id="m18share" role="dialog" aria-modal="true" aria-label="Share the Game"><div class="m18-panel"><div class="m18-head"><b>SHARE THE GAME</b><button type="button" class="m18-close" data-m18="close" title="Close (Esc)">&#10005; Close</button></div><div id="m18body"></div><span id="m18msg" class="m18-msg" role="status" aria-live="polite"></span></div></div>
 <script src="js/share.js"></script>   <!-- M18: Share the Game sheet (QR code + link) -->
 <div id="m42fb" role="dialog" aria-modal="true" aria-label="Send Feedback"><div class="m42-panel"><div class="m42-head"><b>SEND FEEDBACK</b><button type="button" class="m42-close" data-m42="close" title="Close (Esc)">&#10005; Close</button></div><div id="m42body"></div><span id="m42msg" class="m42-msg" role="status" aria-live="polite"></span></div></div>
