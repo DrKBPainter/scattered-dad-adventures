@@ -41,10 +41,14 @@ function pickViewport(w,h){const o=_viewOverride();if(o)return o;
  if(h>w*1.15)return w>=700?[11,15]:[9,13];
  if(_coarsePointer()&&Math.min(w,h)>=600)return[17,12];
  return[15,10];}
-function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const v=pickViewport(iw,ih);VIEW_W=v[0];VIEW_H=v[1];_vBase=[v[0],v[1]];
+function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const _l=_m6Layout(iw,ih);const v=pickViewport(iw,ih);
+ /* MOB-55: phone/tablet landscape: the map fills the left half of the screen, so its tile count follows that half's shape
+    (rows stay as picked; columns = rows x half width / height, never more than picked). ?view=WxH still wins. */
+ if(_l&&_l.land&&!_viewOverride()&&_l.maxH>0)v[0]=Math.max(5,Math.min(v[0],Math.round(v[1]*_l.maxW/_l.maxH)));
+ VIEW_W=v[0];VIEW_H=v[1];_vBase=[v[0],v[1]];
  if(zoomOut>0){const zl=_zoomOutList(v[0],v[1]);if(zoomOut>zl.length)zoomOut=zl.length;const zf=zl[zoomOut-1];VIEW_W=Math.round(v[0]*zf);VIEW_H=Math.round(v[1]*zf);if(zoomOut===zl.length){VIEW_W=Math.max(VIEW_W,MAP_W);VIEW_H=Math.max(VIEW_H,MAP_H);}}
  let cw=VIEW_W*TILE,ch=VIEW_H*TILE;let maxW=Math.min((iw||cw+32)-32,2400),maxH=Math.min((ih||ch+220)-220,1400);
- const _l=_m6Layout(iw,ih);if(_l){maxW=Math.max(60,_l.maxW);maxH=Math.max(60,_l.maxH);}
+ if(_l){maxW=Math.max(60,_l.maxW);maxH=Math.max(60,_l.maxH);}
  let zm=ZOOM_STEPS[zoomStep]||1;
  /* MOB-29: on phones/tablets zooming in shows fewer, larger tiles inside the same map box (the canvas never grows past
     its slot, so the HUD and buttons stay put and the page never overflows). Desktop keeps the enlarged canvas. */
@@ -75,7 +79,11 @@ function _m6Layout(iw,ih){
  let pt=4,pr=4,pb=4,pl=4,gap=4;
  try{const cs=getComputedStyle(document.getElementById("wrap"));pt=parseFloat(cs.paddingTop)||0;pr=parseFloat(cs.paddingRight)||0;pb=parseFloat(cs.paddingBottom)||0;pl=parseFloat(cs.paddingLeft)||0;gap=parseFloat(cs.rowGap)||0;}catch(e){}
  const bord=2;
- if(LANDSCAPE_UI)return{maxW:iw-pl-pr-bord-6-Math.max(250,Math.min(320,Math.round(iw*0.3))),maxH:ih-pt-pb-bord};
+ /* MOB-55: landscape: the map column is exactly the left half of the screen (the column gap straddles the middle);
+    HUD, log, D-pad and buttons take the right half. The column width goes to CSS as --m55-mapw on #wrap. */
+ if(LANDSCAPE_UI){let cg=6;try{cg=parseFloat(getComputedStyle(document.getElementById("wrap")).columnGap)||6;}catch(e){}
+  const colW=Math.max(60,Math.floor(iw/2-pl-cg/2));try{document.getElementById("wrap").style.setProperty("--m55-mapw",colW+"px");}catch(e){}
+  return{land:true,maxW:colW-bord,maxH:ih-pt-pb-bord};}
  let hud=_m6H("hud"),ctl=0;const dp=_m6H("dpad"),ab=_m6H("actionbar"),am=_m6H("aimbar");
  if(dp)ctl+=dp+gap;if(ab)ctl+=ab+gap;if(am&&!dp&&!ab)ctl=am+gap;
  if(_m6Play){_m6HudMax=Math.max(_m6HudMax,hud);_m6CtlMax=Math.max(_m6CtlMax,ctl);hud=_m6HudMax;ctl=_m6CtlMax;}

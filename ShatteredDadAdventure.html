@@ -167,8 +167,8 @@
   body.m-compact #actionbar button{flex:0 0 auto;min-height:40px;padding:6px 10px;font-size:11px;}
   body.m-compact #aimbar{margin:0 auto;} body.m-compact #aimbar button{min-height:40px;}
   body.m-compact .ov{padding:10px 12px;font-size:12.5px;}
-  body.m-compact.m-land #wrap{display:grid;grid-template-columns:auto 146px minmax(0,1fr);grid-auto-rows:min-content;align-items:start;justify-items:stretch;column-gap:6px;row-gap:4px;}
-  body.m-compact.m-land #stage{grid-column:1;grid-row:1 / span 6;justify-self:start;}
+  body.m-compact.m-land #wrap{display:grid;grid-template-columns:var(--m55-mapw,50%) 146px minmax(0,1fr);grid-auto-rows:min-content;align-items:start;justify-items:stretch;column-gap:6px;row-gap:4px;}
+  body.m-compact.m-land #stage{grid-column:1;grid-row:1 / span 6;justify-self:center;} /* MOB-55: map centered in the left half */
   body.m-compact.m-land #hud,body.m-compact.m-land #aimbar{grid-column:2 / span 2;}
   body.m-compact.m-land #dpad{grid-column:2;grid-row:2;}
   body.m-compact.m-land #actionbar{grid-column:3;grid-row:2;flex-direction:column;flex-wrap:nowrap;overflow-x:hidden;overflow-y:auto;max-height:146px;}
