@@ -150,7 +150,7 @@ function newRun(cls,diff,dailySeed){const isDaily=typeof dailySeed==="number";co
  if(cls.id==="grill"||cls.id==="tactical"){addItem(mkConsumable("casserole"));addItem(mkConsumable("granola"));addItem(mkConsumable("jerky"));}
  // Dad knows what he packed: starting rations begin identified.
  ["casserole","water","granola","jerky"].forEach(revealConsumable);
- deathReport=null;buildFloor();messages=[];log(isDaily?"Floor 1. Today's Daily Challenge dungeon awaits — every dad faces this same house. Press H for help.":"Floor 1. The house is warming up. Press H for help.","gold");mode=State.PLAY;showBiomeClip();saveRun();syncUI();}
+ deathReport=null;buildFloor();messages=[];log(isDaily?"Floor 1. Today's Daily Challenge dungeon awaits — every dad faces this same house. "+kbTxt("Press H for help.","For help: MORE, then MANUAL."):"Floor 1. The house is warming up. "+kbTxt("Press H for help.","For help: MORE, then MANUAL."),"gold");mode=State.PLAY;showBiomeClip();saveRun();syncUI();}
 /* ===== graveyard (N12) ===== */
 function loadGraveyard(){try{return JSON.parse(localStorage.getItem(GRAVEYARD_KEY))||[];}catch(e){return [];}}
 function saveGraveyardEntry(entry){try{const g=loadGraveyard();g.unshift(entry);if(g.length>20)g.length=20;localStorage.setItem(GRAVEYARD_KEY,JSON.stringify(g));}catch(e){}}
@@ -547,10 +547,12 @@ function tryCraft(refA,refB){
  if((refA.src==="equip"&&isCursed(itA))||(refB.src==="equip"&&isCursed(itB))){log("You cannot pry a cursed item off to combine it. The curse has opinions. (Remove the curse first.)","red");return;}
  const a=itA.id,b=itB.id;const rec=RECIPES.find(r=>(r.a===a&&r.b===b)||(r.a===b&&r.b===a));if(!rec){log("Those two do not combine. (Yet.)","dim");return;}if(rec.lock&&game.cls.id!==rec.lock){log("Only "+CLASSES.find(c=>c.id===rec.lock).name+" can make that.","red");return;}if(rec.classes&&!rec.classes.includes(game.cls.id)){log("Only the handy sorts (DIY, Tactical, Tech) can rig that.","red");return;}let base=0.7;if(rec.bonus&&game.cls.id===rec.bonus)base=0.95;if(game.cls.craft!=="none"&&!rec.lock)base+=0.05;const wasEquipped=(refA.src==="equip"||refB.src==="equip");refConsume(refA);refConsume(refB);if(wasEquipped)log("You strip a worn piece off to feed it into the project. Bold.","dim");if(Math.random()>base){log("The craft fails. A Learning Experience.","red");addItem(mkObject("ducttape"));combineMark=null;return;}const o=rec.out;let made;if(["weapon","armor","charm"].includes(o.kind))made=mkGear(o,o.kind,Math.random,true);else if(o.kind==="consumable")made=Object.assign({kind:"consumable"},o);else made=Object.assign({kind:"object"},o);addItem(made);if(typeof sfxCraft==="function")sfxCraft();log("CRAFTED: "+o.name+"!","gold");
  // Crafting a previously-undiscovered recipe records it in the Compendium.
- {const _rk=rec.a+"+"+rec.b;if(!game.knownRecipes)game.knownRecipes=[];if(!game.knownRecipes.includes(_rk)){game.knownRecipes.push(_rk);log("Recipe learned — now recorded in the Compendium [J].","blu");}}
+ {const _rk=rec.a+"+"+rec.b;if(!game.knownRecipes)game.knownRecipes=[];if(!game.knownRecipes.includes(_rk)){game.knownRecipes.push(_rk);log("Recipe learned — now recorded in the "+kbTxt("Compendium [J].","Codex (MORE, then CODEX)."),"blu");}}
  combineMark=null;}
 /* ===== dadisms ===== */
 function adjEnemies(){return game.enemies.filter(e=>Math.abs(e.x-game.px)+Math.abs(e.y-game.py)===1);}
+/* MOB-44 (2026-11-13): on compact (phone) layouts in-game text names buttons, never keys. kbTxt(desktop,phone). */
+function kbTxt(d,p){return (typeof COMPACT!=="undefined"&&COMPACT)?p:d;}
 function weaponReach(){return(game.equip&&game.equip.weapon&&game.equip.weapon.reach)||1;}
 function castDadism(id){const d=DADISMS.find(x=>x.id===id);if(!d)return;if(game.moxie<d.cost){log("Not enough Patience for "+d.name+".","red");return;}game.moxie-=d.cost;
  if(d.kind==="dmg"){const t=adjEnemies()[0];if(!t){log("Nothing close enough.","dim");game.moxie+=d.cost;return;}const dm=d.power+Math.floor(effWis()/2);t.hp-=dm;t.shownHP=true;discover(t.def,game.depth);addFX({kind:"blast",cells:[{x:t.x,y:t.y}],t:0,life:10,color:"#f0a040"});log(d.name+"! "+t.def.name+" takes "+dm+".","gold");if(t.hp<=0){gainXP(t.def.xp);game.gold+=t.def.gold;game.enemies=game.enemies.filter(x=>x!==t);}}
@@ -916,7 +918,7 @@ function revealRecipe(e){
  const r=unknown[Math.floor(Math.random()*unknown.length)];
  if(!game.knownRecipes)game.knownRecipes=[];
  game.knownRecipes.push(r.a+"+"+r.b);
- log("YallTube reveals: "+r.desc+" Now shown in the Compendium [J].","gold");
+ log("YallTube reveals: "+r.desc+" Now shown in the "+kbTxt("Compendium [J].","Codex (MORE, then CODEX)."),"gold");
  removeEntry(e,1);endTurn();}
 function applyAttrBoost(boost,e){
  if(boost.stat==="str"){game.str+=boost.amount;log("PERMANENT ATK +"+boost.amount+"! The gains are real.","gold");}
@@ -956,7 +958,7 @@ function openDoorMenu(d){const opts=doorOptions(d);
  openMenu(d.locked?"A locked door blocks the way. What's the play?":"A door. What's the play?",opts);}
 /* ===== placeable traps (#24) — craft, carry (max 5/stack), place 1 per tile ===== */
 function springTrapOn(e,t){t.sprung=true;const d=t.def;const dmg=d.dmg||4;e.hp-=dmg;e.shownHP=true;addFX({kind:"blast",cells:[{x:t.x,y:t.y}],t:0,life:10,color:"#e0453a"});log("Your "+d.name+" springs on "+e.def.name+"! "+dmg+" dmg.","gold");if(d.status==="nap"||d.status==="coma")e.stun=Math.max(e.stun||0,2);else if(d.status)e.root=Math.max(e.root||0,2);if(e.hp<=0){const _g=e.def.gold||0;game.gold+=_g;game.moolahEarned=(game.moolahEarned||0)+_g;log(e.def.name+" is undone by your craftsmanship. +"+e.def.xp+" XP"+(_g>0?", +"+_g+" moolah":""),"gold");gainXP(e.def.xp);game.enemies=game.enemies.filter(x=>x!==e);}}
-function startPlace(e){if(!e||!e.it.placeable){log("That can't be placed.","dim");return;}placeRef=e;placing=true;closeOverlays();log("Place "+e.it.name+" — press a direction (Esc cancels).","blu");}
+function startPlace(e){if(!e||!e.it.placeable){log("That can't be placed.","dim");return;}placeRef=e;placing=true;closeOverlays();log("Place "+e.it.name+kbTxt(" — press a direction (Esc cancels)."," — tap a tile next to you, then PLACE (CANCEL backs out)."),"blu");}
 function quickPlace(){const e=game.inv.find(en=>en.it.placeable);if(!e){log("No traps to place. Craft one first (DIY/Tactical/Tech).","dim");return;}startPlace(e);}
 function quickThrow(){const list=game.inv.filter(en=>en.it.throw);if(!list.length){log("Nothing throwable in the bag. Find or craft something aerodynamic.","dim");return;}/* MOB-11: pick what to throw first */
  openMenu("THROW &mdash; pick the projectile.<br><span class=\"dim\">Your arm: "+throwArm()+" tiles (STR "+game.str+").</span>",list.map(function(en){return {label:itemDisplayName(en.it)+(en.qty>1?" x"+en.qty:"")+" &mdash; "+(en.it.throw.dmg||3)+" dmg, "+throwRange(en.it)+" tiles",fn:function(){startThrow(en);syncUI();}};}));}
