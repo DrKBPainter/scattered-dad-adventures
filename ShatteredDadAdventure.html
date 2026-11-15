@@ -550,6 +550,20 @@ body.m-land #tgtbox .tb-go{display:none;} #scanpop .sp-t{color:var(--gold);font-
 .m12-howto button{font:bold 12px monospace;color:#1a1a1a;background:var(--gold);border:1px solid var(--gold);border-radius:5px;min-height:36px;padding:4px 12px;cursor:pointer}
 body.m-compact .m12-howto button{min-height:44px}
 /* M18: Share the Game sheet (js/share.js); same look as the Save Backup sheet */
+/* MOB-59: end-of-run pop-up on phones (#m59end; ui.js syncEndCard, input.js doEndAction). Share/Feedback sheets (z 210) sit above it. */
+#m59end{display:none;position:fixed;inset:0;z-index:205;background:rgba(4,6,10,.78);align-items:center;justify-content:center;padding:max(8px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));box-sizing:border-box}
+#m59end.show{display:flex}
+#m59end .m59-panel{width:100%;max-width:440px;max-height:100%;display:flex;flex-direction:column;gap:10px;box-sizing:border-box}
+#m59end .m59-card{flex:0 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#fffdf3;color:#111;border:3px solid #000;box-shadow:4px 4px 0 #000;font:13px/1.4 monospace}
+#m59end .atc-mast span:first-child{font-size:20px}
+#m59end .m59-head{font-size:13px;line-height:1.45;margin-bottom:6px}
+#m59end .m59-tally summary{cursor:pointer;font-weight:bold;color:#b5121b;padding:4px 0;min-height:32px;display:flex;align-items:center}
+#m59end .m59-rows{font-size:11.5px;line-height:1.4} #m59end .m59-rows div{margin:0 0 3px}
+#m59end .m59-rows .l-red{color:#b5121b} #m59end .m59-rows .l-gold{color:#8a5a00;font-weight:bold} #m59end .m59-rows .l-grn{color:#0b7a2a} #m59end .m59-rows .l-blu{color:#1f57a8} #m59end .m59-rows .l-dim{color:#5a5240} #m59end .m59-rows .l-ink{color:#222}
+#m59end .m59-btns{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#m59end .m59-btn{min-height:46px;padding:6px 8px;font:bold 12.5px monospace;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:7px;cursor:pointer;touch-action:manipulation;text-transform:uppercase;letter-spacing:.3px}
+#m59end .m59-btn.m59-go{grid-column:1/-1;background:#ffe14a;color:#111;border:2px solid #000;box-shadow:2px 2px 0 #000;font-size:14px}
+body.m-land #m59end .m59-panel{max-width:760px;flex-direction:row;align-items:center} body.m-land #m59end .m59-card{flex:1 1 60%} body.m-land #m59end .m59-btns{flex:0 0 38%;align-content:center}
 /* MOB-43: THE DAD MANUAL (#ovInstr page buttons + #m43man pop-up with a comic card) */
 .m43-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:10px 4px 6px 0}
 body.m-compact .m43-grid{grid-template-columns:1fr 1fr;gap:9px}
@@ -742,6 +756,7 @@ body.m-compact .m18-howto button{min-height:44px}
 <div id="m12ios" role="dialog" aria-modal="true" aria-label="Add to Home Screen"><div class="m12i-panel"><h2>PUT THE GAME ON YOUR HOME SCREEN</h2><p>Safari tidies away website saves after a while. A Home Screen game keeps them, and plays without Wi-Fi.</p><ol><li>Tap <span class="m12-share">Share &#8679;</span> in Safari's toolbar.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>, then open the game from its new icon.</li></ol><p>Your saves here do not move by themselves: use <b>Save Backup</b> (in The Dad Manual) to carry them over.</p><p class="m12-note">A crayon note on the fridge: &ldquo;Dad you are good at installing things. Like the shelf. Mostly.&rdquo;</p><div class="m12i-row"><button type="button" class="m12i-go" data-m12ios="ok">Got it</button></div></div></div>
 <div id="m12save" role="dialog" aria-modal="true" aria-label="Save Backup"><div class="m12-panel"><div class="m12-head"><b>SAVE BACKUP</b><button type="button" class="m12-close" data-m12="close" title="Close (Esc)">&#10005; Close</button></div><div id="m12body"></div><span id="m12msg" class="m12-msg" role="status" aria-live="polite"></span></div></div>
 <script src="js/durable.js"></script>  <!-- M12: install prompt, iOS instructions, save on background, Save Backup export/import, audio unlock -->
+<div id="m59end" role="dialog" aria-modal="true" aria-label="End of the run"></div>
 <div id="m43man" role="dialog" aria-modal="true" aria-label="The Dad Manual"><div class="m43-panel"><div class="m43-head"><b id="m43title">THE DAD MANUAL</b><button type="button" class="m43-close" data-m43c="close" title="Close (Esc)">&#10005; Close</button></div><div id="m43body"></div></div></div>
 <div id="m18share" role="dialog" aria-modal="true" aria-label="Share the Game"><div class="m18-panel"><div class="m18-head"><b>SHARE THE GAME</b><button type="button" class="m18-close" data-m18="close" title="Close (Esc)">&#10005; Close</button></div><div id="m18body"></div><span id="m18msg" class="m18-msg" role="status" aria-live="polite"></span></div></div>
 <script src="js/share.js"></script>   <!-- M18: Share the Game sheet (QR code + link) -->

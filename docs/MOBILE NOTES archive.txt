@@ -4,6 +4,10 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-13 (nightly run 4). Census: [ ] 0 | [-] 0 | [k] 1 | [c] 3 | [!] 14 | [x] awaiting archive 0. INBOX: 2 lines (both FORM lines on the 1-day hold; eligible 2026-11-14).   [displaced 2026-11-15 nightly run]
+Previously: 2026-11-13 (nightly run 3). Census: [ ] 0 | [-] 0 | [k] 1 | [c] 3 | [!] 14 | [x] awaiting archive 0. INBOX: 2 lines (both FORM lines on the 1-day hold; eligible 2026-11-14).   [displaced 2026-11-14 nightly run]
+Previously: 2026-11-13 (nightly run 2). Census: [ ] 0 | [-] 1 | [k] 1 | [c] 2 | [!] 14 | [x] awaiting archive 0. INBOX: 2 lines (both FORM lines on the 1-day hold; eligible 2026-11-14).   [displaced 2026-11-13 nightly run 4]
+Previously: 2026-11-13 (nightly run). Census: [ ] 0 | [-] 0 | [k] 1 | [c] 15 | [!] 11 | [x] awaiting archive 0. INBOX: 2 lines (both FORM lines on the 1-day hold; eligible 2026-11-14).   [displaced 2026-11-13 nightly run 3]
 Previously: 2026-11-12 (nightly run 2). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 14 | [!] 9 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-13 nightly run 2]
 Previously: 2026-11-12 (nightly run). Census: [ ] 0 | [-] 0 | [k] 2 | [c] 13 | [!] 9 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-13 nightly run]
 Previously: 2026-11-11 (nightly run 5). Census: [ ] 0 | [-] 0 | [k] 3 | [c] 11 | [!] 10 | [x] awaiting archive 0. INBOX: 0 lines.   [displaced 2026-11-12 nightly run 2]
@@ -928,6 +932,37 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-15 (nightly; fired Sunday off its Mon-Sat schedule, apparently by hand; the weekly PWA build task is disabled, so the run went ahead)
+- Form import: Sheet read; no responses newer than FORM SYNC 11/13/2026 22:48:53 (0 imported).
+- Triaged 6 INBOX lines: 2 FORM lines (imported 2026-11-14) -> [BUG] MOB-57 (craft with full bag loses the result), [BUG] MOB-58 (Officer Doug hunt target missing); 4 KBP lines -> [UX] MOB-59 (end-of-run pop-up), [!] [CONTENT] MOB-60 (ally gear/bag/tap menu), [-] [UX] MOB-61 (ally walk animation), [!] [CONTENT] MOB-62 (item picture audit + unidentified pants look).
+- No [x] to archive; no [c] reopened; no unanswered KBP notes.
+- Worked (3 [-] items, BUG before UX): MOB-57 -> [c] (js/game.js _craftWear/_craftKeep); MOB-58 -> [c] (js/game.js _spawnHuntElite/_huntDir/huntQuestSweep); MOB-59 -> [c] (#m59end pop-up: HTML + js/ui.js syncEndCard + js/input.js doEndAction). Verified: 7/7 clears (one class per process), Playwright base vs new on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape (base reproduced all three), desktop title/play/bag/end screen md5-identical, protected screens pass md5-identical, sw.js --check OK, folder md5s match.
+- Files changed: js/game.js, js/ui.js, js/input.js, ShatteredDadAdventure.html, sw.js (BUILD 1.0.0-96cd80081a -> 1.0.0-f93da69c66), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. Bugs logged and resolved: BUG-021, BUG-022.
+- Still open: [c] MOB-11, 44, 55, 56, 57, 58, 59 (shared files; push together) | [k] MOB-08 | [-] MOB-61 | [!] MOB-19, 22, 24, 26, 27, 37, 40, 41, 45, 49, 51, 52, 53, 54, 60, 62.
+
+RUN 2026-11-14 (nightly)
+- Form import: Sheet read; 2 new responses imported (sent 11/13/2026 22:40:49 crafted Cargo Shorts + knee sleeves with a full bag: extra slot gone and the crafted item vanished; 22:48:53 Officer Doug hunt quest: no unusually large creature on the floor). FORM SYNC -> 11/13/2026 22:48:53. Both on hold until 2026-11-15.
+- Triaged 2 FORM lines (imported 2026-11-13): reach-box report added to [k] MOB-08 (same issue, reproduced 2026-11-13; still waiting on the reach-rule ASK); item on the stairs -> new [BUG] MOB-56.
+- No [x] to archive; no [c] reopened; no unanswered KBP notes.
+- Worked: MOB-56 -> [c]. The pick-up question (or pile list) now comes before the stairs question, which follows once it is answered (js/game.js tryMove _stairsAsk; js/ui.js resolveConfirm/resolveMenu + _m56Then). Verified: 7/7 clears, Playwright 75/75 on 4 phone profiles + desktop (base reproduced the bug on all 5), real taps on iPhone 13 / Pixel 5, protected screens and desktop md5-identical, old save continues.
+- Files changed: js/game.js, js/ui.js, sw.js (BUILD 1.0.0-1b07448909 -> 1.0.0-96cd80081a), bugs/BUG_LOG.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. Bug logged and resolved: BUG-020.
+- Still open: [c] MOB-11, 44, 55, 56 (shared files; push together) | [k] MOB-08 | [!] MOB-19, 22, 24, 26, 27, 37, 40, 41, 45, 49, 51, 52, 53, 54.
+
+RUN 2026-11-13 (nightly, run 4)
+- Form import: Sheet read; no responses newer than FORM SYNC 11/11/2026 21:16:42 (0 imported). The 2 FORM lines stay on hold until 2026-11-14.
+- Triaged 1 KBP INBOX line ("In landscape, the", cut off): filed on MOB-55 as an unfinished draft of KBP's MOB-55 note; no new item.
+- KBP note answered: MOB-55 (KBP had reopened it to [-]): actioned.
+- Worked: MOB-55 -> [c]. Landscape: slim right column (300 px; 271 px under 700 px wide) holding HUD/log, buttons 2 x 4 (MORE last) and the D-pad to their right; the map takes the rest (S25+ profile 407 -> 516 px, 11 -> 14 columns; column cap 15 -> 20). Verified: 7/7 clears, atlas OK, Playwright 155/155 landscape, 41/41 portrait/desktop regression + old save, 48/48 protected screens (md5-identical).
+- Files changed: js/config.js, ShatteredDadAdventure.html, sw.js (BUILD 1.0.0-1d5789b741 -> 1.0.0-1b07448909), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. No bugs logged (BUG-004 no longer reproduces on the 4 profiles; left open).
+- Still open: [c] MOB-11, 44, 55 (shared sw.js; push together) | [k] MOB-08 | [!] MOB-19, 22, 24, 26, 27, 37, 40, 41, 45, 49, 51, 52, 53, 54.
+
+RUN 2026-11-13 (nightly, run 3)
+- Form import: Sheet read; no responses newer than FORM SYNC 11/11/2026 21:16:42 (0 imported). The 2 FORM lines stay on hold until 2026-11-14.
+- No eligible INBOX lines; no [x] to archive; no [c] reopened; no unanswered KBP notes.
+- Worked: [-] MOB-55 -> [c]. Landscape phones/tablets: map column = left half of the screen (js/config.js _m6Layout + --m55-mapw; column count follows the half's shape), HUD/log/D-pad/buttons in the right half. Verified: 7/7 clears, Playwright 149/159 landscape checks (10 misses = pre-existing BUG-004 Pixel 5 landscape + D-pad overflow, identical in the previous build, and 1 test-script error), portrait/desktop and protected screens md5-identical, old save continues.
+- Files changed: js/config.js, ShatteredDadAdventure.html, sw.js (BUILD 1.0.0-3e3b3bdc69 -> 1.0.0-1d5789b741), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. No bugs logged.
+- Still open: [c] MOB-11, 44, 55 (shared sw.js; push together) | [k] MOB-08 | [!] MOB-19, 22, 24, 26, 27, 37, 40, 41, 45, 49, 51, 52, 53, 54.
+
 RUN 2026-11-13 (nightly, run 2)
 - Form import: Sheet read; no responses newer than FORM SYNC 11/11/2026 21:16:42 (0 imported). The 2 FORM lines from run 1 stay on hold until 2026-11-14.
 - Archived (KBP "Close out. KBP"): MOB-06, MOB-07, MOB-14, MOB-16, MOB-28, MOB-30, MOB-39, MOB-42, MOB-43, MOB-46, MOB-47, MOB-48, MOB-50. BUG-018 and BUG-019 were already resolved.

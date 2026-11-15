@@ -32,7 +32,27 @@ function syncUI(){
 /* ===== overlays ===== */
 const oI=document.getElementById("ovInstr"),oInv=document.getElementById("ovInv"),oD=document.getElementById("ovDad"),oShop=document.getElementById("ovShop"),oB=document.getElementById("ovBest"),oMap=document.getElementById("ovMap"),oCodex=document.getElementById("ovCodex"),oGrave=document.getElementById("ovGrave"),cf=document.getElementById("confirm"),cfT=document.getElementById("cf-text"),cfBtns=document.getElementById("cf-btns");
 const elStat=document.getElementById("statline"),elStatuses=document.getElementById("statuses"),elLog=document.getElementById("log");
-function syncOverlays(){oI.classList.toggle("show",ovInstr);oInv.classList.toggle("show",ovInv);oD.classList.toggle("show",ovDad);oShop.classList.toggle("show",shopOpen);oB.classList.toggle("show",ovBest);oMap.classList.toggle("show",ovMap);oCodex.classList.toggle("show",ovCodex);oGrave.classList.toggle("show",ovGrave);cf.classList.toggle("show",!!pendingConfirm||!!pendingMenu);const _oc=document.getElementById("ovClose");if(_oc)_oc.style.display=(ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave)&&!pendingConfirm&&!pendingMenu?"block":"none";syncDpad();syncActionBar();syncAimBar();_m9Body();syncTgtBox();/* MOB-08 */}
+function syncOverlays(){oI.classList.toggle("show",ovInstr);oInv.classList.toggle("show",ovInv);oD.classList.toggle("show",ovDad);oShop.classList.toggle("show",shopOpen);oB.classList.toggle("show",ovBest);oMap.classList.toggle("show",ovMap);oCodex.classList.toggle("show",ovCodex);oGrave.classList.toggle("show",ovGrave);cf.classList.toggle("show",!!pendingConfirm||!!pendingMenu);const _oc=document.getElementById("ovClose");if(_oc)_oc.style.display=(ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave)&&!pendingConfirm&&!pendingMenu?"block":"none";syncDpad();syncActionBar();syncAimBar();_m9Body();syncTgtBox();/* MOB-08 */syncEndCard();/* MOB-59 */}
+/* MOB-59 (2026-11-15): on phones the end of a run (tapped out, or victory) is a pop-up card with one button per next step, in place of
+   the tap-the-log-row menu. Desktop keeps the log rows. Hidden while an overlay or confirm is open (Bestiary, etc.); the Share and
+   Feedback sheets sit above it. Buttons call doEndAction() in input.js. */
+var _m59Key="";
+function syncEndCard(){const el=typeof document!=="undefined"&&document.getElementById("m59end");if(!el)return;
+ const end=(mode===State.DEAD||mode===State.WIN)&&!!game&&typeof COMPACT!=="undefined"&&COMPACT;
+ const busy=ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave||!!pendingConfirm||!!pendingMenu;
+ const on=end&&!busy;if(!end){_m59Key="";el.classList.remove("show");try{document.body.classList.remove("m59-on");}catch(e){}return;}
+ const won=mode===State.WIN,asc=won&&!game.ascentDone&&!game.ascent;const rep=(!won&&typeof deathReport!=="undefined"&&deathReport)?deathReport:null;
+ const key=(won?"W":"D")+game.depth+"|"+(asc?1:0)+"|"+(rep?rep.length+":"+(rep[0]&&rep[0].t):"");
+ if(key!==_m59Key){_m59Key=key;
+  const head=won?(game.ascentDone?"The Remote is home. Daylight confirmed. Someone has already mentioned the gutters.":"The Remote is recovered. Thermostat: 72. All discovered creatures retained."):(rep&&rep[0]?rep[0].t:"Not defeated. Merely... done for the day.");
+  const rows=rep?rep.slice(1).map(m=>'<div class="l-'+m.c+'">'+m.t+'</div>').join(""):"";
+  const B=(a,t,c)=>'<button type="button" class="m59-btn'+(c?" "+c:"")+'" data-m59="'+a+'">'+t+'</button>';
+  el.innerHTML='<div class="m59-panel"><div class="m59-card"><div class="atc-mast"><span>'+(won?"VICTORY":"TAPPED OUT")+'</span><span class="atc-who">'+(game.cls?game.cls.name:"")+' &middot; Floor '+game.depth+'</span></div>'
+   +'<div class="atc-body"><div class="m59-head">'+head+'</div>'+(game.isDaily?'<div class="atc-sub">Daily Challenge ('+(game.dailyDate||"")+'). Result recorded.</div>':'')
+   +(rows?'<details class="m59-tally"><summary>The Final Tally</summary><div class="m59-rows">'+rows+'</div></details>':'')+(won?'':'<div class="atc-flav">On the fridge, in crayon: "its ok dad. you can try agen tomorow. or now."</div>')+'</div></div>'
+   +'<div class="m59-btns">'+(asc?B("ascent","Ascent: carry it home","m59-go"):"")+B("again","Try again: choose a Dad",asc?"":"m59-go")+B("title","Title screen")+B("best","Bestiary")+B("share","Share the game")+B("feedback","Send feedback")+'</div></div>';}
+ el.classList.toggle("show",on);try{document.body.classList.toggle("m59-on",on);}catch(e){}}
+if(typeof document!=="undefined"&&document.addEventListener)document.addEventListener("click",ev=>{const b=ev.target&&ev.target.closest&&ev.target.closest("#m59end [data-m59]");if(!b)return;ev.preventDefault();if(typeof doEndAction==="function")doEndAction(b.dataset.m59);});/* #m59end sits after the scripts in the HTML, so delegate */
 // Overlay-open shared by the I/K/M/H/B/J keys and the on-screen action-bar panel buttons.
 // Opens the named overlay via the SAME closeOverlays()+build+syncOverlays() path the keys use, so behaviour is identical.
 function openOverlayByName(name){
@@ -130,11 +150,13 @@ function closeOverlays(){if(_m43Open&&typeof closeManualPage==="function")closeM
 function openConfirm(t,fn,lbl){pendingConfirm={fn};if(lbl&&lbl.title){cfT.innerHTML='<b class="cf-title">'+esc(lbl.title)+'</b>'+esc(t);}else cfT.textContent=t;cfT.classList.toggle("cf-story",!!(lbl&&lbl.story));const _y=(lbl&&lbl.yes)||"Yes",_n=(lbl&&lbl.no)||"No";cfBtns.innerHTML=(lbl&&lbl.single)?'<button type="button" class="cf-btn cf-yes cf-single" data-cf="y">'+_y+'</button>':'<button type="button" class="cf-btn cf-yes" data-cf="y">'+kbTxt('[Y] ','')+_y+'</button><button type="button" class="cf-btn" data-cf="n">'+kbTxt('[N] ','')+_n+'</button>';try{cfT.scrollTop=0;}catch(e){}syncOverlays();}
 /* Dad-select story card: shown only after a Dad is chosen (tap card deck "Choose", click a row, or ENTER). One Continue button -> difficulty. Esc/N dismisses. */
 function openClassConfirm(c){openConfirm(c.backstory||c.blurb,()=>{pendingClass=c;mode=State.DIFF;diffCursor=1;syncUI();},{title:c.name.toUpperCase(),story:true,single:true,yes:"Continue \u25B8"});}
-function resolveConfirm(y){if(!pendingConfirm)return;const fn=pendingConfirm.fn;pendingConfirm=null;syncOverlays();if(y&&fn)fn();}
+function resolveConfirm(y){if(!pendingConfirm)return;const fn=pendingConfirm.fn,_th=pendingConfirm.then;pendingConfirm=null;syncOverlays();if(y&&fn)fn();_m56Then(_th);}
+/* MOB-56: run a follow-up question (e.g. the stairs) after this one, or hand it on to the next question it opened */
+function _m56Then(th){if(!th)return;if(typeof mode!=="undefined"&&mode!==State.PLAY)return;if(!game||game.hp<=0)return;if(pendingConfirm)pendingConfirm.then=th;else if(pendingMenu)pendingMenu.then=th;else th();}
 /* ===== option menu (doors, etc.) ===== */
 // Options render as clickable rows (data-menu index) plus a cancel button (data-menu="-1"); keys 1-9/Esc still work.
 function openMenu(title,options){pendingMenu={options};cfT.innerHTML='<b>'+title+'</b><br>'+options.map((o,i)=>'<button type="button" class="cf-menu" data-menu="'+i+'">'+kbTxt('<span class="key">['+(i+1)+']</span> ','')+o.label+'</button>').join('');cfBtns.innerHTML=kbStrip('<button type="button" class="cf-btn" data-menu="-1">[Esc] Cancel</button>');if(typeof m16PaintStrips==="function")m16PaintStrips(cfT);syncOverlays();}
-function resolveMenu(i){if(!pendingMenu)return;const opts=pendingMenu.options;pendingMenu=null;syncOverlays();if(i>=0&&i<opts.length&&opts[i].fn)opts[i].fn();}
+function resolveMenu(i){if(!pendingMenu)return;const opts=pendingMenu.options,_th=pendingMenu.then;pendingMenu=null;syncOverlays();if(i>=0&&i<opts.length&&opts[i].fn)opts[i].fn();_m56Then(_th);}
 /* MOB-44 (KBP 2026-11-11): on compact (phone) layouts the manual has touch instructions only; no keyboard shortcuts. Desktop text unchanged.
    MOB-43 (KBP 2026-11-12): "How to Play" is now THE DAD MANUAL: buildInstr() shows one comic page button per <h2> section of
    _m43Raw() (text unchanged), plus Save Backup, Share and Feedback; a page opens in the #m43man pop-up as a comic card. */

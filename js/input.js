@@ -104,18 +104,20 @@ function doTitleAction(a){
   else if(a==="share"){if(typeof openShare==="function")openShare();}
   else if(a==="feedback"){if(typeof openFeedback==="function")openFeedback();}
 }
+/* MOB-59 (2026-11-15): end-of-run actions, shared by the log rows (desktop) and the phone pop-up (#m59end). "again" = Choose Your Dad. */
+function doEndAction(a){if(mode!==State.DEAD&&mode!==State.WIN)return;
+  if(a==="title"){mode=State.TITLE;messages=[];syncUI();}
+  else if(a==="again"){messages=[];doTitleAction("new");}
+  else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
+  else if(a==="share"){if(typeof openShare==="function")openShare();}
+  else if(a==="feedback"){if(typeof openFeedback==="function")openFeedback();}
+  else if(a==="ascent"&&mode===State.WIN&&!game.ascentDone&&!game.ascent&&typeof startAscent==="function"){startAscent();}}
 // Title / class / difficulty / end-screen options: click the same rows the keys trigger.
 elLog.addEventListener("click",(ev)=>{
  if(mode===State.TITLE){const opt=ev.target.closest("[data-title]");if(!opt)return;doTitleAction(opt.dataset.title);return;}
  if(mode===State.CLASS){const cr=ev.target.closest("[data-class]");if(!cr)return;classCursor=+cr.dataset.class;syncUI();openClassConfirm(CLASSES[classCursor]);return;}
  if(mode===State.DIFF){const dr=ev.target.closest("[data-diff]");if(!dr)return;if(dr.dataset.diff==="back"){mode=State.CLASS;syncUI();return;}diffCursor=+dr.dataset.diff;const _diff=DIFFICULTY_MODES[diffCursor];log(pendingClass.name+" on "+_diff.name+": "+_diff.flavor,"gold");const _dseed=pendingDaily?dailySeedFor(dailyDateStr()):undefined;pendingDaily=false;newRun(pendingClass,_diff,_dseed);return;}
- if(mode===State.DEAD||mode===State.WIN){const en=ev.target.closest("[data-end]");if(!en)return;const a=en.dataset.end;
-  if(a==="title"){mode=State.TITLE;messages=[];syncUI();}
-  else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
-  else if(a==="share"){if(typeof openShare==="function")openShare();}
-  else if(a==="feedback"){if(typeof openFeedback==="function")openFeedback();}
-  else if(a==="ascent"&&mode===State.WIN&&!game.ascentDone&&!game.ascent&&typeof startAscent==="function"){startAscent();}
-  return;}
+ if(mode===State.DEAD||mode===State.WIN){const en=ev.target.closest("[data-end]");if(!en)return;doEndAction(en.dataset.end);return;}
 });
 // M6 compact shell: during play the log is collapsed to its last 2 lines; tap it to expand/collapse.
 elLog.addEventListener("click",()=>{if(mode!==State.PLAY||!document.body.classList.contains("m-compact"))return;const open=!elLog.classList.contains("log-open");elLog.classList.toggle("log-open",open);const h=document.getElementById("hud");if(h)h.classList.toggle("log-open-host",open);if(open)elLog.scrollTop=elLog.scrollHeight;});

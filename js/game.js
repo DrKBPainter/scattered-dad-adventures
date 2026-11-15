@@ -190,7 +190,7 @@ function buildFloor(){game.floorTurns=0;/* MOB-30 */if(game.ally&&!game.ally.fol
  // Family Dog: 20% chance per floor
  if(!vend&&!game.enemies.some(en=>en.def&&en.def.id==="family_dog")&&Math.random()<0.20){let dr=f.rooms[Math.floor(f.rng()*f.rooms.length)],_dtries=0;while(onStairs(dr.cx,dr.cy)&&_dtries<10){dr=f.rooms[Math.floor(f.rng()*f.rooms.length)];_dtries++;}if(!onStairs(dr.cx,dr.cy)){const dogE=mkEnemy(FAMILY_DOG,dr.cx,dr.cy,false);dogE.isDog=true;game.enemies.push(dogE);log("Something large and friendly can be heard nearby.","dim");}}
  // Ally encounter: 15% chance per floor if no active ally
- if(!game.ally&&typeof ALLIES!=="undefined"){const avail=ALLIES.filter(a=>!(game.allyMet||[]).includes(a.id));if(avail.length&&Math.random()<0.15){const adef=avail[Math.floor(Math.random()*avail.length)];let ar=_allyRoom(f);if(!ar){ar=f.rooms[1]||f.rooms[0];if(onStairs(ar.cx,ar.cy))ar=f.rooms.find(rm=>!onStairs(rm.cx,rm.cy))||ar;}game.ally={defId:adef.id,hp:adef.hp,maxhp:adef.maxhp,x:ar.cx,y:ar.cy,following:false,questDone:!adef.quest,questOffered:false};log("A friendly presence is somewhere on this floor.","gold");
+ if(!game.ally&&typeof ALLIES!=="undefined"){const avail=ALLIES.filter(a=>!(game.allyMet||[]).includes(a.id));if(avail.length&&Math.random()<0.15){const adef=avail[Math.floor(Math.random()*avail.length)];let ar=_allyRoom(f);if(!ar){ar=f.rooms[1]||f.rooms[0];if(onStairs(ar.cx,ar.cy))ar=f.rooms.find(rm=>!onStairs(rm.cx,rm.cy))||ar;}game.ally={defId:adef.id,hp:adef.hp,maxhp:adef.maxhp,x:ar.cx,y:ar.cy,following:false,questDone:!adef.quest,questOffered:false};game._huntRef=null;log("A friendly presence is somewhere on this floor.","gold");
   // Recruit side quest: place the fetch item, or spawn an oversized hunt target, elsewhere on this floor.
   if(adef.quest){
    if(adef.quest.type==="fetch"){
@@ -203,7 +203,8 @@ function buildFloor(){game.floorTurns=0;/* MOB-30 */if(game.ally&&!game.ally.fol
     const hr=f.rooms[f.rooms.length-1]||f.rooms[0];
     if(hr){const hx=hr.x+1+Math.floor(f.rng()*Math.max(1,hr.w-2)),hy=hr.y+1+Math.floor(f.rng()*Math.max(1,hr.h-2));
      if(!onStairs(hx,hy)&&!(hx===game.px&&hy===game.py)){const cdef=pickCreature(game.depth,f.rng);
-      if(cdef){const qe=mkEnemy(cdef,hx,hy,false);qe.hp=Math.round(qe.hp*1.6);qe.maxhp=qe.hp;qe.scaledAtk=Math.round((qe.scaledAtk||cdef.atk)*1.3);qe.isQuestElite=true;qe.questFor=adef.id;game.enemies.push(qe);log("Something bigger than usual is stalking this floor.","red");}}}
+      if(cdef){const qe=mkEnemy(cdef,hx,hy,false);qe.hp=Math.round(qe.hp*1.6);qe.maxhp=qe.hp;qe.scaledAtk=Math.round((qe.scaledAtk||cdef.atk)*1.3);qe.isQuestElite=true;qe.questFor=adef.id;game.enemies.push(qe);game._huntRef=qe;log("Something bigger than usual is stalking this floor.","red");}}}
+    if(!game._huntRef)_spawnHuntElite(adef,Math.random);/* MOB-58: the first spot was the stairs or Dad's tile */
    }
   }}}
  _placeFridgeNote(f);/* M16 */
@@ -485,7 +486,9 @@ function tryMove(dx,dy){if(mode!==State.PLAY||pendingConfirm)return;if(napBlocke
  else if(lMatches.length===1)pickupLootAt(lMatches[0]);
  // Traps ALWAYS trigger when stepped on — visible or not — unless the Light Step talent spares you.
  const ti=game.traps.findIndex(t=>t.x===nx&&t.y===ny&&!t.sprung);if(ti>=0){const t=game.traps[ti];if(game.lightStep)log("You step clean over the "+t.def.name+" without breaking stride. Light Step earns its keep.","dim");else springTrap(t);}
- if(nx===game.stairs.x&&ny===game.stairs.y){const _bb=bossBarsStairs();/* MOB-50 */if(_bb)log("The stairs down will not budge while "+_bb.def.name+" still stands. Some doors only open after a hard conversation.","red");else openConfirm("Descend to Floor "+(game.depth+1)+"?",doDescend);}if(game.stairsUp&&nx===game.stairsUp.x&&ny===game.stairsUp.y)openConfirm(game.ascent&&game.depth===1?"Push open the basement door and carry the Remote home?":"Ascend to Floor "+(game.depth-1)+"?",doAscend);
+ const _stairsAsk=()=>{if(nx===game.stairs.x&&ny===game.stairs.y){const _bb=bossBarsStairs();/* MOB-50 */if(_bb)log("The stairs down will not budge while "+_bb.def.name+" still stands. Some doors only open after a hard conversation.","red");else openConfirm("Descend to Floor "+(game.depth+1)+"?",doDescend);}if(game.stairsUp&&nx===game.stairsUp.x&&ny===game.stairsUp.y)openConfirm(game.ascent&&game.depth===1?"Push open the basement door and carry the Remote home?":"Ascend to Floor "+(game.depth-1)+"?",doAscend);};
+ /* MOB-56: something lying on the stairs is offered first; the stairs question follows once that is answered (ui.js _m56Then) */
+ if(onStairs(nx,ny)&&(pendingConfirm||pendingMenu))(pendingConfirm||pendingMenu).then=_stairsAsk;else _stairsAsk();
  computeVis();studfindCheck();endTurn();}
 /* ===== studfinder passive detection ===== */
 function studfindCheck(){
@@ -500,7 +503,7 @@ function studfindCheck(){
   if(game.secrets&&game.secrets.some(s=>s.x===x&&s.y===y)){found=true;break;}}
  if(found&&game.turn-(game.sfLastTurn||-20)>=8){game.sfLastTurn=game.turn;log("The Studfinder of Prophecy hums. Something concealed is nearby — structural or otherwise.","gold");}}
 function closeDoor(d){d.open=false;log("You push the door shut. It creaks with quiet indignation. (1 turn)","dim");computeVis();endTurn();}
-function endTurn(){game.turn++;tickStatuses();survivalTick();if(mode===State.PLAY)enemyTurn();if(mode===State.PLAY)allyTurn();if(mode===State.PLAY){let doorsChanged=false;for(const d of game.doors){if(d.open){const onDoor=(game.px===d.x&&game.py===d.y)||(game.ally&&game.ally.following&&game.ally.x===d.x&&game.ally.y===d.y);if(onDoor){d.playerWasOn=true;}else if(_doorOccupied(d)){/* MOB-02: something is standing (or lying) in the doorway; the door waits */}else{const turnsSinceOpen=game.turn-(d.openTurn||game.turn);if(d.playerWasOn||turnsSinceOpen>=3){d.open=false;d.playerWasOn=false;doorsChanged=true;}}}}if(doorsChanged)computeVis();}if(mode===State.PLAY)hoaFinaleTick();if(mode===State.PLAY)saveRun();if(mode===State.PLAY&&game.clickPath&&game.clickPath.length)setTimeout(continueClickPath,120);if(mode===State.PLAY)offerTalentIfReady();if(mode===State.PLAY&&comedyTick())saveRun();/* MOB-30 */syncUI();}
+function endTurn(){huntQuestSweep();/* MOB-58 */game.turn++;tickStatuses();survivalTick();if(mode===State.PLAY)enemyTurn();if(mode===State.PLAY)allyTurn();if(mode===State.PLAY){let doorsChanged=false;for(const d of game.doors){if(d.open){const onDoor=(game.px===d.x&&game.py===d.y)||(game.ally&&game.ally.following&&game.ally.x===d.x&&game.ally.y===d.y);if(onDoor){d.playerWasOn=true;}else if(_doorOccupied(d)){/* MOB-02: something is standing (or lying) in the doorway; the door waits */}else{const turnsSinceOpen=game.turn-(d.openTurn||game.turn);if(d.playerWasOn||turnsSinceOpen>=3){d.open=false;d.playerWasOn=false;doorsChanged=true;}}}}if(doorsChanged)computeVis();}if(mode===State.PLAY)hoaFinaleTick();if(mode===State.PLAY)saveRun();if(mode===State.PLAY&&game.clickPath&&game.clickPath.length)setTimeout(continueClickPath,120);if(mode===State.PLAY)offerTalentIfReady();if(mode===State.PLAY&&comedyTick())saveRun();/* MOB-30 */syncUI();}
 /* ===== throwing (+ trap disarm, persistent landing) ===== */
 /* MOB-11: STR sets how far Dad can throw (2 + STR/2 tiles), capped by the item's own range (default 8).
    throwLine(): the tiles a throw passes over toward a target tile (or a straight direction), cut at that range;
@@ -529,6 +532,14 @@ function applyTo(e,st){if(st==="soaked"){e.blind=Math.max(e.blind,1);log(e.def.n
 function refItem(r){return !r?null:(r.src==="equip"?game.equip[r.slot]:(r.e?r.e.it:null));}
 function refConsume(r){if(r.src==="equip"){const it=game.equip[r.slot];game.equip[r.slot]=null;return it;}removeEntry(r.e,1);return r.e?r.e.it:null;}
 function sameRef(a,b){if(!a||!b)return false;if(a.src!==b.src)return false;return a.src==="equip"?a.slot===b.slot:a.e===b.e;}
+/* MOB-57 (2026-11-15): a craft never loses its result. If a worn ingredient freed the slot the result fits, it goes straight on
+   (so crafted Cargo Shorts keep their pockets); otherwise it goes in the bag, and if the bag is full it lands at Dad's feet. */
+function _craftSlotFor(it){if(!it)return null;if(it.kind==="weapon")return["weapon"];if(it.kind==="armor")return it.slot?[it.slot]:null;if(it.kind==="charm")return["charm1","charm2"];return null;}
+function _craftWear(it,freed){const sl=_craftSlotFor(it);if(!sl||!freed||!freed.length)return false;const s=sl.find(k=>freed.includes(k)&&!game.equip[k]);if(!s)return false;
+ if(it.kind==="charm"){game.equip[s]=it;it.idd=true;}else equip(it,true);if(game.equip[s]!==it)return false;
+ log("You put the "+it.name+" straight on, before anyone can ask what it is.","grn");return true;}
+function _craftKeep(it){if(addItem(it))return true;let dx=game.px,dy=game.py;if(onStairs(dx,dy)){for(const[ox,oy]of[[0,1],[1,0],[0,-1],[-1,0]]){const nx=dx+ox,ny=dy+oy;if(nx>=0&&ny>=0&&nx<MAP_W&&ny<MAP_H&&game.floor.grid[ny][nx]===0&&!onStairs(nx,ny)){dx=nx;dy=ny;break;}}}
+ game.loot.push({x:dx,y:dy,item:it});log("No room in the bag, so the "+it.name+" goes on the floor at your feet. It is fine. Floors are a kind of shelf.","gold");return false;}
 function tryCraft(refA,refB){
  if(refA&&refA.it&&!refA.src)refA={src:"inv",e:refA};/* back-compat: raw inv entry */
  if(refB&&refB.it&&!refB.src)refB={src:"inv",e:refB};
@@ -545,7 +556,7 @@ function tryCraft(refA,refB){
    else{log("The Sticky Note only identifies gear and consumables.","dim");return;}
    refConsume(noteRef);combineMark=null;if(typeof ovInv!=="undefined"&&ovInv)buildInv();syncUI();endTurn();return;}}
  if((refA.src==="equip"&&isCursed(itA))||(refB.src==="equip"&&isCursed(itB))){log("You cannot pry a cursed item off to combine it. The curse has opinions. (Remove the curse first.)","red");return;}
- const a=itA.id,b=itB.id;const rec=RECIPES.find(r=>(r.a===a&&r.b===b)||(r.a===b&&r.b===a));if(!rec){log("Those two do not combine. (Yet.)","dim");return;}if(rec.lock&&game.cls.id!==rec.lock){log("Only "+CLASSES.find(c=>c.id===rec.lock).name+" can make that.","red");return;}if(rec.classes&&!rec.classes.includes(game.cls.id)){log("Only the handy sorts (DIY, Tactical, Tech) can rig that.","red");return;}let base=0.7;if(rec.bonus&&game.cls.id===rec.bonus)base=0.95;if(game.cls.craft!=="none"&&!rec.lock)base+=0.05;const wasEquipped=(refA.src==="equip"||refB.src==="equip");refConsume(refA);refConsume(refB);if(wasEquipped)log("You strip a worn piece off to feed it into the project. Bold.","dim");if(Math.random()>base){log("The craft fails. A Learning Experience.","red");addItem(mkObject("ducttape"));combineMark=null;return;}const o=rec.out;let made;if(["weapon","armor","charm"].includes(o.kind))made=mkGear(o,o.kind,Math.random,true);else if(o.kind==="consumable")made=Object.assign({kind:"consumable"},o);else made=Object.assign({kind:"object"},o);addItem(made);if(typeof sfxCraft==="function")sfxCraft();log("CRAFTED: "+o.name+"!","gold");
+ const a=itA.id,b=itB.id;const rec=RECIPES.find(r=>(r.a===a&&r.b===b)||(r.a===b&&r.b===a));if(!rec){log("Those two do not combine. (Yet.)","dim");return;}if(rec.lock&&game.cls.id!==rec.lock){log("Only "+CLASSES.find(c=>c.id===rec.lock).name+" can make that.","red");return;}if(rec.classes&&!rec.classes.includes(game.cls.id)){log("Only the handy sorts (DIY, Tactical, Tech) can rig that.","red");return;}let base=0.7;if(rec.bonus&&game.cls.id===rec.bonus)base=0.95;if(game.cls.craft!=="none"&&!rec.lock)base+=0.05;const wasEquipped=(refA.src==="equip"||refB.src==="equip");const _freed=[refA,refB].filter(r=>r.src==="equip").map(r=>r.slot);/* MOB-57 */refConsume(refA);refConsume(refB);if(wasEquipped)log("You strip a worn piece off to feed it into the project. Bold.","dim");if(Math.random()>base){log("The craft fails. A Learning Experience.","red");_craftKeep(mkObject("ducttape"));combineMark=null;return;}const o=rec.out;let made;if(["weapon","armor","charm"].includes(o.kind))made=mkGear(o,o.kind,Math.random,true);else if(o.kind==="consumable")made=Object.assign({kind:"consumable"},o);else made=Object.assign({kind:"object"},o);if(!_craftWear(made,_freed))_craftKeep(made);if(typeof sfxCraft==="function")sfxCraft();log("CRAFTED: "+o.name+"!","gold");
  // Crafting a previously-undiscovered recipe records it in the Compendium.
  {const _rk=rec.a+"+"+rec.b;if(!game.knownRecipes)game.knownRecipes=[];if(!game.knownRecipes.includes(_rk)){game.knownRecipes.push(_rk);log("Recipe learned — now recorded in the "+kbTxt("Compendium [J].","Codex (MORE, then CODEX)."),"blu");}}
  combineMark=null;}
@@ -618,9 +629,13 @@ function allyEncounter(){
  if(!def)return;
  // Recruit side quest gate: must be completed before they'll follow.
  if(def.quest&&!game.ally.questDone){
+  huntQuestSweep();/* MOB-58 */
+  if(!game.ally.questDone){
   if(!game.ally.questOffered){game.ally.questOffered=true;log(def.name+": "+def.intro,"gold");log(def.name+": \""+def.quest.text+"\"","gold");}
   else{log(def.name+" is still waiting on you. \""+def.quest.text+"\"","dim");}
-  endTurn();return;}
+  if(def.quest.type==="hunt"){let el=_huntLive(def.id);const fresh=!el;if(!el)el=_spawnHuntElite(def,Math.random);
+   if(el)log(def.name+(fresh?" squints into the distance. \"It moved. Big one, off to the ":" nods. \"Big one. Off to the ")+_huntDir(game.ally.x,game.ally.y,el.x,el.y)+". You'll know it when it hits you.\"","gold");}
+  endTurn();return;}}
  if(!game.allyMet.includes(def.id))game.allyMet.push(def.id);
  game.ally.following=true;
  if(!game.ally.questOffered)log(def.name+": "+def.intro,"gold");
@@ -635,6 +650,21 @@ function tryCompleteFetchQuest(item){
  if(!def||!def.quest||def.quest.type!=="fetch")return;
  game.ally.questDone=true;
  log(def.name+": \"That's the one — nice work.\"","gold");}
+/* MOB-58 (2026-11-15): the hunt target can go missing (the first spot was the stairs, the app was closed and the floor rebuilt on
+   Continue, the family dog chased it off, or a Dadism or the companion finished it). huntQuestSweep() (start of endTurn and of
+   allyEncounter) completes the quest when the tracked target died by any means; allyEncounter puts a new target on the floor
+   when none is alive and says which way it is. game._huntRef is transient (not saved). No seeded RNG is used. */
+function _huntLive(id){return game.enemies.find(e=>e.isQuestElite&&e.questFor===id&&e.hp>0)||null;}
+function _spawnHuntElite(adef,rng){const f=game.floor;if(!f||!f.rooms||!f.rooms.length)return null;rng=rng||Math.random;
+ const busy=(x,y)=>onStairs(x,y)||(x===game.px&&y===game.py)||game.enemies.some(e=>e.x===x&&e.y===y)||(game.ally&&game.ally.x===x&&game.ally.y===y)||!(f.grid[y]&&f.grid[y][x]===0)||(typeof doorAt==="function"&&doorAt(x,y));
+ const rooms=f.rooms.slice().reverse();
+ for(let t=0;t<60;t++){const r=rooms[t%rooms.length];if(!r)continue;const x=r.x+1+Math.floor(rng()*Math.max(1,r.w-2)),y=r.y+1+Math.floor(rng()*Math.max(1,r.h-2));
+  if(busy(x,y))continue;if(Math.max(Math.abs(x-game.px),Math.abs(y-game.py))<4&&t<40)continue;
+  const cdef=pickCreature(game.depth,rng);if(!cdef)return null;const qe=mkEnemy(cdef,x,y,false);qe.hp=Math.round(qe.hp*1.6);qe.maxhp=qe.hp;qe.scaledAtk=Math.round((qe.scaledAtk||cdef.atk)*1.3);qe.isQuestElite=true;qe.questFor=adef.id;game.enemies.push(qe);game._huntRef=qe;return qe;}
+ return null;}
+function _huntDir(fx,fy,tx,ty){const dx=tx-fx,dy=ty-fy;if(!dx&&!dy)return"right here";const a=(Math.atan2(dy,dx)*180/Math.PI+360+22.5)%360;return["east","southeast","south","southwest","west","northwest","north","northeast"][Math.floor(a/45)];}
+function huntQuestSweep(){if(!game||!game.ally||game.ally.following||game.ally.questDone)return;const def=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(!def||!def.quest||def.quest.type!=="hunt")return;
+ const el=_huntLive(def.id);if(el){game._huntRef=el;return;}const r=game._huntRef;if(r&&r.hp<=0&&r.questFor===def.id)tryCompleteHuntQuest(r);game._huntRef=null;}
 // Hunt-quest completion check — called when a quest-tagged elite creature is defeated.
 function tryCompleteHuntQuest(e){
  if(!e||!e.isQuestElite||!e.questFor||!game.ally||game.ally.following||game.ally.questDone)return;
