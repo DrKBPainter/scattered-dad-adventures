@@ -104,6 +104,27 @@ function drawDadAnim(dx,dy,sc){sc=sc||1;_daTrack();const f=_daFrame();if(!f){dra
  if(game.equip&&game.equip.weapon){ctx.fillStyle=PAL['y'];ctx.fillRect(bx+24*sc,by+18*sc,sc,sc);ctx.fillRect(bx+24*sc,by+19*sc,sc,sc);}
  if(f.slash&&(f.slash.dx||f.slash.dy)){const a=f.slash,cx=dx+16*sc+a.dx*22*sc,cy=dy+16*sc+a.dy*22*sc,px=-a.dy,py=a.dx;ctx.fillStyle="#f4f1e8";
   for(let i=-3;i<=3;i++){const bend=-Math.abs(i);ctx.fillRect(Math.round(cx+(px*i*2+a.dx*bend)*sc)-sc,Math.round(cy+(py*i*2+a.dy*bend)*sc)-sc,2*sc,2*sc);}}}
+/* MOB-61 (2026-11-16): the companion gets the Dad's N29 walk cycle and attack lunge, cut the same way from its own
+   cached sprite (_daLegs/_daBlit). A step is detected at draw time when game.ally moves one tile on the same floor;
+   allyHit() in game.js calls allyAnimAttack(dx,dy). Same switches as the Dad: off with ?noanim, the MOTION toggle or
+   prefers-reduced-motion (_daOn). Purely visual; allyAnimStats() for tests. */
+let _alLast=null,_alWalk=null,_alAtk=null,_alStep=0,_alWalks=0,_alAtks=0,_alFrames=0;
+function allyAnimAttack(dx,dy){if(!_daOn())return;_alAtk={t0:_rNow(),dx:Math.sign(dx||0),dy:Math.sign(dy||0)};_alWalk=null;_alAtks++;requestAnim(DAD_ATK_MS+40);}
+function _alTrack(){if(typeof game==="undefined"||!game)return;const A=game.ally,L=_alLast;
+ if(A&&L&&L.a===A&&L.d===game.depth){const ddx=A.x-L.x,ddy=A.y-L.y;if((ddx||ddy)&&Math.abs(ddx)<=1&&Math.abs(ddy)<=1&&_daOn()){_alStep++;_alWalks++;_alWalk={t0:_rNow(),left:(_alStep&1)===1};_alAtk=null;requestAnim(DAD_WALK_MS+40);}}
+ else if(!L||L.a!==A||L.d!==game.depth){_alWalk=null;if(!L||L.a!==A)_alAtk=null;}
+ _alLast=A?{a:A,d:game.depth,x:A.x,y:A.y}:null;}
+function _alFrame(){if(!_daOn())return null;const n=_rNow();
+ if(_alAtk){const t=n-_alAtk.t0,a=_alAtk;if(t>=0&&t<DAD_ATK_MS){const lg=t<DAD_LUNGE_MS;const L=lg?5:2;return{k:lg?"attack":"recover",x:a.dx*L,y:a.dy*L,b:0,bx:a.dx*(lg?2:1),by:a.dy*(lg?1:0),l:0,r:0};}_alAtk=null;}
+ if(_alWalk){const t=n-_alWalk.t0;if(t>=0&&t<DAD_WALK_MS){if(t<DAD_STEP_MS)return _alWalk.left?{k:"stepL",x:0,y:0,b:-1,bx:0,by:0,l:-2,r:0}:{k:"stepR",x:0,y:0,b:-1,bx:0,by:0,l:0,r:-2};return{k:"pass",x:0,y:0,b:1,bx:0,by:0,l:0,r:0};}_alWalk=null;}
+ return null;}
+function allyAnimStats(){const f=_alFrame();return{on:_daOn(),walks:_alWalks,attacks:_alAtks,frames:_alFrames,frame:f?f.k:"idle"};}
+/* drawWorld's companion: the animated frame when one is playing, else exactly drawSprite(). */
+function drawAllyAnim(spr,dx,dy){_alTrack();const f=_alFrame();if(!f||!spr){drawSprite(spr,dx,dy,1);return;}
+ if(_sprCacheOK===null)_sprCacheOK=!!_sprNewCanvas(1,1);const e=_sprCacheOK?_sprCached(spr,null,null):null;if(!e||!e.cv){drawSprite(spr,dx,dy,1);return;}
+ const g=_daLegs(spr),W=e.w,H=e.h,lt=Math.max(0,g.top-Math.max(0,-(f.b+f.by))),ox=dx+f.x,oy=dy+f.y;ctx.imageSmoothingEnabled=false;_alFrames++;
+ _daBlit(e,0,lt,g.split,H-lt,ox,oy+f.l,1);_daBlit(e,g.split,lt,W-g.split,H-lt,ox,oy+f.r,1);
+ _daBlit(e,0,0,W,g.top,ox+f.bx,oy+f.b+f.by,1);}
 /* ===== M15 GAME FEEL ("juice", mobile plan) =====
    Purely visual: no game state is changed and Math.random is never called (all jitter comes from _tileHash), so
    seeded runs and the harness are unaffected. Everything is detected at draw time in drawWorld by comparing each
@@ -425,9 +446,9 @@ function drawWorld(){camX=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,
  if(game.healFountains)for(const fn of game.healFountains){if(game.seen[fn.y][fn.x]){if(fn.charges>0)drawSprite(SPR_HEALFOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1);else drawSpriteRemap(SPR_HEALFOUNTAIN,(fn.x-camX)*TILE,(fn.y-camY)*TILE,1,{'r':'m','R':'M','O':'s','o':'m'});}}
  for(const e of game.enemies){if(!game.vis[e.y][e.x])continue;const [px,py]=_jzPos(_J,e,(e.x-camX)*TILE,(e.y-camY)*TILE);drawSprite(e.def.sprite,px,py,1);_jzFlash(_J,e,px,py);if(typeof _tgtMark!=="undefined"&&_tgtMark===e)_tgtDrawMark(px,py);/* MOB-08 */if(showEnemyHP(e)){const w=TILE-2;ctx.fillStyle="#3a0d0d";ctx.fillRect(px+1,py-3,w,2);ctx.fillStyle=e.isBoss?"#f0a040":"#5fbf4f";ctx.fillRect(px+1,py-3,Math.max(0,w*e.hp/e.maxhp),2);}}
  // Draw unrecruited ally on map (solid cyan bar = friendly)
- if(game.ally&&!game.ally.following){const [ax,ay]=_jzAllyPos(_J,(game.ally.x-camX)*TILE,(game.ally.y-camY)*TILE);if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef)drawSprite(adef.sprite,ax,ay,1);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,TILE-2,2);}}
+ if(game.ally&&!game.ally.following){const [ax,ay]=_jzAllyPos(_J,(game.ally.x-camX)*TILE,(game.ally.y-camY)*TILE);if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef)drawAllyAnim(adef.sprite,ax,ay);/* MOB-61 */ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,TILE-2,2);}}
  // Draw active following ally with HP bar
- if(game.ally&&game.ally.following){const [ax,ay]=_jzAllyPos(_J,(game.ally.x-camX)*TILE,(game.ally.y-camY)*TILE);if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef){drawSprite(adef.sprite,ax,ay,1);const w=TILE-2;ctx.fillStyle="#1a3a1a";ctx.fillRect(ax+1,ay-3,w,2);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,Math.max(0,w*game.ally.hp/game.ally.maxhp),2);}}}
+ if(game.ally&&game.ally.following){const [ax,ay]=_jzAllyPos(_J,(game.ally.x-camX)*TILE,(game.ally.y-camY)*TILE);if(game.vis[game.ally.y]&&game.vis[game.ally.y][game.ally.x]){const adef=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;if(adef){drawAllyAnim(adef.sprite,ax,ay);/* MOB-61 */const w=TILE-2;ctx.fillStyle="#1a3a1a";ctx.fillRect(ax+1,ay-3,w,2);ctx.fillStyle="#37b0b0";ctx.fillRect(ax+1,ay-3,Math.max(0,w*game.ally.hp/game.ally.maxhp),2);}}}
  {const _dp=_jzDadPos(_J,(game.px-camX)*TILE,(game.py-camY)*TILE);drawDadAnim(_dp[0],_dp[1],1);}/* N29 + M15 glide */
  drawFX();_jzWorldFx(_J);
  if(inspectOn){const px=(insX-camX)*TILE,py=(insY-camY)*TILE;ctx.strokeStyle="#f4c430";ctx.lineWidth=1;ctx.strokeRect(px+0.5,py+0.5,TILE-1,TILE-1);}

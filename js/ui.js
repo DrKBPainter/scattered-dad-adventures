@@ -593,22 +593,12 @@ function m16PaintStrips(root){try{if(!root||!root.querySelectorAll)return;root.q
    Desktop never shows the box. Nothing here is saved. */
 var _tgtSel=null,_tgtMark=null,_tgtKey="";
 const TGT_DIRS=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
-function tgtTargets(){if(!game||!game.floor||!game.enemies||!game.enemies.length)return[];const G=game.floor.grid,out=[],wr=weaponReach();
- for(const D of TGT_DIRS){const dx=D[0],dy=D[1],nx=game.px+dx,ny=game.py+dy;
-  if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||G[ny][nx]===1)continue;
-  const dr=doorAt(nx,ny);if(dr&&!dr.open)continue;
-  if(game.vendor&&game.vendor.x===nx&&game.vendor.y===ny)continue;
-  if(game.fountains&&game.fountains.some(f=>f.x===nx&&f.y===ny))continue;
-  if(game.healFountains&&game.healFountains.some(f=>f.x===nx&&f.y===ny))continue;
-  let hit=game.enemies.find(z=>z.x===nx&&z.y===ny),r=1;
-  if(!hit&&wr>1){for(let k=2;k<=wr;k++){const rx=game.px+dx*k,ry=game.py+dy*k;
-    if(rx<0||ry<0||rx>=MAP_W||ry>=MAP_H||G[ry][rx]===1)break;
-    if(k>2){const mx=game.px+dx*(k-1),my=game.py+dy*(k-1);if(G[my][mx]===1)break;const md=doorAt(mx,my);if(md&&!md.open)break;if(game.enemies.some(z=>z.x===mx&&z.y===my))break;}
-    const re=game.enemies.find(z=>z.x===rx&&z.y===ry);if(re){hit=re;r=k;break;}}}
-  if(!hit||hit.isDog)continue;
-  if(!(game.vis&&game.vis[hit.y]&&game.vis[hit.y][hit.x]))continue;
-  out.push({e:hit,dx:dx,dy:dy,r:r});}
- out.sort((a,b)=>a.r-b.r);/* nearest first; ties keep clockwise-from-north order */
+function tgtTargets(){if(!game||!game.floor||!game.enemies||!game.enemies.length)return[];const out=[];
+ /* MOB-08 (2026-11-16, reach rule A): every visible enemy within weapon reach in any direction with a clear straight
+    line (game.js inReach). Nearest first; ties clockwise from north. */
+ for(const e of game.enemies){if(!inReach(e))continue;const ax=e.x-game.px,ay=e.y-game.py;
+  out.push({e:e,dx:Math.sign(ax),dy:Math.sign(ay),r:reachDist(e),a:(Math.atan2(ax,-ay)+2*Math.PI)%(2*Math.PI)});}
+ out.sort((p,q)=>p.r-q.r||p.a-q.a);
  return out;}
 function _tgtBusy(){return !!(ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen||pendingConfirm||pendingMenu||aiming||placing);}
 function _tgtSpr(cv,spr){if(!cv||!cv.getContext||!spr)return;const cx=cv.getContext("2d");if(!cx)return;cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.height);if(_uiSprImg(cx,spr,cv.width,cv.height))return;
@@ -634,4 +624,4 @@ function syncTgtBox(){const b=document.getElementById("tgtbox");if(!b||!b.classL
 function tgtCycle(n){const L=tgtTargets();if(L.length<2){syncTgtBox();return;}let i=L.findIndex(t=>t.e===_tgtSel);if(i<0)i=0;_tgtSel=L[((i+n)%L.length+L.length)%L.length].e;syncTgtBox();}
 function tgtAttack(){if(mode!==State.PLAY||!game||_tgtBusy())return;const L=tgtTargets();const t=L.find(x=>x.e===_tgtSel)||L[0];if(!t){syncTgtBox();return;}_tgtSel=t.e;
  if(typeof scanPick!=="undefined"&&scanPick&&typeof setScanPick==="function")setScanPick(false);
- game.clickPath=[];game.clickDoor=null;clearMouseInspect();tryMove(t.dx,t.dy);syncUI();}
+ game.clickPath=[];game.clickDoor=null;clearMouseInspect();reachStrike(t.e);syncUI();}

@@ -565,6 +565,31 @@ function adjEnemies(){return game.enemies.filter(e=>Math.abs(e.x-game.px)+Math.a
 /* MOB-44 (2026-11-13): on compact (phone) layouts in-game text names buttons, never keys. kbTxt(desktop,phone). */
 function kbTxt(d,p){return (typeof COMPACT!=="undefined"&&COMPACT)?p:d;}
 function weaponReach(){return(game.equip&&game.equip.weapon&&game.equip.weapon.reach)||1;}
+/* MOB-08 (2026-11-16, reach rule A): a reach weapon strikes any visible enemy within its reach in any direction
+   (Chebyshev distance, so diagonals count like the straight lines), when the straight line to it is clear: walls,
+   closed doors, the vendor, fountains and other enemies in between block. Used by the phone target box (ui.js
+   tgtTargets/tgtAttack) and by desktop click attacks (input.js canvasTap). Pressing a direction keeps its old rule. */
+function reachLineClear(tx,ty){const x0=game.px,y0=game.py,ax=tx-x0,ay=ty-y0,n=Math.max(Math.abs(ax),Math.abs(ay));
+ for(let i=1;i<n;i++){const x=x0+Math.sign(ax)*Math.round(Math.abs(ax)*i/n),y=y0+Math.sign(ay)*Math.round(Math.abs(ay)*i/n);
+  if(x<0||y<0||x>=MAP_W||y>=MAP_H||game.floor.grid[y][x]===1)return false;
+  const d=doorAt(x,y);if(d&&!d.open)return false;
+  if(game.vendor&&game.vendor.x===x&&game.vendor.y===y)return false;
+  if(game.fountains&&game.fountains.some(f=>f.x===x&&f.y===y))return false;
+  if(game.healFountains&&game.healFountains.some(f=>f.x===x&&f.y===y))return false;
+  if(game.enemies.some(z=>z.x===x&&z.y===y))return false;}
+ return true;}
+function reachDist(e){return Math.max(Math.abs(e.x-game.px),Math.abs(e.y-game.py));}
+function inReach(e){if(!game||!e||e.isDog||!game.floor)return false;const r=reachDist(e);if(r<1||r>weaponReach())return false;
+ if(!(game.vis&&game.vis[e.y]&&game.vis[e.y][e.x]))return false;return r===1||reachLineClear(e.x,e.y);}
+/* Strike enemy e if it is in reach. Returns true when the attempt was handled (a turn may have passed). Adjacent and
+   straight-line targets go through tryMove (same step as pressing that direction); others strike directly. */
+function reachStrike(e){if(mode!==State.PLAY||pendingConfirm||!inReach(e))return false;
+ const ax=e.x-game.px,ay=e.y-game.py,r=reachDist(e);
+ if(r===1||ax===0||ay===0||Math.abs(ax)===Math.abs(ay)){tryMove(Math.sign(ax),Math.sign(ay));return true;}
+ if(napBlocked())return true;clearScanMessages();
+ const wn=game.equip&&game.equip.weapon?game.equip.weapon.name:"Your weapon";
+ log(wn+" strikes at range "+r+"!","gold");
+ if(attack(e))return true;endTurn();return true;}
 function castDadism(id){const d=DADISMS.find(x=>x.id===id);if(!d)return;if(game.moxie<d.cost){log("Not enough Patience for "+d.name+".","red");return;}game.moxie-=d.cost;
  if(d.kind==="dmg"){const t=adjEnemies()[0];if(!t){log("Nothing close enough.","dim");game.moxie+=d.cost;return;}const dm=d.power+Math.floor(effWis()/2);t.hp-=dm;t.shownHP=true;discover(t.def,game.depth);addFX({kind:"blast",cells:[{x:t.x,y:t.y}],t:0,life:10,color:"#f0a040"});log(d.name+"! "+t.def.name+" takes "+dm+".","gold");if(t.hp<=0){gainXP(t.def.xp);game.gold+=t.def.gold;game.enemies=game.enemies.filter(x=>x!==t);}}
  else if(d.kind==="heal"){game.hp=Math.min(game.maxhp,game.hp+d.power);addFX({kind:"blast",cells:[{x:game.px,y:game.py}],t:0,life:10,color:"#5fbf4f"});log(d.name+". +"+d.power+" HP.","grn");}
@@ -691,7 +716,7 @@ function allyStepToward(tx,ty){
  const steps=adx>=ady?[[dx,0],[0,dy]]:[[0,dy],[dx,0]];
  for(const [mx,my] of steps){if(mx===0&&my===0)continue;const nx=A.x+mx,ny=A.y+my;if(canStep(nx,ny)){A.x=nx;A.y=ny;return true;}}
  return false;}
-function allyHit(def,t){
+function allyHit(def,t){if(typeof allyAnimAttack==="function"&&game.ally)allyAnimAttack(t.x-game.ally.x,t.y-game.ally.y);/* MOB-61 attack lunge (visual only) */
  const dmg=Math.max(1,def.atk-Math.floor(t.def.def/3));t.hp-=dmg;t.shownHP=true;addFX({kind:"blast",cells:[{x:t.x,y:t.y}],t:0,life:6,color:"#37b0b0"});log(def.name+" hits "+t.def.name+" for "+dmg+".","dim");
  if(t.hp<=0){log(t.def.name+" defeated by "+def.name+".","gold");gainXP(Math.floor(t.def.xp/2));game.gold+=Math.floor(t.def.gold/2);tryCompleteHuntQuest(t);game.enemies=game.enemies.filter(x=>x!==t);if(game.allyOrder&&game.allyOrder.type==="attack"&&game.allyOrder.target===t)game.allyOrder=null;}}
 function allySufferAdjacent(def){
