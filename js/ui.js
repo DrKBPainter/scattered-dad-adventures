@@ -499,7 +499,23 @@ function buildMap(){const cv=document.getElementById("mapcv");const cx=cv.getCon
  if(game.vendor&&game.seen[game.vendor.y][game.vendor.x]){cx.fillStyle="#5fbf4f";cx.fillRect(game.vendor.x*s,game.vendor.y*s,s,s);}
  for(const e of game.enemies)if(game.vis[e.y][e.x]){cx.fillStyle="#e0453a";cx.fillRect(e.x*s,e.y*s,s,s);}
  if(game.healFountains)for(const fn of game.healFountains){if(game.seen[fn.y][fn.x]){cx.fillStyle=fn.charges>0?"#d44c4c":"#5a2020";cx.fillRect(fn.x*s,fn.y*s,s,s);}}
- cx.fillStyle="#7fb0e8";cx.fillRect(game.px*s,game.py*s,s,s);if(game.fountains)for(const fn of game.fountains){if(game.seen[fn.y][fn.x]){cx.fillStyle=fn.charges>0?"#37b0b0":"#1e4040";cx.fillRect(fn.x*s,fn.y*s,s,s);}}}
+ cx.fillStyle="#7fb0e8";cx.fillRect(game.px*s,game.py*s,s,s);if(game.fountains)for(const fn of game.fountains){if(game.seen[fn.y][fn.x]){cx.fillStyle=fn.charges>0?"#37b0b0":"#1e4040";cx.fillRect(fn.x*s,fn.y*s,s,s);}}buildLedger();}
+/* MOB-49: FLOOR LEDGER inside MAP: one row per floor of the current biome, only what Dad has seen there (game.ledger, see ledgerNote() in game.js). */
+function buildLedger(){const el=document.getElementById("m49ledger");if(!el||!game)return;const L=game.ledger||{},d=game.depth,b0=Math.floor((d-1)/10),lo=b0*10+1,hi=Math.min(MAXDEPTH,lo+9);
+ const chip=(c,t)=>'<span class="lg-chip"><i style="background:'+c+'"></i>'+t+'</span>';
+ let h='<h2>FLOOR LEDGER &middot; '+esc(LEDGER_BIOMES[b0]||"Parts Unknown")+' (Floors '+lo+'&ndash;'+hi+')</h2><div class="lg-list">';
+ for(let f=lo;f<=hi;f++){const e=L[f],here=f===d;let t=[];
+  if(e){if(e.b)t.push(chip(e.b.x?"#5a5a5a":"#e0453a",(e.b.x?"Boss beaten: ":"Boss: ")+esc(e.b.n)));
+   if(e.m)t.push(chip("#5fbf4f","Merchant: "+esc(e.m)));
+   if(e.a)t.push(chip("#c890ff",(e.a.j?"Met (joined you): ":"Companion: ")+esc(e.a.n)));
+   if(typeof e.w==="number")t.push(chip(e.w>0?"#37b0b0":"#1e4040","Water fountain"+(e.w>0?" ("+e.w+" sip"+(e.w===1?"":"s")+" left)":" (dry)")));
+   if(typeof e.h==="number")t.push(chip(e.h>0?"#d44c4c":"#5a2020","Cooler of Restoration"+(e.h>0?" ("+e.h+" left)":" (empty)")));
+   if(e.l)t.push(chip("#9c2b2b",e.l===2?"Locked door (opened)":"Locked door"));
+   if(e.k)t.push(chip("#f4c430","Key spotted"));
+   if(!t.length)t.push('<span class="dim">Nothing of note. Carpet. Regret.</span>');}
+  else t.push('<span class="dim">?</span>');
+  h+='<div class="lg-row'+(here?" lg-here":"")+'"><b class="lg-f">F'+f+'</b><span class="lg-it">'+t.join("")+(here?'<span class="lg-you">you are here</span>':'')+'</span></div>';}
+ h+='</div><p class="dim lg-foot">Kept in Dad&rsquo;s own handwriting. Only what he has seen with his own eyes. You are doing better than the ledger suggests.</p>';el.innerHTML=h;}
 /* ===== inventory actions ===== */
 function invAction(k){const e=game.inv[invSel];const COLS=8;
  if(k==="ArrowUp"){invSel=Math.max(0,invSel-COLS);buildInv();}

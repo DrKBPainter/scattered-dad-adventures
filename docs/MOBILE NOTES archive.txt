@@ -4,6 +4,7 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-15 (nightly run). Census: [ ] 0 | [-] 1 | [k] 1 | [c] 7 | [!] 16 | [x] awaiting archive 0. INBOX: 0 lines (0 FORM lines on hold).   [displaced 2026-11-16]
 Previously: 2026-11-14 (nightly run). Census: [ ] 0 | [-] 0 | [k] 1 | [c] 4 | [!] 14 | [x] awaiting archive 0. INBOX: 2 lines (both FORM lines on the 1-day hold; eligible 2026-11-15).   [displaced 2026-11-16 nightly run]
 Previously: 2026-11-13 (nightly run 4). Census: [ ] 0 | [-] 0 | [k] 1 | [c] 3 | [!] 14 | [x] awaiting archive 0. INBOX: 2 lines (both FORM lines on the 1-day hold; eligible 2026-11-14).   [displaced 2026-11-15 nightly run]
 Previously: 2026-11-13 (nightly run 3). Census: [ ] 0 | [-] 0 | [k] 1 | [c] 3 | [!] 14 | [x] awaiting archive 0. INBOX: 2 lines (both FORM lines on the 1-day hold; eligible 2026-11-14).   [displaced 2026-11-14 nightly run]
@@ -1135,6 +1136,14 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-16 (nightly run 2; fired 01:15 UTC, about 40 minutes after run 1, off the 06:47 UTC schedule)
+- Form import: Sheet read; no responses newer than FORM SYNC 11/13/2026 22:48:53 (0 imported).
+- INBOX empty; nothing triaged. No [x] to archive; no [c] reopened; no unanswered KBP notes.
+- Skip check: only (d) held ([!] items open). No [-] items waiting, so one [!] item: MOB-49 (KBP-directed, UX before BALANCE).
+- Worked: MOB-49 -> [c] FLOOR LEDGER in MAP (js/game.js ledgerNote/LEDGER_BIOMES + save field "ledger"; js/ui.js buildLedger; HTML #m49ledger + .lg-* CSS). Verified: 7/7 clears (one class per process), Playwright old vs new on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, desktop; floor-10 scenario; old save loads; desktop title/play md5-identical; protected screens pass on old and new build.
+- Files changed: js/game.js, js/ui.js, ShatteredDadAdventure.html, sw.js (BUILD 1.0.0-39808a909a -> 1.0.0-440dc1ee62), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt. No bugs logged (UX item).
+- Still open: [c] MOB-08, 49, 61 (shared files; push together) | [!] MOB-19, 22, 24, 26, 27, 37, 40, 41, 45, 51, 52, 53, 54, 60, 62.
+
 RUN 2026-11-16 (nightly)
 - Form import: Sheet read; no responses newer than FORM SYNC 11/13/2026 22:48:53 (0 imported).
 - INBOX empty; nothing triaged.
