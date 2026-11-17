@@ -635,8 +635,26 @@ function syncTgtBox(){const b=document.getElementById("tgtbox");if(!b||!b.classL
    +'<div class="tb-hpt">HP '+(known?hp+'/'+mx:'?')+'</div>'
    +'<div class="tb-go">TAP TO ATTACK'+(many?' &middot; SWIPE TO CHOOSE':'')+'</div>';
   if(b.querySelector)_tgtSpr(b.querySelector(".tb-spr"),e.def.sprite);}
- b.classList.toggle("show",true);
+ b.classList.toggle("show",true);_tgtPlace(b,e,L);
  if(was!==e&&typeof markDirty==="function")markDirty();}
+/* MOB-68: the box sits in the lower-right corner of the map, over 2-3 tiles. When that corner would cover the chosen
+   target, Dad or another thing in view (enemy, item), it moves to the corner that covers least: lower-left (class
+   tb-left), then upper-right (tb-top), then upper-left (both); weights: target or Dad 4, other target in reach 2,
+   other visible enemy or item 1; a tie keeps the earlier corner, so it stays lower-right unless moving helps.
+   Uses the camera rule of drawWorld (render.js) for the end-of-turn positions. Layout only; nothing is saved. */
+function _tgtPlace(b,e,L){try{b.classList.remove("tb-left","tb-top");const cv=document.getElementById("screen");if(!cv||!cv.getBoundingClientRect||!b.getBoundingClientRect)return;
+ const c=cv.getBoundingClientRect(),R=b.getBoundingClientRect();if(!c.width||!R.width)return;const sc=c.width/(VIEW_W*TILE),z=TILE*sc;
+ const cx0=VIEW_W>MAP_W?-Math.floor((VIEW_W-MAP_W)/2):Math.max(0,Math.min(MAP_W-VIEW_W,game.px-Math.floor(VIEW_W/2)));
+ const cy0=VIEW_H>MAP_H?-Math.floor((VIEW_H-MAP_H)/2):Math.max(0,Math.min(MAP_H-VIEW_H,game.py-Math.floor(VIEW_H/2)));
+ const st=b.offsetParent,sr=st&&st.getBoundingClientRect?st.getBoundingClientRect():c,lx=sr.left+((st&&st.clientLeft)||0)+4,ty=sr.top+((st&&st.clientTop)||0)+4;
+ const hit=(x0,y0,x,y)=>{const l=c.left+(x-cx0)*z,t=c.top+(y-cy0)*z;return Math.max(0,Math.min(l+z,x0+R.width)-Math.max(l,x0))*Math.max(0,Math.min(t+z,y0+R.height)-Math.max(t,y0))>z*z*0.25;};
+ const V=(x,y)=>!!(game.vis&&game.vis[y]&&game.vis[y][x]),inR=new Set(L.map(t=>t.e));
+ const score=(x0,y0)=>{let n=0;if(hit(x0,y0,e.x,e.y))n+=4;if(hit(x0,y0,game.px,game.py))n+=4;
+  for(const o of game.enemies){if(o===e||!V(o.x,o.y))continue;if(hit(x0,y0,o.x,o.y))n+=inR.has(o)?2:1;}
+  for(const l of (game.loot||[])){if(V(l.x,l.y)&&hit(x0,y0,l.x,l.y))n+=1;}return n;};
+ let best=null,bs=score(R.left,R.top);if(!bs)return;
+ for(const k of [[lx,R.top,"tb-left"],[R.left,ty,"tb-top"],[lx,ty,"tb-left tb-top"]]){if(k[0]>R.left||k[1]>R.top)continue;const n=score(k[0],k[1]);if(n<bs){bs=n;best=k[2];}}
+ if(best)b.classList.add(...best.split(" "));}catch(err){}}
 function tgtCycle(n){const L=tgtTargets();if(L.length<2){syncTgtBox();return;}let i=L.findIndex(t=>t.e===_tgtSel);if(i<0)i=0;_tgtSel=L[((i+n)%L.length+L.length)%L.length].e;syncTgtBox();}
 function tgtAttack(){if(mode!==State.PLAY||!game||_tgtBusy())return;const L=tgtTargets();const t=L.find(x=>x.e===_tgtSel)||L[0];if(!t){syncTgtBox();return;}_tgtSel=t.e;
  if(typeof scanPick!=="undefined"&&scanPick&&typeof setScanPick==="function")setScanPick(false);

@@ -357,6 +357,7 @@
 /* MOB-08: target box, lower-right of the map (compact layouts only; ui.js syncTgtBox) */
 #tgtbox{display:none;position:absolute;right:4px;bottom:4px;z-index:30;width:104px;padding:5px 4px 4px;background:rgba(10,12,20,.92);border:2px solid var(--gold);border-radius:5px;text-align:center;color:#e8e8e8;font-size:11px;line-height:1.2;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.6);}
 #tgtbox.show{display:block;}
+#tgtbox.tb-left{right:auto;left:4px;} #tgtbox.tb-top{bottom:auto;top:4px;} /* MOB-68: moves out of the way of what it would cover (ui.js _tgtPlace) */
 #tgtbox.tb-boss{border-color:#f0a040;}
 #tgtbox .tb-h{color:var(--gold);font-weight:bold;font-size:10px;letter-spacing:.5px;font-family:var(--pix,inherit);}
 #tgtbox.tb-boss .tb-h{color:#f0a040;}
