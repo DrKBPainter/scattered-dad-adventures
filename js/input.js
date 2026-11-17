@@ -27,7 +27,7 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  else if((game.vis&&game.vis[y]&&game.vis[y][x])||(game.seen&&game.seen[y]&&game.seen[y][x])){
   // Visible or discovered (MOB-12: shaded tiles too) non-adjacent tile: pathfind toward it
   // MOB-01: a closed door is never a path tile, so walk to the tile beside it, then ask what to do.
-  const _cd=(_dr&&!_dr.open)?_dr:null;const _wl=!_cd&&game.floor.grid[y][x]===1;/* MOB-05: a tapped wall walks to the nearest floor tile beside it */const path=_cd?pathToDoor(_cd):_wl?pathToWall(x,y):bfsPath(game.px,game.py,x,y);
+  const _cd=(_dr&&!_dr.open)?_dr:null;const _wl=!_cd&&game.floor.grid[y][x]===1;/* MOB-05: a tapped wall walks to the nearest floor tile beside it */const path=_cd?pathToDoor(_cd):_wl?pathToWall(x,y):bfsPath(game.px,game.py,x,y,true);/* MOB-67: routes may pass closed, unlocked doors */
   if(path&&path.length){game.clickPath=path;if(_cd)game.clickDoor={x:_cd.x,y:_cd.y};continueClickPath();}
   else if(touchy)_m36NoWay();else{showInspect(x,y);}
  }else if(touchy)_m36NoWay();else{showInspect(x,y);}}

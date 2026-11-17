@@ -310,7 +310,13 @@ function losClear(x0,y0,x1,y1){let dx=Math.abs(x1-x0),dy=Math.abs(y1-y0),sx=x0<x
  while(true){if(x===x1&&y===y1)return true;const e2=2*err;if(e2>-dy){err-=dy;x+=sx;}if(e2<dx){err+=dx;y+=sy;}if(x===x1&&y===y1)return true;if(opaque(x,y))return false;}}
 function computeVis(){for(let y=0;y<MAP_H;y++)for(let x=0;x<MAP_W;x++)game.vis[y][x]=false;
  const R=Math.max(4,Math.min(8,4+Math.floor(effPer()/3)));game.vis[game.py][game.px]=true;game.seen[game.py][game.px]=true;
- for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){if(dx*dx+dy*dy>R*R)continue;const x=game.px+dx,y=game.py+dy;if(x<0||y<0||x>=MAP_W||y>=MAP_H)continue;if(losClear(game.px,game.py,x,y)){game.vis[y][x]=true;game.seen[y][x]=true;}}ledgerNote();}
+ for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){if(dx*dx+dy*dy>R*R)continue;const x=game.px+dx,y=game.py+dy;if(x<0||y<0||x>=MAP_W||y>=MAP_H)continue;if(losClear(game.px,game.py,x,y)){game.vis[y][x]=true;game.seen[y][x]=true;}}_doorPeek();ledgerNote();}
+/* MOB-66: an open door next to Dad (any of the 8 neighbours) always shows the tiles straight through it, so opening a door from
+   the side reveals the tile right in front of it on the far side (a corner wall used to block that line of sight). No RNG. */
+function _doorPeek(){if(!game||!game.doors||!game.floor)return;const G=game.floor.grid,W=(x,y)=>x<0||y<0||x>=MAP_W||y>=MAP_H||G[y][x]===1;
+ for(const d of game.doors){if(!d.open||Math.max(Math.abs(d.x-game.px),Math.abs(d.y-game.py))!==1)continue;let t;
+  if(W(d.x-1,d.y)&&W(d.x+1,d.y))t=[[d.x,d.y-1],[d.x,d.y+1]];else if(W(d.x,d.y-1)&&W(d.x,d.y+1))t=[[d.x-1,d.y],[d.x+1,d.y]];else t=[[2*d.x-game.px,2*d.y-game.py]];
+  t.push([d.x,d.y]);for(const[x,y]of t){if(W(x,y))continue;game.vis[y][x]=true;game.seen[y][x]=true;}}}
 /* MOB-49: FLOOR LEDGER. Records, per floor, the notable things Dad has actually SEEN (in view): water fountain (sips left),
    Cooler of Restoration, merchant, companion, locked door (and whether it is open now), key, boss (beaten or not).
    Kept in game.ledger {depth:{...}} and saved in the run save as the optional field 'ledger' (old sda_save_v4 saves load with {}). No DOM. */
@@ -383,11 +389,11 @@ function survivalTick(){const hr=(game.cls.hungerRate||0.5)*0.5,hy=Math.max(0.05
  /* MOB-35: a continued run used to have no hunger/hydra values (NaN meters: drawn full, never hurt, food did nothing). */
  if(!Number.isFinite(game.hunger))game.hunger=0;if(!Number.isFinite(game.hydra))game.hydra=0;
  game.hunger=Math.min(hcap,game.hunger+hr);game.hydra=Math.min(dcap,game.hydra+hy);
- const hwarn=hcap*0.7,dwarn=dcap*0.7;
+ const hwarn=hcap*0.7,dwarn=dcap*0.7;const _surv4=game.turn%4===0;/* MOB-63: an empty stomach or a dry throat costs 1 HP every 4th turn, not every turn */
  if(game.hunger>=hwarn&&game.hunger-hr<hwarn)log("You're getting hungry.","dim");
  if(game.hydra>=dwarn&&game.hydra-hy<dwarn)log("You're getting thirsty (need a drink).","dim");
- if(game.hunger>=hcap){game.hp=Math.max(0,game.hp-1);log("Starving! -1 HP. Eat something.","red");}
- if(game.hydra>=dcap){game.hp=Math.max(0,game.hp-1);log("Parched! -1 HP. Drink something.","red");}
+ if(game.hunger>=hcap&&_surv4){game.hp=Math.max(0,game.hp-1);log("Starving! -1 HP. Eat something.","red");}
+ if(game.hydra>=dcap&&_surv4){game.hp=Math.max(0,game.hp-1);log("Parched! -1 HP. Drink something.","red");}
  if(game.hp<=0)die(game.hunger>=hcap?"starvation, in a fully stocked dungeon, having never once stopped for a proper lunch":"dehydration, in a building that absolutely had a water fountain somewhere",game.hunger>=hcap?"hunger":"thirst");}
 function applyStatus(id,turns){if(!STATUSES[id])return;if(id==="thirst"){if(game.statuses.thirst){game.statuses.thirst.depend=(game.statuses.thirst.depend||0)+1;return;}game.statuses.thirst={turns:9999,craving:0,depend:0};return;}game.statuses[id]={turns};}
 function tickStatuses(){game.moxTick++;if(game.moxTick%4===0)game.moxie=Math.min(game.maxmoxie,game.moxie+1);
@@ -427,7 +433,8 @@ function enemyTurn(){for(const e of game.enemies){if(e.isDog)continue;
 function _doorOccupied(d){return game.enemies.some(e=>e.x===d.x&&e.y===d.y)||game.loot.some(l=>l.x===d.x&&l.y===d.y)||!!(game.ally&&game.ally.x===d.x&&game.ally.y===d.y)||!!(game.vendor&&game.vendor.x===d.x&&game.vendor.y===d.y);}
 /* MOB-17: auto-walk routes around known, unsprung traps (the tapped tile itself is allowed); if that leaves no route, the old path is used. */
 function _knownTrapAt(x,y){return game.traps.some(t=>t.known&&!t.sprung&&t.x===x&&t.y===y);}
-function bfsPath(x0,y0,x1,y1){if(game.traps&&game.traps.some(t=>t.known&&!t.sprung)){const p=_bfsPath(x0,y0,x1,y1,true);if(p)return p;}return _bfsPath(x0,y0,x1,y1,false);}
+/* MOB-67: doorsOk lets auto-travel route through closed, unlocked doors (continueClickPath opens them on the way). */
+function bfsPath(x0,y0,x1,y1,doorsOk){if(game.traps&&game.traps.some(t=>t.known&&!t.sprung)){const p=_bfsPath(x0,y0,x1,y1,true,doorsOk);if(p)return p;}return _bfsPath(x0,y0,x1,y1,false,doorsOk);}
 function _bfsPath(x0,y0,x1,y1,avoid,doorsOk){
  if(x0===x1&&y0===y1)return [];
  const dist=[];for(let y=0;y<MAP_H;y++)dist.push(new Array(MAP_W).fill(-1));
@@ -446,20 +453,22 @@ function _bfsPath(x0,y0,x1,y1,avoid,doorsOk){
   if(dist[ny][nx]===dist[cy][cx]-1){path.unshift([cx-nx,cy-ny]);cx=nx;cy=ny;break;}}}
  return path;}
 /* MOB-01: shortest path to a floor tile orthogonally next to closed door d (null if none reachable). */
-function pathToDoor(d){let best=null;for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0]]){const nx=d.x+dx,ny=d.y+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||game.floor.grid[ny][nx]===1)continue;const od=doorAt(nx,ny);if(od&&!od.open)continue;const p=bfsPath(game.px,game.py,nx,ny);if(p&&(!best||p.length<best.length))best=p;}return best;}
+function pathToDoor(d){let best=null;for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0]]){const nx=d.x+dx,ny=d.y+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||game.floor.grid[ny][nx]===1)continue;const od=doorAt(nx,ny);if(od&&!od.open)continue;const p=bfsPath(game.px,game.py,nx,ny,true);if(p&&(!best||p.length<best.length))best=p;}return best;}
 /* MOB-05: shortest path to an open tile next to wall (wx,wy), any of its 8 neighbors (null if none reachable). */
-function pathToWall(wx,wy){let best=null;for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,-1],[-1,1],[1,1]]){const nx=wx+dx,ny=wy+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||game.floor.grid[ny][nx]===1)continue;const od=doorAt(nx,ny);if(od&&!od.open)continue;const p=bfsPath(game.px,game.py,nx,ny);if(p&&p.length&&(!best||p.length<best.length))best=p;}return best;}
+function pathToWall(wx,wy){let best=null;for(const[dx,dy]of[[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,-1],[-1,1],[1,1]]){const nx=wx+dx,ny=wy+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H||game.floor.grid[ny][nx]===1)continue;const od=doorAt(nx,ny);if(od&&!od.open)continue;const p=bfsPath(game.px,game.py,nx,ny,true);if(p&&p.length&&(!best||p.length<best.length))best=p;}return best;}
 /* MOB-01: the walk ended without a halt next to the tapped door: offer the door menu. */
 function _doorArrive(){const cd=game.clickDoor;game.clickDoor=null;if(!cd||mode!==State.PLAY||pendingConfirm||pendingMenu)return;const d=doorAt(cd.x,cd.y);if(!d||d.open)return;if(Math.abs(d.x-game.px)+Math.abs(d.y-game.py)!==1)return;openDoorMenu(d);}
 function continueClickPath(){
  if(!game||!game.clickPath||!game.clickPath.length)return;
  if(mode!==State.PLAY||pendingConfirm||pendingMenu)return;
  if(ovInv||ovDad||ovBest||ovInstr||aiming||placing||shopOpen)return;
- const[dx,dy]=game.clickPath.shift();
+ const[dx,dy]=game.clickPath[0];
  const lastHp=game.hp;
  const badBefore=badStatusCount();
  const _inView=e=>!!(game.vis&&game.vis[e.y]&&game.vis[e.y][e.x]);const seenBefore=game.enemies.filter(_inView);
- tryMove(dx,dy);
+ const _ad=doorAt(game.px+dx,game.py+dy);/* MOB-67: a closed, unlocked door on the route is opened (1 turn, as by hand) and the walk goes on */
+ if(_ad&&!_ad.open&&!_ad.locked&&Math.abs(dx)+Math.abs(dy)===1){if(napBlocked())return;doorOpen(_ad,"You open the door without breaking stride. Mostly. (1 turn)");}
+ else{game.clickPath.shift();tryMove(dx,dy);}
  // M7: auto-travel also halts when an enemy that was not visible before this step comes into view.
  if(game&&game.clickPath&&game.clickPath.length&&mode===State.PLAY&&game.hp>=lastHp&&badStatusCount()<=badBefore&&game.enemies.some(e=>_inView(e)&&!seenBefore.includes(e))){log("Auto-travel halted. Something has entered the field of view. He stops, squints, and assumes a ready stance.","dim");game.clickPath=[];game.clickDoor=null;return;}
  // Auto-travel halts the moment anything goes wrong: HP loss OR any new negative status
