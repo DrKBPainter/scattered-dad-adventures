@@ -1,24 +1,76 @@
-ingredient_1,ingredient_2,class_restriction,result_name,rarity,result_type,flavor
-Duct Tape,Plunger,,Reinforced Plunger,uncommon,weapon,Duct tape makes it a weapon of consequence.
-Duct Tape,Rake,,Taped-Up Rake,uncommon,weapon,It holds. Barely. Enough.
-Propane,Spatula,Grillmaster only,The Flame Spatula,rare,weapon,OSHA has questions. The burgers do not.
-Meatball,Propane,bonus: grill,Charred Mega-Meatball,rare,consumable,+18 HP or a 9-dmg projectile of glory.
-Coffee,Energy Drink,,Double-Fisted Coffee,common,consumable,"+6 HP, +8 Patience. Heart rate: academic."
-Gatorade,Pedialyte,,Daderade,common,consumable,Maximum electrolytes. The science is real.
-Zip Ties,Battery,,Zip-Tied Battery Bundle,common,object,Throwable (7 dmg). 100% safe. 0% warranty.
-WD-40,Blowtorch,,WD-40 Torch,uncommon,weapon,Not intended for this. Definitely for this.
-Acetaminophen,Ibuprofen (do not take on an empty stomach),,Maximum Dad Relief Protocol,common,consumable,+5 HP. DEF +8 for 8 turns. Briefly immune to regret. The directions said not to combine these. He combined them.
-Zip Ties,HDMI Cable,,Tangled HDMI Flail,common,object,Throwable (9 dmg). The cable works now that it has been weaponized.
-Duct Tape,AA Battery,,Improvised Flashlight,common,consumable,+4 Patience. Actually works. He is unreasonably proud of this.
-Coffee,Blue Gatorade,,The Dad Boost,common,consumable,"+8HP, +5 Patience, hydrate 30. Also: The Jitters. You cannot have everything."
-Propane,WD-40,DIY / Tactical only,The Regrettable Flamethrower Rig,rare,object,Throwable (12 dmg). Warranty: absolutely void. OSHA: unaware.
-Screws,Plywood,Handy classes only,Plywood Barricade,rare,object,Placeable. Blocks a tile. Enemies must go around. Structurally questionable. Tactically sound.
-Acetaminophen,Whiskey,,Unlabeled Fizzing Concoction,common,consumable,It fizzed when it shouldn't have. The label told me not to do this.
-Acetaminophen,Light Beer,,Unlabeled Fizzing Concoction,common,consumable,It fizzed when it shouldn't have. The label told me not to do this.
-Acetaminophen,Warm Beer,,Unlabeled Fizzing Concoction,common,consumable,It fizzed when it shouldn't have. The label told me not to do this.
-Duct Tape,Horseshoe,,Duct-Taped Horseshoe Mace,uncommon,weapon,"Luck, taped to a handle. The handle is also tape. It connects with authority."
-Coffee,Protein Bar,,Pre-Run Fuel,common,consumable,"+6 HP, +6 Patience. The breakfast of men who say they will 'just do a quick loop.'"
-WD-40,Horseshoe,,Lubricated Throwing Shoe,common,object,"Throwable (9 dmg, long range). Frictionless. Flies further than physics strictly permits."
-Propane,Frozen Burger Patty,bonus: grill,Properly Grilled Burger,rare,consumable,+22 HP. Cooked to a temperature he refuses to disclose. It is perfect. It is always perfect.
-Propane,Golf Ball,Grillmaster only,Flaming Tee Shot,rare,object,"Throwable (11 dmg, long range). A golf ball, but on fire, and somehow personally offended. Fore."
-Screws,Bowling Ball,DIY / Tactical only,Screw-Studded Bowling Ball,rare,object,"Throwable (13 dmg). Fourteen mystery screws, finally employed. The project was always this."
+ingredient_1,ingredient_2,class_restriction,result_name,rarity,result_type,flavor,tier
+Half Roll of Duct Tape,Plunger,,Reinforced Plunger,uncommon,weapon,Duct tape makes it a weapon of consequence.,1
+Half Roll of Duct Tape,Leaf Rake,,Taped-Up Rake,uncommon,weapon,It holds. Barely. Enough.,1
+Half-Full Propane Tank,Spatula,Grillmaster only,The Flame Spatula,uncommon,weapon,OSHA has questions. The burgers do not.,1
+Lukewarm Meatball,Half-Full Propane Tank,,Charred Mega-Meatball,uncommon,consumable,+18 HP or a 9-dmg projectile of glory.,1
+Gas Station Coffee,Off-Brand Energy Drink,,Double-Fisted Coffee,uncommon,consumable,"+6 HP, +8 Patience. Heart rate: academic.",1
+Blue Electrolyte Drink,Kids' Electrolyte Solution,,Daderade,uncommon,consumable,Maximum electrolytes. The science is real.,1
+Bag of Zip Ties,9-Volt Battery,,Zip-Tied Battery Bundle,uncommon,object,Throwable (7 dmg). 100% safe. 0% warranty.,1
+Can of WG-40 Spray Lube,Mini Blowtorch,,WG-40 Torch,uncommon,weapon,Not intended for this. Definitely for this.,1
+Acetaminophen (Store Brand),Ibuprofen (Family Size),,Maximum Dad Relief Protocol,uncommon,consumable,+5 HP. DEF +8 for 8 turns. Briefly immune to regret. The directions said not to combine these. He combined them.,1
+Bag of Zip Ties,Tangled HDMI Cables,,Tangled HDMI Flail,uncommon,object,Throwable (9 dmg). The cable works now that it has been weaponized.,1
+Half Roll of Duct Tape,Loose AA Battery,,Improvised Flashlight,uncommon,consumable,+4 Patience. Actually works. He is unreasonably proud of this.,1
+Gas Station Coffee,Blue Electrolyte Drink,,The Dad Boost,uncommon,consumable,"+8HP, +5 Patience, hydrate 30. Also: The Jitters. You cannot have everything.",1
+Half-Full Propane Tank,Can of WG-40 Spray Lube,DIY Dad/Tactical Dad only,The Regrettable Flamethrower Rig,uncommon,object,Throwable (12 dmg). Warranty: absolutely void. OSHA: unaware.,1
+Mystery Screws x14,Scrap Plywood,DIY Dad/Tactical Dad/Tech Dad only,Plywood Barricade,uncommon,object,Placeable. Blocks a tile. Enemies must go around. Structurally questionable. Tactically sound.,1
+Acetaminophen (Store Brand),Pocket Flask of Whiskey,,Unlabeled Fizzing Concoction,uncommon,consumable,It fizzed when it shouldn't have. The label told me not to do this.,1
+Acetaminophen (Store Brand),Light Beer,,Unlabeled Fizzing Concoction,uncommon,consumable,It fizzed when it shouldn't have. The label told me not to do this.,1
+Acetaminophen (Store Brand),Warm Beer Can,,Unlabeled Fizzing Concoction,uncommon,consumable,It fizzed when it shouldn't have. The label told me not to do this.,1
+Half Roll of Duct Tape,Rusted Horseshoe,,Duct-Taped Horseshoe Mace,uncommon,weapon,"Luck, taped to a handle. The handle is also tape. It connects with authority.",1
+Gas Station Coffee,Chalky Protein Bar,,Pre-Run Fuel,uncommon,consumable,"+6 HP, +6 Patience. The breakfast of men who say they will 'just do a quick loop.'",1
+Can of WG-40 Spray Lube,Rusted Horseshoe,,Lubricated Throwing Shoe,uncommon,object,"Throwable (9 dmg, long range). Frictionless. Flies further than physics strictly permits.",1
+Half-Full Propane Tank,Frozen Burger Patty (Single),,Properly Grilled Burger,uncommon,consumable,+22 HP. Cooked to a temperature he refuses to disclose. It is perfect. It is always perfect.,1
+Half-Full Propane Tank,Range Bucket Golf Ball,Grillmaster only,Flaming Tee Shot,uncommon,object,"Throwable (11 dmg, long range). A golf ball, but on fire, and somehow personally offended. Fore.",1
+Mystery Screws x14,Garage Bowling Ball (One Of A Pair),DIY Dad/Tactical Dad only,Screw-Studded Bowling Ball,uncommon,object,"Throwable (13 dmg). Fourteen mystery screws, finally employed. The project was always this.",1
+Compression Knee Sleeves,Cargo Shorts,,Tactical Compression Cargo System,rare,armor,"+2 DEF, +2 slots, knees fully insured. The sleeves go under the shorts. He will explain the layering system to anyone who slows down.",1
+Dad Cap,Wraparound Sunglasses,,The Umpire Stare (Full Assembly),rare,armor,"+3 PER, +1 WIS. Cap over wraparounds. He can now disagree with a call from 200 feet, silently, in a way everyone feels.",1
+Tube Socks (Pulled Up),Sandals with Socks,,Socks and Sandals: Final Form,epic,armor,"+2 DEF, +1 WIS, +1 PER. The fusion society feared. Comfort so complete it deflects blows and fashion criticism alike.",1
+Work Gloves,Rubber Dishwashing Gloves,,The Double-Glove Guarantee,rare,armor,"+3 DEF, +1 ATK. Rubber under leather. Waterproof, gripproof, excuse-proof. 'Two is one and one is none,' he says, incorrectly attributing it.",1
+Fleece Vest,High-Vis Safety Vest,,High-Vis Fleece of Managed Expectations,rare,armor,"+3 DEF, +1 WIS, +1 PER. Visible from space, insulated to 40 degrees, pockets fully redundant. Business casual for the apocalypse.",1
+Construction Hard Hat,Hearing Protection Muffs,,Full Compliance Helm,rare,armor,"+3 DEF, +1 WIS. Head protected. Ears protected. Opinions unprotected and flowing freely, since he can no longer hear the responses.",1
+Lumberjack Flannel (Unbuttoned),Grilling Apron,,Vestments of the Grillfather,epic,armor,"+4 DEF, +2 ATK. Flannel beneath apron: the sacred layering. Someday, and that day may come at the cookout, it will ask a favor of you.",1
+Knee Brace (Right Knee),Elastic-Waist Sweatpants,,Orthopedic Leisure Command Trousers,rare,armor,"+2 DEF, +1 slot, +1 WIS. The brace goes over the sweatpants. Medically inadvisable. Spiritually correct.",1
+Steel-Toe Boots,Steel-Toe Boot (The Single One),,The Reunited Pair,epic,armor,"+3 DEF, +2 ATK. The single boot has found its family. Somewhere in the garage, a shelf grieves. The set is complete. Nothing else in his life is.",1
+Utility Belt (Dad-Configured),Tape Measure (Belt Clip),,The Belt of Infinite Preparedness,rare,armor,"+3 slots, +2 PER. Every clip occupied. Every scenario considered. Sits below the waistline at an angle physics has agreed not to discuss.",1
+Windbreaker (Circa 2001),Winter Beanie (Worn Indoors),,The 64-Degree Doctrine Hood,rare,armor,"+2 DEF, +1 WIS, +1 PER. A beanie reinforced with windbreaker lining. The thermostat stays at 64. This is the compromise. He is thriving. Ask him.",1
+Half Roll of Duct Tape,Broom Handle,,The Broom of Structural Overconfidence,uncommon,weapon,It was a broom. It is now a spear with a cleaning history.,1
+Bag of Zip Ties,Spatula,,Reinforced Spatula,uncommon,weapon,Zip-tied at the stress points. It no longer bends when he flips with conviction.,1
+Half Roll of Duct Tape,Half a Brick,,Taped Brick (Return Address Included),uncommon,object,Throwable (10 dmg). Comes back to you 3 turns after it is thrown. Technically mail.,1
+Can of WG-40 Spray Lube,Caulk Gun,,The Lubricated Caulk Cannon,uncommon,weapon,"Reach 2. Nothing will ever stick to it again, including blame.",1
+9-Volt Battery,The Extension Cord of Endless Horizons,DIY Dad/Tactical Dad/Tech Dad only,The Live Extension Cord,uncommon,weapon,He tested it with his tongue. It works.,1
+Tangled HDMI Cables,The Extension Cord of Endless Horizons,,The Entertainment Center Knot,uncommon,object,Throwable (8 dmg). The target cannot move for 2 turns. Nobody has ever untangled one. Nobody will.,1
+Bag of Zip Ties,Range Bucket Golf Ball,,Bolas of the Back Nine,uncommon,object,"Throwable (8 dmg, range 6). Fore, and also aft.",1
+Gas Station Coffee,All-Day Slow Cooker Stew,,Stew-Strength Coffee,uncommon,consumable,"+14 HP. Breakfast and lunch, braised. Also: The Jitters.",1
+Half-Full Propane Tank,Cold Pizza (Breakfast),,"Pizza, Reheated Correctly",uncommon,consumable,+16 HP. The microwave was never an option.,1
+Half-Full Propane Tank,Gas Station Hot Dog,,An Actually Grilled Hot Dog,uncommon,consumable,+14 HP. Redeemed by fire.,1
+Lone Banana (Slightly Bruised),Chalky Protein Bar,,The Post-Workout Banana Bar,uncommon,consumable,"+10 HP, +3 Patience. The workout is implied.",1
+Tube of Menthol Heat Rub,Knee Brace (Right Knee),,The Menthol Knee Command,rare,armor,"+3 DEF, knee relief. He can feel it working. Everyone can smell it working.",1
+Epsom Salt Soak (Travel Packet),Garden Hose Water,,Backyard Recovery Soak,uncommon,consumable,"+18 HP, cures The Back. Taken in a kiddie pool, with dignity.",1
+Flat Ginger Ale,Chalky Antacid Tablet,,The Settled Stomach Protocol,uncommon,consumable,"+8 HP, cures Hangry and Hangover. Mom's remedy, Dad's branding.",1
+Juice Pouch (Apple),Kids' Electrolyte Solution,,Juice Box Reserve (Confiscated),uncommon,consumable,"+6 HP, hydrate 50. Taken from the team cooler. The team will recover.",1
+Experimental Kombucha,Flat Ginger Ale,,Garage-Fermented Wellness Tonic,uncommon,consumable,+10 HP. Could be medicine. Could be a science fair.,1
+Restaurant Mints (Handful),Gas Station Coffee,,Meeting-Ready Breath,uncommon,consumable,+8 Patience. Ready to circle back. Ready to touch base.,1
+Bag of Zip Ties,Rubber Dishwashing Gloves,,Zip-Tied Gauntlets of Mild Inconvenience,rare,armor,+3 DEF. They will not come off. This was not the plan. (Taking them off breaks them.),1
+Dad Bandana (Forehead),Wraparound Sunglasses,,The Weekend Rider,rare,armor,"+1 DEF, +2 PER, +1 WIS. He has never owned a motorcycle. He has opinions about them.",1
+Denim Shirt (Buttoned Wrong),Relaxed-Fit Jeans,,The Denim Tuxedo,epic,armor,+4 DEF. Formalwear for occasions that involve a tailgate.,1
+Painter's Overalls (Three Projects Old),Lumberjack Flannel (Unbuttoned),,The Weekend Project Uniform,rare,armor,"+3 DEF, +1 slot, +1 WIS. Three projects old. Four projects behind.",1
+Crocs (Sport Mode Engaged),Tube Socks (Pulled Up),,"Sport-Mode Clogs, Socked",rare,armor,"+2 DEF, +1 PER. The strap is back. The feet are warm. Things are serious.",1
+Emergency Rain Poncho (From the Glovebox),Windbreaker (Circa 2001),,The Two-Layer Weather Opinion,rare,armor,"+3 DEF, +1 PER. He checked four forecasts. All four were wrong. He was ready anyway.",1
+Elbow Pads (Just In Case),Work Gloves,,Full Arm Insurance Policy,rare,armor,+4 DEF. Deductible: his pride.,1
+Safety Glasses (Scratched),Construction Hard Hat,,The Site Supervisor,rare,armor,"+3 DEF, +1 PER. He is not in charge. He is dressed as if he were.",1
+Keychain (45 Keys),Membership Lanyard,,The Lanyard of Forty-Five Keys,rare,charm,"+2 PER, +1 slot: both charms in one charm slot. One of them opens something. He will find out what.",1
+Half Roll of Duct Tape,Reinforced Plunger,,Dual Reinforced Plunger,uncommon,weapon,"Reinforced, then reinforced again. The second layer of tape is load-bearing.",2 (needs its YallTube video)
+Reinforced Plunger,Bag of Zip Ties,,The Plunger of Final Notice,uncommon,weapon,The clog has been warned.,2 (needs its YallTube video)
+Reinforced Spatula,Spatula,,Zip-Tied Double Spatula,uncommon,weapon,"Two spatulas, one handle. Flipping capacity doubled. Judgment halved.",2 (needs its YallTube video)
+The Flame Spatula,Grilling Apron,Grillmaster only,The Grillfather's Scepter,uncommon,weapon,The burgers bow.,2 (needs its YallTube video)
+Taped-Up Rake,The Extension Cord of Endless Horizons,,The Rake of Long Reach,uncommon,weapon,Reach 2. The leaves will be dealt with from a safe distance.,2 (needs its YallTube video)
+Double-Fisted Coffee,Off-Brand Energy Drink,,The Triple Fist,uncommon,consumable,"+8 HP, +14 Patience. The Jitters, twice as long. Not a beverage. A decision.",2 (needs its YallTube video)
+Daderade,Coconut Water (Impulse Buy),,Daderade Reserve,uncommon,consumable,"+14 HP, hydrate 90, cures Hangry, Hangover and The Thirst. Aged in a garage fridge.",2 (needs its YallTube video)
+Zip-Tied Battery Bundle,The Extension Cord of Endless Horizons,,The Lightning Lasso,uncommon,object,"Throwable (12 dmg, range 6). Does not break: it lands where it hits. He cannot explain it. He will not stop.",2 (needs its YallTube video)
+Duct-Taped Horseshoe Mace,Lucky Penny (Heads Up),,The Mace of Unreasonable Luck,uncommon,weapon,+5% critical hits (double damage). Heads up. Always heads up.,2 (needs its YallTube video)
+Properly Grilled Burger,Cold Pizza (Breakfast),,The Pizza Burger Incident,uncommon,consumable,+35 HP. It happened at the cookout. Nobody talks about it. Everybody wants another.,2 (needs its YallTube video)
+Tactical Compression Cargo System,Utility Belt (Dad-Configured),,The Cargo Singularity,legendary,armor,"+3 DEF, +5 slots, knee relief. Pockets inside pockets. Somewhere in there is the remote.",2 (needs its YallTube video)
+Socks and Sandals: Final Form,Crocs (Sport Mode Engaged),,The Final Final Form,legendary,armor,"+3 DEF, +2 WIS, +1 PER. The prophecy had a sequel.",2 (needs its YallTube video)
+Vestments of the Grillfather,High-Vis Safety Vest,,The Grillfather's High-Visibility Mandate,legendary,armor,"+5 DEF, +2 ATK, +1 PER. A creature that hits him has a 25% chance to be blinded for 3 turns. Seen from orbit. Respected at the grill.",2 (needs its YallTube video)
+Full Compliance Helm,Safety Glasses (Scratched),,The Inspector's Crown,legendary,armor,"+4 DEF, +1 WIS, +2 PER. Every corner noticed. Every corner cut, noted.",2 (needs its YallTube video)
+Lubricated Throwing Shoe,Rusted Horseshoe,,Matched Pair of Ringers,uncommon,object,"Throwable (10 dmg, range 7, hits twice). Does not break: it lands where it hits. The backyard pit has never seen such form.",2 (needs its YallTube video)

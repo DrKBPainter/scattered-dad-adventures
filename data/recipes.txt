@@ -1,5 +1,5 @@
 SCATTERED DAD ADVENTURES — CRAFTING RECIPES (combine two items)
-Auto-generated from the build (v0.11.0). Edit the matching data array in js/data.js; this mirrors it.
+Auto-generated from the build (v1.0.0). Edit the matching data array in js/data.js; this mirrors it.
 ================================================================
 
 Duct Tape + Plunger.  ->  Reinforced Plunger
@@ -17,13 +17,13 @@ Meatball + Propane.  ->  Charred Mega-Meatball  [bonus: grill]
 Coffee + Energy Drink.  ->  Double-Fisted Coffee
   Result: consumable — +6 HP, +8 Patience. Heart rate: academic.
 
-Gatorade + Pedialyte.  ->  Daderade
+Blue Electrolyte Drink + Kids' Electrolyte Solution.  ->  Daderade
   Result: consumable — Maximum electrolytes. The science is real.
 
 Zip Ties + Battery.  ->  Zip-Tied Battery Bundle
   Result: object — Throwable (7 dmg). 100% safe. 0% warranty.
 
-WD-40 + Blowtorch.  ->  WD-40 Torch
+WG-40 + Mini Blowtorch.  ->  WG-40 Torch
   Result: weapon — Not intended for this. Definitely for this.
 
 Acetaminophen + Ibuprofen (do not take on an empty stomach).  ->  Maximum Dad Relief Protocol
@@ -35,10 +35,10 @@ Zip Ties + HDMI Cable.  ->  Tangled HDMI Flail
 Duct Tape + AA Battery.  ->  Improvised Flashlight
   Result: consumable — +4 Patience. Actually works. He is unreasonably proud of this.
 
-Coffee + Blue Gatorade.  ->  The Dad Boost
+Coffee + Blue Electrolyte Drink.  ->  The Dad Boost
   Result: consumable — +8HP, +5 Patience, hydrate 30. Also: The Jitters. You cannot have everything.
 
-Propane + WD-40 (DIY / Tactical only).  ->  The Regrettable Flamethrower Rig
+Propane + WG-40 (DIY / Tactical only).  ->  The Regrettable Flamethrower Rig
   Result: object — Throwable (12 dmg). Warranty: absolutely void. OSHA: unaware.
 
 Screws + Plywood (Handy classes only).  ->  Plywood Barricade
@@ -59,7 +59,7 @@ Duct Tape + Horseshoe.  ->  Duct-Taped Horseshoe Mace
 Coffee + Protein Bar.  ->  Pre-Run Fuel
   Result: consumable — +6 HP, +6 Patience. The breakfast of men who say they will 'just do a quick loop.'
 
-WD-40 + Horseshoe.  ->  Lubricated Throwing Shoe
+WG-40 + Horseshoe.  ->  Lubricated Throwing Shoe
   Result: object — Throwable (9 dmg, long range). Frictionless. Flies further than physics strictly permits.
 
 Propane + Frozen Burger Patty.  ->  Properly Grilled Burger  [bonus: grill]
@@ -103,3 +103,126 @@ Utility Belt + Tape Measure (Belt Clip).  ->  The Belt of Infinite Preparedness
 
 Windbreaker + Winter Beanie. The thermostat is non-negotiable.  ->  The 64-Degree Doctrine Hood
   Result: armor — +2 DEF, +1 WIS, +1 PER. A beanie reinforced with windbreaker lining. The thermostat stays at 64. This is the compromise. He is thriving. Ask him.
+
+Duct Tape + Broom Handle.  ->  The Broom of Structural Overconfidence
+  Result: weapon — It was a broom. It is now a spear with a cleaning history.
+
+Zip Ties + Spatula.  ->  Reinforced Spatula
+  Result: weapon — Zip-tied at the stress points. It no longer bends when he flips with conviction.
+
+Duct Tape + Half a Brick.  ->  Taped Brick (Return Address Included)
+  Result: object — Throwable (10 dmg). Comes back to you 3 turns after it is thrown. Technically mail.
+
+WG-40 + Caulk Gun.  ->  The Lubricated Caulk Cannon
+  Result: weapon — Reach 2. Nothing will ever stick to it again, including blame.
+
+9-Volt Battery + Extension Cord (DIY / Tactical / Tech only).  ->  The Live Extension Cord
+  Result: weapon — He tested it with his tongue. It works.
+
+Tangled HDMI Cables + Extension Cord.  ->  The Entertainment Center Knot
+  Result: object — Throwable (8 dmg). The target cannot move for 2 turns. Nobody has ever untangled one. Nobody will.
+
+Zip Ties + Golf Ball.  ->  Bolas of the Back Nine
+  Result: object — Throwable (8 dmg, range 6). Fore, and also aft.
+
+Coffee + Slow Cooker Stew.  ->  Stew-Strength Coffee
+  Result: consumable — +14 HP. Breakfast and lunch, braised. Also: The Jitters.
+
+Propane + Cold Pizza.  ->  Pizza, Reheated Correctly  [bonus: grill]
+  Result: consumable — +16 HP. The microwave was never an option.
+
+Propane + Gas Station Hot Dog.  ->  An Actually Grilled Hot Dog  [bonus: grill]
+  Result: consumable — +14 HP. Redeemed by fire.
+
+Banana + Protein Bar.  ->  The Post-Workout Banana Bar
+  Result: consumable — +10 HP, +3 Patience. The workout is implied.
+
+Menthol Heat Rub + Knee Brace.  ->  The Menthol Knee Command
+  Result: armor — +3 DEF, knee relief. He can feel it working. Everyone can smell it working.
+
+Epsom Salt + Garden Hose Water.  ->  Backyard Recovery Soak
+  Result: consumable — +18 HP, cures The Back. Taken in a kiddie pool, with dignity.
+
+Flat Ginger Ale + Antacid Tablet.  ->  The Settled Stomach Protocol
+  Result: consumable — +8 HP, cures Hangry and Hangover. Mom's remedy, Dad's branding.
+
+Juice Pouch + Kids' Electrolyte Solution.  ->  Juice Box Reserve (Confiscated)
+  Result: consumable — +6 HP, hydrate 50. Taken from the team cooler. The team will recover.
+
+Kombucha + Flat Ginger Ale.  ->  Garage-Fermented Wellness Tonic
+  Result: consumable — +10 HP. Could be medicine. Could be a science fair.
+
+Restaurant Mints + Coffee.  ->  Meeting-Ready Breath
+  Result: consumable — +8 Patience. Ready to circle back. Ready to touch base.
+
+Zip Ties + Rubber Gloves.  ->  Zip-Tied Gauntlets of Mild Inconvenience
+  Result: armor — +3 DEF. They will not come off. This was not the plan. (Taking them off breaks them.)
+
+Dad Bandana + Wraparound Sunglasses.  ->  The Weekend Rider
+  Result: armor — +1 DEF, +2 PER, +1 WIS. He has never owned a motorcycle. He has opinions about them.
+
+Denim Shirt + Relaxed-Fit Jeans.  ->  The Denim Tuxedo
+  Result: armor — +4 DEF. Formalwear for occasions that involve a tailgate.
+
+Painter's Overalls + Lumberjack Flannel.  ->  The Weekend Project Uniform
+  Result: armor — +3 DEF, +1 slot, +1 WIS. Three projects old. Four projects behind.
+
+Foam Clogs + Tube Socks.  ->  Sport-Mode Clogs, Socked
+  Result: armor — +2 DEF, +1 PER. The strap is back. The feet are warm. Things are serious.
+
+Rain Poncho + Windbreaker.  ->  The Two-Layer Weather Opinion
+  Result: armor — +3 DEF, +1 PER. He checked four forecasts. All four were wrong. He was ready anyway.
+
+Elbow Pads + Work Gloves.  ->  Full Arm Insurance Policy
+  Result: armor — +4 DEF. Deductible: his pride.
+
+Safety Glasses + Hard Hat.  ->  The Site Supervisor
+  Result: armor — +3 DEF, +1 PER. He is not in charge. He is dressed as if he were.
+
+Keychain (45 Keys) + Membership Lanyard.  ->  The Lanyard of Forty-Five Keys
+  Result: charm — +2 PER, +1 slot: both charms in one charm slot. One of them opens something. He will find out what.
+
+Duct Tape + Reinforced Plunger.  ->  Dual Reinforced Plunger
+  Result: weapon — Reinforced, then reinforced again. The second layer of tape is load-bearing.
+
+Reinforced Plunger + Zip Ties.  ->  The Plunger of Final Notice
+  Result: weapon — The clog has been warned.
+
+Reinforced Spatula + Spatula.  ->  Zip-Tied Double Spatula  [bonus: grill]
+  Result: weapon — Two spatulas, one handle. Flipping capacity doubled. Judgment halved.
+
+The Flame Spatula + Grilling Apron (Grillmaster only).  ->  The Grillfather's Scepter  [grill ONLY]
+  Result: weapon — The burgers bow.
+
+Taped-Up Rake + Extension Cord.  ->  The Rake of Long Reach
+  Result: weapon — Reach 2. The leaves will be dealt with from a safe distance.
+
+Double-Fisted Coffee + Energy Drink.  ->  The Triple Fist
+  Result: consumable — +8 HP, +14 Patience. The Jitters, twice as long. Not a beverage. A decision.
+
+Daderade + Coconut Water.  ->  Daderade Reserve
+  Result: consumable — +14 HP, hydrate 90, cures Hangry, Hangover and The Thirst. Aged in a garage fridge.
+
+Zip-Tied Battery Bundle + Extension Cord.  ->  The Lightning Lasso
+  Result: object — Throwable (12 dmg, range 6). Does not break: it lands where it hits. He cannot explain it. He will not stop.
+
+Duct-Taped Horseshoe Mace + Lucky Penny.  ->  The Mace of Unreasonable Luck
+  Result: weapon — +5% critical hits (double damage). Heads up. Always heads up.
+
+Properly Grilled Burger + Cold Pizza.  ->  The Pizza Burger Incident  [bonus: grill]
+  Result: consumable — +35 HP. It happened at the cookout. Nobody talks about it. Everybody wants another.
+
+Tactical Compression Cargo System + Utility Belt.  ->  The Cargo Singularity
+  Result: armor — +3 DEF, +5 slots, knee relief. Pockets inside pockets. Somewhere in there is the remote.
+
+Socks and Sandals: Final Form + Foam Clogs.  ->  The Final Final Form
+  Result: armor — +3 DEF, +2 WIS, +1 PER. The prophecy had a sequel.
+
+Vestments of the Grillfather + High-Vis Vest.  ->  The Grillfather's High-Visibility Mandate
+  Result: armor — +5 DEF, +2 ATK, +1 PER. A creature that hits him has a 25% chance to be blinded for 3 turns. Seen from orbit. Respected at the grill.
+
+Full Compliance Helm + Safety Glasses.  ->  The Inspector's Crown
+  Result: armor — +4 DEF, +1 WIS, +2 PER. Every corner noticed. Every corner cut, noted.
+
+Lubricated Throwing Shoe + Rusted Horseshoe.  ->  Matched Pair of Ringers
+  Result: object — Throwable (10 dmg, range 7, hits twice). Does not break: it lands where it hits. The backyard pit has never seen such form.

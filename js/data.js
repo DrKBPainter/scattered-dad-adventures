@@ -712,7 +712,7 @@ const WEAPONS=[
  {id:"snowshovel",name:"The Snow Shovel of Seasonal Vengeance",atk:6,reach:2,sprite:SPR_WPN_RAKE,desc:"Lives in the garage eleven months a year, dreaming of the twelfth. The driveway remembers. So does his back."},
  {reqLevel:4,id:"tikitorch",powered:true,name:"The Backyard Tiki Torch of Ambient Menace",atk:7,reach:2,sprite:SPR_WPN_BLOWTORCH,desc:"Citronella-scented and faintly threatening. Keeps mosquitoes, raccoons, and party guests at a respectful distance."},
  {id:"gardenhose",name:"The Garden Hose of Unspooling Doom",atk:4,reach:4,sprite:SPR_WPN_EXTENSIONCORD,throw:{dmg:3,range:5},desc:"A serpent that kinks at the precise moment of maximum need. Never rewinds correctly. Vengeance comes in PSI."},
- {reqLevel:5,id:"crowbar",name:"The Pry Bar of Last Resort",atk:8,reach:1,sprite:SPR_WPN_HEXHAMMER,throw:{dmg:7,range:3},desc:"When persuasion fails and the WD-40 is empty, the realm turns to leverage. Leverage does not negotiate."}
+ {reqLevel:5,id:"crowbar",name:"The Pry Bar of Last Resort",atk:8,reach:1,sprite:SPR_WPN_HEXHAMMER,throw:{dmg:7,range:3},desc:"When persuasion fails and the WG-40 is empty, the realm turns to leverage. Leverage does not negotiate."}
 ];
 
 /* ===== ARMOR (slots: head/torso/arms/legs/feet) ===== */
@@ -935,22 +935,25 @@ const DADISMS=[
 ];
 
 /* ===== RECIPES (combine two items) ===== */
+/* MOB-40 (2026-11-17): tier 1 = two non-crafted items (any time). tier:2 = a crafted result + an item; it cannot be tried
+   until its YallTube video has revealed it (game.knownRecipes). Crafted results get their own ids and crafted:true (tryCraft). */
+function _rspr(id){const L=[WEAPONS,ARMORS,CHARMS];for(const A of L){const f=A.find(x=>x.id===id);if(f&&f.sprite)return f.sprite;}return undefined;}
 const RECIPES=[
- {a:"ducttape",b:"plunger",out:{kind:"weapon",id:"plunger",name:"Reinforced Plunger",atk:7,desc:"Duct tape makes it a weapon of consequence."},desc:"Duct Tape + Plunger."},
- {a:"ducttape",b:"rake",out:{kind:"weapon",id:"rake",name:"Taped-Up Rake",atk:6,desc:"It holds. Barely. Enough."},desc:"Duct Tape + Rake."},
+ {a:"ducttape",b:"plunger",out:{kind:"weapon",id:"plunger_reinforced",name:"Reinforced Plunger",atk:7,desc:"Duct tape makes it a weapon of consequence."},desc:"Duct Tape + Plunger."},
+ {a:"ducttape",b:"rake",out:{kind:"weapon",id:"rake_taped",name:"Taped-Up Rake",atk:6,desc:"It holds. Barely. Enough."},desc:"Duct Tape + Rake."},
  {a:"propane",b:"spatula",out:{kind:"weapon",id:"flamespat",name:"The Flame Spatula",atk:9,desc:"OSHA has questions. The burgers do not."},lock:"grill",desc:"Propane + Spatula (Grillmaster only)."},
  {a:"meatball",b:"propane",out:{kind:"consumable",id:"charball",name:"Charred Mega-Meatball",heal:18,throw:{dmg:9},desc:"+18 HP or a 9-dmg projectile of glory."},bonus:"grill",desc:"Meatball + Propane."},
  {a:"coffee",b:"energy",out:{kind:"consumable",id:"supercoffee",name:"Double-Fisted Coffee",heal:6,moxie:8,hydrate:15,causes:"jitters",desc:"+6 HP, +8 Patience. Heart rate: academic."},desc:"Coffee + Energy Drink."},
- {a:"gatorade",b:"pedialyte",out:{kind:"consumable",id:"daderade",name:"Daderade",heal:8,hydrate:60,cures:["hangry","hangover","thirst"],desc:"Maximum electrolytes. The science is real."},desc:"Gatorade + Pedialyte."},
+ {a:"gatorade",b:"pedialyte",out:{kind:"consumable",id:"daderade",name:"Daderade",heal:8,hydrate:60,cures:["hangry","hangover","thirst"],desc:"Maximum electrolytes. The science is real."},desc:"Blue Electrolyte Drink + Kids' Electrolyte Solution."},
  {a:"ziptie",b:"battery",out:{kind:"object",id:"zapbundle",name:"Zip-Tied Battery Bundle",throw:{dmg:7},desc:"Throwable (7 dmg). 100% safe. 0% warranty."},desc:"Zip Ties + Battery."},
- {a:"wd40",b:"blowtorch",out:{kind:"weapon",id:"flamespray",name:"WD-40 Torch",atk:8,throw:{dmg:5},desc:"Not intended for this. Definitely for this."},desc:"WD-40 + Blowtorch."}
+ {a:"wd40",b:"blowtorch",out:{kind:"weapon",id:"flamespray",name:"WG-40 Torch",atk:8,throw:{dmg:5},desc:"Not intended for this. Definitely for this."},desc:"WG-40 + Mini Blowtorch."}
 ,
  // ── NIGHTLY ADDITIONS (2026-06-18) ──
  {a:"acetaminophen",b:"ibuprofen",out:{kind:"consumable",id:"dadrelief",name:"Maximum Dad Relief Protocol",defBuff:8,invincible:8,heal:5,desc:"+5 HP. DEF +8 for 8 turns. Briefly immune to regret. The directions said not to combine these. He combined them."},desc:"Acetaminophen + Ibuprofen (do not take on an empty stomach)."},
  {a:"ziptie",b:"hdmi",out:{kind:"object",id:"hdmi_flail",name:"Tangled HDMI Flail",throw:{dmg:9,range:6},desc:"Throwable (9 dmg). The cable works now that it has been weaponized."},desc:"Zip Ties + HDMI Cable."},
  {a:"ducttape",b:"aabattery",out:{kind:"consumable",id:"taped_torch",name:"Improvised Flashlight",heal:0,moxie:4,desc:"+4 Patience. Actually works. He is unreasonably proud of this.",nourish:0},desc:"Duct Tape + AA Battery."},
- {a:"coffee",b:"gatorade",out:{kind:"consumable",id:"dadboost",name:"The Dad Boost",heal:8,hydrate:30,moxie:5,causes:"jitters",desc:"+8HP, +5 Patience, hydrate 30. Also: The Jitters. You cannot have everything."},desc:"Coffee + Blue Gatorade."},
- {a:"propane",b:"wd40",out:{kind:"object",id:"flamethrower_rig",name:"The Regrettable Flamethrower Rig",throw:{dmg:12,range:7},desc:"Throwable (12 dmg). Warranty: absolutely void. OSHA: unaware.",classes:["diy","tactical"]},classes:["diy","tactical"],desc:"Propane + WD-40 (DIY / Tactical only)."},
+ {a:"coffee",b:"gatorade",out:{kind:"consumable",id:"dadboost",name:"The Dad Boost",heal:8,hydrate:30,moxie:5,causes:"jitters",desc:"+8HP, +5 Patience, hydrate 30. Also: The Jitters. You cannot have everything."},desc:"Coffee + Blue Electrolyte Drink."},
+ {a:"propane",b:"wd40",out:{kind:"object",id:"flamethrower_rig",name:"The Regrettable Flamethrower Rig",throw:{dmg:12,range:7},desc:"Throwable (12 dmg). Warranty: absolutely void. OSHA: unaware.",classes:["diy","tactical"]},classes:["diy","tactical"],desc:"Propane + WG-40 (DIY / Tactical only)."},
  {a:"screws",b:"plywood",out:{kind:"object",id:"barricade",name:"Plywood Barricade",placeable:true,trapId:"barricade",desc:"Placeable. Blocks a tile. Enemies must go around. Structurally questionable. Tactically sound."},classes:["diy","tactical","tech"],desc:"Screws + Plywood (Handy classes only)."}
 ,
  // -- NIGHTLY ADDITIONS (2026-06-18 PM) -- Acetaminophen + Alcohol: a mild reaction of sorts --
@@ -960,7 +963,7 @@ const RECIPES=[
  // ── NIGHTLY ADDITIONS (2026-06-21) N6 recipes ──
  {a:"ducttape",b:"horseshoe",out:{kind:"weapon",id:"luckymace",name:"Duct-Taped Horseshoe Mace",atk:7,desc:"Luck, taped to a handle. The handle is also tape. It connects with authority."},desc:"Duct Tape + Horseshoe."},
  {a:"coffee",b:"proteinbar",out:{kind:"consumable",id:"prefuel",name:"Pre-Run Fuel",heal:6,moxie:6,nourish:25,causes:"jitters",desc:"+6 HP, +6 Patience. The breakfast of men who say they will 'just do a quick loop.'"},desc:"Coffee + Protein Bar."},
- {a:"wd40",b:"horseshoe",out:{kind:"object",id:"slick_shoe",name:"Lubricated Throwing Shoe",throw:{dmg:9,range:6},desc:"Throwable (9 dmg, long range). Frictionless. Flies further than physics strictly permits."},desc:"WD-40 + Horseshoe."},
+ {a:"wd40",b:"horseshoe",out:{kind:"object",id:"slick_shoe",name:"Lubricated Throwing Shoe",throw:{dmg:9,range:6},desc:"Throwable (9 dmg, long range). Frictionless. Flies further than physics strictly permits."},desc:"WG-40 + Horseshoe."},
  {a:"propane",b:"frozen_burger",out:{kind:"consumable",id:"grillburger",name:"Properly Grilled Burger",heal:22,nourish:50,desc:"+22 HP. Cooked to a temperature he refuses to disclose. It is perfect. It is always perfect."},bonus:"grill",desc:"Propane + Frozen Burger Patty."},
  {a:"propane",b:"golf_ball",out:{kind:"object",id:"flaming_drive",name:"Flaming Tee Shot",throw:{dmg:11,range:7},desc:"Throwable (11 dmg, long range). A golf ball, but on fire, and somehow personally offended. Fore."},lock:"grill",desc:"Propane + Golf Ball (Grillmaster only)."},
  {a:"screws",b:"bowling_ball",out:{kind:"object",id:"spiked_ball",name:"Screw-Studded Bowling Ball",throw:{dmg:13},desc:"Throwable (13 dmg). Fourteen mystery screws, finally employed. The project was always this."},classes:["diy","tactical"],desc:"Screws + Bowling Ball (DIY / Tactical only)."},
@@ -975,8 +978,70 @@ const RECIPES=[
  {a:"kneebrace",b:"sweatpants",out:{kind:"armor",id:"ortho_sweats",name:"Orthopedic Leisure Command Trousers",slot:"legs",def:2,cap:1,wis:1,baseRarity:"Rare",sprite:SPR_A_KHAKIPANTS,desc:"+2 DEF, +1 slot, +1 WIS. The brace goes over the sweatpants. Medically inadvisable. Spiritually correct."},desc:"Knee Brace + Elastic-Waist Sweatpants."},
  {a:"steelboot",b:"steeltoe",out:{kind:"armor",id:"reunited_boots",name:"The Reunited Pair",slot:"feet",def:3,atk:2,baseRarity:"Epic",sprite:SPR_A_STEELBOOTS,desc:"+3 DEF, +2 ATK. The single boot has found its family. Somewhere in the garage, a shelf grieves. The set is complete. Nothing else in his life is."},desc:"Steel-Toe Boots + The Single One. It was in the garage. It was always in the garage."},
  {a:"utility_belt",b:"pt_measure",out:{kind:"armor",id:"prep_belt",name:"The Belt of Infinite Preparedness",slot:"arms",cap:3,per:2,baseRarity:"Rare",sprite:SPR_A_TAPEMEASURE,desc:"+3 slots, +2 PER. Every clip occupied. Every scenario considered. Sits below the waistline at an angle physics has agreed not to discuss."},desc:"Utility Belt + Tape Measure (Belt Clip)."},
- {a:"windbreaker",b:"beanie",out:{kind:"armor",id:"thermo_hood",name:"The 64-Degree Doctrine Hood",slot:"head",def:2,wis:1,per:1,baseRarity:"Rare",sprite:SPR_A_HARDHAT,desc:"+2 DEF, +1 WIS, +1 PER. A beanie reinforced with windbreaker lining. The thermostat stays at 64. This is the compromise. He is thriving. Ask him."},desc:"Windbreaker + Winter Beanie. The thermostat is non-negotiable."}
+ {a:"windbreaker",b:"beanie",out:{kind:"armor",id:"thermo_hood",name:"The 64-Degree Doctrine Hood",slot:"head",def:2,wis:1,per:1,baseRarity:"Rare",sprite:SPR_A_HARDHAT,desc:"+2 DEF, +1 WIS, +1 PER. A beanie reinforced with windbreaker lining. The thermostat stays at 64. This is the compromise. He is thriving. Ask him."},desc:"Windbreaker + Winter Beanie. The thermostat is non-negotiable."},
+ // -- MOB-40 (2026-11-17): expanded crafting, tier 1 (approved by KBP 2026-11-17, with his changes) --
+ {a:"ducttape",b:"broomhandle",out:{kind:"weapon",id:"broom_spear",name:"The Broom of Structural Overconfidence",atk:7,sprite:_rspr("broomhandle"),desc:"It was a broom. It is now a spear with a cleaning history."},desc:"Duct Tape + Broom Handle."},
+ {a:"ziptie",b:"spatula",out:{kind:"weapon",id:"spatula_reinforced",name:"Reinforced Spatula",atk:6,sprite:_rspr("spatula"),desc:"Zip-tied at the stress points. It no longer bends when he flips with conviction."},desc:"Zip Ties + Spatula."},
+ {a:"ducttape",b:"brick",out:{kind:"object",id:"taped_brick",name:"Taped Brick (Return Address Included)",throw:{dmg:10,returns:3},desc:"Throwable (10 dmg). Comes back to you 3 turns after it is thrown. Technically mail."},desc:"Duct Tape + Half a Brick."},
+ {a:"wd40",b:"caulkgun",out:{kind:"weapon",id:"caulk_cannon",name:"The Lubricated Caulk Cannon",atk:8,reach:2,sprite:_rspr("caulkgun"),desc:"Reach 2. Nothing will ever stick to it again, including blame."},desc:"WG-40 + Caulk Gun."},
+ {a:"battery",b:"extensioncord",out:{kind:"weapon",id:"live_cord",name:"The Live Extension Cord",atk:10,reach:4,sprite:_rspr("extensioncord"),desc:"He tested it with his tongue. It works."},classes:["diy","tactical","tech"],desc:"9-Volt Battery + Extension Cord (DIY / Tactical / Tech only)."},
+ {a:"hdmi",b:"extensioncord",out:{kind:"object",id:"cable_knot",name:"The Entertainment Center Knot",throw:{dmg:8,status:"root"},desc:"Throwable (8 dmg). The target cannot move for 2 turns. Nobody has ever untangled one. Nobody will."},desc:"Tangled HDMI Cables + Extension Cord."},
+ {a:"ziptie",b:"golf_ball",out:{kind:"object",id:"bolas",name:"Bolas of the Back Nine",throw:{dmg:8,range:6},desc:"Throwable (8 dmg, range 6). Fore, and also aft."},desc:"Zip Ties + Golf Ball."},
+ {a:"coffee",b:"crockpot",out:{kind:"consumable",id:"stew_coffee",name:"Stew-Strength Coffee",heal:14,nourish:40,hydrate:20,causes:"jitters",desc:"+14 HP. Breakfast and lunch, braised. Also: The Jitters."},desc:"Coffee + Slow Cooker Stew."},
+ {a:"propane",b:"coldpizza",out:{kind:"consumable",id:"pizza_reheated",name:"Pizza, Reheated Correctly",heal:16,nourish:45,desc:"+16 HP. The microwave was never an option."},bonus:"grill",desc:"Propane + Cold Pizza."},
+ {a:"propane",b:"hotdog",out:{kind:"consumable",id:"grilled_hotdog",name:"An Actually Grilled Hot Dog",heal:14,nourish:40,desc:"+14 HP. Redeemed by fire."},bonus:"grill",desc:"Propane + Gas Station Hot Dog."},
+ {a:"banana",b:"proteinbar",out:{kind:"consumable",id:"banana_bar",name:"The Post-Workout Banana Bar",heal:10,nourish:35,moxie:3,desc:"+10 HP, +3 Patience. The workout is implied."},desc:"Banana + Protein Bar."},
+ {a:"icyhot",b:"kneebrace",out:{kind:"armor",id:"menthol_knee",name:"The Menthol Knee Command",slot:"legs",def:3,kneeRelief:true,baseRarity:"Rare",sprite:_rspr("kneebrace"),desc:"+3 DEF, knee relief. He can feel it working. Everyone can smell it working."},desc:"Menthol Heat Rub + Knee Brace."},
+ {a:"epsom",b:"hose_water",out:{kind:"consumable",id:"recovery_soak",name:"Backyard Recovery Soak",heal:18,cures:["back"],desc:"+18 HP, cures The Back. Taken in a kiddie pool, with dignity."},desc:"Epsom Salt + Garden Hose Water."},
+ {a:"ginger_ale",b:"antacid",out:{kind:"consumable",id:"stomach_protocol",name:"The Settled Stomach Protocol",heal:8,cures:["hangry","hangover"],desc:"+8 HP, cures Hangry and Hangover. Mom's remedy, Dad's branding."},desc:"Flat Ginger Ale + Antacid Tablet."},
+ {a:"applejuice",b:"pedialyte",out:{kind:"consumable",id:"juicebox_reserve",name:"Juice Box Reserve (Confiscated)",heal:6,hydrate:50,desc:"+6 HP, hydrate 50. Taken from the team cooler. The team will recover."},desc:"Juice Pouch + Kids' Electrolyte Solution."},
+ {a:"kombucha",b:"ginger_ale",out:{kind:"consumable",id:"wellness_tonic",name:"Garage-Fermented Wellness Tonic",heal:10,reaction:3,desc:"+10 HP. Could be medicine. Could be a science fair."},desc:"Kombucha + Flat Ginger Ale."},
+ {a:"dinnermints",b:"coffee",out:{kind:"consumable",id:"meeting_breath",name:"Meeting-Ready Breath",moxie:8,desc:"+8 Patience. Ready to circle back. Ready to touch base."},desc:"Restaurant Mints + Coffee."},
+ {a:"ziptie",b:"rubbergloves",out:{kind:"armor",id:"ziptie_gauntlets",name:"Zip-Tied Gauntlets of Mild Inconvenience",slot:"arms",def:3,breakOnRemove:true,baseRarity:"Rare",sprite:_rspr("rubbergloves"),desc:"+3 DEF. They will not come off. This was not the plan. (Taking them off breaks them.)"},desc:"Zip Ties + Rubber Gloves."},
+ {a:"bandana",b:"sunglasses",out:{kind:"armor",id:"weekend_rider",name:"The Weekend Rider",slot:"head",def:1,per:2,wis:1,baseRarity:"Rare",sprite:_rspr("bandana"),desc:"+1 DEF, +2 PER, +1 WIS. He has never owned a motorcycle. He has opinions about them."},desc:"Dad Bandana + Wraparound Sunglasses."},
+ {a:"denimshirt",b:"jeans",out:{kind:"armor",id:"denim_tux",name:"The Denim Tuxedo",slot:"torso",def:4,baseRarity:"Epic",sprite:_rspr("denimshirt"),desc:"+4 DEF. Formalwear for occasions that involve a tailgate."},desc:"Denim Shirt + Relaxed-Fit Jeans."},
+ {a:"overalls",b:"flannel",out:{kind:"armor",id:"project_uniform",name:"The Weekend Project Uniform",slot:"legs",def:3,cap:1,wis:1,baseRarity:"Rare",sprite:_rspr("overalls"),desc:"+3 DEF, +1 slot, +1 WIS. Three projects old. Four projects behind."},desc:"Painter's Overalls + Lumberjack Flannel."},
+ {a:"crocs",b:"pt_grip",out:{kind:"armor",id:"socked_clogs",name:"Sport-Mode Clogs, Socked",slot:"feet",def:2,per:1,baseRarity:"Rare",sprite:_rspr("pt_grip"),desc:"+2 DEF, +1 PER. The strap is back. The feet are warm. Things are serious."},desc:"Foam Clogs + Tube Socks."},
+ {a:"poncho",b:"windbreaker",out:{kind:"armor",id:"weather_opinion",name:"The Two-Layer Weather Opinion",slot:"torso",def:3,per:1,baseRarity:"Rare",sprite:_rspr("windbreaker"),desc:"+3 DEF, +1 PER. He checked four forecasts. All four were wrong. He was ready anyway."},desc:"Rain Poncho + Windbreaker."},
+ {a:"elbowpads",b:"glovework",out:{kind:"armor",id:"arm_insurance",name:"Full Arm Insurance Policy",slot:"arms",def:4,baseRarity:"Rare",sprite:_rspr("glovework"),desc:"+4 DEF. Deductible: his pride."},desc:"Elbow Pads + Work Gloves."},
+ {a:"safety_glasses",b:"hardhat",out:{kind:"armor",id:"site_supervisor",name:"The Site Supervisor",slot:"head",def:3,per:1,baseRarity:"Rare",sprite:_rspr("hardhat"),desc:"+3 DEF, +1 PER. He is not in charge. He is dressed as if he were."},desc:"Safety Glasses + Hard Hat."},
+ {a:"keychain",b:"lanyard",out:{kind:"charm",id:"lanyard_keys",name:"The Lanyard of Forty-Five Keys",wear:"neck",per:2,cap:1,baseRarity:"Rare",desc:"+2 PER, +1 slot: both charms in one charm slot. One of them opens something. He will find out what."},desc:"Keychain (45 Keys) + Membership Lanyard."},
+ // -- MOB-40 tier 2: a crafted result + an item; each needs its YallTube video first --
+ {tier:2,a:"ducttape",b:"plunger_reinforced",out:{kind:"weapon",id:"plunger_dual",name:"Dual Reinforced Plunger",atk:9,sprite:_rspr("plunger"),desc:"Reinforced, then reinforced again. The second layer of tape is load-bearing."},desc:"Duct Tape + Reinforced Plunger."},
+ {tier:2,a:"plunger_reinforced",b:"ziptie",out:{kind:"weapon",id:"plunger_notice",name:"The Plunger of Final Notice",atk:11,sprite:_rspr("plunger"),desc:"The clog has been warned."},desc:"Reinforced Plunger + Zip Ties."},
+ {tier:2,a:"spatula_reinforced",b:"spatula",out:{kind:"weapon",id:"double_spatula",name:"Zip-Tied Double Spatula",atk:12,sprite:_rspr("spatula"),desc:"Two spatulas, one handle. Flipping capacity doubled. Judgment halved."},bonus:"grill",desc:"Reinforced Spatula + Spatula."},
+ {tier:2,a:"flamespat",b:"apron",out:{kind:"weapon",id:"grill_scepter",name:"The Grillfather's Scepter",atk:13,sprite:_rspr("spatula"),desc:"The burgers bow."},lock:"grill",desc:"The Flame Spatula + Grilling Apron (Grillmaster only)."},
+ {tier:2,a:"rake_taped",b:"extensioncord",out:{kind:"weapon",id:"rake_long",name:"The Rake of Long Reach",atk:9,reach:2,sprite:_rspr("rake"),desc:"Reach 2. The leaves will be dealt with from a safe distance."},desc:"Taped-Up Rake + Extension Cord."},
+ {tier:2,a:"supercoffee",b:"energy",out:{kind:"consumable",id:"triple_fist",name:"The Triple Fist",heal:8,moxie:14,causes:"jitters",causesTurns:28,desc:"+8 HP, +14 Patience. The Jitters, twice as long. Not a beverage. A decision."},desc:"Double-Fisted Coffee + Energy Drink."},
+ {tier:2,a:"daderade",b:"coconut_water",out:{kind:"consumable",id:"daderade_reserve",name:"Daderade Reserve",heal:14,hydrate:90,cures:["hangry","hangover","thirst"],desc:"+14 HP, hydrate 90, cures Hangry, Hangover and The Thirst. Aged in a garage fridge."},desc:"Daderade + Coconut Water."},
+ {tier:2,a:"zapbundle",b:"extensioncord",out:{kind:"object",id:"lightning_lasso",name:"The Lightning Lasso",throw:{dmg:12,range:6,keep:true},desc:"Throwable (12 dmg, range 6). Does not break: it lands where it hits. He cannot explain it. He will not stop."},desc:"Zip-Tied Battery Bundle + Extension Cord."},
+ {tier:2,a:"luckymace",b:"lucky_coin",out:{kind:"weapon",id:"luck_mace",name:"The Mace of Unreasonable Luck",atk:10,critPct:5,sprite:_rspr("hexhammer"),desc:"+5% critical hits (double damage). Heads up. Always heads up."},desc:"Duct-Taped Horseshoe Mace + Lucky Penny."},
+ {tier:2,a:"grillburger",b:"coldpizza",out:{kind:"consumable",id:"pizza_burger",name:"The Pizza Burger Incident",heal:35,nourish:80,desc:"+35 HP. It happened at the cookout. Nobody talks about it. Everybody wants another."},bonus:"grill",desc:"Properly Grilled Burger + Cold Pizza."},
+ {tier:2,a:"cargo_compression",b:"utility_belt",out:{kind:"armor",id:"cargo_singularity",name:"The Cargo Singularity",slot:"legs",def:3,cap:5,kneeRelief:true,baseRarity:"Legendary",sprite:SPR_A_CARGOSHORTS,desc:"+3 DEF, +5 slots, knee relief. Pockets inside pockets. Somewhere in there is the remote."},desc:"Tactical Compression Cargo System + Utility Belt."},
+ {tier:2,a:"socks_sandals_final",b:"crocs",out:{kind:"armor",id:"final_final_form",name:"The Final Final Form",slot:"feet",def:3,wis:2,per:1,baseRarity:"Legendary",sprite:SPR_A_TUBESOCKS,desc:"+3 DEF, +2 WIS, +1 PER. The prophecy had a sequel."},desc:"Socks and Sandals: Final Form + Foam Clogs."},
+ {tier:2,a:"grillfather_vest",b:"highvis",out:{kind:"armor",id:"grillfather_mandate",name:"The Grillfather's High-Visibility Mandate",slot:"torso",def:5,atk:2,per:1,blindOnHit:25,baseRarity:"Legendary",sprite:SPR_A_CHESTPAD,desc:"+5 DEF, +2 ATK, +1 PER. A creature that hits him has a 25% chance to be blinded for 3 turns. Seen from orbit. Respected at the grill."},desc:"Vestments of the Grillfather + High-Vis Vest."},
+ {tier:2,a:"osha_helm",b:"safety_glasses",out:{kind:"armor",id:"inspector_crown",name:"The Inspector's Crown",slot:"head",def:4,wis:1,per:2,baseRarity:"Legendary",sprite:SPR_A_HARDHAT,desc:"+4 DEF, +1 WIS, +2 PER. Every corner noticed. Every corner cut, noted."},desc:"Full Compliance Helm + Safety Glasses."},
+ {tier:2,a:"slick_shoe",b:"horseshoe",out:{kind:"object",id:"ringer_pair",name:"Matched Pair of Ringers",throw:{dmg:10,range:7,hits:2,keep:true},desc:"Throwable (10 dmg, range 7, hits twice). Does not break: it lands where it hits. The backyard pit has never seen such form."},desc:"Lubricated Throwing Shoe + Rusted Horseshoe."}
 ];
+
+/* MOB-40 (2026-11-17): workshop tags for the "Might combine with" hint. Two items might combine when their tags pair up
+   the way some recipe's ingredients do (craftPairOK in js/game.js); some such pairs make nothing on purpose.
+   Armor gets "GARMENT:<slot>" and charms "POCKET" automatically (craftTags). */
+const CRAFT_TAGS={
+ TAPE:["ducttape","ziptie"],FUEL:["propane","wd40"],POWER:["battery","aabattery","hdmi","extensioncord","blowtorch","zapbundle"],
+ FASTENER:["screws"],LUMBER:["plywood","broomhandle"],
+ GRILL:["spatula","spatula_reinforced","flamespat","frozen_burger","hotdog","coldpizza","meatball","grillburger"],
+ CAFFEINE:["coffee","energy","dinnermints","supercoffee"],
+ FLUIDS:["gatorade","pedialyte","applejuice","coconut_water","hose_water","sportsdrink","kombucha","ginger_ale","daderade","water"],
+ MEDS:["ibuprofen","acetaminophen","antacid","ginger_ale","icyhot","epsom","glucosamine","tums_roll"],
+ SNACK:["banana","proteinbar","crockpot","coldpizza","granola","casserole"],
+ SPORTS:["golf_ball","bowling_ball","horseshoe","slick_shoe"],BOOZE:["flask","lightbeer","beercan"],
+ TOOL:["plunger","plunger_reinforced","rake","rake_taped","caulkgun","brick","luckymace"]
+};
+const CRAFT_TEASE=["You try those two again. They still do not combine. They have not changed. Neither, apparently, has he.",
+ "Same two items. Same result. Somewhere, a YallTube commenter types 'did you even watch the video'.",
+ "He tries it again, slower, as if speed was the problem. Speed was not the problem.",
+ "Those two did not combine last time either. He remembers. The items remember. Everyone remembers."];
 
 /* ===== PRO TIPS (permanent upgrades) ===== */
 const PROTIPS=[

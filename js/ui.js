@@ -245,7 +245,8 @@ function buildInv(){const SL=[["weapon","Weapon"],["head","Head"],["torso","Tors
  {const kr=(game.keyring||[]).slice().sort((a,b)=>(a.floor||0)-(b.floor||0));h+='<div class="keyring"><div class="sl">KEY RING'+(kr.length?'':' — empty')+'</div>';if(kr.length){h+='<div class="keys">';kr.forEach(k=>{const cur=k.floor===game.depth;h+='<span class="keytag'+(cur?' cur':'')+'" title="'+(k.desc||'').replace(/"/g,'&quot;')+'">🔑 '+(k.floor?('Fl '+k.floor):'Mystery')+(cur?' ✓':'')+'</span>';});h+='</div>';}else{h+='<span class="meta">No keys yet. Dads label them in Sharpie; you have nothing to label.</span>';}h+='</div>';}
  const sel=game.inv[invSel];const unid=sel&&["weapon","armor","charm"].includes(sel.it.kind)&&sel.it.idd===false;const consUnid=sel&&sel.it.kind==="consumable"&&!consKnown(sel.it);
  // Mouse-only action strip for the selected bag item — each button fires the SAME invAction() branch as its key (no duplicated logic). Examine logs the item's flavor.
- let _acts='';if(sel){const _it=sel.it;const _useLbl=["weapon","armor","charm"].includes(_it.kind)?"Equip":"Use";const _marked=combineMark&&combineMark.src==="inv"&&combineMark.e===sel;_acts='<div class="invacts" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">'+'<button type="button" class="cf-btn" data-invact="e">'+_useLbl+'</button>'+(_it.throw?'<button type="button" class="cf-btn" data-invact="t">Throw</button>':'')+(_it.placeable?'<button type="button" class="cf-btn" data-invact="p">Place</button>':'')+'<button type="button" class="cf-btn" data-invact="c">'+(_marked?'Combine (marked)':'Combine')+'</button>'+'<button type="button" class="cf-btn" data-invact="d">Drop</button>'+'<button type="button" class="cf-btn" data-invact="x">Examine</button>'+'</div>';}
+ let _acts='';if(sel){const _it=sel.it;const _useLbl=["weapon","armor","charm"].includes(_it.kind)?"Equip":"Use";const _marked=combineMark&&combineMark.src==="inv"&&combineMark.e===sel;_acts='<div class="invacts" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">'+'<button type="button" class="cf-btn" data-invact="e">'+_useLbl+'</button>'+(_it.throw?'<button type="button" class="cf-btn" data-invact="t">Throw</button>':'')+(_it.placeable?'<button type="button" class="cf-btn" data-invact="p">Place</button>':'')+'<button type="button" class="cf-btn" data-invact="c">'+(_marked?'Combine (marked)':'Combine')+'</button>'+'<button type="button" class="cf-btn" data-invact="d">Drop</button>'+'<button type="button" class="cf-btn" data-invact="x">Examine</button>'+'</div>';
+  /* MOB-40 S2: workshop hint */if(typeof craftPartners==="function"){const _pp=craftPartners(_it);if(_pp.length){const _nm=[];_pp.forEach(x=>{const n=itemDisplayName(x);if(!_nm.includes(n))_nm.push(n);});_acts+='<div class="meta craft-hint" style="margin-top:6px">&#9874; Might combine with: '+_nm.join(', ')+'</div>';}}}
  if(typeof COMPACT!=="undefined"&&COMPACT)h+=_m9Detail(sel,_acts,unid||consUnid);else h+='<div class="detail">'+(sel?('<span class="r-'+rarClass(sel.it)+'">'+itemDisplayName(sel.it)+'</span>'+((unid||consUnid)?' <span class="meta">(unidentified)</span>':'')+' <span class="meta">['+(itemSlotLabel(sel.it)||sel.it.kind)+']</span><br><span class="meta">'+itemMeta(sel.it)+'</span>'+_acts):'<span class="dim">Empty slot.</span>')+'</div>';
  oInv.innerHTML=h;_m9Pad();
  oInv.querySelectorAll('.invgrid .cell[data-inv]').forEach(cell=>{const e=game.inv[+cell.dataset.inv];if(!e)return;const cv=cell.querySelector('canvas.ic');if(!cv)return;const cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;const spr=itemIconSprite(e.it);const sc=spr.length===32?1:2;cx.clearRect(0,0,32,32);if(_uiSprImg(cx,spr,32,32))return;for(let y=0;y<spr.length;y++){const row=spr[y];for(let x=0;x<row.length;x++){const col=PAL[row[x]];if(!col)continue;cx.fillStyle=col;cx.fillRect(x*sc,y*sc,sc,sc);}}});}
@@ -280,7 +281,7 @@ function _m14Card(e,i){const no='No. '+(i+1);
    +(e.lines&&e.lines.length?'<div class="bc-seen">'+e.lines.join(' &middot; ')+'</div>':'')
    +(e.flav?'<div class="bc-flav">'+e.flav+'</div>':'')+'</div></div>'
  +'</div></div>';}
-function _m14ItemName(id){const f=x=>x.id===id;const it=(typeof CONSUMABLES!=="undefined"&&CONSUMABLES.find(f))||(typeof OBJECTS!=="undefined"&&OBJECTS.find(f))||WEAPONS.find(f)||ARMORS.find(f)||CHARMS.find(f);return it?it.name:id;}
+function _m14ItemName(id){const f=x=>x.id===id;const it=(typeof CONSUMABLES!=="undefined"&&CONSUMABLES.find(f))||(typeof OBJECTS!=="undefined"&&OBJECTS.find(f))||WEAPONS.find(f)||ARMORS.find(f)||CHARMS.find(f);if(!it&&typeof craftName==="function")return craftName(id);/* MOB-40: crafted ingredients */return it?it.name:id;}
 function _m14OutSpr(o){if(o.sprite)return o.sprite;const f=x=>x.id===o.id;const src=o.kind==="weapon"?WEAPONS:o.kind==="armor"?ARMORS:o.kind==="charm"?CHARMS:(typeof CONSUMABLES!=="undefined"?CONSUMABLES:[]);const it=src.find(f);
  if(it&&it.sprite)return it.sprite;return typeof lootSprite==="function"?lootSprite(o):null;}
 function _m14Body(tab,gHas){_m14Sprs=[];let list=[],head='';
@@ -308,15 +309,15 @@ function _m14Body(tab,gHas){_m14Sprs=[];let list=[],head='';
    return {met:true,boss:boss,pal:cfg,tag:boss?('FLOOR '+c.floor):(cfg.tag||esc(c.biome||'')),name:esc(c.name),spr:c.sprite,stats:[['HP',c.hp],['ATK',c.atk],['DEF',c.def],['XP',c.xp]],
     lines:['Seen <b>'+d.count+'&times;</b>','first on floor <b>'+d.firstFloor+'</b>'].concat(c.pack?['travels in packs']:[]),flav:esc(c.flavor||'')};});}
  else{const known=(typeof game!=="undefined"&&game&&game.knownRecipes)?game.knownRecipes:[];const R=(typeof RECIPES!=="undefined"&&RECIPES)||[];
-  const shown=r=>known.includes(r.a+"+"+r.b)||r.desc.includes("(Grillmaster")||!!r.classes||!!r.lock;
-  head='Known: '+cnt(R,shown)+' / '+R.length+'. The rest are hidden until you find a YallTube DIY Video.';
+  const shown=r=>known.includes(r.a+"+"+r.b)||(r.tier!==2&&(!!r.classes||!!r.lock));/* MOB-40 F3 */
+  head='Known: '+cnt(R,shown)+' / '+R.length+'. The rest are hidden until you find a YallTube DIY Video. Recipes that build on something already crafted cannot even be attempted until you have seen their video.';
   list=R.map(r=>{if(!shown(r))return {met:false,stamp:'FIND A<br>YALLTUBE VIDEO',utag:'RECIPE'};
    const o=r.out,ln=[];const who=r.lock?CLASSES.find(c=>c.id===r.lock).name:r.classes?r.classes.map(id=>CLASSES.find(c=>c.id===id).name).join('/'):'';
    if(who)ln.push(who+' only');ln.push('Makes: '+(o.kind||'item'));
    const st=[];if(o.atk)st.push(['ATK',o.atk]);if(o.def)st.push(['DEF','+'+o.def]);if(o.heal)st.push(['HP','+'+o.heal]);if(o.throw)st.push(['THROW',o.throw.dmg]);
    return {met:true,pal:M14_PAL.recipe,tag:who?'RECIPE &middot; '+who.toUpperCase():'RECIPE',name:o.name,spr:_m14OutSpr(o),
     combo:'<div class="cx-combo"><b>'+_m14ItemName(r.a)+'</b><i>+</i><b>'+_m14ItemName(r.b)+'</b><i>=</i><b class="cx-out">'+o.name+'</b></div>',stats:st.slice(0,4),lines:ln,flav:o.desc||r.desc};});}
- return '<p class="dim">'+head+'</p><p class="dim cx-hint">Tap a card to flip it.</p><div class="bc-grid cdx-bc">'+list.map(_m14Card).join('')+'</div>';}
+ return '<p class="dim">'+head+'</p><p class="dim cx-hint">Tap a card to flip it.</p><div class="bc-grid cdx-bc">'+list.map(_m14Card).join('')+'</div>'+(tab===6?'<p class="dim cx-hint">Every project you finish is one more than the guy who never started. Keep building.</p>':'');}
 function _m14Paint(host,draw){host.querySelectorAll('canvas[data-cxspr]').forEach(cv=>{const s=_m14Sprs[+cv.dataset.cxspr];if(s)draw(cv,s);});
  if(!host._cxWired){host._cxWired=true;host.addEventListener('click',ev=>{const card=ev.target.closest&&ev.target.closest('.bc-card[data-cx]');if(card&&host.contains(card))card.classList.toggle('flipped');});}}
 function buildCodex(){
@@ -446,13 +447,13 @@ function buildCodex(){
   if(!RECIPES||!RECIPES.length){h+='<p class="dim">No recipes defined.</p>';}
   else{RECIPES.forEach(r=>{
    const key=r.a+"+"+r.b;
-   const isKnown=known.includes(key)||r.desc.includes("(Grillmaster")||r.classes||r.lock;
+   const isKnown=known.includes(key)||(r.tier!==2&&(r.classes||r.lock));/* MOB-40 F3 */
    // Basic recipes always shown; class-locked shown w/ class; YallTube recipes hidden until found
-   const alwaysVisible=!!(r.lock||r.classes);
+   const alwaysVisible=r.tier!==2&&!!(r.lock||r.classes);
    const needsVideo=!isKnown&&!alwaysVisible&&!r.lock&&!r.classes;
    const aName=(typeof CONSUMABLES!=="undefined"?CONSUMABLES.find(c=>c.id===r.a):null)||(typeof OBJECTS!=="undefined"?OBJECTS.find(o=>o.id===r.a):null);
    const bName=(typeof CONSUMABLES!=="undefined"?CONSUMABLES.find(c=>c.id===r.b):null)||(typeof OBJECTS!=="undefined"?OBJECTS.find(o=>o.id===r.b):null);
-   const aLabel=aName?aName.name:r.a;const bLabel=bName?bName.name:r.b;
+   const aLabel=aName?aName.name:_m14ItemName(r.a);const bLabel=bName?bName.name:_m14ItemName(r.b);
    if(needsVideo){h+='<div class="cdx-recipe locked"><span class="dim">??? + ??? → ???</span><div class="meta">Find a YallTube DIY Video to unlock.</div></div>';}
    else{h+='<div class="cdx-recipe">'
     +'<span class="r-'+(r.lock||r.classes?"Uncommon":"Common")+'">'+aLabel+' + '+bLabel+'</span>'
@@ -461,7 +462,7 @@ function buildCodex(){
     +(r.classes?' <span class="meta">['+r.classes.map(id=>CLASSES.find(c=>c.id===id).name).join('/')+'  only]</span>':'')
     +'<div class="meta">'+r.desc+'</div></div>';}
   });}
-  h+='</div>';
+  h+='</div><p class="dim">Every project you finish is one more than the guy who never started. Keep building.</p>';
  }
  h+=_m14?'</div>':'</div><p class="dim" style="margin-top:8px">1-7 switch tab &bull; J or Esc close &bull; Scroll to browse</p>';
  oCodex.innerHTML=h;
