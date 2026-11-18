@@ -131,7 +131,7 @@ function itemSlotLabel(it){if(!it)return "";if(it.kind==="weapon")return "weapon
 function itemSlotSuffix(it){const s=itemSlotLabel(it);return s?" ["+s+"]":"";}/* MOB-38 (KBP 2026-11-10): slot in brackets, e.g. "Spatula [weapon]" */
 function itemNameSlot(it){return itemDisplayName(it)+itemSlotSuffix(it);}
 /* ===== run / floor ===== */
-function newRun(cls,diff,dailySeed){const isDaily=typeof dailySeed==="number";const seed=isDaily?dailySeed:(Math.random()*1e9)|0;diff=diff||(typeof DIFFICULTY_MODES!=="undefined"?DIFFICULTY_MODES[1]:null);
+function newRun(cls,diff,dailySeed){_shopSold={};/* MOB-72 */const isDaily=typeof dailySeed==="number";const seed=isDaily?dailySeed:(Math.random()*1e9)|0;diff=diff||(typeof DIFFICULTY_MODES!=="undefined"?DIFFICULTY_MODES[1]:null);
  // Daily Challenge: every dad who plays today gets the identical dungeon. Route all
  // run-setup randomness (not just floor layout) through the same seeded RNG so nothing varies.
  const _rr=isDaily?mulberry32(seed+424242):null;const rnd=isDaily?()=>_rr():Math.random;
@@ -339,10 +339,17 @@ function stackable(it){return it.kind==="consumable"||it.kind==="object"||it.kin
 function maxStack(it){if(it.societyItem)return 9;if(it.placeable)return 5;if(it.throw)return 9;if(it.kind==="consumable")return 5;return Infinity;}
 function addItem(it){noteGearSeen(it);/* MOB-07 */if(it.kind==="gold"){game.gold+=it.amount;return true;}if(it.kind==="key"){if(!game.keyring)game.keyring=[];if(it.floor&&game.keyring.some(k=>k.floor===it.floor))return true;game.keyring.push(it);return true;}if(stackable(it)){const ms=maxStack(it);const e=game.inv.find(e=>e.it.kind===it.kind&&e.it.id===it.id&&e.qty<ms);if(e){e.qty++;return true;}}if(game.inv.length>=invCap()){log("Inventory full ("+invCap()+" slots). Drop something.","red");return false;}game.inv.push({it,qty:1});return true;}
 function removeEntry(e,n){n=n||1;e.qty-=n;if(e.qty<=0){const i=game.inv.indexOf(e);if(i>=0)game.inv.splice(i,1);}}
-function equip(itOrE,silent){const it=itOrE.it?itOrE.it:itOrE;let slot;if(it.kind==="weapon")slot="weapon";else if(it.kind==="armor")slot=it.slot;else if(it.kind==="charm"){slot=!game.equip.charm1?"charm1":(!game.equip.charm2?"charm2":"charm1");}else return;
+function equip(itOrE,silent,slotPick){const it=itOrE.it?itOrE.it:itOrE;let slot;if(it.kind==="weapon")slot="weapon";else if(it.kind==="armor")slot=it.slot;else if(it.kind==="charm"){
+  if(slotPick==="charm1"||slotPick==="charm2")slot=slotPick;
+  else if(game.equip.charm1&&game.equip.charm2&&!silent){/* MOB-71: both charm slots full: ask which one to swap out */const _it=it;
+   openMenu("Both charm slots are taken. Swap out which charm for the "+it.name+"?",["charm1","charm2"].map((k,n)=>({label:"Charm slot "+(n+1)+": "+game.equip[k].name+(isCursed(game.equip[k])?" (cursed)":""),fn:function(){equip(_it,false,k);if(typeof ovInv!=="undefined"&&ovInv&&typeof buildInv==="function")buildInv();syncUI();}})));return;}
+  else slot=!game.equip.charm1?"charm1":(!game.equip.charm2?"charm2":"charm1");}else return;
  if(it.reqLevel&&game.level<it.reqLevel&&!silent){const bonus=(game.cls&&game.cls.id==="tactical"&&it.reqLevel>1)?1:0;if(game.level<it.reqLevel-bonus){log("Requires Level "+it.reqLevel+(bonus?" (Tactical: "+( it.reqLevel-bonus)+")":"")+" to wield "+it.name+". (You are Level "+game.level+".)","red");return;}}
  if(isCursed(game.equip[slot])){log("The "+game.equip[slot].name+" refuses to budge — the curse won't let you swap it out. (Remove the curse first.)","red");return;}
- const wasIdd=it.idd;it.idd=true;const old=game.equip[slot];game.equip[slot]=it;const e=game.inv.find(e=>e.it===it);if(e)removeEntry(e,1);if(old)addItem(old);if(!silent){const _q=(typeof EQUIP_MSGS!=="undefined"&&EQUIP_MSGS[it.id])?(" "+EQUIP_MSGS[it.id]):"";log("Equipped "+it.name+(it.kind==="charm"?(" ("+(it.wear||"charm")+")"):"")+"."+_q,"grn");}if(!silent&&!wasIdd&&(it.affixes||[]).length)log("As you put it on, you can tell what it is by the way that it is.","blu");}
+ const wasIdd=it.idd;it.idd=true;const old=game.equip[slot];game.equip[slot]=it;const e=game.inv.find(e=>e.it===it);if(e)removeEntry(e,1);if(old)_m71KeepOld(old);if(!silent){const _q=(typeof EQUIP_MSGS!=="undefined"&&EQUIP_MSGS[it.id])?(" "+EQUIP_MSGS[it.id]):"";log("Equipped "+it.name+(it.kind==="charm"?(" ("+(it.wear||"charm")+")"):"")+"."+_q,"grn");}if(!silent&&!wasIdd&&(it.affixes||[]).length)log("As you put it on, you can tell what it is by the way that it is.","blu");}
+/* MOB-71: the piece taken off goes in the bag; if the swap shrank the bag (a charm or shorts that gave extra slots), it lands at Dad's feet instead of vanishing */
+function _m71KeepOld(old){if(game.inv.length<invCap()){addItem(old);return true;}let dx=game.px,dy=game.py;if(onStairs(dx,dy)){for(const[ox,oy]of[[0,1],[1,0],[0,-1],[-1,0]]){const nx=dx+ox,ny=dy+oy;if(nx>=0&&ny>=0&&nx<MAP_W&&ny<MAP_H&&game.floor.grid[ny][nx]===0&&!onStairs(nx,ny)){dx=nx;dy=ny;break;}}}
+ noteGearSeen(old);game.loot.push({x:dx,y:dy,item:old});log("No room in the bag for the "+old.name+", so it goes on the floor at your feet. He will remember it is there. He will not remember it is there.","gold");return false;}
 function isCursed(it){return !!(it&&["weapon","armor","charm"].includes(it.kind)&&!it.uncursed&&(it.affixes||[]).some(a=>a.type==="hinder"));}
 function uncurseAll(){let n=0;for(const k of SLOTS){const g=game.equip[k];if(g&&!g.uncursed&&(g.affixes||[]).some(a=>a.type==="hinder")){g.affixes=g.affixes.filter(a=>a.type!=="hinder");g.rarity=rarityFromAffixes(g.affixes);g.uncursed=true;n++;}}if(n)log("The Original Receipt glows with retail authority. "+n+" curse(s) lifted — the gear releases its grip with an audible, sulking sigh.","gold");else log("No active curses on your equipped gear. The receipt was, for once, unnecessary. You keep it anyway. Obviously.","dim");}
 function uncurseSelected(e){
@@ -526,6 +533,7 @@ function tryMove(dx,dy){if(mode!==State.PLAY||pendingConfirm)return;if(napBlocke
  }}
  // Check for unrecruited ally
  if(game.ally&&!game.ally.following&&game.ally.x===nx&&game.ally.y===ny){allyEncounter();return;}
+ if(hasStatus("rooted")){/* MOB-70: Frozen (Update Installing) holds Dad in place; attacks above still work */game.clickPath=[];game.clickDoor=null;const _rt=game.statuses.rooted.turns;log("Dad is Frozen. The update is still installing"+(_rt>0?" ("+_rt+" turn"+(_rt===1?"":"s")+" left)":"")+". The feet do not respond. There is no skip button. There is never a skip button.","dim");endTurn();return;}
  if(tryFumble("your footing"))return;
  game.px=nx;game.py=ny;kneePainTick();if(game.hp<=0)return;
  if(game.floor.grid[ny][nx]===2){applyStatus("soaked",3);log("You wade into the water. Socks: ruined.","blu");}
@@ -1015,6 +1023,12 @@ function sellPrice(it){if(it.societyItem&&it.sellValue)return it.sellValue;let p
  return Math.max(1,Math.floor(p));}
 function sellItem(idx){const e=game.inv[idx];if(!e)return;const it=e.it;const sp=sellPrice(it);const nm=itemDisplayName(it);game.gold+=sp;removeEntry(e,1);log("Sold "+nm+" for "+sp+" moolah. The vendor will resell it at a markup. That is the way of things.","grn");buildShop();syncUI();}
 function openShop(){shopOpen=true;buildShop();syncOverlays();}
+/* MOB-72: vendor stock runs out. Counts are per run, per floor and per stock row, kept in memory (not in the save) */
+var _shopSold={};
+function shopStockQty(it){const r=(it.rarity||"Common");if(r==="Mythic"||r==="Legendary"||r==="Epic")return 1;if(r==="Rare")return 2;if(r==="Uncommon")return 3;return 5;}
+function _shopKey(i){return (game.seed||0)+":"+(game.ascent?"a":"d")+":"+game.depth+":"+i;}
+function shopLeft(i,it){return Math.max(0,shopStockQty(it)-(_shopSold[_shopKey(i)]||0));}
+function shopNoteSold(i){const k=_shopKey(i);_shopSold[k]=(_shopSold[k]||0)+1;}
 /* ===== fountain ===== */
 function useFountain(fn){if(fn.charges<=0){log("The fountain is empty. It gave all it had.","dim");return;}fn.charges--;game.hydra=Math.max(0,game.hydra-40);game.hunger=Math.max(0,game.hunger-10);log("You drink from the fountain. Hydration: restored. Dignity: intact.","blu");if(fn.charges===0)log("The fountain sputters and goes dry.","dim");endTurn();}
 /* ===== healing fountain (The Cooler of Restoration) ===== */
