@@ -870,7 +870,7 @@ const STATUSES={
  atkup:{icon:"PUMP",name:"Pumped Up",bad:false,desc:"+3 ATK. He is locked in."},
  guard:{icon:"GUARD",name:"Guard Stance",bad:false,desc:"+2 DEF. He saw this coming."},
  jitters:{icon:"JITTRS",name:"The Jitters",bad:true,desc:"Caffeine overload. Random movement occasionally."},
- thirst:{icon:"THIRST",name:"The Thirst",bad:true,desc:"Escalating dependency: Stage 1 (depend 1-2) slows cravings; Stage 2 (3-5) -1 STR, -3 PER, faster cravings; Stage 3 (6+) -2 STR, -4 PER, craving threshold drops. Wears off after 40 turns without alcohol (+10 per dependency point); the second half is the worst (+5% fumble). A drink resets the count. Faster cure: Family Intervention Binder."},
+ thirst:{icon:"THIRST",name:"The Thirst",bad:true,desc:"Escalating dependency: Stage 1 (depend 1-2) slows cravings; Stage 2 (3-5) -1 STR, -3 PER, faster cravings; Stage 3 (6+) -2 STR, -4 PER, craving threshold drops. Wears off after 100 turns without alcohol; the second half is the worst (+5% fumble). A drink resets the count. Faster cure: Family Intervention Binder."},
  hangry:{icon:"HANGRY",name:"Hangry",bad:true,desc:"Unfed too long. ATK reduced. Dignity: wavering."},
  hangover:{icon:"HNGOVR",name:"Hangover",bad:true,desc:"The morning after. PER and WIS both suffer."},
  soaked:{icon:"SOAKED",name:"Soaked",bad:true,desc:"Wet. DEF reduced. Dignity: soaked."},

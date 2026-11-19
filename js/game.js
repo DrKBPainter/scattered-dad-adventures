@@ -102,7 +102,7 @@ function effWis(){return Math.max(0,game.wis+gearSum("wis"));}
 function invCap(){return 10+gearSum("cap")+Math.floor((game&&game.level?game.level:0)/5);}
 /* MOB-64: The Thirst wears off after this many alcohol-free turns (counted in s.dry, kept in the run save with the status;
    old saves start at 0). A drink or a new exposure resets the count; the Family Intervention Binder stays the faster cure. */
-function thirstNeed(s){return 40+10*((s&&s.depend)||0);}
+function thirstNeed(s){return 100;}/* MOB-64 (KBP 2026-11-18): flat 100 alcohol-free turns */
 function fumbleChance(){let c=0;const th=game.statuses.thirst;if(th){const _dep=th.depend||0,_st=_dep>=6?3:_dep>=3?2:0,_thr=_st===3?4:_st===2?5:6,_fc=_st===3?.25:_st===2?.20:.18;if(th.craving>=_thr)c=_fc+(!th.withdrawing&&(th.dry||0)>=Math.ceil(thirstNeed(th)/2)?.05:0);/* MOB-64: worse in the second half */}if(hasStatus("jitters"))c=Math.max(c,.10);if(hasStatus("hangover"))c=Math.max(c,.10);return c;}
 function tryFumble(v){if(Math.random()<fumbleChance()){log("The shakes! You fumble "+v+".","red");endTurn();return true;}return false;}
 function roll(max){return 1+Math.floor(Math.random()*Math.max(1,max));}

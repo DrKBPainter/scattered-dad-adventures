@@ -15,7 +15,7 @@ The Jitters  [DEBUFF]
   Caffeine overload. Random movement occasionally.
 
 The Thirst  [DEBUFF]
-  Escalating dependency: Stage 1 (depend 1-2) slows cravings; Stage 2 (3-5) -1 STR, -3 PER, faster cravings; Stage 3 (6+) -2 STR, -4 PER, craving threshold drops. Wears off after 40 turns without alcohol (+10 per dependency point); the second half is the worst (+5% fumble). A drink resets the count. Faster cure: Family Intervention Binder.
+  Escalating dependency: Stage 1 (depend 1-2) slows cravings; Stage 2 (3-5) -1 STR, -3 PER, faster cravings; Stage 3 (6+) -2 STR, -4 PER, craving threshold drops. Wears off after 100 turns without alcohol; the second half is the worst (+5% fumble). A drink resets the count. Faster cure: Family Intervention Binder.
 
 Hangry  [DEBUFF]
   Unfed too long. ATK reduced. Dignity: wavering.
