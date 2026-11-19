@@ -239,7 +239,7 @@ function _m9Act(a){if(a==="x"){_m9Det=false;_m9Slot=null;buildInv();return;}
  if(a==="cmb"&&_m9Slot){markCombineEquip(_m9Slot);return;}}
 function buildInv(){const SL=[["weapon","Weapon"],["head","Head"],["torso","Torso"],["arms","Arms"],["legs","Legs"],["feet","Feet"],["charm1","Charm 1"],["charm2","Charm 2"]];
  let h='<h1>INVENTORY &amp; EQUIPMENT</h1><div class="slots">';for(const[k,lab]of SL){const g=game.equip[k];const eqMark=(combineMark&&combineMark.src==="equip"&&combineMark.slot===k)?" mark":"";h+='<div class="slot'+eqMark+(g?' rb-'+rarClass(g):'')+'" data-slot="'+k+'"><div class="sl">'+lab+'</div>'+(g?('<span class="r-'+rarClass(g)+'">'+g.name+'</span> '+affixHTML(g)+'<br><span class="meta">'+gearStat(g)+((typeof COMPACT!=="undefined"&&COMPACT)?'':' &middot; click to remove &middot; shift-click to combine')+'</span>'):'<span class="meta">— empty —</span>')+'</div>';}
- h+='</div>'+((typeof COMPACT!=="undefined"&&COMPACT)?'<p class="dim m9-tip">Tap an item for its options. Tap a worn slot to remove it or combine it. Slots '+game.inv.length+'/'+invCap()+'</p>':'<p class="dim">arrows select &middot; [E] use/equip &middot; [T] throw &middot; [P] place trap &middot; [C] combine (mark two; shift-click a worn slot to combine it) &middot; [D] drop &middot; click a worn slot to unequip &middot; [Esc] close &nbsp; Slots '+game.inv.length+'/'+invCap()+'</p>');
+ h+='</div>'+((typeof COMPACT!=="undefined"&&COMPACT)?'<p class="dim m9-tip">Tap an item for its options. Tap a worn slot to remove it or combine it. Slots '+game.inv.length+'/'+invCap()+'</p>':'<p class="dim">arrows select &middot; [E] use/equip &middot; [T] throw &middot; [P] place trap &middot; [C] combine (opens the combine card; shift-click a worn slot to start from it) &middot; [D] drop &middot; click a worn slot to unequip &middot; [Esc] close &nbsp; Slots '+game.inv.length+'/'+invCap()+'</p>');
  h+='<div class="invgrid">';const cap=invCap();for(let i=0;i<cap;i++){const e=game.inv[i];if(e){const it=e.it;h+='<div class="cell k-'+it.kind+' rb-'+rarClass(it)+(i===invSel?" sel":"")+((combineMark&&combineMark.src==="inv"&&combineMark.e===e)?" mark":"")+'" data-inv="'+i+'"><canvas class="ic" width="32" height="32"></canvas>'+(e.qty>1?'<div class="q">'+e.qty+'</div>':'')+'</div>';}else h+='<div class="cell" data-inv="'+i+'"></div>';}
  h+='</div>';
  {const kr=(game.keyring||[]).slice().sort((a,b)=>(a.floor||0)-(b.floor||0));h+='<div class="keyring"><div class="sl">KEY RING'+(kr.length?'':' — empty')+'</div>';if(kr.length){h+='<div class="keys">';kr.forEach(k=>{const cur=k.floor===game.depth;h+='<span class="keytag'+(cur?' cur':'')+'" title="'+(k.desc||'').replace(/"/g,'&quot;')+'">🔑 '+(k.floor?('Fl '+k.floor):'Mystery')+(cur?' ✓':'')+'</span>';});h+='</div>';}else{h+='<span class="meta">No keys yet. Dads label them in Sharpie; you have nothing to label.</span>';}h+='</div>';}
@@ -525,7 +525,7 @@ function invAction(k){const e=game.inv[invSel];const COLS=8;
  else if(k==="ArrowRight"){invSel=Math.min(game.inv.length-1,invSel+1);buildInv();}
  else if(k==="e"||k==="E"){if(!e)return;if(["weapon","armor","charm"].includes(e.it.kind)){equip(e);buildInv();syncUI();}else if(e.it.kind==="consumable"){useConsumable(e);if(ovInv){invSel=Math.min(invSel,Math.max(0,game.inv.length-1));buildInv();}syncUI();}else if(e.it.kind==="protip"){closeOverlays();useProtip(e);}else if(e.it.kind==="object"){useObject(e);if(ovInv)buildInv();syncUI();}else log(e.it.name+": "+e.it.desc,"dim");}
  else if(k==="t"||k==="T"){if(e&&e.it.throw){startThrow(e);}else log("Not throwable.","dim");}
- else if(k==="c"||k==="C"){if(!e)return;const ref={src:"inv",e};if(!combineMark)combineMark=ref;else if(sameRef(combineMark,ref))combineMark=null;else{tryCraft(combineMark,ref);combineMark=null;invSel=Math.min(invSel,Math.max(0,game.inv.length-1));syncUI();}buildInv();}
+ else if(k==="c"||k==="C"){if(!e)return;combineMark=null;openCombineCard({src:"inv",e});/* MOB-41: the flash card replaces mark-two */}
  else if(k==="d"||k==="D"){if(e){dropItem(e);invSel=Math.max(0,Math.min(invSel,game.inv.length-1));buildInv();syncUI();}}
  else if(k==="p"||k==="P"){if(e&&e.it.placeable){startPlace(e);}else log("That item can't be placed. Craft a trap first.","dim");}}
 /* ===== input ===== */
@@ -577,7 +577,7 @@ oShop.addEventListener("click",(ev)=>{
  openConfirm("Buy "+it.name+" for "+price+" moolah?"+kbTxt(" ([Y] confirm / [N] cancel)",""),()=>{if(!shopLeft(bidx,it)){syncUI();return;}if(game.gold<price){log("Not enough moolah. Need "+price+" moolah.","red");syncUI();return;}if(!addItem(it)){syncUI();return;}game.gold-=price;shopNoteSold(bidx);if(it.kind==="consumable")revealConsumable(it.id);log("Purchased: "+it.name+" for "+price+" moolah.","grn");buildShop();syncUI();});
 });
 oInv.addEventListener("click",(ev)=>{const sl=ev.target.closest("[data-slot]");if(sl){const slot=sl.dataset.slot;if(typeof COMPACT!=="undefined"&&COMPACT){_m9Slot=game.equip[slot]?slot:null;_m9Det=!!_m9Slot;buildInv();return;}if(ev.shiftKey){markCombineEquip(slot);return;}unequip(slot);buildInv();syncUI();}});
-function markCombineEquip(slot){if(!game.equip[slot]){log("Nothing worn there to combine.","dim");return;}const ref={src:"equip",slot};if(!combineMark)combineMark=ref;else if(sameRef(combineMark,ref))combineMark=null;else{tryCraft(combineMark,ref);combineMark=null;}buildInv();syncUI();}
+function markCombineEquip(slot){if(!game.equip[slot]){log("Nothing worn there to combine.","dim");return;}combineMark=null;openCombineCard({src:"equip",slot});/* MOB-41 */}
 /* M13: draw a sprite's PNG art (N21 pipeline) into a UI canvas when one is registered; false = caller draws the ASCII pixels as before */
 function _uiSprImg(cx,spr,w,h){if(typeof hasSpriteImage!=="function"||typeof _sprCached!=="function"||!hasSpriteImage(spr))return false;let e=null;try{e=_sprCached(spr,null,null);}catch(err){e=null;}if(!e||!e.img)return false;cx.imageSmoothingEnabled=false;cx.drawImage(e.cv,0,0,w,h);return true;}
 
@@ -657,6 +657,68 @@ function _tgtPlace(b,e,L){try{b.classList.remove("tb-left","tb-top");const cv=do
  let best=null,bs=score(R.left,R.top);if(!bs)return;
  for(const k of [[lx,R.top,"tb-left"],[R.left,ty,"tb-top"],[lx,ty,"tb-left tb-top"]]){if(k[0]>R.left||k[1]>R.top)continue;const n=score(k[0],k[1]);if(n<bs){bs=n;best=k[2];}}
  if(best)b.classList.add(...best.split(" "));}catch(err){}}
+/* ===== MOB-41 (2026-11-19): COMBINE flash card (#m41cmb) =====
+   COMBINE (bag button, worn-slot button, [C] key, shift-click a worn slot) opens a card laid out like a multiplication
+   flash card: the starting item on top, "x" and an empty box below, a rule, then the result line. Tapping the box lists
+   only items that might combine with the top item (craftPartners(), MOB-40; tier 2 partners only after their video;
+   Sticky Notes for unidentified things). The result line shows a known recipe's result, or "???" for anything not yet
+   learned (a pair that makes nothing also shows "???": MOB-40 S3 keeps those unrecorded for the player).
+   CONFIRM calls tryCraft(), so every crafting rule (curses, class locks, full bag, MOB-57) is unchanged. */
+var _m41={open:false,top:null,pick:null,list:false};
+function _m41Ref(it){if(!it)return null;for(const e of game.inv)if(e.it===it)return{src:"inv",e};for(const k in game.equip)if(game.equip[k]===it)return{src:"equip",slot:k};return null;}
+function _m41Unid(it){return !!it&&((["weapon","armor","charm"].includes(it.kind)&&it.idd===false)||(it.kind==="consumable"&&!consKnown(it)));}
+function combinePartners(top){const it=refItem(top);if(!it)return[];let L=[];
+ if(it.identifySingle){for(const e of game.inv)if(!e.it.identifySingle&&_m41Unid(e.it))L.push(e.it);for(const k in game.equip){const g=game.equip[k];if(g&&_m41Unid(g))L.push(g);}}
+ else{L=(typeof craftPartners==="function"?craftPartners(it):[]).slice();if(_m41Unid(it))for(const e of game.inv)if(e.it.identifySingle)L.push(e.it);}
+ const out=[];for(const x of L){if(x===it||out.some(p=>p.it===x))continue;const r=_m41Ref(x);if(!r)continue;if(r.src==="equip"&&isCursed(x))continue;out.push({it:x,ref:r});}return out;}
+/* {known:true,name} for a result the player already knows, else {known:false} ("???"). */
+function combineResult(top,pick){const a=refItem(top),b=refItem(pick);if(!a||!b)return null;
+ if(a.identifySingle||b.identifySingle){const t=a.identifySingle?b:a;return{known:true,name:"The truth about the "+itemDisplayName(t)};}
+ const x=craftId(a),y=craftId(b);const rec=RECIPES.find(r=>(r.a===x&&r.b===y)||(r.a===y&&r.b===x));
+ if(rec&&craftKnown(rec)){let who="";if(rec.lock&&game.cls.id!==rec.lock){const c=CLASSES.find(c=>c.id===rec.lock);who=" (only "+(c?c.name:"one Dad")+" can make it)";}else if(rec.classes&&!rec.classes.includes(game.cls.id))who=" (only the handy sorts can rig it)";return{known:true,name:rec.out.name,who,out:rec.out};}
+ return{known:false};}
+function _m41Icon(cv,it){try{if(!cv||!it)return;const cx=cv.getContext("2d");cx.imageSmoothingEnabled=false;cx.clearRect(0,0,32,32);const spr=itemIconSprite(it);if(!spr)return;if(_uiSprImg(cx,spr,32,32))return;const sc=spr.length===32?1:2;for(let y=0;y<spr.length;y++){const row=spr[y];for(let x=0;x<row.length;x++){const col=PAL[row[x]];if(!col)continue;cx.fillStyle=col;cx.fillRect(x*sc,y*sc,sc,sc);}}}catch(err){}}
+const M41_NOTES=["Index card, Dad's handwriting: “Measure twice. Combine once. Apologize to the garage after.”",
+ "Crayon, back of a flash card: “You are good at fixing stuff. Most of the time. We still like the wobbly shelf.” — the kids",
+ "Pencil, very small: “Show your work.” — Mrs. Kowalski, fourth grade math, still watching"];
+function _m41Render(){const s=document.getElementById("m41cmb");if(!s)return;const b=document.getElementById("m41body");if(!b)return;
+ const top=refItem(_m41.top);if(!top){closeCombineCard();return;}
+ if(_m41.pick&&!refItem(_m41.pick))_m41.pick=null;
+ const P=combinePartners(_m41.top);const pk=_m41.pick?refItem(_m41.pick):null;const res=pk?combineResult(_m41.top,_m41.pick):null;
+ const nm=it=>esc(itemDisplayName(it));const worn=r=>r&&r.src==="equip"?' <span class="m41-w">(worn)</span>':'';
+ let h='<div class="m41-card"><div class="m41-line m41-topline"><canvas class="m41-ic" data-ic="top" width="32" height="32"></canvas><span class="m41-nm">'+nm(top)+'</span>'+worn(_m41.top)+'</div>'
+  +'<div class="m41-line m41-opline"><span class="m41-op" aria-hidden="true">&times;</span><button type="button" class="m41-box'+(pk?' full':'')+(_m41.list?' open':'')+'" data-m41="box" aria-expanded="'+(_m41.list?'true':'false')+'">'
+  +(pk?'<canvas class="m41-ic" data-ic="pick" width="32" height="32"></canvas><span class="m41-nm">'+nm(pk)+'</span>'+worn(_m41.pick):'<span class="m41-empty">'+(P.length?'tap to pick a partner':'nothing to pair it with')+'</span>')+'</button></div>'
+  +'<div class="m41-rule"></div><div class="m41-line m41-res">'
+  +(!pk?'<span class="m41-q dim">&nbsp;</span>':(res&&res.known?'<span class="m41-out">'+esc(res.name)+'</span>'+(res.who?'<span class="m41-who">'+esc(res.who)+'</span>':''):'<span class="m41-q">???</span>'))+'</div></div>';
+ if(_m41.list){h+='<div class="m41-list" role="listbox">';if(!P.length)h+='<p class="dim">Nothing you are carrying or wearing looks like it would combine with this. He checks his pockets twice anyway.</p>';
+  P.forEach((p,i)=>{h+='<button type="button" class="m41-opt'+(pk===p.it?' sel':'')+'" data-m41p="'+i+'" role="option"><canvas class="m41-ic" data-ic="o'+i+'" width="32" height="32"></canvas><span class="r-'+rarClass(p.it)+'">'+nm(p.it)+'</span>'+worn(p.ref)+(i<9&&!(typeof COMPACT!=="undefined"&&COMPACT)?' <span class="key dim">['+(i+1)+']</span>':'')+'</button>';});h+='</div>';}
+ h+='<div class="m41-acts"><button type="button" class="m41-btn m41-pri" data-m41="ok"'+(pk?'':' disabled')+'>CONFIRM COMBINE</button><button type="button" class="m41-btn" data-m41="close">Cancel</button></div>'
+  +(typeof COMPACT!=="undefined"&&COMPACT?'':'<p class="dim m41-keys">[Enter] or [Space] open the box &middot; [1]-[9] pick &middot; [Enter] confirm once picked &middot; [Esc] cancel</p>')
+  +'<p class="m41-note">'+esc(M41_NOTES[(game.turn||0)%M41_NOTES.length])+'</p>';
+ b.innerHTML=h;
+ _m41Icon(b.querySelector('[data-ic="top"]'),top);if(pk)_m41Icon(b.querySelector('[data-ic="pick"]'),pk);if(_m41.list)P.forEach((p,i)=>_m41Icon(b.querySelector('[data-ic="o'+i+'"]'),p.it));}
+function openCombineCard(ref){const s=document.getElementById("m41cmb");const it=refItem(ref);if(!s||!it)return;
+ if(typeof combinePartners==="function"&&!_m41Bound)_m41Bind(s);
+ _m41.open=true;_m41.top=ref;_m41.pick=null;_m41.list=false;_m41Render();s.classList.add("show");
+ try{const bx=s.querySelector('[data-m41="box"]');if(bx)bx.focus({preventScroll:true});}catch(e){}}
+function closeCombineCard(){const s=document.getElementById("m41cmb");_m41.open=false;_m41.top=_m41.pick=null;_m41.list=false;if(!s)return;s.classList.remove("show");try{const f=document.activeElement;if(f&&s.contains(f)&&f.blur)f.blur();}catch(e){}if(typeof markDirty==="function")markDirty();}
+function _m41Pick(i){const P=combinePartners(_m41.top);if(!P[i])return;_m41.pick=P[i].ref;_m41.list=false;_m41Render();try{const ok=document.querySelector('#m41cmb [data-m41="ok"]');if(ok)ok.focus({preventScroll:true});}catch(e){}}
+function _m41Confirm(){if(!_m41.open||!_m41.top||!_m41.pick)return;const a=_m41.top,b=_m41.pick;closeCombineCard();tryCraft(a,b);combineMark=null;
+ invSel=Math.min(invSel,Math.max(0,game.inv.length-1));if(typeof _m9Det!=="undefined"){_m9Det=false;_m9Slot=null;}if(typeof ovInv!=="undefined"&&ovInv)buildInv();syncUI();}
+var _m41Bound=false;
+function _m41Bind(s){_m41Bound=true;
+ s.addEventListener("click",ev=>{if(ev.target===s){closeCombineCard();return;}
+  const o=ev.target.closest("[data-m41p]");if(o){_m41Pick(+o.dataset.m41p);return;}
+  const b=ev.target.closest("[data-m41]");if(!b)return;const a=b.dataset.m41;
+  if(a==="close")closeCombineCard();else if(a==="box"){_m41.list=!_m41.list;_m41Render();}else if(a==="ok")_m41Confirm();});}
+/* While the card is open it takes the keys (game keys must not move Dad behind it). */
+if(typeof document!=="undefined"&&document.addEventListener)document.addEventListener("keydown",ev=>{if(!_m41.open)return;const k=ev.key;
+ if(k==="Escape"){if(_m41.list){_m41.list=false;_m41Render();}else closeCombineCard();}
+ else if(/^[1-9]$/.test(k)){if(!_m41.list){_m41.list=true;_m41Render();}else _m41Pick(parseInt(k,10)-1);}
+ else if(k==="Enter"||k===" "){const t=ev.target;if(t&&t.closest&&t.closest("#m41cmb button")){ev.stopImmediatePropagation();/* the focused button clicks itself (default action kept) */return;}if(_m41.pick)_m41Confirm();else{_m41.list=!_m41.list;_m41Render();}}
+ else if(k==="Tab")return;
+ ev.stopImmediatePropagation();ev.preventDefault();},true);
 function tgtCycle(n){const L=tgtTargets();if(L.length<2){syncTgtBox();return;}let i=L.findIndex(t=>t.e===_tgtSel);if(i<0)i=0;_tgtSel=L[((i+n)%L.length+L.length)%L.length].e;syncTgtBox();}
 function tgtAttack(){if(mode!==State.PLAY||!game||_tgtBusy())return;const L=tgtTargets();const t=L.find(x=>x.e===_tgtSel)||L[0];if(!t){syncTgtBox();return;}_tgtSel=t.e;
  if(typeof scanPick!=="undefined"&&scanPick&&typeof setScanPick==="function")setScanPick(false);
