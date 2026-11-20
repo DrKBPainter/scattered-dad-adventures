@@ -879,7 +879,7 @@ const OBJECTS=[
  // ── NIGHTLY ADDITIONS (2026-06-21) N6 throwables ──
  {id:"bowling_ball",name:"Garage Bowling Ball (One Of A Pair)",throw:{dmg:8},desc:"Throwable (8 dmg). Its twin is lost forever. This one carries the grief, and the momentum."},
  {id:"horseshoe",name:"Rusted Horseshoe",throw:{dmg:6},desc:"Throwable (6 dmg). Lucky for you. Considerably less so for whatever it lands on."},
- {id:"frozen_burger",name:"Frozen Burger Patty (Single)",throw:{dmg:5,status:"soaked"},desc:"Throwable (5 dmg). A discus of regret. Thaws on impact, mostly onto the target."},
+ {id:"frozen_burger",name:"Frozen Burger Patty (Single)",throw:{dmg:5,status:"chill"},desc:"Throwable (5 dmg). A discus of regret. Thaws on impact, mostly onto the target."},
  {id:"golf_ball",name:"Range Bucket Golf Ball",throw:{dmg:4,range:7},desc:"Throwable (4 dmg, long range). He has a whole bucket of these. Nobody knows why. He knows why."}
 ,
  // ── NIGHTLY ADDITIONS (2026-06-22) N7 ──
@@ -905,14 +905,40 @@ const STATUSES={
  rooted:{icon:"FROZEN",name:"Frozen (Update Installing)",bad:true,desc:"Cannot move. Mandatory. No skip option."},
  backlock:{icon:"BACKLK",name:"Back Locked",bad:true,desc:"It went out. Movement is, for the moment, not on the table."},
  reaction:{icon:"REACTN",name:"The Reaction",bad:true,desc:"Acetaminophen met alcohol. The body is responding. Rapidly. Find a bathroom and some water."},
- saltdry:{icon:"SALT",name:"Salt Mouth",bad:true,desc:"That jerky was aggressively salty. You dehydrate faster for a few turns. Worth it."}
+ saltdry:{icon:"SALT",name:"Salt Mouth",bad:true,desc:"That jerky was aggressively salty. You dehydrate faster for a few turns. Worth it."},
+ /* MOB-69 Run A: damage-type effects on Dad (see DMG_TYPES below) */
+ burn:{icon:"BURN",name:"On Fire, Technically",bad:true,desc:"Burning: 2 damage a turn for 3 turns. Put out by getting Soaked, wading into water, or drinking a Warm Water Bottle. Cancels Chilled."},
+ zap:{icon:"ZAP",name:"Static Discharge",bad:true,desc:"Shocked: you lose your next turn (2 turns and +2 damage if you were Soaked). It passes on its own."},
+ chill:{icon:"CHILL",name:"Cold Shoulder",bad:true,desc:"Chilled: you act every other turn for 3 turns. A third chill while Chilled freezes you solid. Cured by Gas Station Coffee or by catching fire."},
+ frozensolid:{icon:"SOLID",name:"Frozen Solid",bad:true,desc:"Cannot move for 2 turns. You can still swing. Cured by Gas Station Coffee."},
+ bleed:{icon:"BLEED",name:"Paper Cut, Spiritually",bad:true,desc:"Bleeding: 1 damage a turn per cut for 5 turns; up to 3 cuts. Any healing item stops it."},
+ doubt:{icon:"DOUBT",name:"Per My Previous Email",bad:true,desc:"Psychic: each turn there is a 25% chance you spend it second-guessing yourself. Higher Wisdom shortens it. Using a Dadism clears it."}
 };
+
+/* ===== MOB-69 Run A: damage types =====
+   A hit can carry one type; its effect lands on a proc roll (weapons 25%, powered weapons 30%, creature attacks 20%;
+   throwables and traps always). Bosses: every duration halved (round down, minimum 1).
+   Armor: one resisting piece halves the duration and takes 1 off per-turn damage; two pieces make Dad immune
+   (the poncho alone keeps Soaked off). Tables are keyed by item / creature id. */
+var DMG_TYPES={
+ burn:{name:"Burning",tag:"On Fire, Technically",turns:3,dmg:2},
+ zap:{name:"Shocked",tag:"Static Discharge",turns:1},
+ chill:{name:"Chilled",tag:"Cold Shoulder",turns:3},
+ bleed:{name:"Bleeding",tag:"Paper Cut, Spiritually",turns:5,dmg:1,max:3},
+ soaked:{name:"Soaked",tag:"Soaked",turns:3},
+ psychic:{name:"Psychic",tag:"Per My Previous Email",turns:3}
+};
+var WEAPON_DTYPE={blowtorch:"burn",flamespat:"burn",tikitorch:"burn",extensioncord:"zap",orbital_sander:"zap",snowshovel:"chill",pizzacutter:"bleed",orbitaledger:"bleed",ptoreaper:"bleed",gardenhose:"soaked",pressurewand:"soaked"};
+var ARMOR_RESIST={apron:["burn"],overalls:["burn"],rubbergloves:["zap"],crocs:["zap"],beanie:["chill"],windbreaker:["chill"],flannel:["chill"],chestpad:["bleed"],elbowpads:["bleed"],steelboot:["bleed"],jeans:["bleed"],poncho:["soaked"],earprotection:["psychic"],sunglasses:["psychic"]};
+var CREATURE_DTYPE={lawnmower_peak:"burn",birthday_party:"burn",vastco_sample_station:"burn",rogue_roomba:"zap",selfcheckout_sentinel:"zap",motion_sensor_light:"zap",thermostat_phantom:"chill",the_waterboy:"chill",paint_swatch_swarm:"bleed",assembly_instructions:"bleed",park_offleash_dog:"bleed",the_covenant:"psychic",violation_notice:"psychic",annual_meeting:"psychic",hall_monitor:"psychic",lingering_board_member:"psychic",nextdoor_post:"psychic"};
+var CREATURE_IMMUNE={rogue_roomba:["bleed"],shopping_cart:["bleed"],aisle12_forklift:["bleed"],sale_sign_golem:["bleed"],fog_machine:["bleed"],trophy_case:["bleed"],mrs_kowalski_fish:["soaked"],morning_obligation:["psychic"],the_wait:["psychic"]};
+var CREATURE_WEAK={mrs_kowalski_fish:["zap"],permission_slip:["burn"],permission_form:["burn"],assembly_instructions:["burn"],neighborhood_newsletter:["burn"],violation_notice:["burn"],the_check:["burn"],childrens_menu:["burn"]};
 
 /* ===== TRAPS ===== */
 const TRAPS_DEF=[
- {id:"hoa_notice",sprite:SPR_TRAP_HOA,name:"HOA Violation Notice",detect:2,dmg:0,status:"hangry",desc:"Psychic damage only. But it lingers."},
- {id:"lego",sprite:SPR_TRAP_LEGO,name:"Scattered Building Bricks",detect:3,dmg:4,status:"knee",desc:"The ancient enemy of bare feet and peace of mind."},
- {id:"wires",sprite:SPR_TRAP_WIRES,name:"Tangle of Extension Cords",detect:2,dmg:3,desc:"Trip hazard. The surge protector is somewhere in there."},
+ {id:"hoa_notice",sprite:SPR_TRAP_HOA,name:"HOA Violation Notice",detect:2,dmg:0,status:"hangry",dtype:"psychic",desc:"Psychic damage only. But it lingers."},
+ {id:"lego",sprite:SPR_TRAP_LEGO,name:"Scattered Building Bricks",detect:3,dmg:4,status:"knee",dtype:"bleed",desc:"The ancient enemy of bare feet and peace of mind."},
+ {id:"wires",sprite:SPR_TRAP_WIRES,name:"Tangle of Extension Cords",detect:2,dmg:3,dtype:"zap",desc:"Trip hazard. The surge protector is somewhere in there."},
  {id:"wet_floor",sprite:SPR_TRAP_WET,name:"Unmarked Wet Floor",detect:3,dmg:2,status:"soaked",desc:"No sign. Of course there's no sign."},
  {id:"recall_notice",sprite:SPR_TRAP_RECALL,name:"Product Recall Notice",detect:1,dmg:0,status:"jitters",desc:"The thing you use every day. Always has been recalled."},
  {id:"popup_ad",sprite:SPR_TRAP_POPUP,name:"Unskippable Ad",detect:1,dmg:0,status:"rooted",desc:"Fifteen seconds. Cannot be dismissed. Will not be dismissed."},

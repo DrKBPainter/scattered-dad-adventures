@@ -17,3 +17,9 @@ Frozen (Update Installing),DEBUFF,,,,,frozen,,Cannot move. Mandatory. No skip op
 Back Locked,DEBUFF,,,,,,,"It went out. Movement is, for the moment, not on the table."
 The Reaction,DEBUFF,,,,,,,Acetaminophen met alcohol. The body is responding. Rapidly. Find a bathroom and some water.
 Salt Mouth,DEBUFF,,,,,,thirst_fast,That jerky was aggressively salty. You dehydrate faster for a few turns. Worth it.
+"On Fire, Technically",DEBUFF,,,,,,burn_2_per_turn,"Burning: 2 damage a turn for 3 turns. Put out by getting Soaked, wading into water, or drinking a Warm Water Bottle. Cancels Chilled."
+Static Discharge,DEBUFF,,,,,lose_next_turn,,"Shocked: you lose your next turn (2 turns and +2 damage if you were Soaked). It passes on its own."
+Cold Shoulder,DEBUFF,,,,,act_every_other_turn,,"Chilled: you act every other turn for 3 turns. A third chill while Chilled freezes you solid. Cured by Gas Station Coffee or by catching fire."
+Frozen Solid,DEBUFF,,,,,cannot_move,,"Cannot move for 2 turns. You can still swing. Cured by Gas Station Coffee."
+"Paper Cut, Spiritually",DEBUFF,,,,,,bleed_1_per_cut,"Bleeding: 1 damage a turn per cut for 5 turns; up to 3 cuts. Any healing item stops it."
+Per My Previous Email,DEBUFF,,,,,turn_loss_25pct,,"Psychic: each turn there is a 25% chance you spend it second-guessing yourself. Higher Wisdom shortens it. Using a Dadism clears it."

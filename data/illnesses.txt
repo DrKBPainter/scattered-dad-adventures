@@ -55,3 +55,21 @@ The Reaction  [DEBUFF]
 
 Salt Mouth  [DEBUFF]
   That jerky was aggressively salty. You dehydrate faster for a few turns. Worth it.
+
+On Fire, Technically  [DEBUFF]
+  Burning: 2 damage a turn for 3 turns. Put out by getting Soaked, wading into water, or drinking a Warm Water Bottle. Cancels Chilled.
+
+Static Discharge  [DEBUFF]
+  Shocked: you lose your next turn (2 turns and +2 damage if you were Soaked). It passes on its own.
+
+Cold Shoulder  [DEBUFF]
+  Chilled: you act every other turn for 3 turns. A third chill while Chilled freezes you solid. Cured by Gas Station Coffee or by catching fire.
+
+Frozen Solid  [DEBUFF]
+  Cannot move for 2 turns. You can still swing. Cured by Gas Station Coffee.
+
+Paper Cut, Spiritually  [DEBUFF]
+  Bleeding: 1 damage a turn per cut for 5 turns; up to 3 cuts. Any healing item stops it.
+
+Per My Previous Email  [DEBUFF]
+  Psychic: each turn there is a 25% chance you spend it second-guessing yourself. Higher Wisdom shortens it. Using a Dadism clears it.
