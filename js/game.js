@@ -108,7 +108,15 @@ function tryFumble(v){if(Math.random()<fumbleChance()){log("The shakes! You fumb
 function roll(max){return 1+Math.floor(Math.random()*Math.max(1,max));}
 /* ===== item makers ===== */
 function rarityFromAffixes(af){if(af.some(a=>a.id==="grillblessed"))return "Epic";const h=af.filter(a=>a.type==="help").length;return h>=2?"Rare":h===1?"Uncommon":"Common";}
-function mkGear(tpl,kind,rng,clean){rng=rng||Math.random;const g={uid:uid(),kind,id:tpl.id,name:tpl.name,desc:tpl.desc,affixes:[]};for(const k of["atk","def","per","wis","cap","slot","wear","reach","throw","sprite","kneeRelief","critPct","blindOnHit","breakOnRemove"])if(tpl[k]!==undefined)g[k]=tpl[k];if(!clean){const n=rng()<0.45?1:(rng()<0.6?2:0);const pool=AFFIXES.filter(a=>!a.req||tpl[a.req]);for(let i=0;i<n&&pool.length;i++)g.affixes.push(pool.splice(Math.floor(rng()*pool.length),1)[0]);
+/* MOB-52 (2026-11-20): mods only land on gear they fit. gearTags(tpl,kind) = hand-set GEAR_TAGS (js/data.js) plus
+   kind-based tags (weapon: workgear + grip; armor/charm: worn; work/dishwashing gloves: grip; powered:true: powered).
+   affixFits(a,tags): a mod with no fit list (and no old req) fits anything; otherwise it needs one of its fit tags.
+   The roll itself is unchanged (same rng calls); only the pool it picks from is filtered. Saved gear keeps its mods. */
+function gearTags(tpl,kind){const t=new Set();if(!tpl)return t;const L=(typeof GEAR_TAGS!=="undefined"&&GEAR_TAGS[tpl.id])||[];for(const x of L)t.add(x);
+ if(tpl.powered)t.add("powered");if(kind==="weapon"){t.add("workgear");t.add("grip");}else if(kind==="armor"||kind==="charm")t.add("worn");
+ if(typeof GEAR_GRIP_IDS!=="undefined"&&GEAR_GRIP_IDS.includes(tpl.id))t.add("grip");return t;}
+function affixFits(a,tags){const need=a.fit||(a.req?[a.req]:null);return !need||need.some(x=>tags.has(x));}
+function mkGear(tpl,kind,rng,clean){rng=rng||Math.random;const g={uid:uid(),kind,id:tpl.id,name:tpl.name,desc:tpl.desc,affixes:[]};for(const k of["atk","def","per","wis","cap","slot","wear","reach","throw","sprite","kneeRelief","critPct","blindOnHit","breakOnRemove"])if(tpl[k]!==undefined)g[k]=tpl[k];if(!clean){const n=rng()<0.45?1:(rng()<0.6?2:0);const _tg=gearTags(tpl,kind);const pool=AFFIXES.filter(a=>affixFits(a,_tg));for(let i=0;i<n&&pool.length;i++)g.affixes.push(pool.splice(Math.floor(rng()*pool.length),1)[0]);
   // Armor is cursed 25% less often: each rolled Learning-Experience (hinder) affix on armor has a 25% chance to be dropped.
   if(kind==="armor"&&g.affixes.length)g.affixes=g.affixes.filter(a=>a.type!=="hinder"||rng()>=0.25);}g.rarity=tpl.baseRarity||rarityFromAffixes(g.affixes);g.idd=!!clean;return g;}
 function mkConsumable(id){return Object.assign({kind:"consumable"},CONSUMABLES.find(x=>x.id===id));}

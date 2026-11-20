@@ -216,7 +216,7 @@ function _m44Touch(){return '<h2>Touch Controls</h2><p><b>Tap</b> a tile next to
  +'<p>By default the bar holds <b>BAG, SCAN, WAIT, THROW</b> and <b>DADVICE, MAP, PLACE TRAP, MORE</b>. <b>MORE</b> opens the junk drawer: Attributes, Codex, zoom, D-pad, sound, motion, backup, share, feedback, and <b>SAVE &amp; MENU</b> (the run is saved). <b>CUSTOMIZE BAR</b> in the drawer lets you choose which buttons live on the bar. Any open panel closes with the &#10005; <b>Close</b> button.</p>'
  +'<p><b>THROW</b>: pick what to throw from the list, then tap the target tile (or swipe toward it) and confirm. STR decides how far it flies; aim past that and it lands short. <b>PLACE TRAP</b>: tap a tile next to Dad, then confirm. <b>CANCEL</b> backs out of either. In the <b>BAG</b>, tap an item for Use, Equip, Drop, Throw or Combine. Cast Dadisms with the <b>Cast</b> button in the Book of Dadvice.</p>';}
 function rarClass(it){return (it&&["weapon","armor","charm"].includes(it.kind)&&it.idd===false)?"Common":((it&&it.rarity)||"Common");}
-function affixHTML(g){if(g&&["weapon","armor","charm"].includes(g.kind)&&g.idd===false)return '<span class="tag t-nothing">??? unidentified — equip it or read the Owner&rsquo;s Manual</span>';return (g.affixes||[]).map(a=>{const mods=(a.type==="hinder"&&a.mods)?Object.entries(a.mods).filter(([k])=>["atk","def","per","wis"].includes(k)).map(([k,v])=>(v>0?"+":"")+v+k.toUpperCase()).join(", "):"";return '<span class="tag t-'+a.type+'">'+(a.type==="help"?"Upgrade: ":a.type==="hinder"?"Learning Exp: ":"")+a.name+(mods?" ("+mods+")":"")+"</span>";}).join("");}
+function affixHTML(g){if(g&&["weapon","armor","charm"].includes(g.kind)&&g.idd===false)return '<span class="tag t-nothing">??? unidentified — equip it or read the Owner&rsquo;s Manual</span>';return (g.affixes||[]).map(a=>{const mods=(a.type!=="nothing"&&a.mods)?Object.entries(a.mods).filter(([k])=>["atk","def","per","wis"].includes(k)).map(([k,v])=>(v>0?"+":"")+v+k.toUpperCase()).join(", "):"";/* MOB-52: Upgrades show their numbers too; every tag opens the mod card */return '<span class="tag t-'+a.type+' afx-tap" data-afx="'+String(a.id||"").replace(/[^a-z0-9_]/gi,"")+'" title="What does this do?">'+(a.type==="help"?"Upgrade: ":a.type==="hinder"?"Learning Exp: ":"")+a.name+(mods?" ("+mods+")":"")+"</span>";}).join("");}
 function gearStat(g){return [["atk","ATK"],["def","DEF"],["per","PER"],["wis","WIS"],["cap","slots"]].filter(p=>g[p[0]]).map(p=>(g[p[0]]>0?"+":"")+g[p[0]]+" "+p[1]).join(" ");}
 function itemMeta(it){if(["weapon","armor","charm"].includes(it.kind)){let reach="";if(it.kind==="weapon"&&it.idd!==false){const r=it.reach||1;reach=' &middot; Reach '+r+' tile'+(r===1?'':'s');}return gearStat(it)+reach+(it.wear?(" ("+it.wear+")"):"")+" "+affixHTML(it);}if(it.kind==="consumable"){if(!consKnown(it))return '<span class="tag t-nothing">??? unidentified — drink it to find out, or use the Owner&rsquo;s Manual / Sticky Note of Identification</span>'+(it.throw?' &middot; throwable':'');const e=[];if(it.heal)e.push("+"+it.heal+"HP");if(it.nourish)e.push("food");if(it.hydrate)e.push("drink");if(it.cures)e.push("cures "+it.cures.join("/"));if(it.throw)e.push("throwable");return e.join(" &middot; ")+" — "+it.desc;}return (it.throw?"throwable &middot; ":"")+(it.placeable?"placeable trap &middot; ":"")+(it.desc||"");}
 /* M9 (compact only): item detail is a bottom sheet. _m9Det = sheet open; _m9Slot = worn slot shown (else the selected bag item). */
@@ -657,6 +657,36 @@ function _tgtPlace(b,e,L){try{b.classList.remove("tb-left","tb-top");const cv=do
  let best=null,bs=score(R.left,R.top);if(!bs)return;
  for(const k of [[lx,R.top,"tb-left"],[R.left,ty,"tb-top"],[lx,ty,"tb-left tb-top"]]){if(k[0]>R.left||k[1]>R.top)continue;const n=score(k[0],k[1]);if(n<bs){bs=n;best=k[2];}}
  if(best)b.classList.add(...best.split(" "));}catch(err){}}
+/* ===== MOB-52 (2026-11-20): tap a mod tag to read what it does (#m52afx) =====
+   Any rolled-mod tag drawn by affixHTML() (BAG list and detail, worn slots and the worn-slot sheet, vendor buy/sell rows)
+   carries data-afx="<id>". A capture-phase click opens this card instead of the row's own action (no buy, sell, select
+   or unequip happens). The card: kind banner, name, the numbers in words, what it turns up on (AFFIXES[].fit via
+   GEAR_TAG_WORDS), the existing desc and the flavor line. Unidentified gear shows "???" and has no tappable tags.
+   Esc / Enter / Space / Close / a tap outside closes it; while open it takes the keys. Nothing is saved. */
+var _m52Open=false;
+var M52_KIND={help:"UPGRADE",hinder:"LEARNING EXPERIENCE",nothing:"NO EFFECT"};
+var M52_STAT={atk:"Attack",def:"Defense",per:"Perception",wis:"Dadism power",cap:"Bag space"};
+function _m52Def(id){return (typeof AFFIXES!=="undefined"&&AFFIXES.find(a=>a.id===id))||null;}
+function _m52Numbers(a){const L=Object.entries(a.mods||{}).filter(([k,v])=>M52_STAT[k]&&v).map(([k,v])=>M52_STAT[k]+" "+(v>0?"+":"")+v);return L.length?L.join(", "):"Nothing. Nothing at all.";}
+function _m52Where(a){const need=a.fit||(a.req?[a.req]:null);if(!need)return "Anything: weapons, armor and charms.";
+ const w=need.map(t=>(typeof GEAR_TAG_WORDS!=="undefined"&&GEAR_TAG_WORDS[t])||t);return w.join("; ").replace(/^./,c=>c.toUpperCase())+".";}
+function openAffixCard(id){const s=document.getElementById("m52afx"),b=document.getElementById("m52body");const a=_m52Def(id);if(!s||!b||!a)return false;
+ const kind=a.type||"nothing";
+ b.innerHTML='<div class="m52-card m52-'+kind+'"><div class="m52-kind">'+(M52_KIND[kind]||"MOD")+'</div><div class="m52-name">'+esc(a.name)+'</div>'
+  +'<div class="m52-row"><span class="m52-lab">DOES</span><span class="m52-val">'+esc(_m52Numbers(a))+'</span></div>'
+  +'<div class="m52-row"><span class="m52-lab">TURNS UP ON</span><span class="m52-val">'+esc(_m52Where(a))+'</span></div>'
+  +(a.desc?'<p class="m52-desc">'+esc(a.desc)+'</p>':'')
+  +(a.flavor?'<p class="m52-flav">&ldquo;'+esc(a.flavor)+'&rdquo;</p>':'')+'</div>'
+  +'<div class="m52-acts"><button type="button" class="m52-btn" data-m52="close">Got it</button></div>';
+ _m52Open=true;s.classList.add("show");try{const c=s.querySelector('[data-m52="close"]');if(c)c.focus({preventScroll:true});}catch(e){}
+ if(typeof markDirty==="function")markDirty();return true;}
+function closeAffixCard(){const s=document.getElementById("m52afx");_m52Open=false;if(!s)return;s.classList.remove("show");try{const f=document.activeElement;if(f&&s.contains(f)&&f.blur)f.blur();}catch(e){}if(typeof markDirty==="function")markDirty();}
+if(typeof document!=="undefined"&&document.addEventListener){
+ document.addEventListener("click",ev=>{const t=ev.target;if(!t||!t.closest)return;
+  const s=document.getElementById("m52afx");if(s&&s.contains(t)){if(t===s||t.closest('[data-m52="close"]')){ev.stopPropagation();closeAffixCard();}return;}
+  const tag=t.closest(".afx-tap");if(!tag)return;ev.stopPropagation();ev.preventDefault();openAffixCard(tag.dataset.afx);},true);
+ document.addEventListener("keydown",ev=>{if(!_m52Open)return;const k=ev.key;if(k==="Tab")return;
+  if(k==="Escape"||k==="Enter"||k===" ")closeAffixCard();ev.stopImmediatePropagation();ev.preventDefault();},true);}
 /* ===== MOB-41 (2026-11-19): COMBINE flash card (#m41cmb) =====
    COMBINE (bag button, worn-slot button, [C] key, shift-click a worn slot) opens a card laid out like a multiplication
    flash card: the starting item on top, "x" and an empty box below, a rule, then the result line. Tapping the box lists

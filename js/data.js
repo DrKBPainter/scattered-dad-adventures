@@ -655,33 +655,55 @@ const CLASSES=[
 
 /* ===== AFFIXES (silly buffs: help / hinder / nothing) ===== */
 const AFFIXES=[
- {id:"confident",name:"of Misplaced Confidence",type:"help",mods:{atk:1},desc:"+1 ATK. It is not earned, but it counts."},
- {id:"ergo",name:"Ergonomic",type:"help",mods:{atk:1},desc:"+1 ATK. The grip says so on the sticker."},
- {id:"reinforced",name:"Reinforced w/ Duct Tape",type:"help",mods:{def:2},desc:"+2 DEF. Holds the universe together."},
- {id:"warranty",name:"Extended Warranty",type:"help",mods:{def:1},desc:"+1 DEF. For once in your life."},
- {id:"preowned",name:"Pre-Owned",type:"help",mods:{atk:1,def:1},desc:"+1 ATK, +1 DEF. Someone else's problem, now yours to enjoy."},
- {id:"recalled",name:"Recalled",type:"hinder",mods:{atk:-1},desc:"-1 ATK. The lawsuit is still pending."},
- {id:"batteries",name:"Batteries Not Included",type:"hinder",req:"powered",mods:{atk:-1},desc:"-1 ATK. You knew. You bought it anyway."},
- {id:"assembly",name:"Assembly Required",type:"hinder",mods:{def:-1},desc:"-1 DEF. Three pieces are left over. Probably unimportant."},
- {id:"stripped",name:"Stripped Screw",type:"hinder",mods:{def:-1},desc:"-1 DEF. Stripped. Eternal."},
- {id:"dented",name:"Dented",type:"hinder",mods:{atk:-1,def:-1},desc:"-1 ATK, -1 DEF. It was like this when you found it."},
- {id:"cursed",name:"of the HOA",type:"hinder",mods:{atk:-2},desc:"-2 ATK. Technically violates several covenants."},
- {id:"counterfeit",name:"Counterfeit",type:"hinder",mods:{atk:-2,def:-1},desc:"-2 ATK, -1 DEF. Not from the manufacturer. You knew this in the parking lot."},
- {id:"expired",name:"Expired (Best Before 2019)",type:"hinder",mods:{def:-2},desc:"-2 DEF. It is not 2019. It has never been 2019 since 2019."},
- {id:"flickering",name:"Flickering",type:"hinder",req:"powered",mods:{per:-1,def:-1},desc:"-1 PER, -1 DEF. Unstable. Unreliable. The description said 'vibrant.'"},
- {id:"wrongsize",name:"Wrong Size (Close Enough)",type:"hinder",mods:{atk:-1,per:-1},desc:"-1 ATK, -1 PER. You told yourself it would be fine. It is not fine."},
- {id:"stripped2",name:"Stripped Beyond Salvation",type:"hinder",mods:{atk:-1,def:-2},desc:"-1 ATK, -2 DEF. The screw was a warning. You did not heed the warning."},
- {id:"warrantyvoid",name:"Warranty Voided",type:"hinder",req:"powered",mods:{atk:-1,wis:-1},desc:"-1 ATK, -1 Dadism power. You opened the casing. That was the end of the warranty and also of a small piece of your dignity."},
- {id:"fine",name:"Fine, I Guess",type:"nothing",mods:{},desc:"Does nothing. Perfectly adequate. A metaphor."},
- {id:"reviewed",name:"4-Star Rated",type:"nothing",mods:{},desc:"One reviewer called it 'adequate.' They were right."},
- {id:"generic",name:"Store Brand",type:"nothing",mods:{},desc:"Same thing as the name brand. He insists otherwise."},
- {id:"contractor",name:"Contractor Grade",type:"help",mods:{atk:1,def:1},desc:"+1 ATK, +1 DEF. Costs forty percent more for reasons no one can articulate. Worth it, allegedly."},
- {id:"newinbox",name:"New In Box",type:"help",mods:{def:1,per:1},desc:"+1 DEF, +1 PER. Still has the twist-ties. He will keep the box. He will keep all the boxes."},
- {id:"asseenontv",name:"As Seen On TV",type:"help",mods:{atk:2},desc:"+2 ATK. But wait — there is no second one, the shipping consumed the savings, and it works exactly as advertised, which is alarming."},
- {id:"clearance",name:"Final Clearance",type:"hinder",mods:{def:-1,per:-1},desc:"-1 DEF, -1 PER. All sales final. The endcap claimed it. He could not resist the endcap."},
- {id:"openbox",name:"Open Box (Some Wear)",type:"hinder",mods:{atk:-1},desc:"-1 ATK. Someone returned it for a reason they did not write down. The reason reveals itself in combat."},
- {id:"asis",name:"Sold As-Is",type:"nothing",mods:{},desc:"Does nothing, but with finality. No returns, no refunds, no opinions. A purchase and a philosophy."}
+ {id:"confident",name:"of Misplaced Confidence",type:"help",mods:{atk:1},desc:"+1 ATK. It is not earned, but it counts.",flavor:"Studies show confidence wins 60% of fights. The other 40% are not discussed at dinner."},
+ {id:"ergo",name:"Ergonomic",type:"help",mods:{atk:1},desc:"+1 ATK. The grip says so on the sticker.",fit:["grip"],flavor:"Molded to the average hand. No one has ever met the average hand."},
+ {id:"reinforced",name:"Reinforced w/ Duct Tape",type:"help",mods:{def:2},desc:"+2 DEF. Holds the universe together.",flavor:"Silver, eternal, and load-bearing. Several marriages are held together the same way."},
+ {id:"warranty",name:"Extended Warranty",type:"help",mods:{def:1},desc:"+1 DEF. For once in your life.",flavor:"Covers everything except the thing that will happen."},
+ {id:"preowned",name:"Pre-Owned",type:"help",mods:{atk:1,def:1},desc:"+1 ATK, +1 DEF. Someone else's problem, now yours to enjoy.",flavor:"The previous owner wrote his initials in marker. They are not your initials. You are fine with this."},
+ {id:"recalled",name:"Recalled",type:"hinder",mods:{atk:-1},desc:"-1 ATK. The lawsuit is still pending.",flavor:"A letter came. It is still on the counter, under the other letters."},
+ {id:"batteries",name:"Batteries Not Included",type:"hinder",req:"powered",mods:{atk:-1},desc:"-1 ATK. You knew. You bought it anyway.",fit:["powered"],flavor:"The batteries are in the junk drawer. The junk drawer is in another dimension."},
+ {id:"assembly",name:"Assembly Required",type:"hinder",mods:{def:-1},desc:"-1 DEF. Three pieces are left over. Probably unimportant.",fit:["screws"],flavor:"Step 4 shows a hand with six fingers. The hand is pointing at nothing."},
+ {id:"stripped",name:"Stripped Screw",type:"hinder",mods:{def:-1},desc:"-1 DEF. Stripped. Eternal.",fit:["screws"],flavor:"Righty-tighty, lefty-loosey, both now meaningless."},
+ {id:"dented",name:"Dented",type:"hinder",mods:{atk:-1,def:-1},desc:"-1 ATK, -1 DEF. It was like this when you found it.",fit:["metal"],flavor:"Character, he calls it. Insurance calls it something else."},
+ {id:"cursed",name:"of the HOA",type:"hinder",mods:{atk:-2},desc:"-2 ATK. Technically violates several covenants.",flavor:"Approved in color 'Builder Beige' only. Your color was not Builder Beige."},
+ {id:"counterfeit",name:"Counterfeit",type:"hinder",mods:{atk:-2,def:-1},desc:"-2 ATK, -1 DEF. Not from the manufacturer. You knew this in the parking lot.",flavor:"The logo is spelled with one fewer vowel. It performs accordingly."},
+ {id:"expired",name:"Expired (Best Before 2019)",type:"hinder",mods:{def:-2},desc:"-2 DEF. It is not 2019. It has never been 2019 since 2019.",fit:["perish"],flavor:"Smells faintly of a garage that has given up."},
+ {id:"flickering",name:"Flickering",type:"hinder",req:"powered",mods:{per:-1,def:-1},desc:"-1 PER, -1 DEF. Unstable. Unreliable. The description said 'vibrant.'",fit:["powered"],flavor:"Works if you hold it at this exact angle. Nobody else knows the angle."},
+ {id:"wrongsize",name:"Wrong Size (Close Enough)",type:"hinder",mods:{atk:-1,per:-1},desc:"-1 ATK, -1 PER. You told yourself it would be fine. It is not fine.",fit:["worn"],flavor:"He measured once and cut never. The tag says XL. The tag is lying."},
+ {id:"stripped2",name:"Stripped Beyond Salvation",type:"hinder",mods:{atk:-1,def:-2},desc:"-1 ATK, -2 DEF. The screw was a warning. You did not heed the warning.",fit:["screws"],flavor:"The screwdriver now spins freely, like a man at a wedding who has heard the DJ take requests."},
+ {id:"warrantyvoid",name:"Warranty Voided",type:"hinder",req:"powered",mods:{atk:-1,wis:-1},desc:"-1 ATK, -1 Dadism power. You opened the casing. That was the end of the warranty and also of a small piece of your dignity.",fit:["powered"],flavor:"The sticker said DO NOT REMOVE. The sticker was right about many things."},
+ {id:"fine",name:"Fine, I Guess",type:"nothing",mods:{},desc:"Does nothing. Perfectly adequate. A metaphor.",flavor:"Neither helps nor hurts. The beige of mods."},
+ {id:"reviewed",name:"4-Star Rated",type:"nothing",mods:{},desc:"One reviewer called it 'adequate.' They were right.",flavor:"The one-star review just says 'Why.' Nobody has answered him."},
+ {id:"generic",name:"Store Brand",type:"nothing",mods:{},desc:"Same thing as the name brand. He insists otherwise.",flavor:"Same factory, different box, eleven cents cheaper. Victory."},
+ {id:"contractor",name:"Contractor Grade",type:"help",mods:{atk:1,def:1},desc:"+1 ATK, +1 DEF. Costs forty percent more for reasons no one can articulate. Worth it, allegedly.",fit:["workgear"],flavor:"Comes with a truck-bed scratch and the faint smell of a 6 a.m. job site."},
+ {id:"newinbox",name:"New In Box",type:"help",mods:{def:1,per:1},desc:"+1 DEF, +1 PER. Still has the twist-ties. He will keep the box. He will keep all the boxes.",flavor:"The box is in the attic now, with the other boxes, in case anything ever needs to be returned in 2041."},
+ {id:"asseenontv",name:"As Seen On TV",type:"help",mods:{atk:2},desc:"+2 ATK. But wait — there is no second one, the shipping consumed the savings, and it works exactly as advertised, which is alarming.",flavor:"Operators were standing by. They are still standing by. Someone should check on them."},
+ {id:"clearance",name:"Final Clearance",type:"hinder",mods:{def:-1,per:-1},desc:"-1 DEF, -1 PER. All sales final. The endcap claimed it. He could not resist the endcap.",flavor:"Marked down four times. Each sticker was a cry for help."},
+ {id:"openbox",name:"Open Box (Some Wear)",type:"hinder",mods:{atk:-1},desc:"-1 ATK. Someone returned it for a reason they did not write down. The reason reveals itself in combat.",flavor:"The box was opened. The something wore. Both facts are true."},
+ {id:"asis",name:"Sold As-Is",type:"nothing",mods:{},desc:"Does nothing, but with finality. No returns, no refunds, no opinions. A purchase and a philosophy.",flavor:"You are a lot like this item, and you are doing great. Keep going, Dad."}
 ];
+
+/* MOB-52 (2026-11-20): which mods can land on which gear. AFFIXES[].fit lists the tags a mod needs (none = fits anything);
+   GEAR_TAGS gives each gear id its hand-set tags. Kind-based tags need no entry: every weapon is "workgear" and "grip",
+   every armor piece and charm is "worn", the work and dishwashing gloves are "grip", and a template's powered:true adds
+   "powered". See gearTags()/affixFits() in js/game.js. */
+const GEAR_TAGS={
+ spatula:["metal"],plunger:["perish"],rake:["screws"],caulkgun:["metal"],blowtorch:["metal","screws","powered"],flamespat:["metal","screws","powered"],
+ leafblower:["screws","powered"],tapemeasure:["metal","screws"],ratchet:["metal"],pressurewand:["metal","screws","powered"],orbital_sander:["screws","powered"],
+ extensioncord:["perish"],ladder:["metal","screws"],orbitaledger:["metal","screws"],hexhammer:["metal"],ptoreaper:["metal","screws","powered"],
+ justincase:["metal","screws"],shopvac:["screws","powered"],pizzacutter:["metal","screws"],snowshovel:["metal","screws"],tikitorch:["metal","powered"],
+ gardenhose:["perish"],crowbar:["metal"],
+ hardhat:["workgear"],glovework:["workgear"],pt_measure:["metal","screws","workgear"],pt_grip:["perish"],steelboot:["metal","workgear"],steeltoe:["metal","workgear"],
+ sunglasses:["screws"],earprotection:["workgear"],highvis:["workgear"],apron:["workgear"],kneebrace:["perish"],sweatpants:["perish"],sandals:["perish"],
+ flipflops:["perish"],worklaces:["workgear"],rubbergloves:["perish"],utility_belt:["metal","workgear"],knee_sleeves:["perish"],safety_glasses:["screws","workgear"],
+ elbowpads:["workgear","perish"],overalls:["metal","workgear"],crocs:["perish"],poncho:["perish"],
+ weddingring:["metal"],classring:["metal"],keychain:["metal"],lucky_coin:["metal"],fishing_lure:["metal"],dogtags:["metal"],signet:["metal"],
+ readers:["metal","screws"],visor:["perish"],fortunecookie:["perish"],fistbump_band:["perish"],suspenders:["metal"],
+ watchband:["powered"],studfinder_charm:["powered"],earbuds:["powered"]
+};
+const GEAR_GRIP_IDS=["glovework","rubbergloves"];
+/* Words for the mod card ("Turns up on: ..."). */
+const GEAR_TAG_WORDS={screws:"things held together with screws, bolts or hinges",metal:"mostly-metal things that can dent",perish:"rubber, foam, elastic or food (things that go off with age)",workgear:"job-site gear (every weapon counts)",powered:"anything with a battery, cord or fuel",grip:"things you grip: every weapon, plus work and dishwashing gloves",worn:"anything worn: armor and charms"};
 
 /* ===== WEAPONS ===== */
 const WEAPONS=[

@@ -642,6 +642,24 @@ body.m-compact .m43-grid{grid-template-columns:1fr 1fr;gap:9px}
 #m41cmb .dim{color:var(--dim)}
 #m41cmb .m41-keys{font-size:11px;margin:8px 0 0}
 #m41cmb .m41-note{color:#f0c86a;font-style:italic;transform:rotate(-1deg);margin:10px 2px 0;font-size:12px}
+/* MOB-52: tap a mod tag to read it (#m52afx) */
+.tag.afx-tap{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;touch-action:manipulation}
+#m52afx{display:none;position:fixed;inset:0;z-index:214;background:rgba(4,6,10,.74);align-items:center;justify-content:center;padding:max(8px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));box-sizing:border-box}
+#m52afx.show{display:flex}
+#m52afx .m52-panel{width:100%;max-width:380px;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box}
+#m52afx .m52-card{background:#fbf6e4;color:#1d1d24;border:3px solid #1d1d24;border-radius:8px;box-shadow:4px 4px 0 #1d1d24;padding:0 0 12px;font:13px/1.45 monospace;transform:rotate(-.6deg)}
+#m52afx .m52-kind{font:bold 12px monospace;letter-spacing:2px;color:#fff;background:#6b6250;padding:6px 12px;border-bottom:3px solid #1d1d24;border-radius:5px 5px 0 0}
+#m52afx .m52-help .m52-kind{background:#1f6b2a}
+#m52afx .m52-hinder .m52-kind{background:#a8322a}
+#m52afx .m52-name{font:bold 18px/1.2 monospace;padding:10px 12px 6px;overflow-wrap:anywhere}
+#m52afx .m52-row{display:flex;flex-direction:column;gap:1px;margin:6px 12px 0;padding:6px 8px;background:rgba(255,255,255,.6);border:2px solid #1d1d24;border-radius:4px}
+#m52afx .m52-lab{font:bold 10px monospace;letter-spacing:1px;color:#6b6250}
+#m52afx .m52-val{font-weight:bold}
+#m52afx .m52-desc{margin:10px 12px 0}
+#m52afx .m52-flav{margin:8px 12px 0;font-style:italic;color:#3a6fb0}
+#m52afx .m52-acts{display:flex;margin-top:12px;position:sticky;bottom:0;padding-top:6px;background:linear-gradient(transparent,rgba(4,6,10,.9) 40%)}
+@media (max-height:480px){#m52afx .m52-name{font-size:15px;padding:6px 12px 2px}#m52afx .m52-row{margin-top:4px;padding:3px 8px}#m52afx .m52-desc,#m52afx .m52-flav{margin-top:6px}}
+#m52afx .m52-btn{flex:1;font:bold 13px monospace;color:#1a1a1a;background:var(--gold);border:1px solid var(--gold);border-radius:5px;min-height:44px;padding:4px 12px;cursor:pointer;touch-action:manipulation}
 #m42fb{display:none;position:fixed;inset:0;z-index:210;background:rgba(4,6,10,.72);align-items:center;justify-content:center;padding:max(8px,env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));box-sizing:border-box}
 #m42fb.show{display:flex}
 #m42fb .m42-panel{width:100%;max-width:560px;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box;background:var(--panel);color:var(--ink);border:1px solid var(--border);border-radius:10px;padding:0 14px 14px;font:13px/1.45 monospace}
@@ -773,6 +791,7 @@ body.m-compact .m18-howto button{min-height:44px}
 
 <!-- Load order matters: each file depends on those above it -->
 <div id="m41cmb" role="dialog" aria-modal="true" aria-label="Combine"><div class="m41-panel"><div class="m41-head"><b>COMBINE</b><button type="button" class="m41-close" data-m41="close" title="Close (Esc)">&#10005; Close</button></div><div id="m41body"></div></div></div>
+<div id="m52afx" role="dialog" aria-modal="true" aria-label="What this mod does"><div class="m52-panel"><div id="m52body"></div></div></div>
 <script src="js/config.js"></script>   <!-- constants, canvas ref, fitCanvas -->
 <script src="js/sprites.js"></script>  <!-- PAL palette, SPR_ pixel art -->
 <script src="js/data.js"></script>     <!-- CREATURES, BOSSES, CLASSES, items, recipes — ADD NEW CONTENT HERE -->
