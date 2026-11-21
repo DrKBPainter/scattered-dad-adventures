@@ -482,6 +482,18 @@ function inspectAt(x,y){if(x<0||y<0||x>=MAP_W||y>=MAP_H||!game.seen[y][x])return
    "This puddle has dreams of becoming a lake. You respect the ambition. You do not step in it.",
   "There is a rainbow sheen on this. Someone has been meaning to look into that. That someone is you. You have not looked into it."];return {t:"Standing Water",b:notes[(x*7+y*13)%4]+" You search for the source of the leak. You do not find the source. The search has become the point."};}
  if(game.floor.grid[y][x]===1)return {t:"A Wall",b:"Load-bearing. Probably. Do not test this."};
- return {t:"Floor",b:"Suspiciously ordinary linoleum."};}
+ return _m76FloorScan(x,y);}
+/* MOB-76 (KBP 2026-11-21): scanning a plain floor tile describes that biome's floor (two lines per biome, picked by tile). */
+const _M76_FLOORS={"House":["Carpet","Wall-to-wall beige. It has absorbed eleven years of juice boxes and one incident nobody discusses.","Plush. A single toy brick lurks somewhere in this carpet. It knows exactly where your foot will be."],
+ "Lowe & Behold":["Sealed Concrete","Polished warehouse concrete. A forklift has been here. A forklift is always somewhere nearby.","A drip of orange paint, shaped vaguely like the project you said you would finish this weekend."],
+ "Park":["Grass","Someone else's grass. It is greener. Of course it is.","Mowed by the city on a schedule nobody has ever seen posted. You respect it. You resent it."],
+ "Vastco":["Warehouse Floor","Bulk-grade tile, sold by the pallet. You could buy forty square feet of it right now. You are thinking about it.","A sample cup lies here, licked clean. A trail of crumbs leads toward a five-pound tub of hummus."],
+ "Soccer Complex":["Artificial Turf","Rubber pellets. They will live in your shoes, your car and your dryer until the heat death of the universe.","Lined for U8. Also for U10. Also for lacrosse. Nobody knows which line is which."],
+ "School":["Linoleum","Suspiciously ordinary linoleum, waxed to a shine by a custodian who has seen things.","Scuffed with the heel marks of four hundred indoor recesses. One of them is yours, from 1989."],
+ "Family Restaurant":["Checkered Tile","Sticky. Not dirty, exactly. Just committed to holding onto you.","Black and white squares. A crayon rolls slowly across them toward a destiny under the booth."],
+ "IDKEA":["Laminate Wood","Click-lock laminate. Twelve planks of it. The box said fourteen.","A painted arrow on blond wood insists you keep going. The arrow has never once been wrong. Or right."],
+ "Neighborhood":["Asphalt","Blacktop, faintly chalked. The hopscotch grid stops at 7 for reasons the kids will not explain.","A crack you have meant to fill since spring. The crack has meant to widen. It is winning."],
+ "HOA":["Luxury Carpet","Deep-pile carpet in an approved neutral. Shoes are to be removed. Yours were not. This has been noted.","Vacuumed in perfect stripes. Stepping on it is technically a violation of Section 4.2(b)."]};
+function _m76FloorScan(x,y){const k=typeof keyBiomeFor==="function"&&game?keyBiomeFor(game.depth|0):"";const f=_M76_FLOORS[k];if(!f)return {t:"Floor",b:"Suspiciously ordinary linoleum."};return {t:f[0],b:f[1+((x*7+y*13)%2)]};}
 /* MOB-08: gold corner marks on the enemy chosen in the target box (compact layouts only; _tgtMark is null otherwise). */
 function _tgtDrawMark(x,y){const t=TILE,l=4;ctx.fillStyle="#f4c430";ctx.fillRect(x,y,l,1);ctx.fillRect(x,y,1,l);ctx.fillRect(x+t-l,y,l,1);ctx.fillRect(x+t-1,y,1,l);ctx.fillRect(x,y+t-1,l,1);ctx.fillRect(x,y+t-l,1,l);ctx.fillRect(x+t-l,y+t-1,l,1);ctx.fillRect(x+t-1,y+t-l,1,l);}
