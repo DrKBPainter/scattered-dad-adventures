@@ -522,7 +522,7 @@ function waitTurn(){if(mode!==State.PLAY||pendingConfirm)return;if(game.statuses
 function pickupLootAt(idx){const l=game.loot[idx];if(!l)return;if(l.item.kind==="note"){game.loot.splice(idx,1);readFridgeNote(l.item);if(typeof sfxPickup==="function")sfxPickup();syncUI();return;}/* M16 */if(l.item.kind==="gold"){game.gold+=l.item.amount;game.moolahEarned=(game.moolahEarned||0)+l.item.amount;log("Picked up "+l.item.amount+" moolah.","gold");game.loot.splice(idx,1);syncUI();return;}openConfirm("Pick up "+itemNameSlot(l.item)+"?",()=>{if(addItem(l.item)){log("Picked up "+itemNameSlot(l.item)+".","grn");if(typeof sfxPickup==="function")sfxPickup();game.itemsFound=(game.itemsFound||0)+1;tryCompleteFetchQuest(l.item);game.loot.splice(idx,1);backPainTick();}syncUI();});}
 function tryMove(dx,dy){if(mode!==State.PLAY||pendingConfirm)return;if(napBlocked())return;if(hasStatus("drunk")&&Math.random()<0.30){const rd=[[0,-1],[0,1],[-1,0],[1,0]][Math.floor(Math.random()*4)];dx=rd[0];dy=rd[1];log("Your feet navigate independently.","red");}clearScanMessages();const nx=game.px+dx,ny=game.py+dy;if(nx<0||ny<0||nx>=MAP_W||ny>=MAP_H)return;if(game.floor.grid[ny][nx]===1)return;
  const d=doorAt(nx,ny);if(d&&!d.open){openDoorMenu(d);return;}
- if(game.vendor&&game.vendor.x===nx&&game.vendor.y===ny){openShop();return;}
+ if(game.vendor&&game.vendor.x===nx&&game.vendor.y===ny){/* MOB-53: ask first */openConfirm("Trade with your neighbor?",()=>{openShop();},{title:game.vendor.def.name,yes:"Yes",no:"No"});return;}
  const fn=game.fountains&&game.fountains.find(f=>f.x===nx&&f.y===ny);if(fn){/* MOB-25: ask before drinking; an empty fountain just says so */if(fn.charges>0)openConfirm("Drink from the water fountain? It has "+fn.charges+" sip"+(fn.charges===1?"":"s")+" left. It has waited years for someone to ask.",()=>{useFountain(fn);syncUI();},{yes:"Drink",no:"Not now"});else useFountain(fn);return;}
  const hf=game.healFountains&&game.healFountains.find(f=>f.x===nx&&f.y===ny);if(hf){useHealFountain(hf);return;}
  const e=game.enemies.find(e=>e.x===nx&&e.y===ny);if(e){if(e.isDog){dogEncounter(e);return;}if(attack(e))return;endTurn();return;}
@@ -1096,12 +1096,17 @@ function shopPrice(it){if(it.societyItem&&it.sellValue)return it.sellValue;
 // Sell value: identified gear is worth more than unidentified; upgraded > plain > cursed.
 function sellPrice(it){if(it.societyItem&&it.sellValue)return it.sellValue;let p=shopPrice(it)*0.5;
  if(["weapon","armor","charm"].includes(it.kind)){
-  if(it.idd===false)p*=0.55; // a mystery item fetches less at the desk
+  if(it.idd===false)p=shopPrice(Object.assign({},it,{affixes:[]}))*0.5*0.55; // MOB-53: a mystery item is priced as the plain base item (hidden upgrades/curses do not move the price), and fetches less at the desk
   else{const hasHelp=(it.affixes||[]).some(a=>a.type==="help");const cursed=(it.affixes||[]).some(a=>a.type==="hinder")&&!it.uncursed;if(cursed)p*=0.15;else if(hasHelp)p*=1.3;}
  }
  return Math.max(1,Math.floor(p));}
-function sellItem(idx){const e=game.inv[idx];if(!e)return;const it=e.it;const sp=sellPrice(it);const nm=itemDisplayName(it);game.gold+=sp;removeEntry(e,1);log("Sold "+nm+" for "+sp+" moolah. The vendor will resell it at a markup. That is the way of things.","grn");buildShop();syncUI();}
-function openShop(){shopOpen=true;buildShop();syncOverlays();}
+function sellItem(idx){const e=game.inv[idx];if(!e)return;const it=e.it;const sp=sellPrice(it);const nm=itemDisplayName(it);const _m53u=["weapon","armor","charm"].includes(it.kind)&&it.idd===false;game.gold+=sp;removeEntry(e,1);log("Sold "+nm+" for "+sp+" moolah. The vendor will resell it at a markup. That is the way of things.","grn");if(_m53u)log(_m53Reveal(it),"gold");buildShop();syncUI();}
+/* MOB-53 (KBP 2026-11-13): unidentified gear stays unidentified to both of you until the sale is done; then he holds it up to the light */
+function _m53Reveal(it){const af=it.affixes||[];if(!af.length)return "He holds the "+it.name+" up to the light. Completely unmodified. He looks relieved. You both move on.";const cur=af.some(a=>a.type==="hinder")&&!it.uncursed;const help=af.some(a=>a.type==="help");const names=af.map(a=>a.name).join(", ");
+ if(cur)return "He holds the "+it.name+" up to the light: "+names+". It was cursed. He looks delighted. You decide not to ask what he does with these.";
+ if(help)return "He holds the "+it.name+" up to the light: "+names+". He whistles. You do the math on what you just let go for "+sellPrice(Object.assign({},it,{idd:false}))+" moolah. Some lessons cost money.";
+ return "He holds the "+it.name+" up to the light: "+names+". He shrugs. You shrug. A fair deal, technically.";}
+function openShop(){shopOpen=true;try{_m53Tab=0;}catch(e){}buildShop();syncOverlays();}
 /* MOB-72: vendor stock runs out. Counts are per run, per floor and per stock row, kept in memory (not in the save) */
 var _shopSold={};
 function shopStockQty(it){const r=(it.rarity||"Common");if(r==="Mythic"||r==="Legendary"||r==="Epic")return 1;if(r==="Rare")return 2;if(r==="Uncommon")return 3;return 5;}

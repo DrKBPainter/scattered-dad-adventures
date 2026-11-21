@@ -252,11 +252,35 @@ function buildInv(){const SL=[["weapon","Weapon"],["head","Head"],["torso","Tors
  oInv.querySelectorAll('.invgrid .cell[data-inv]').forEach(cell=>{const e=game.inv[+cell.dataset.inv];if(!e)return;const cv=cell.querySelector('canvas.ic');if(!cv)return;const cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;const spr=itemIconSprite(e.it);const sc=spr.length===32?1:2;cx.clearRect(0,0,32,32);if(_uiSprImg(cx,spr,32,32))return;for(let y=0;y<spr.length;y++){const row=spr[y];for(let x=0;x<row.length;x++){const col=PAL[row[x]];if(!col)continue;cx.fillStyle=col;cx.fillRect(x*sc,y*sc,sc,sc);}}});}
 function shortName(n){return n.length>22?n.slice(0,21)+"…":n;}
 function buildDad(){let h='<h1>BOOK OF DADVICE</h1><p class="dim">Dadisms cost Patience ('+game.moxie+'/'+game.maxmoxie+'). '+kbTxt('arrows select &middot; [ENTER] cast &middot; [Esc] close','Tap Cast to use one.')+'</p>';const known=DADISMS.filter(d=>game.dadisms.includes(d.id));if(!known.length)h+='<p class="dim">No Dadisms.</p>';known.forEach((d,i)=>{const can=game.moxie>=d.cost;h+='<div class="row'+(i===dadSel?" sel":"")+'" data-dad="'+i+'"><div><span class="nm" style="'+(can?"":"opacity:.5")+'">'+d.name+'</span><div class="meta">'+d.desc+'</div></div><div class="meta">'+d.cost+' Patience'+(can?' <button type="button" class="cf-btn" data-cast="'+i+'">Cast</button>':'')+'</div></div>';});oD.innerHTML=h;}
-function buildShop(){const v=game.vendor.def;let h='<h1>'+v.name+'</h1><p class="dim">'+v.greet+'</p><p><b>'+game.gold+' moolah</b> &middot; '+kbTxt('click an item to buy &middot; [Esc] leave','tap an item to buy')+'</p>';v.stock.forEach((id,i)=>{const it=mkById(id);if(!it)return;const price=shopPrice(it);const qty=shopLeft(i,it);/* MOB-72 */h+='<div class="row'+(qty?'':' sold-out')+'" data-shop="'+i+'"'+(qty?'':' style="opacity:.5"')+'><div><span class="nm r-'+(it.rarity||"Common")+'">'+it.name+itemSlotSuffix(it)+'</span><div class="meta">'+itemMeta(it)+'</div></div><div class="meta">'+price+'g &middot; <span class="dim">'+(qty?'In stock: '+qty:'Sold out')+'</span></div></div>';});
+function buildShop(){if(_m14On()){_m53Cards();return;}const v=game.vendor.def;let h='<h1>'+v.name+'</h1><p class="dim">'+v.greet+'</p><p><b>'+game.gold+' moolah</b> &middot; '+kbTxt('click an item to buy &middot; [Esc] leave','tap an item to buy')+'</p>';v.stock.forEach((id,i)=>{const it=mkById(id);if(!it)return;const price=shopPrice(it);const qty=shopLeft(i,it);/* MOB-72 */h+='<div class="row'+(qty?'':' sold-out')+'" data-shop="'+i+'"'+(qty?'':' style="opacity:.5"')+'><div><span class="nm r-'+(it.rarity||"Common")+'">'+it.name+itemSlotSuffix(it)+'</span><div class="meta">'+itemMeta(it)+'</div></div><div class="meta">'+price+'g &middot; <span class="dim">'+(qty?'In stock: '+qty:'Sold out')+'</span></div></div>';});
  h+='<h1 style="margin-top:14px">SELL ANYTHING</h1><p class="dim">"I\'ll take it off your hands." click an item to sell &middot; he buys everything</p>';
  if(!game.inv.length)h+='<p class="dim">Your pockets are empty. Nothing to sell.</p>';
- game.inv.forEach((e,i)=>{const it=e.it;const sp=sellPrice(it);h+='<div class="row" data-sell="'+i+'"><div><span class="nm r-'+rarClass(it)+'">'+itemNameSlot(it)+(e.qty>1?' &times;'+e.qty:'')+'</span><div class="meta">'+(isCursed(it)?'<span class="tag t-hinder">CURSED — hex-tax ('+sp+'g)</span>':itemMeta(it))+'</div></div><div class="meta l-gold">+'+sp+'g</div></div>';});
+ game.inv.forEach((e,i)=>{const it=e.it;const sp=sellPrice(it);h+='<div class="row" data-sell="'+i+'"><div><span class="nm r-'+rarClass(it)+'">'+itemNameSlot(it)+(e.qty>1?' &times;'+e.qty:'')+'</span><div class="meta">'+(isCursed(it)&&it.idd!==false/* MOB-53 */?'<span class="tag t-hinder">CURSED — hex-tax ('+sp+'g)</span>':itemMeta(it))+'</div></div><div class="meta l-gold">+'+sp+'g</div></div>';});
  oShop.innerHTML=h;}
+
+/* MOB-53 (KBP 2026-11-13): phone shop as Codex-style comic cards (bc-card pieces, js/ui.js _m14Card), BUY and SELL tabs.
+   Tap a card to flip it; the button on the back buys or sells. Unidentified gear shows as the bag shows it. Desktop keeps the list. */
+var _m53Tab=0;
+function _m53Pal(it){return it.kind==="weapon"?M14_PAL.weapon:it.kind==="armor"?M14_PAL.armor:it.kind==="charm"?M14_PAL.charm:it.kind==="consumable"?M14_PAL.cons:M14_PAL.recipe;}
+function _m53Entry(it,o){const gear=["weapon","armor","charm"].includes(it.kind);const unid=gear&&it.idd===false;const cunk=!o.buy&&it.kind==="consumable"&&!consKnown(it);/* stock is named and shown in full, as the old list did; buying identifies it */const st=[],ln=[];
+ if(gear){if(it.atk)st.push(['ATK',(it.kind==="weapon"?'':'+')+it.atk]);if(it.def)st.push(['DEF','+'+it.def]);if(it.per)st.push(['PER','+'+it.per]);if(it.wis)st.push(['WIS','+'+it.wis]);if(it.cap)st.push(['SLOTS','+'+it.cap]);
+  if(unid)ln.push('??? unidentified');else{ln.push(it.rarity||'Common');if(it.kind==="weapon"){const r=it.reach||1;if(r>1)ln.push('Reach '+r);}const af=(it.affixes||[]).map(a=>(a.type==="help"?"Upgrade: ":a.type==="hinder"?"Learning Exp: ":"")+esc(a.name));if(af.length)ln.push(af.join(', '));if(isCursed(it))ln.push('<b style="color:#b0021b">CURSED</b> (hex-tax)');}}
+ else if(it.kind==="consumable"){if(cunk)ln.push('??? unidentified');else{if(it.heal)st.push(['HP','+'+it.heal]);if(it.nourish)st.push(['FOOD',it.nourish]);if(it.hydrate)st.push(['DRINK',it.hydrate]);if(it.cures)ln.push('Cures: '+it.cures.join('/'));}if(it.throw)ln.push('throwable');}
+ else{if(it.throw)ln.push('throwable');if(it.placeable)ln.push('placeable trap');}
+ ln.push(o.note);const slot=itemSlotLabel(it);
+ return {met:true,pal:_m53Pal(it),tag:o.tag,name:esc(o.buy?it.name:itemDisplayName(it))+(o.qty>1?' &times;'+o.qty:''),spr:itemIconSprite(it),stats:st.slice(0,4),lines:ln,flav:(unid||cunk)?'':(it.desc||''),
+  combo:'<button type="button" class="cf-btn m53-act'+(o.off?' m53-off':'')+'" '+o.attr+(o.off?' aria-disabled="true"':'')+'>'+o.btn+'</button>'+(slot?'<div class="bc-seen">Slot: '+slot+'</div>':'')};}
+function _m53Cards(){const v=game.vendor.def;_m14Sprs=[];let h='<h1>'+v.name+'</h1><p class="dim">'+v.greet+'</p><p><b>'+game.gold+' moolah</b> &middot; tap a card to flip it, then tap the button on the back</p>';
+ h+='<div class="cdx-tabs"><button type="button" class="cdx-tab'+(_m53Tab===0?' cdx-tab-sel':'')+'" data-m53tab="0">BUY</button><button type="button" class="cdx-tab'+(_m53Tab===1?' cdx-tab-sel':'')+'" data-m53tab="1">SELL ('+game.inv.length+')</button></div>';
+ const list=[];
+ if(_m53Tab===0){v.stock.forEach((id,i)=>{const it=mkById(id);if(!it)return;const price=shopPrice(it);const qty=shopLeft(i,it);list.push(_m53Entry(it,{buy:true,tag:price+'g',note:qty?'In stock: '+qty:'Sold out',attr:'data-shop="'+i+'"',btn:qty?'BUY '+price+'g':'SOLD OUT',off:!qty}));});
+  if(!list.length)h+='<p class="dim">The shelves are bare. He apologizes in a way that suggests it is your fault.</p>';}
+ else{game.inv.forEach((e,i)=>{const it=e.it;const sp=sellPrice(it);list.push(_m53Entry(it,{tag:'+'+sp+'g',note:'He pays: '+sp+' moolah',attr:'data-sell="'+i+'"',btn:'SELL +'+sp+'g',qty:e.qty}));});
+  if(!list.length)h+='<p class="dim">Your pockets are empty. Nothing to sell. Travel light, they said. You listened.</p>';}
+ h+='<div class="bc-grid cdx-bc m53-grid">'+list.map(_m14Card).join('')+'</div>';
+ if(_m53Tab===1&&list.length)h+='<p class="dim cx-hint">"I\'ll take it off your hands." He buys everything. Unidentified things are a mystery to him too, until the deal is done.</p>';
+ oShop.innerHTML=h;
+ oShop.querySelectorAll('canvas[data-cxspr]').forEach(cv=>{const spr=_m14Sprs[+cv.dataset.cxspr];if(!spr)return;const cx=cv.getContext('2d');cx.imageSmoothingEnabled=false;cx.clearRect(0,0,cv.width,cv.height);if(_uiSprImg(cx,spr,cv.width,cv.height))return;const s=Math.floor(cv.width/spr.length);for(let y=0;y<spr.length;y++){const row=spr[y];for(let x=0;x<row.length;x++){const col=PAL[row[x]];if(!col)continue;cx.fillStyle=col;cx.fillRect(x*s,y*s,s,s);}}});}
 
 /* ===== DAD'S COMPENDIUM (Codex) ===== */
 const CODEX_TABS=["Weapons","Armor","Charms","Consumables","Creatures","Bosses","Recipes"];
@@ -569,6 +593,8 @@ document.addEventListener("keydown",(e)=>{const k=e.key;
 
 /* ===== mouse (shop buy + slot unequip) ===== */
 oShop.addEventListener("click",(ev)=>{
+ const _tb=ev.target.closest("[data-m53tab]");if(_tb){_m53Tab=+_tb.dataset.m53tab;buildShop();return;}/* MOB-53: cards flip first; the back's button buys or sells */
+ const _cd=ev.target.closest(".bc-card[data-cx]");if(_cd){if(!_cd.classList.contains("flipped")){_cd.classList.add("flipped");return;}if(!ev.target.closest("[data-sell],[data-shop]")){_cd.classList.remove("flipped");return;}if(ev.target.closest(".m53-off")){log("Sold out. He checks the back. He returns with nothing and a long story about his supplier.","dim");syncUI();return;}}
  const sellRow=ev.target.closest("[data-sell]");
  if(sellRow){const idx=+sellRow.dataset.sell;const e=game.inv[idx];if(!e)return;const sp=sellPrice(e.it);openConfirm("Sell "+itemNameSlot(e.it)+" for "+sp+" moolah?"+kbTxt(" ([Y] confirm / [N] cancel)",""),()=>sellItem(idx));return;}
  const buyRow=ev.target.closest("[data-shop]");if(!buyRow)return;
