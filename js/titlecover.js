@@ -1,6 +1,7 @@
 /* ===== SCATTERED DAD ADVENTURES -- titlecover.js =====
    Mobile title screen (Concept A, "The Cover"): one full-screen comic cover with a random Dad,
    then New Adventure / Continue / Daily Challenge / The Dad Manual (MOB-43) / Bestiary / Graveyard buttons.
+   MOB-77 (2026-11-22): a taped-on BETA EDITION strip across the top; tapping it opens SEND FEEDBACK (doTitleAction "feedback").
    Active only on compact layouts (body.m-compact) while mode===State.TITLE; desktop keeps the
    canvas + HUD menu. Buttons call doTitleAction() (input.js), the same path as the HUD rows.
    Reuses the comic card styles from the Dad-select deck (.dc-face, .dc-mast, .dc-burst, ...).
@@ -20,7 +21,8 @@ function _tcSaveInfo(){try{if(typeof hasSave!=="function"||!hasSave())return nul
 function _tcDailyInfo(){let d="",st="not tried yet";try{d=_tcMonthDay(dailyDateStr());const r=todaysDailyRecord();if(r)st=(r.outcome==="win"?"WON":"best: Floor "+r.depth);}catch(e){}return d+" · "+st;}
 
 function _tcBuild(){if(_tcEl||typeof document==="undefined")return;const el=document.createElement("div");el.id="titlecov";
- el.innerHTML='<div class="dc-face dc-front tc-cover"><div class="dc-mast"><span class="dc-pub">DAD COMICS</span><span class="dc-issue tc-ver"></span></div>'
+ el.innerHTML='<button type="button" class="tc-beta" data-tc="feedback" aria-label="Beta edition: send feedback"><b>BETA EDITION:</b> Some assembly required. Several parts left over. Tap SEND FEEDBACK if Dad finds one.</button>'/* MOB-77 */
+  +'<div class="dc-face dc-front tc-cover"><div class="dc-mast"><span class="dc-pub">DAD COMICS</span><span class="dc-issue tc-ver"></span></div>'
   +'<div class="dc-art"><canvas class="dc-spr tc-spr" width="32" height="32"></canvas><div class="dc-burst tc-burst"><span></span></div></div>'
   +'<div class="tc-title"><em>SCATTERED</em>DAD ADVENTURES</div>'
   +'<div class="tc-cap"></div></div>'

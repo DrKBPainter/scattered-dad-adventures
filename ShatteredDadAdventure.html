@@ -275,6 +275,14 @@
   /* ===== Mobile title screen: comic cover (js/titlecover.js). Compact layouts only. ===== */
   #titlecov{display:none;position:fixed;inset:0;z-index:150;flex-direction:column;gap:10px;background:radial-gradient(ellipse at 50% 40%,#1d2233 0%,#0a0c12 70%);padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));--comic:Impact,Haettenschweiler,'Avenir Next Condensed','Arial Narrow Bold',sans-serif-condensed,'Arial Black',sans-serif;-webkit-user-select:none;user-select:none;}
   body.m-titlecov{overflow:hidden;} body.m-titlecov #titlecov{display:flex;}
+  /* MOB-77 (2026-11-22): taped-on BETA EDITION strip at the top of the cover; tap opens SEND FEEDBACK. */
+  .tc-beta{position:relative;flex:0 0 auto;display:block;width:calc(100% - 28px);max-width:532px;margin:4px auto 0;padding:4px 10px;min-height:36px;box-sizing:border-box;background:#fff4d6;color:#111;border:2px solid #000;box-shadow:2px 2px 0 #000;transform:rotate(-1deg);font-family:var(--comic);font-size:10px;line-height:1.25;text-transform:uppercase;letter-spacing:0;text-align:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+  .tc-beta b{color:#d0021b;font-weight:900;letter-spacing:1px;}
+  .tc-beta::before,.tc-beta::after{content:"";position:absolute;top:-7px;width:34px;height:14px;background:rgba(230,222,190,.82);border:1px solid rgba(0,0,0,.18);box-shadow:0 1px 0 rgba(0,0,0,.15);pointer-events:none;}
+  .tc-beta::before{left:-10px;transform:rotate(-24deg);} .tc-beta::after{right:-10px;transform:rotate(22deg);}
+  .tc-beta:active{transform:rotate(-1deg) translate(1px,1px);box-shadow:1px 1px 0 #000;}
+  body.m-titlecov.m-land #titlecov{grid-template-rows:auto minmax(0,1fr);}
+  body.m-land #titlecov .tc-beta{grid-column:1 / -1;margin:0 auto 4px;min-height:32px;padding:3px 12px;font-size:10.5px;max-width:none;width:calc(100% - 28px);}
   .tc-cover{position:relative;flex:1 1 auto;min-height:0;font-size:12px;width:100%;max-width:560px;margin:0 auto;}
   .tc-cover .dc-burst{width:34%;max-width:150px;} .tc-cover .dc-burst span{font-size:clamp(11px,3.3vw,17px);}
   .tc-cover .dc-spr{width:70%;height:94%;}
@@ -643,6 +651,13 @@ body.m-compact .m43-grid{grid-template-columns:1fr 1fr;gap:9px}
 #m41cmb .m41-acts .m41-btn{flex:1 1 0}
 #m41cmb .m41-pri{background:var(--gold);color:#1a1a1a;border-color:var(--gold)}
 #m41cmb .m41-pri:disabled{opacity:.45;cursor:default}
+/* MOB-41 follow-up (2026-11-22): result pop-up after CONFIRM; the big X shows only for a failed attempt. */
+#m41cmb .m41-done .m41-res{justify-content:flex-end;min-height:64px}
+#m41cmb .m41-bigx{font-size:64px;line-height:1;font-weight:900;color:#d0021b;padding-right:6px;text-shadow:2px 2px 0 rgba(0,0,0,.18)}
+#m41cmb .m41-win .m41-out{font-size:18px}
+#m41cmb .m41-log{margin-top:10px;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;font:12.5px/1.45 monospace}
+@media (max-height:520px){#m41cmb .m41-done{padding:8px 14px 6px}#m41cmb .m41-done .m41-line{min-height:34px}#m41cmb .m41-done .m41-topline{padding-bottom:2px;margin-bottom:4px}#m41cmb .m41-done .m41-box{min-height:36px;padding:2px 10px}#m41cmb .m41-done .m41-rule{margin:6px 0 4px}#m41cmb .m41-done .m41-res{min-height:44px}#m41cmb .m41-done .m41-bigx{font-size:44px}#m41cmb .m41-done~.m41-log{margin-top:6px;padding:5px 10px}#m41cmb .m41-done~.m41-acts{margin-top:8px}}
+#m41cmb .m41-log .l-gold{color:var(--gold)} #m41cmb .m41-log .l-red{color:#ff8a7a} #m41cmb .m41-log .l-grn{color:var(--grn)} #m41cmb .m41-log .l-dim{color:var(--dim)} #m41cmb .m41-log .l-blu{color:var(--blu)}
 #m41cmb .dim{color:var(--dim)}
 #m41cmb .m41-keys{font-size:11px;margin:8px 0 0}
 #m41cmb .m41-note{color:#f0c86a;font-style:italic;transform:rotate(-1deg);margin:10px 2px 0;font-size:12px}
@@ -738,6 +753,7 @@ body.m-compact .m18-howto button{min-height:44px}
     <button type="button" id="btnPad" class="m-only" data-act="pad" title="Show or hide the on-screen D-pad">D-PAD</button>
     <button type="button" id="btnMute" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
     <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
+    <button type="button" data-act="music" title="Turn off background music (L)">MUSIC</button>
     <button type="button" class="ally-only" data-act="stance" title="Companion stance: aggressive, neutral or passive (O)">COMPANION</button>
     <button type="button" data-act="quit" title="Save &amp; quit to main menu (Q)">MENU</button>
     <button type="button" class="m-only" data-act="attrs" title="Your stats and what each one does">STATS</button>
@@ -771,6 +787,7 @@ body.m-compact .m18-howto button{min-height:44px}
         <button type="button" data-act="pad" title="Show or hide the on-screen D-pad">D-PAD</button>
         <button type="button" data-act="mute" title="Mute / unmute sound (U)">SOUND</button>
         <button type="button" data-act="motion" title="Turn off motion effects (screen shake, sliding, damage numbers)">MOTION</button>
+        <button type="button" data-act="music" title="Turn off background music (L)">MUSIC</button>
         <button type="button" data-act="backup" title="Back up or restore your saves">BACKUP</button>
         <button type="button" data-act="share" title="Share the game: QR code and link">SHARE</button>
         <button type="button" data-act="feedback" title="Report a bug or idea (opens a short form)">FEEDBACK</button>

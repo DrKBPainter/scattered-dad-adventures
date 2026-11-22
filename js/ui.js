@@ -14,11 +14,12 @@ function statusChip(id){const S=STATUSES[id];if(!S)return "";const shakes=(id===
 /* MOB-44 (2026-11-13): on compact (phone) layouts strip keyboard-shortcut tags such as [ENTER], [Y], [1], [Esc]. */
 function kbStrip(h){return (typeof COMPACT!=="undefined"&&COMPACT)?String(h).replace(/\[(?:[A-Z]|[0-9]+|ENTER|Esc)\]\s?/g,""):h;}
 function syncUI(){
+ if(typeof musicUpdate==="function")musicUpdate();/* MOB-78: background music follows the run state (js/audio.js) */
  try{document.body.classList.toggle("has-ally",!!(mode===State.PLAY&&game&&game.ally&&game.ally.following));}catch(e){}/* MOB-28: COMPANION button only with a following companion */
  if(typeof scanPick!=="undefined"&&scanPick&&mode!==State.PLAY)setScanPick(false);// MOB-36
  if(typeof _m6SetMode==="function")_m6SetMode(mode===State.PLAY);
  if(mode===State.PLAY&&game&&!_m7Hinted&&typeof COMPACT!=="undefined"&&COMPACT){_m7Hinted=true;log("Field manual: swipe the map to step, tap a tile to walk there, tap your Dad (or WAIT) to wait, press and hold to inspect, tap a status chip to read it. MORE opens the junk drawer: map, Dadvice, codex, traps, zoom, sound. Taped inside the cover, in crayon: \"you are the best dad.\"","dim");}
- if(mode===State.TITLE){const n=Object.keys(discovered).length;const gn=loadGraveyard().length;const dRec=todaysDailyRecord();const dStat=dRec?('best: <b class="l-gold">'+(dRec.outcome==="win"?"WON":"Floor "+dRec.depth)+'</b> as '+dRec.clsName+' ('+dRec.attempts+' attempt'+(dRec.attempts===1?"":"s")+')'):'not yet attempted';elStat.innerHTML='<b style="font-size:16px">SCATTERED DAD ADVENTURES</b> <span class="dim">v'+GAME_VERSION+'</span>';elStatuses.innerHTML="";elLog.innerHTML=kbStrip('<div class="ti-opt" data-title="new">[ENTER] New Adventure</div>'+(hasSave()?'<div class="ti-opt" data-title="continue">[C] Continue Run</div>':'')+'<div class="ti-opt" data-title="daily">[D] Daily Challenge ('+dailyDateStr()+') &middot; <span class="l-dim">'+dStat+'</span></div>'+'<div><span class="ti-opt" data-title="help">[H] The Dad Manual</span> &nbsp; <span class="ti-opt" data-title="best">[B] Discovered Creatures ('+n+'/'+(CREATURES.length+BOSSES.length)+')</span> &nbsp; <span class="ti-opt" data-title="grave">[G] Graveyard ('+gn+')</span> &nbsp; <span class="ti-opt" data-title="backup">[S] Save Backup</span> &nbsp; <span class="ti-opt" data-title="share">[Q] Share the Game</span> &nbsp; <span class="ti-opt" data-title="feedback">[F] Send Feedback</span></div>');}
+ if(mode===State.TITLE){const n=Object.keys(discovered).length;const gn=loadGraveyard().length;const dRec=todaysDailyRecord();const dStat=dRec?('best: <b class="l-gold">'+(dRec.outcome==="win"?"WON":"Floor "+dRec.depth)+'</b> as '+dRec.clsName+' ('+dRec.attempts+' attempt'+(dRec.attempts===1?"":"s")+')'):'not yet attempted';elStat.innerHTML='<b style="font-size:16px">SCATTERED DAD ADVENTURES</b> <span class="dim">v'+GAME_VERSION+'</span>';elStatuses.innerHTML="";elLog.innerHTML=kbStrip('<div class="ti-opt" data-title="new">[ENTER] New Adventure</div>'+(hasSave()?'<div class="ti-opt" data-title="continue">[C] Continue Run</div>':'')+'<div class="ti-opt" data-title="daily">[D] Daily Challenge ('+dailyDateStr()+') &middot; <span class="l-dim">'+dStat+'</span></div>'+'<div><span class="ti-opt" data-title="help">[H] The Dad Manual</span> &nbsp; <span class="ti-opt" data-title="best">[B] Discovered Creatures ('+n+'/'+(CREATURES.length+BOSSES.length)+')</span> &nbsp; <span class="ti-opt" data-title="grave">[G] Graveyard ('+gn+')</span> &nbsp; <span class="ti-opt" data-title="backup">[S] Save Backup</span> &nbsp; <span class="ti-opt" data-title="share">[Q] Share the Game</span> &nbsp; <span class="ti-opt" data-title="feedback">[F] Send Feedback</span></div>'+'<div class="ti-opt l-dim" data-title="feedback" style="margin-top:6px">BETA EDITION: Some assembly required. Several parts left over. Press [F] (Send Feedback) if Dad finds one.</div>'/* MOB-77 */);}
  else if(mode===State.CLASS){elStat.innerHTML='<b>CHOOSE YOUR DAD'+(pendingDaily?' &mdash; DAILY CHALLENGE':'')+'</b> <span class="dim">'+((typeof COMPACT!=="undefined"&&COMPACT)?'(tap a Dad to choose &middot; tap the arrows to change skin)':'(UP/DOWN pick Dad, [ / ] pick skin, ENTER)')+'</span>';const _sk=(typeof SKIN_SWATCHES!=="undefined")?SKIN_SWATCHES[((skinCursor%SKIN_SWATCHES.length)+SKIN_SWATCHES.length)%SKIN_SWATCHES.length]:null;elStatuses.innerHTML=_sk?('<div>Skin Tone: <b>'+_sk.name+'</b> <span class="ti-opt" data-skin="next" title="Click to cycle skin tone" style="display:inline-block;width:12px;height:12px;vertical-align:middle;border:1px solid #000;background:'+_sk.f+'"></span> <span class="l-dim"><span class="ti-opt" data-skin="prev">&larr; [</span> &nbsp; <span class="ti-opt" data-skin="next">] &rarr;</span></span></div>'):"";let h="";CLASSES.forEach((c,i)=>{h+='<div class="ti-opt '+(i===classCursor?"l-gold":"")+'" data-class="'+i+'">'+(i===classCursor?"&#9654; ":"&nbsp;&nbsp; ")+'<b>'+c.name+'</b> &mdash; HP'+c.hp+' STR'+c.str+' DEF'+c.def+' PER'+c.per+' WIS'+c.wis+' &middot; <span class="l-dim">'+c.blurb+'</span></div>';});elLog.innerHTML=h;}
  else if(mode===State.DIFF){elStat.innerHTML='<b>CHOOSE DIFFICULTY'+(pendingDaily?' &mdash; DAILY CHALLENGE':'')+'</b> <span class="dim">'+kbTxt('(UP/DOWN, ENTER &middot; Esc = back)','(tap a difficulty)')+'</span>';elStatuses.innerHTML='<span class="dim">Chosen dad: <b class="l-gold">'+(pendingClass?pendingClass.name:'')+'</b></span>';let h='';DIFFICULTY_MODES.forEach((d,i)=>{h+='<div class="ti-opt '+(i===diffCursor?'l-gold':'')+'" data-diff="'+i+'">'+(i===diffCursor?'&#9654; ':'&nbsp;&nbsp; ')+'<b>'+d.name+'</b> &mdash; <span class="l-dim">'+d.blurb+'</span></div>';});h+='<div class="ti-opt l-dim" data-diff="back" style="margin-top:6px">&larr; Back to Dad select</div>';elLog.innerHTML=h;}
  else if(mode===State.PLAY){elStat.innerHTML=(game.ascent?'<span class="l-gold">[ASCENT] </span>':'')+(game.isDaily?'<span class="l-gold">[DAILY '+(game.dailyDate||"")+']</span> ':'')+'<b>'+game.cls.name+'</b> Lv'+game.level+' '+bar("hp",game.hp,game.maxhp)+' <span class="l-red">'+Math.max(0,game.hp)+'/'+game.maxhp+'</span> &nbsp;Patience '+bar("mox",game.moxie,game.maxmoxie)+' '+game.moxie+'/'+game.maxmoxie+' &nbsp;XP '+bar("xp",game.xp,game.xpNext)+' &nbsp;<span class="l-blu">Floor '+game.depth+'/'+MAXDEPTH+'</span> &nbsp;<b>'+game.gold+' moolah</b> '+((typeof COMPACT!=="undefined"&&COMPACT)?'':'&nbsp;STR '+game.str+' ATK '+effAtk()+' DEF '+effDef()+' PER '+effPer()+' WIS '+effWis()+' ')+'&nbsp;'+_survLbl("Hunger",100*game.hunger/(game.hungerCap||100))+' '+meter("hun",100*game.hunger/(game.hungerCap||100))+' '+_survLbl("Thirst",100*game.hydra/(game.hydraCap||100))+' '+meter("thi",100*game.hydra/(game.hydraCap||100));
@@ -79,7 +80,7 @@ function syncActionBar(){const ab=document.getElementById("actionbar");if(!ab)re
    stay in the MORE drawer. Desktop: the m-pri class and --mo order only apply under body.m-compact, so the full row is unchanged. */
 const BAR_KEY="sda_bar_v1";
 const BAR_DEFAULT=["inv","scan","wait","throw","dad","map","place"];
-const BAR_POOL=[["inv","BAG"],["scan","SCAN"],["wait","WAIT"],["throw","THROW"],["dad","DADVICE"],["map","MAP"],["place","PLACE TRAP"],["attrs","STATS"],["codex","CODEX"],["instr","MANUAL"],["zoomin","ZOOM +"],["zoomout","ZOOM \u2212"],["pad","D-PAD"],["mute","SOUND"],["motion","MOTION"],["backup","BACKUP"],["share","SHARE"],["feedback","FEEDBACK"],["quit","MENU"]];
+const BAR_POOL=[["inv","BAG"],["scan","SCAN"],["wait","WAIT"],["throw","THROW"],["dad","DADVICE"],["map","MAP"],["place","PLACE TRAP"],["attrs","STATS"],["codex","CODEX"],["instr","MANUAL"],["zoomin","ZOOM +"],["zoomout","ZOOM \u2212"],["pad","D-PAD"],["mute","SOUND"],["motion","MOTION"],["music","MUSIC"],["backup","BACKUP"],["share","SHARE"],["feedback","FEEDBACK"],["quit","MENU"]];
 var _barCfgOpen=false,_barCfgSel=0,_barCfgChanged=false;
 function barLayout(){let a=null;try{a=JSON.parse(localStorage.getItem(BAR_KEY)||"null");}catch(e){a=null;}
  if(!Array.isArray(a)||(a.length!==7&&a.length!==3))return BAR_DEFAULT.slice();/* MOB-46: 3 actions = one row (3 + MORE), 7 = two rows */const ok=BAR_POOL.map(p=>p[0]),seen={};
@@ -202,7 +203,7 @@ function _m43Raw(){const cp=(typeof COMPACT!=="undefined"&&COMPACT),K=(d,m)=>cp?
  +'<p>Descend '+MAXDEPTH+' floors. Recover the Remote. Fix the thermostat. Return a hero. (They will ask you to clean the gutters. This is already scheduled.)</p>'
  +(cp?_m44Touch():(''
  +'<h2>Controls</h2><p>On the Dad-select screen, <span class="key">[</span> and <span class="key">]</span> cycle your skin tone (the default is a proud suburban orange no flooring dares to wear). <span class="key">Arrows/WASD</span> move (bump to attack). <span class="key">7/9/1/3 or Home/PgUp/End/PgDn</span> move diagonally. <span class="key">Space</span> wait. <span class="key">Click</span> a tile to inspect; click adjacent to move/attack.</p>'
- +'<p><span class="key">I</span> Inventory &middot; <span class="key">K</span> Book of Dadvice &middot; <span class="key">X</span> Scan (radius perception sweep) &middot; <span class="key">T</span> Throw &middot; <span class="key">M</span> Map &middot; <span class="key">H</span> Help &middot; <span class="key">B</span> Bestiary &middot; <span class="key">Q</span> Quit to main menu (run saved) &middot; <span class="key">U</span> Mute/unmute sound &middot; <span class="key">+/=</span> Zoom in &middot; <span class="key">-</span> Zoom out (7 steps: 100%–250%) &middot; <span class="key">Esc</span> close.</p>'
+ +'<p><span class="key">I</span> Inventory &middot; <span class="key">K</span> Book of Dadvice &middot; <span class="key">X</span> Scan (radius perception sweep) &middot; <span class="key">T</span> Throw &middot; <span class="key">M</span> Map &middot; <span class="key">H</span> Help &middot; <span class="key">B</span> Bestiary &middot; <span class="key">Q</span> Quit to main menu (run saved) &middot; <span class="key">U</span> Mute/unmute sound &middot; <span class="key">L</span> Music on/off &middot; <span class="key">+/=</span> Zoom in &middot; <span class="key">-</span> Zoom out (7 steps: 100%–250%) &middot; <span class="key">Esc</span> close.</p>'
  +'<h2>Mouse-Only Play</h2><p>Every action is reachable with the mouse alone &mdash; no keyboard required. Use the on-screen <b>D-pad</b> to move/wait, and the action-bar buttons under it: <b>SCAN / ZOOM +/&minus; / THROW / PLACE</b> to scan, zoom, throw an item, or place a trap; <b>BAG / DADVICE / MAP / BESTIARY / CODEX / MANUAL</b> to open each panel; and <b>MENU</b> to save-and-quit. Any open panel is dismissed with the &#10005; <b>Close</b> button (top-right). Click any title, class, difficulty, skin-tone, menu, or Yes/No option directly. To throw or place, press <b>THROW</b> or <b>PLACE</b> (or the Throw/Place button on a bag item), then click the target tile &mdash; a throw travels toward the tile you click, a trap drops on the adjacent tile you click, and <b>CANCEL</b> aborts. Cast Dadisms with the <b>Cast</b> button in the Book of Dadvice. Keyboard shortcuts still work if you prefer them.</p>'
  ))
  +'<h2>Sight &amp; Scanning</h2><p>You only see what is in line of sight &mdash; walls and closed doors block your view. '+K('<span class="key">Scan (X)</span> sweeps a radius that grows with Perception, marking traps, revealing hidden spaces, and noting items. Inspecting things also grows Perception over time. Inspect a suspicious wall to find <span class="key">hidden spaces</span>.','Tap <b>SCAN</b> twice to sweep a radius that grows with Perception, marking traps, revealing hidden spaces, and noting items. <b>SCAN</b> then a tap on one tile tells you what is there. Looking closely at things also grows Perception over time; a suspicious wall deserves a look for <span class="key">hidden spaces</span>.')+'</p>'
@@ -569,6 +570,7 @@ document.addEventListener("keydown",(e)=>{const k=e.key;
  if(mode===State.PLAY&&(k==="i"||k==="I")){ovInv=!ovInv;if(ovInv){closeOverlays();ovInv=true;invSel=Math.min(invSel,Math.max(0,game.inv.length-1));buildInv();}syncOverlays();e.preventDefault();return;}
  if(mode===State.PLAY&&(k==="k"||k==="K")){ovDad=!ovDad;if(ovDad){closeOverlays();ovDad=true;dadSel=0;buildDad();}syncOverlays();e.preventDefault();return;}
  if(mode===State.PLAY&&(k==="q"||k==="Q")){quitToMenu();e.preventDefault();return;}
+ if(k==="l"||k==="L"){if(typeof musicToggle==="function"){const on=musicToggle();if(mode===State.PLAY)log(on?"Music on. Somewhere, a tiny orchestra resumes its vigil. [L] to toggle.":"Music off. The tiny orchestra packs up without complaint. [L] to toggle.","dim");}e.preventDefault();return;}/* MOB-78 */
  if(k==="u"||k==="U"){if(typeof sfxToggleMute==="function"){sfxToggleMute();if(typeof syncMuteBtn==="function")syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". [U] to toggle.","dim");}e.preventDefault();return;}
  if(k==="Escape"){closeOverlays();if(inspectOn)toggleInspect();return;}
  if(ovInv){invAction(k);e.preventDefault();return;}
@@ -719,8 +721,11 @@ if(typeof document!=="undefined"&&document.addEventListener){
    only items that might combine with the top item (craftPartners(), MOB-40; tier 2 partners only after their video;
    Sticky Notes for unidentified things). The result line shows a known recipe's result, or "???" for anything not yet
    learned (a pair that makes nothing also shows "???": MOB-40 S3 keeps those unrecorded for the player).
-   CONFIRM calls tryCraft(), so every crafting rule (curses, class locks, full bag, MOB-57) is unchanged. */
-var _m41={open:false,top:null,pick:null,list:false};
+   CONFIRM calls tryCraft(), so every crafting rule (curses, class locks, full bag, MOB-57) is unchanged.
+   MOB-41 follow-up (2026-11-22, KBP + field report 11/22): after CONFIRM the card stays up as a result pop-up that shows
+   the outcome and the log lines of that attempt (no need to close the bag to read the log). The big X appears ONLY here,
+   when the attempt failed; before CONFIRM an unlearned or dud pair still shows "???". */
+var _m41={open:false,top:null,pick:null,list:false,res:null};
 function _m41Ref(it){if(!it)return null;for(const e of game.inv)if(e.it===it)return{src:"inv",e};for(const k in game.equip)if(game.equip[k]===it)return{src:"equip",slot:k};return null;}
 function _m41Unid(it){return !!it&&((["weapon","armor","charm"].includes(it.kind)&&it.idd===false)||(it.kind==="consumable"&&!consKnown(it)));}
 function combinePartners(top){const it=refItem(top);if(!it)return[];let L=[];
@@ -738,6 +743,7 @@ const M41_NOTES=["Index card, Dad's handwriting: “Measure twice. Combine once.
  "Crayon, back of a flash card: “You are good at fixing stuff. Most of the time. We still like the wobbly shelf.” — the kids",
  "Pencil, very small: “Show your work.” — Mrs. Kowalski, fourth grade math, still watching"];
 function _m41Render(){const s=document.getElementById("m41cmb");if(!s)return;const b=document.getElementById("m41body");if(!b)return;
+ if(_m41.res){_m41RenderResult(b);return;}
  const top=refItem(_m41.top);if(!top){closeCombineCard();return;}
  if(_m41.pick&&!refItem(_m41.pick))_m41.pick=null;
  const P=combinePartners(_m41.top);const pk=_m41.pick?refItem(_m41.pick):null;const res=pk?combineResult(_m41.top,_m41.pick):null;
@@ -758,18 +764,40 @@ function openCombineCard(ref){const s=document.getElementById("m41cmb");const it
  if(typeof combinePartners==="function"&&!_m41Bound)_m41Bind(s);
  _m41.open=true;_m41.top=ref;_m41.pick=null;_m41.list=false;_m41Render();s.classList.add("show");
  try{const bx=s.querySelector('[data-m41="box"]');if(bx)bx.focus({preventScroll:true});}catch(e){}}
-function closeCombineCard(){const s=document.getElementById("m41cmb");_m41.open=false;_m41.top=_m41.pick=null;_m41.list=false;if(!s)return;s.classList.remove("show");try{const f=document.activeElement;if(f&&s.contains(f)&&f.blur)f.blur();}catch(e){}if(typeof markDirty==="function")markDirty();}
+function closeCombineCard(){const s=document.getElementById("m41cmb");_m41.open=false;_m41.top=_m41.pick=null;_m41.list=false;_m41.res=null;if(!s)return;s.classList.remove("show");try{const f=document.activeElement;if(f&&s.contains(f)&&f.blur)f.blur();}catch(e){}if(typeof markDirty==="function")markDirty();}
 function _m41Pick(i){const P=combinePartners(_m41.top);if(!P[i])return;_m41.pick=P[i].ref;_m41.list=false;_m41Render();try{const ok=document.querySelector('#m41cmb [data-m41="ok"]');if(ok)ok.focus({preventScroll:true});}catch(e){}}
-function _m41Confirm(){if(!_m41.open||!_m41.top||!_m41.pick)return;const a=_m41.top,b=_m41.pick;closeCombineCard();tryCraft(a,b);combineMark=null;
- invSel=Math.min(invSel,Math.max(0,game.inv.length-1));if(typeof _m9Det!=="undefined"){_m9Det=false;_m9Slot=null;}if(typeof ovInv!=="undefined"&&ovInv)buildInv();syncUI();}
+function _m41Confirm(){if(!_m41.open||_m41.res||!_m41.top||!_m41.pick)return;const a=_m41.top,b=_m41.pick;const iA=refItem(a),iB=refItem(b);if(!iA||!iB)return;
+ const res={aIt:iA,bIt:iB,aName:itemDisplayName(iA),bName:itemDisplayName(iB),ok:false,made:null,name:"",lines:[]};
+ const before=messages.slice();tryCraft(a,b);combineMark=null;
+ res.lines=messages.filter(m=>!before.includes(m));
+ const cr=res.lines.find(m=>/^CRAFTED: /.test(m.t)),idl=res.lines.find(m=>/^You stick the note/.test(m.t));
+ if(cr){res.ok=true;res.name=cr.t.replace(/^CRAFTED: /,"").replace(/!$/,"");const all=game.inv.map(e=>e.it).concat(Object.values(game.equip||{}));res.made=all.filter(x=>x&&x.crafted&&x.name===res.name).pop()||null;}
+ else if(idl){res.ok=true;res.name="Identified";}
+ if(!res.lines.length)res.lines=[{t:"Nothing happens. Not even a noise. Somehow that is worse.",c:"dim"}];
+ invSel=Math.min(invSel,Math.max(0,game.inv.length-1));if(typeof _m9Det!=="undefined"){_m9Det=false;_m9Slot=null;}if(typeof ovInv!=="undefined"&&ovInv)buildInv();syncUI();
+ const s=document.getElementById("m41cmb");if(!s){closeCombineCard();return;}
+ _m41.res=res;_m41.list=false;_m41.open=true;_m41Render();s.classList.add("show");
+ try{const ok=s.querySelector('[data-m41="done"]');if(ok){ok.focus({preventScroll:true});ok.scrollIntoView({block:"nearest"});}}catch(e){}}
+/* MOB-41 follow-up: the result pop-up (same flash card, answered). Failed attempt = big X; success = what was made. */
+function _m41RenderResult(b){const r=_m41.res;
+ let h='<div class="m41-card m41-done'+(r.ok?' m41-win':' m41-fail')+'"><div class="m41-line m41-topline"><canvas class="m41-ic" data-ic="ra" width="32" height="32"></canvas><span class="m41-nm">'+esc(r.aName)+'</span></div>'
+  +'<div class="m41-line m41-opline"><span class="m41-op" aria-hidden="true">&times;</span><div class="m41-box full"><canvas class="m41-ic" data-ic="rb" width="32" height="32"></canvas><span class="m41-nm">'+esc(r.bName)+'</span></div></div>'
+  +'<div class="m41-rule"></div><div class="m41-line m41-res" role="status">'
+  +(r.ok?((r.made?'<canvas class="m41-ic" data-ic="rm" width="32" height="32"></canvas>':'')+'<span class="m41-out">'+esc(r.name)+'</span>')
+       :'<span class="m41-bigx" role="img" aria-label="Did not combine">&#10005;</span>')+'</div></div>'
+  +'<div class="m41-log">'+r.lines.map(m=>'<div class="l-'+m.c+'">'+m.t+'</div>').join("")+'</div>'
+  +'<div class="m41-acts"><button type="button" class="m41-btn m41-pri" data-m41="done">OK</button></div>'
+  +(typeof COMPACT!=="undefined"&&COMPACT?'':'<p class="dim m41-keys">[Enter] or [Esc] close</p>');
+ b.innerHTML=h;_m41Icon(b.querySelector('[data-ic="ra"]'),r.aIt);_m41Icon(b.querySelector('[data-ic="rb"]'),r.bIt);if(r.made)_m41Icon(b.querySelector('[data-ic="rm"]'),r.made);}
 var _m41Bound=false;
 function _m41Bind(s){_m41Bound=true;
  s.addEventListener("click",ev=>{if(ev.target===s){closeCombineCard();return;}
   const o=ev.target.closest("[data-m41p]");if(o){_m41Pick(+o.dataset.m41p);return;}
   const b=ev.target.closest("[data-m41]");if(!b)return;const a=b.dataset.m41;
-  if(a==="close")closeCombineCard();else if(a==="box"){_m41.list=!_m41.list;_m41Render();}else if(a==="ok")_m41Confirm();});}
+  if(a==="close"||a==="done")closeCombineCard();else if(_m41.res)return;else if(a==="box"){_m41.list=!_m41.list;_m41Render();}else if(a==="ok")_m41Confirm();});}
 /* While the card is open it takes the keys (game keys must not move Dad behind it). */
 if(typeof document!=="undefined"&&document.addEventListener)document.addEventListener("keydown",ev=>{if(!_m41.open)return;const k=ev.key;
+ if(_m41.res){if(k==="Escape"||k==="Enter"||k===" ")closeCombineCard();if(k!=="Tab"){ev.stopImmediatePropagation();ev.preventDefault();}return;}
  if(k==="Escape"){if(_m41.list){_m41.list=false;_m41Render();}else closeCombineCard();}
  else if(/^[1-9]$/.test(k)){if(!_m41.list){_m41.list=true;_m41Render();}else _m41Pick(parseInt(k,10)-1);}
  else if(k==="Enter"||k===" "){const t=ev.target;if(t&&t.closest&&t.closest("#m41cmb button")){ev.stopImmediatePropagation();/* the focused button clicks itself (default action kept) */return;}if(_m41.pick)_m41Confirm();else{_m41.list=!_m41.list;_m41Render();}}

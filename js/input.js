@@ -146,6 +146,8 @@ function barAction(a){
  if(a==="mute"){if(typeof sfxToggleMute==="function"){sfxToggleMute();syncMuteBtn();if(mode===State.PLAY)log("Sound "+(SFX_MUTED?"muted":"unmuted")+". Click SOUND or press [U] to toggle.","dim");}return;}
  // M15: MOTION (screen shake, glides, damage numbers, walk frames) is a global preference like SOUND; the drawer stays open.
  if(a==="motion"){if(typeof toggleJuiceMotion==="function"){const on=toggleJuiceMotion();if(mode===State.PLAY)log(on?"Motion effects on. The world resumes its theatrics.":"Motion effects off. The world holds still, as you have always asked it to.","dim");}return;}
+ // MOB-78: MUSIC is a global preference like SOUND and MOTION; the drawer stays open.
+ if(a==="music"){if(typeof musicToggle==="function"){const on=musicToggle();if(mode===State.PLAY)log(on?"Music on. Somewhere, a tiny orchestra resumes its vigil.":"Music off. The tiny orchestra packs up without complaint.","dim");}return;}
  if(mode!==State.PLAY||pendingConfirm||pendingMenu||aiming||placing||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen)return;
  if(a==="more"){setMoreOpen(!_m8More);return;}
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
@@ -186,7 +188,7 @@ if(oDpad)oDpad.addEventListener("click",(ev)=>{const btn=ev.target.closest("[dat
 /* MOB-29: iOS Safari ignores user-scalable=no; block its page pinch so only the map zooms (canvas pinch = doZoom, MOB-04). */
 try{document.addEventListener("gesturestart",e=>{e.preventDefault();},{passive:false});}catch(e){}
 /* ===== boot ===== */
-fitCanvas();render();syncUI();if(typeof syncMuteBtn==="function")syncMuteBtn();if(typeof syncMotionBtn==="function")syncMotionBtn();
+fitCanvas();render();syncUI();if(typeof syncMuteBtn==="function")syncMuteBtn();if(typeof syncMotionBtn==="function")syncMotionBtn();if(typeof syncMusicBtn==="function")syncMusicBtn();/* MOB-78 */
 /* MOB-08: target box. Horizontal swipe (>= M7_SWIPE px) = choose the next (left) or previous (right) enemy;
    a tap on an arrow does the same; any other tap attacks the chosen enemy (tgtAttack in ui.js). The box sits over
    the canvas but outside it, so the map's tap/swipe/pinch handlers never see these touches. */

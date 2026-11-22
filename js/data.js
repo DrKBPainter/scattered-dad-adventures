@@ -1345,3 +1345,24 @@ const KEY_HOLDERS = {
  "The Neighborhood":{base:"dog_walker",name:"The Dog Walker (Seven Leashes, One Key)",flavor:"Walks seven dogs and holds a key to every house on the street. Trusted by all. Stopped by none.",spawnMsg:"The Dog Walker (Seven Leashes, One Key) is out there with your key, seven dogs and a schedule that does not include you.",defeatMsg:"Seven leashes go seven directions. The key, at last, goes in one: yours."},
  "The HOA Dominion":{base:"lingering_board_member",name:"The Board Member Who Has the Clubhouse Key",flavor:"Was asked to return the clubhouse key in 2011. Has attended every meeting since to explain why he has not.",spawnMsg:"The key is held by The Board Member Who Has the Clubhouse Key. A motion to have him return it is on the agenda. It has been on the agenda since 2011.",defeatMsg:"Motion carried. The Board Member surrenders the clubhouse key, under protest, to be noted in the minutes."}
 };
+
+/* MOB-78 (Music 1 of 3, from MOB-51): background music table. One entry per biome (slug = TILE_BIOMES order), three roles:
+   main  = plays on the biome's floors;  boss = plays while that biome's main boss (floors 10, 20 ... 100) is alive;
+   rare  = replaces main on about 1 floor in 10 (seeded, see musicWanted in js/audio.js).
+   Titles are the MOB-47 list (Kevin MacLeod, incompetech.com, CC BY 4.0); MOB-79 confirms each title and license page.
+   have:false = the loop file is not in the project yet: the player never requests it, so nothing plays and nothing errors.
+   MOB-80 cuts the loops to assets/music/<slug>-<role>.mp3 and sets have:true. */
+const MUSIC_AUTHOR="Kevin MacLeod (incompetech.com)",MUSIC_LICENSE="Creative Commons: By Attribution 4.0";
+const MUSIC_RARE_CHANCE=0.1;
+const MUSIC={
+ house: {biome:"The House",            main:{title:"Monkeys Spinning Monkeys",file:"assets/music/house-main.mp3",have:false}, boss:{title:"Fluffing a Duck",file:"assets/music/house-boss.mp3",have:false}, rare:{title:"Carefree",file:"assets/music/house-rare.mp3",have:false}},
+ lowe:  {biome:"Lowe & Behold",        main:{title:"Sneaky Snitch",file:"assets/music/lowe-main.mp3",have:false}, boss:{title:"Scheming Weasel",file:"assets/music/lowe-boss.mp3",have:false}, rare:{title:"Investigations",file:"assets/music/lowe-rare.mp3",have:false}},
+ park:  {biome:"The Park",             main:{title:"Wallpaper",file:"assets/music/park-main.mp3",have:false}, boss:{title:"Poofy Reel",file:"assets/music/park-boss.mp3",have:false}, rare:{title:"Bushwick Tarantella",file:"assets/music/park-rare.mp3",have:false}},
+ vastco:{biome:"Vastco",               main:{title:"Local Forecast - Elevator",file:"assets/music/vastco-main.mp3",have:false}, boss:{title:"Lobby Time",file:"assets/music/vastco-boss.mp3",have:false}, rare:{title:"Hustle",file:"assets/music/vastco-rare.mp3",have:false}},
+ soccer:{biome:"Soccer Complex",       main:{title:"Pixelland",file:"assets/music/soccer-main.mp3",have:false}, boss:{title:"Itty Bitty 8 Bit",file:"assets/music/soccer-boss.mp3",have:false}, rare:{title:"Run Amok",file:"assets/music/soccer-rare.mp3",have:false}},
+ school:{biome:"The School",           main:{title:"Quirky Dog",file:"assets/music/school-main.mp3",have:false}, boss:{title:"Spy Glass",file:"assets/music/school-boss.mp3",have:false}, rare:{title:"Thinking Music",file:"assets/music/school-rare.mp3",have:false}},
+ resto: {biome:"The Family Restaurant",main:{title:"Bossa Antigua",file:"assets/music/resto-main.mp3",have:false}, boss:{title:"Life of Riley",file:"assets/music/resto-boss.mp3",have:false}, rare:{title:"Easy Lemon",file:"assets/music/resto-rare.mp3",have:false}},
+ idkea: {biome:"IDKEA",                main:{title:"Fuzzball Parade",file:"assets/music/idkea-main.mp3",have:false}, boss:{title:"Hidden Agenda",file:"assets/music/idkea-boss.mp3",have:false}, rare:{title:"Sneaky Adventure",file:"assets/music/idkea-rare.mp3",have:false}},
+ hood:  {biome:"The Neighborhood",     main:{title:"Merry Go",file:"assets/music/hood-main.mp3",have:false}, boss:{title:"Daily Beetle",file:"assets/music/hood-boss.mp3",have:false}, rare:{title:"Breaktime",file:"assets/music/hood-rare.mp3",have:false}},
+ hoa:   {biome:"The HOA Dominion",     main:{title:"Volatile Reaction",file:"assets/music/hoa-main.mp3",have:false}, boss:{title:"Five Armies",file:"assets/music/hoa-boss.mp3",have:false}, rare:{title:"Heroic Age",file:"assets/music/hoa-rare.mp3",have:false}}
+};
