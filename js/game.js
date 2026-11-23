@@ -709,7 +709,15 @@ function _craftWear(it,freed){const sl=_craftSlotFor(it);if(!sl||!freed||!freed.
  log("You put the "+it.name+" straight on, before anyone can ask what it is.","grn");return true;}
 function _craftKeep(it){if(addItem(it))return true;let dx=game.px,dy=game.py;if(onStairs(dx,dy)){for(const[ox,oy]of[[0,1],[1,0],[0,-1],[-1,0]]){const nx=dx+ox,ny=dy+oy;if(nx>=0&&ny>=0&&nx<MAP_W&&ny<MAP_H&&game.floor.grid[ny][nx]===0&&!onStairs(nx,ny)){dx=nx;dy=ny;break;}}}
  game.loot.push({x:dx,y:dy,item:it});log("No room in the bag, so the "+it.name+" goes on the floor at your feet. It is fine. Floors are a kind of shelf.","gold");return false;}
+/* MOB-90 (2026-11-23): three attempts in a row to combine items that do not combine (no other action between them) always
+   blow up: 10% of max HP (at least 1), never below 1 HP. Transient (not saved). Any other tryCraft outcome resets the count;
+   any action that spends a turn (game.turn changes) does too. */
+var _m90Duds=0,_m90Turn=-1,_m90G=null;
+function _m90Blowup(){const dmg=Math.max(1,Math.round((game.maxhp||1)*0.10));const real=Math.min(dmg,Math.max(0,game.hp-1));game.hp-=real;
+ if(typeof sfxOof==="function")sfxOof();if(game.fx)game.fx.push({kind:"blast",cells:[{x:game.px,y:game.py}],t:0,life:10,color:"#ff9a3c"});
+ log("Well, the third time was not the charm.","red");log("The pile goes off with a sound usually reserved for garage projects. -"+real+" HP.","red");_m90Duds=0;}
 function tryCraft(refA,refB){
+ const _m90Prev=(_m90G===game&&_m90Turn===game.turn)?_m90Duds:0;_m90Duds=0;
  if(refA&&refA.it&&!refA.src)refA={src:"inv",e:refA};/* back-compat: raw inv entry */
  if(refB&&refB.it&&!refB.src)refB={src:"inv",e:refB};
  const itA=refItem(refA),itB=refItem(refB);
@@ -727,6 +735,8 @@ function tryCraft(refA,refB){
  if((refA.src==="equip"&&isCursed(itA))||(refB.src==="equip"&&isCursed(itB))){log("You cannot pry a cursed item off to combine it. The curse has opinions. (Remove the curse first.)","red");return;}
  const a=craftId(itA),b=craftId(itB);const rec=RECIPES.find(r=>(r.a===a&&r.b===b)||(r.a===b&&r.b===a));
  if(!rec){/* MOB-40 S3: pairs that make nothing are remembered (never shown); a repeat attempt gets teased. No items are used. */const _pk=[a,b].sort().join("+");if(!game.triedPairs)game.triedPairs=[];
+  _m90Duds=_m90Prev+1;_m90Turn=game.turn;_m90G=game;/* MOB-90 */
+  if(_m90Duds>=3){if(!game.triedPairs.includes(_pk))game.triedPairs.push(_pk);_m90Blowup();combineMark=null;syncUI();return;}
   if(game.triedPairs.includes(_pk))log(CRAFT_TEASE[Math.floor(Math.random()*CRAFT_TEASE.length)],"dim");else{game.triedPairs.push(_pk);log("Those two do not combine. He tried. The garage saw.","dim");}
   combineMark=null;return;}
  if(rec.tier===2&&!craftKnown(rec)){log("You have not seen the video. You are not doing this without the video.","dim");combineMark=null;return;}/* MOB-40 S1 */if(rec.lock&&game.cls.id!==rec.lock){log("Only "+CLASSES.find(c=>c.id===rec.lock).name+" can make that.","red");return;}if(rec.classes&&!rec.classes.includes(game.cls.id)){log("Only the handy sorts (DIY, Tactical, Tech) can rig that.","red");return;}let base=0.7;if(rec.bonus&&game.cls.id===rec.bonus)base=0.95;if(game.cls.craft!=="none"&&!rec.lock)base+=0.05;const wasEquipped=(refA.src==="equip"||refB.src==="equip");const _freed=[refA,refB].filter(r=>r.src==="equip").map(r=>r.slot);/* MOB-57 */refConsume(refA);refConsume(refB);if(wasEquipped)log("You strip a worn piece off to feed it into the project. Bold.","dim");if(Math.random()>base){log("The craft fails. A Learning Experience.","red");_craftKeep(mkObject("ducttape"));craftLearn(rec);/* MOB-40: the failure still teaches the recipe */combineMark=null;return;}const o=rec.out;let made;if(["weapon","armor","charm"].includes(o.kind))made=mkGear(o,o.kind,Math.random,true);else if(o.kind==="consumable")made=Object.assign({kind:"consumable"},o);else made=Object.assign({kind:"object"},o);made.crafted=true;/* MOB-40 F2 */if(!_craftWear(made,_freed))_craftKeep(made);if(typeof sfxCraft==="function")sfxCraft();log("CRAFTED: "+o.name+"!","gold");
