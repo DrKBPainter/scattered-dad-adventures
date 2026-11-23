@@ -110,7 +110,7 @@ function musicWanted(){
  const slug=_muSlug(game.depth||1),B=MUSIC[slug];if(!B)return null;
  let role="main";
  if(game.depth%10===0&&(game.enemies||[]).some(e=>e.isBoss&&e.hp>0))role="boss";
- else if(game.depth%10!==0&&musicRareFloor(game.seed,game.depth))role="rare";
+ else if(game.depth%10!==0&&musicRareFloor(game.seed,game.depth)&&B.rare&&B.rare.have)role="rare";/* MOB-80: a rare loop not yet in the project falls back to main */
  return slug+":"+role;}
 function _muTrack(k){if(!k||typeof MUSIC==="undefined")return null;const p=k.split(":"),B=MUSIC[p[0]];return B&&B[p[1]]||null;}
 function _muLoad(k,t){
@@ -125,7 +125,12 @@ function _muStop(fade){if(!_muCur)return;const c=_muCur;_muCur=null;
  try{const ac=_ac,t=ac.currentTime;c.g.gain.cancelScheduledValues(t);c.g.gain.setValueAtTime(c.g.gain.value,t);c.g.gain.linearRampToValueAtTime(0,t+(fade?MUSIC_FADE:0.02));c.s.stop(t+(fade?MUSIC_FADE:0.02)+0.05);}catch(e){try{c.s.stop();}catch(e2){}}}
 function _muStart(k){const ac=_getAC();if(!ac||ac.state!=="running")return false;const buf=_muBuf[k];if(!buf)return false;
  try{const s=ac.createBufferSource(),g=ac.createGain();s.buffer=buf;s.loop=true;s.connect(g);g.connect(ac.destination);
-  const t=ac.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(MUSIC_VOL,t+MUSIC_FADE);s.start(t);_muCur={k:k,s:s,g:g};return true;}catch(e){_muBad[k]=1;return false;}}
+  const lp=_muLoopPts(buf,(_muTrack(k)||{}).len);if(lp){s.loopStart=lp[0];s.loopEnd=lp[1];}
+  const t=ac.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(MUSIC_VOL,t+MUSIC_FADE);s.start(t,lp?lp[0]:0);_muCur={k:k,s:s,g:g};return true;}catch(e){_muBad[k]=1;return false;}}
+/* MOB-80: loop exactly len seconds of the loop body. Some browsers keep the MP3 encoder's lead-in (a few ms of near-silence)
+   in the decoded buffer and some trim it; skip it if present, so the seam lands where tools_make_loops.js blended it. */
+function _muLoopPts(buf,len){try{if(!(len>0))return null;const d=buf.getChannelData(0),sr=buf.sampleRate,lim=Math.min(d.length,Math.floor(sr*0.08));
+ let i=0;while(i<lim&&Math.abs(d[i])<1e-4)i++;if(i>=lim)i=0;const a=i/sr,b=a+len;if(b>buf.duration+0.002)return null;return[a,Math.min(b,buf.duration)];}catch(e){return null;}}
 function musicUpdate(){
  let k=null;
  try{k=(!_muHidden&&musicOn()&&!SFX_MUTED)?musicWanted():null;}catch(e){k=null;}

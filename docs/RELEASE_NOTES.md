@@ -15,6 +15,10 @@ What is in it (Mobile PWA plan M1-M18, docs/MOBILE_PWA_PLAN.md):
 - Mobile comic screens: title cover, Choose Your Dad deck, Bestiary cards.
 - NEW in v1.0.0: Share the Game (QR code + link) from the desktop title [Q], the end-of-run screen [Q], How To, and MORE > SHARE.
 
+### Music credits (MOB-80, 2026-11-22)
+
+Background music by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/). Each track was shortened to a loop of about 24 seconds, converted to mono and re-encoded for the game; the originals are not changed. Tracks: Monkeys Spinning Monkeys, Fluffing a Duck, Carefree, Sneaky Snitch, Scheming Weasel (faster version), Wallpaper, Poofy Reel, Bushwick Tarantella Loop, Local Forecast - Elevator, Lobby Time, Hustle, Pixelland, Itty Bitty 8 Bit, Run Amok, Quirky Dog, Spy Glass, Thinking Music, Bossa Antigua, Life of Riley, Easy Lemon (60 second), Fuzzball Parade, Hidden Agenda, Sneaky Adventure, Merry Go, Daily Beetle, Breaktime, Volatile Reaction, Five Armies, Heroic Age. The same credit is in The Dad Manual.
+
 Unchanged: the save format (`sda_save_v4`); saves from v0.11.0 load as before. Desktop keyboard play is unchanged.
 
 Known open items: see docs/MOBILE NOTES.txt (open MOB items) and bugs/BUG_LOG.md (BUG-016: desktop action bar below the fold on common laptop windows).

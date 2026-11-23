@@ -16,7 +16,7 @@ if(!ver){console.error("GAME_VERSION not found in js/config.js");process.exit(2)
 const h=crypto.createHash("sha256");let missing=0;
 for(const a of assets){const p=path.join(root,a);if(!fs.existsSync(p)){console.error("MISSING shell file: "+a);missing++;continue;}
  /* normalize CRLF so a Windows checkout hashes the same as the pushed LF copy */
- let buf=fs.readFileSync(p);if(!/\.(png|jpg|webp|ico)$/i.test(a))buf=Buffer.from(buf.toString("utf8").replace(/\r\n/g,"\n"),"utf8");
+ let buf=fs.readFileSync(p);if(!/\.(png|jpg|webp|ico|mp3)$/i.test(a))buf=Buffer.from(buf.toString("utf8").replace(/\r\n/g,"\n"),"utf8");
  else buf=stripPngMeta(buf);
  h.update(a+"\0");h.update(buf);h.update("\0");}
 if(missing)process.exit(1);

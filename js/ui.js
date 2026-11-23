@@ -172,8 +172,11 @@ function buildInstr(){const cp=(typeof COMPACT!=="undefined"&&COMPACT),K=(d,m)=>
  +(typeof openSaveBackup==="function"?pg('data-m12open="1" title="Back up, restore, or install"',' m43-util','Save Backup &amp; Install','Copy your saves to a code or file, restore them on another device, or install the game.'):'')
  +pg('data-m18open="1" title="QR code and link"',' m43-util','Share the Game','A QR code and a link, for recruiting other dads.')
  +(typeof openFeedback==="function"?pg('data-m42open="1" title="Report a bug or idea"',' m43-util','Send Feedback','Found a bug or have an idea? Opens a short form; the game fills in its version, floor and screen size.'):'')
- +'</div><p class="m43-note">'+M43_NOTE+'</p>'+K('<p class="dim">Press H or Esc to return.</p>','<p class="dim">Tap &#10005; Close to return.</p>');
+ +'</div><p class="m43-note">'+M43_NOTE+'</p>'+_m80Credit()+K('<p class="dim">Press H or Esc to return.</p>','<p class="dim">Tap &#10005; Close to return.</p>');
  _m43Wire();}
+/* MOB-80: CC BY 4.0 credit for the background music (titles from the MUSIC table, only loops present in the game) */
+function _m80Credit(){if(typeof MUSIC==="undefined")return "";const t=[];Object.keys(MUSIC).forEach(k=>["main","boss","rare"].forEach(r=>{const m=MUSIC[k][r];if(m&&m.have&&t.indexOf(m.title)<0)t.push(m.title);}));if(!t.length)return "";
+ return '<p class="m43-note dim m80-credit">Music: '+(typeof MUSIC_AUTHOR!=="undefined"?MUSIC_AUTHOR:"Kevin MacLeod (incompetech.com)")+', licensed under '+(typeof MUSIC_LICENSE!=="undefined"?MUSIC_LICENSE:"Creative Commons: By Attribution 4.0")+' (creativecommons.org/licenses/by/4.0). Tracks, shortened to loops: '+t.join(', ')+'.</p>';}
 function openManualPage(n){const P=_m43Last||_m43Pages(),p=P[n],s=typeof document!=="undefined"&&document.getElementById("m43man");if(!p||!s)return;
  _m43Wire();_m43Open=true;document.getElementById("m43title").innerHTML=p.t;
  document.getElementById("m43body").innerHTML='<div class="atc m43-card"><div class="atc-mast"><span>DAD MANUAL</span><span class="atc-who">Page '+(n+1)+' of '+P.length+'</span></div><div class="atc-body">'+p.h+'</div></div>';

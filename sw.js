@@ -6,7 +6,7 @@
    A changed sw.js installs in the background and WAITS; the page shows a
    "New version available" banner and only swaps when the player taps Reload,
    so a run in progress is never switched to new code mid-floor. */
-const BUILD="1.0.0-896a2c4453";
+const BUILD="1.0.0-cc004cfc1f";
 const CACHE="sda-shell-"+BUILD;
 const ASSETS=[
  "./",
@@ -47,8 +47,14 @@ const ASSETS=[
  "icons/icon-512.png",
  "icons/icon-512-maskable.png",
  "icons/apple-touch-icon.png",
- "icons/favicon-32.png"
+ "icons/favicon-32.png",
+ "assets/music/house-main.mp3",
+ "assets/music/house-boss.mp3",
+ "assets/music/house-rare.mp3"
 ];
+/* MOB-80: the other biomes' music loops are cached the first time they play (MUSIC_CACHE, kept across updates),
+   so the first download stays small and music still works offline after that. Bump MUSIC_CACHE if a loop file changes. */
+const MUSIC_CACHE="sda-music-1";
 const BASE=new URL("./",self.location).href;
 const SHELL=new Set(ASSETS.map(a=>new URL(a,BASE).href));
 self.addEventListener("install",ev=>{
@@ -56,7 +62,7 @@ self.addEventListener("install",ev=>{
  /* no skipWaiting here: the page decides when to swap (update banner) */
 });
 self.addEventListener("activate",ev=>{
- ev.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.indexOf("sda-shell-")===0&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
+ ev.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>(k.indexOf("sda-shell-")===0&&k!==CACHE)||(k.indexOf("sda-music-")===0&&k!==MUSIC_CACHE)).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
 self.addEventListener("message",ev=>{
  const d=ev.data||{};
@@ -75,6 +81,14 @@ self.addEventListener("fetch",ev=>{
  if(url.pathname.endsWith("/sw.js"))return;
  const key=shellKey(req.url);
  const isNav=req.mode==="navigate";
+ if(!SHELL.has(key)&&!isNav&&/\/assets\/music\/[a-z]+-(main|boss|rare)\.mp3$/.test(url.pathname)){
+  ev.respondWith((async()=>{
+   const c=await caches.open(MUSIC_CACHE);const hit=await c.match(key);if(hit)return hit;
+   try{const net=await fetch(req);if(net&&net.ok&&net.status===200)c.put(key,net.clone());return net;}
+   catch(e){return new Response("",{status:503});}
+  })());
+  return;
+ }
  if(!SHELL.has(key)&&!isNav)return; /* not part of the shell: plain network */
  ev.respondWith((async()=>{
   const c=await caches.open(CACHE);
