@@ -48,6 +48,7 @@ function syncTitleCover(){if(typeof document==="undefined"||!document.body)retur
  _tcEl.querySelector(".tc-ver").textContent="No. 1 · 25¢ · v"+GAME_VERSION;
  const sv=_tcSaveInfo();const cont=_tcEl.querySelector(".tc-cont");cont.style.display=sv?"":"none";_tcEl.querySelector(".tc-cont-s").textContent=sv?sv.txt:"";
  _tcEl.querySelector(".tc-row").classList.toggle("tc-solo",!sv);
- _tcEl.querySelector(".tc-daily-s").textContent=_tcDailyInfo();
+ {const _tbd=(typeof DAILY_TBD!=="undefined"&&DAILY_TBD),_db=_tcEl.querySelector(".tc-daily");_db.disabled=_tbd;_db.classList.toggle("tc-tbd",_tbd);_db.setAttribute("aria-disabled",_tbd?"true":"false");/* MOB-87 */
+  _tcEl.querySelector(".tc-daily-s").textContent=_tbd?"TBD":_tcDailyInfo();}
  let n=0,tot=0,g=0;try{n=Object.keys(discovered).length;tot=CREATURES.length+BOSSES.length;g=loadGraveyard().length;}catch(e){}
  _tcEl.querySelector(".tc-best-s").textContent=n+" / "+tot;_tcEl.querySelector(".tc-grave-s").textContent=g+(g===1?" dad":" dads");}

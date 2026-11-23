@@ -406,6 +406,18 @@ function useConsumable(e){const it=e.it;let did=false;
  game.consumed=(game.consumed||0)+1;
  removeEntry(e,1);endTurn();}
 function useProtip(e){const p=e.it.perm||{};if(p.per)game.per+=p.per;if(p.str)game.str+=p.str;if(p.maxhp){game.maxhp+=p.maxhp;game.hp+=p.maxhp;}if(p.maxmoxie){game.maxmoxie+=p.maxmoxie;game.moxie+=p.maxmoxie;}if(p.hydraslow)game.hydraSlow+=p.hydraslow;log("PRO TIP internalized: "+e.it.name+".","gold");const _bfts=[];if(p.per)_bfts.push("+"+ p.per+" Perception");if(p.str)_bfts.push("+"+p.str+" ATK");if(p.maxhp)_bfts.push("+"+p.maxhp+" max HP");if(p.maxmoxie)_bfts.push("+"+p.maxmoxie+" max Patience");if(p.hydraslow)_bfts.push("thirst fills more slowly");if(_bfts.length)log("Benefits applied: "+_bfts.join(", ")+".","grn");removeEntry(e,1);endTurn();}
+/* MOB-84: hand a known healing consumable to the companion (standing on any of the 8 tiles next to Dad). It heals the companion by the
+   item's heal value and stops its bleeding; costs a turn, like eating it yourself. Unidentified consumables are not offered (Dad does not know they heal). */
+var M84_LINES=["{n} eats it standing up, like a professional.","{n} says thanks with their mouth full. Manners can wait.","{n} looks at the label, decides not to ask, and eats it.","Sharing your snacks. The kids would be proud of you. They would also want some."];
+function allyCanTakeHeal(it){return !!(it&&it.kind==="consumable"&&it.heal>0&&consKnown(it)&&game.ally&&game.ally.following&&game.ally.hp>0);}
+function giveToAlly(e){const A=game.ally;if(!e||!allyCanTakeHeal(e.it)){log("Nobody here has any use for that.","dim");syncUI();return false;}
+ const nm=allyName();
+ if(Math.max(Math.abs(A.x-game.px),Math.abs(A.y-game.py))>1){log(nm+" is too far away to hand it over. Dad does not throw food. He has standards, and also aim. Get next to them first.","dim");syncUI();return false;}
+ if(A.hp>=A.maxhp&&!(A.dBleed>0)){log(nm+" is already at full health and politely declines the "+e.it.name+". Save it for later.","dim");syncUI();return false;}
+ const before=A.hp;A.hp=Math.min(A.maxhp,A.hp+e.it.heal);
+ log("You hand "+nm+" the "+e.it.name+". +"+(A.hp-before)+" HP ("+A.hp+"/"+A.maxhp+"). "+M84_LINES[(game.turn||0)%M84_LINES.length].replace("{n}",nm),"grn");
+ if(A.dBleed>0){A.dBleed=0;A.dBleedN=0;log(nm+"'s bleeding stops.","grn");}
+ removeEntry(e,1);endTurn();return true;}
 /* ===== survival + statuses ===== */
 function survivalTick(){const hr=(game.cls.hungerRate||0.5)*0.5,hy=Math.max(0.05,((game.cls.hydraRate||0.7)*0.5)-(game.hydraSlow||0)*0.5);
  const hcap=game.hungerCap||100,dcap=game.hydraCap||100;
@@ -428,7 +440,30 @@ function springTrap(t){t.sprung=true;const d=t.def;addFX({kind:"blast",cells:[{x
 function attack(e){if(typeof dadAnimAttack==="function")dadAnimAttack(e.x-game.px,e.y-game.py);/* N29 attack frame (visual only) */if(tryFumble("your attack"))return true;let dmg=Math.max(1,roll(effAtk())-Math.floor(e.def.def/2));{const _w=game.equip&&game.equip.weapon;if(_w&&_w.critPct&&Math.random()*100<_w.critPct){dmg*=2;log("CRITICAL! The "+_w.name+" finds the exact spot. Double damage.","gold");}}/* MOB-40 */if(e.justCameThruDoor){dmg=Math.max(2,Math.floor(dmg*1.5));e.justCameThruDoor=false;log("SURPRISE! It came through the door. You were the door's plan all along. Bonus damage.","gold");}e.hp-=dmg;discover(e.def,game.depth);e.shownHP=true;addFX({kind:"blast",cells:[{x:e.x,y:e.y}],t:0,life:7,color:"#ffffff"});log("You hit "+e.def.name+" for "+dmg+".","ink");{const _wt=dtWeaponType();if(_wt&&e.hp>0&&Math.random()<dtWeaponProc()){if(_wt==="soaked")applyTo(e,"soaked");else dtApplyUnit(e,_wt);}}/* MOB-69 */if(e.hp<=0){game.kills=(game.kills||0)+1;const _g=e.def.gold||0;game.gold+=_g;game.moolahEarned=(game.moolahEarned||0)+_g;log(e.def.name+" defeated. +"+e.def.xp+" XP"+(_g>0?", +"+_g+" moolah":""),"gold");{const _dm=e.def.defeatMsg||(typeof DEFEAT_FLAVOR!=="undefined"?DEFEAT_FLAVOR[Math.floor(Math.random()*DEFEAT_FLAVOR.length)]:"");if(_dm)log(_dm,"dim");}gainXP(e.def.xp);tryCompleteHuntQuest(e);game.enemies=game.enemies.filter(x=>x!==e);if(e.isBoss)log("The way down is clear.","gold");const dc=0.12+(e.def.xp/120);if(Math.random()<dc){let dr;const _fl=Math.min(0.75,0.35+(game.foodLuck||0));if(Math.random()<_fl){const FD=["water","gatorade","pedialyte","sportsdrink","applejuice","casserole","granola","jerky","coldpizza","proteinbar"];dr=mkConsumable(FD[Math.floor(Math.random()*FD.length)]);}else{dr=pickLoot(Math.random,game.depth);}game.loot.push({x:e.x,y:e.y,item:dr});log(e.def.name+" dropped: "+dr.name+".","gold");}}return false;}
 function canStep(x,y){if(x<0||y<0||x>=MAP_W||y>=MAP_H)return false;if(game.floor.grid[y][x]===1)return false;const d=doorAt(x,y);if(d&&!d.open)return false;if(x===game.px&&y===game.py)return false;if(game.enemies.some(e=>e.x===x&&e.y===y))return false;if(game.vendor&&game.vendor.x===x&&game.vendor.y===y)return false;if(game.fountains&&game.fountains.some(f=>f.x===x&&f.y===y))return false;if(game.healFountains&&game.healFountains.some(f=>f.x===x&&f.y===y))return false;return true;}
 function canMoveEnemy(e,x,y){if(!canStep(x,y))return false;if(game.ally&&game.ally.following&&game.ally.x===x&&game.ally.y===y)return false;const tile=game.floor.grid[y]&&game.floor.grid[y][x];if(e.def.aquatic&&tile!==2)return false;if(!e.def.aquatic&&tile===2)return false;return true;}
-function enemyTurn(){for(const e of game.enemies){if(e.isDog)continue;if(e.hp<=0||!game.enemies.includes(e))continue;{const _dt=dtTickUnit(e,false);if(_dt)continue;}/* MOB-69 */
+/* MOB-86: creatures try to surround Dad. Each turn every approaching creature (nearest first) claims a free tile of the 8 around Dad: the one it
+   can reach in the fewest steps, with a penalty for tiles next to ones already taken or claimed, so the pack spreads around him. It then takes
+   one step along a short path to that tile (around the others) instead of straight at Dad. If no tile is free or reachable, it falls back to
+   the old straight approach. No random rolls (Seeded/Daily floors unchanged). */
+var M86_RING=[[0,-1],[1,0],[0,1],[-1,0],[1,-1],[1,1],[-1,1],[-1,-1]],M86_CROWD=3,M86_MAXSTEPS=14;
+/* Steps from e to each tile within M86_MAXSTEPS (4-way, through tiles the creature may enter). Returns {d:Map key->steps, p:Map key->prev key}. */
+function _m86Bfs(e){const d=new Map(),p=new Map(),k0=e.x+","+e.y;d.set(k0,0);const q=[[e.x,e.y]];
+ for(let h=0;h<q.length;h++){const[cx,cy]=q[h],ck=cx+","+cy,cd=d.get(ck);if(cd>=M86_MAXSTEPS)continue;
+  for(const[dx,dy]of[[0,-1],[1,0],[0,1],[-1,0]]){const nx=cx+dx,ny=cy+dy,nk=nx+","+ny;if(d.has(nk)||!canMoveEnemy(e,nx,ny))continue;d.set(nk,cd+1);p.set(nk,ck);q.push([nx,ny]);}}
+ return {d,p};}
+function _m86Ring(){const c=new Set(),asg=new Map(),px=game.px,py=game.py;
+ for(const e of game.enemies){if(e.isDog||e.hp<=0)continue;if(Math.max(Math.abs(e.x-px),Math.abs(e.y-py))===1)c.add(e.x+","+e.y);}
+ const md=e=>Math.abs(e.x-px)+Math.abs(e.y-py);
+ const go=game.enemies.filter(e=>!e.isDog&&e.hp>0&&!(e.def&&e.def.isDogWalker)&&!c.has(e.x+","+e.y)&&md(e)<=7&&!(e.root>0)&&!(e.stun>0)).sort((a,b)=>md(a)-md(b));/* nearest creatures pick first */
+ for(const e of go){const B=_m86Bfs(e);let best=null,bs=1e9;
+  for(const[dx,dy]of M86_RING){const tx=px+dx,ty=py+dy,k=tx+","+ty;if(c.has(k)||!B.d.has(k))continue;
+   let crowd=0;for(const q of c){const i=q.indexOf(","),cx=+q.slice(0,i),cy=+q.slice(i+1);if(Math.max(Math.abs(cx-tx),Math.abs(cy-ty))===1)crowd++;}
+   const sc=B.d.get(k)+M86_CROWD*crowd;if(sc<bs){bs=sc;best=k;}}
+  if(best){c.add(best);asg.set(e,best);}}
+ return {claimed:c,assign:asg};}
+function _m86Step(e,R){const t=R.assign.get(e);if(!t)return false;const B=_m86Bfs(e);if(!B.d.has(t))return false;
+ let k=t;while(B.p.has(k)&&B.p.get(k)!==e.x+","+e.y)k=B.p.get(k);if(!B.p.has(k))return false;
+ const i=k.indexOf(","),nx=+k.slice(0,i),ny=+k.slice(i+1);if(!canMoveEnemy(e,nx,ny))return false;e.x=nx;e.y=ny;return true;}
+function enemyTurn(){const _m86=_m86Ring();for(const e of game.enemies){if(e.isDog)continue;if(e.hp<=0||!game.enemies.includes(e))continue;{const _dt=dtTickUnit(e,false);if(_dt)continue;}/* MOB-69 */
   // Dog Walker: moves and leaves poop bombs
   if(e.def&&e.def.isDogWalker){
     if(e.stun>0){e.stun--;continue;}
@@ -449,7 +484,7 @@ function enemyTurn(){for(const e of game.enemies){if(e.isDog)continue;if(e.hp<=0
   }
   if(e.stun>0){e.stun--;continue;}const dist=Math.abs(e.x-game.px)+Math.abs(e.y-game.py);
   if(Math.max(Math.abs(e.x-game.px),Math.abs(e.y-game.py))===1){/* MOB-65: any of the 8 tiles around Dad */e.hitDad=true;/* MOB-28 */if(hasStatus("invincible")){log(e.def.name+" cannot touch you. Maximum Dad Relief is in effect.","gold");continue;}if(e.blind>0){e.blind--;if(Math.random()<0.6){log(e.def.name+" swings wildly and misses.","dim");continue;}}const _ct=dtCreatureType(e);/* MOB-69: psychic hits ignore armor DEF */const dmg=Math.max(1,roll(e.scaledAtk||e.def.atk)-Math.floor((_ct==="psychic"?Math.max(0,effDef()-gearSum("def")):effDef())/2));game.hp-=dmg;if(typeof sfxOof==="function")sfxOof();log(e.def.name+" hits you for "+dmg+"."+(_ct==="psychic"?" It went straight past the armor and into the feelings.":""),"red");if(game.hp<=0){die(e.def.name+", who he insists he was about to defeat",e.isBoss?"boss":"creature");return;}if(_ct&&Math.random()<DT_PROC_CREATURE){dtApplyDad(_ct,e.def.name);if(mode!==State.PLAY)return;}blindOnHitCheck(e);}
-  else if(dist<=7&&e.root<=0){const _ox=e.x,_oy=e.y;const sx=e.x+Math.sign(game.px-e.x),sy=e.y+Math.sign(game.py-e.y);if(canMoveEnemy(e,sx,e.y))e.x=sx;else if(canMoveEnemy(e,e.x,sy))e.y=sy;if(e.x!==_ox||e.y!==_oy){const _dd=doorAt(e.x,e.y);e.justCameThruDoor=!!(_dd&&_dd.open);}}else if(e.root>0)e.root--;
+  else if(dist<=7&&e.root<=0){const _ox=e.x,_oy=e.y;if(!_m86Step(e,_m86)/* MOB-86 */){const sx=e.x+Math.sign(game.px-e.x),sy=e.y+Math.sign(game.py-e.y);if(canMoveEnemy(e,sx,e.y))e.x=sx;else if(canMoveEnemy(e,e.x,sy))e.y=sy;}if(e.x!==_ox||e.y!==_oy){const _dd=doorAt(e.x,e.y);e.justCameThruDoor=!!(_dd&&_dd.open);}}else if(e.root>0)e.root--;
   const _pt=game.traps.find(t=>!t.sprung&&t.fromPlayer&&t.x===e.x&&t.y===e.y);if(_pt)springTrapOn(e,_pt);}}
 /* ===== BFS click-to-move pathfinding ===== */
 /* MOB-02: a door does not swing shut on a creature, a companion, a vendor or an item lying in the doorway. */

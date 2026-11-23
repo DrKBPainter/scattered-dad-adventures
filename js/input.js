@@ -94,10 +94,12 @@ oD.addEventListener("click",(ev)=>{const cast=ev.target.closest("[data-cast]");i
 // Confirm dialog + option menus: clickable Yes/No (data-cf) and numbered rows (data-menu; -1 = cancel).
 cf.addEventListener("click",(ev)=>{const cb=ev.target.closest("[data-cf]");if(cb){resolveConfirm(cb.dataset.cf==="y");return;}const mb=ev.target.closest("[data-menu]");if(mb){resolveMenu(parseInt(mb.dataset.menu,10));return;}});
 /* Title menu actions, shared by the HUD rows (desktop) and the compact comic cover (js/titlecover.js). */
+/* MOB-87: the Daily Challenge is parked ("Daily Challenge / TBD", grayed out, does nothing) until it is reworked. Set false to bring it back. */
+var DAILY_TBD=true;
 function doTitleAction(a){
   if(a==="new"){pendingDaily=false;mode=State.CLASS;syncUI();}
   else if(a==="continue"){if(hasSave()){if(!continueRun()){mode=State.CLASS;syncUI();}}}
-  else if(a==="daily"){pendingDaily=true;mode=State.CLASS;syncUI();}
+  else if(a==="daily"){if((typeof DAILY_TBD!=="undefined"&&DAILY_TBD))return;/* MOB-87 */pendingDaily=true;mode=State.CLASS;syncUI();}
   else if(a==="help"){closeOverlays();ovInstr=true;buildInstr();syncOverlays();}
   else if(a==="best"){closeOverlays();ovBest=true;buildBest();syncOverlays();}
   else if(a==="grave"){closeOverlays();ovGrave=true;buildGraveyard();syncOverlays();}
