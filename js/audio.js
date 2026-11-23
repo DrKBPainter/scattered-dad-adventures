@@ -4,10 +4,42 @@
    Sounds: sfxKneeCrack / sfxOof / sfxPickup / sfxCraft / sfxUnlock
    Mute:   sfxToggleMute() — state persisted in localStorage ("sda_mute")
    Music:  MOB-78 looping background player (musicUpdate / musicToggle / musicStats), localStorage "sda_music" ("1"/"0", default on).
+   MOB-81: volume and vibration settings (sfxVol / musicVol / sfxVibeOn / musicVibeOn), set from the SOUND & MOTION sheet (js/soundmotion.js).
+     sda_sfx_vol 0-100 (default 100 = the old loudness), sda_music_vol 0-100 (default 60 = the old 0.32 gain),
+     sda_sfx_vibe / sda_music_vibe "1"/"0" (default off; Android only: iPhone browsers have no navigator.vibrate).
+     SOUND off now silences sound effects only; MUSIC has its own switch.
    ============================================= */
 "use strict";
 let _ac = null;
 let SFX_MUTED = (typeof localStorage !== "undefined" && localStorage.getItem("sda_mute") === "1");
+
+/* ===== MOB-81: volume + vibration settings ===== */
+const SFX_VOL_KEY="sda_sfx_vol",MUSIC_VOL_KEY="sda_music_vol",SFX_VIBE_KEY="sda_sfx_vibe",MUSIC_VIBE_KEY="sda_music_vibe";
+const SFX_VOL_DEF=100,MUSIC_VOL_DEF=60,MUSIC_VOL_MAX=0.32*100/MUSIC_VOL_DEF;/* slider 60 = the pre-MOB-81 music gain 0.32 */
+function _sndGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function _sndSet(k,v){try{localStorage.setItem(k,String(v));}catch(e){}}
+function _sndPct(k,d){const v=parseInt(_sndGet(k),10);return (isFinite(v)&&v>=0&&v<=100)?v:d;}
+function sfxVol(){return _sndPct(SFX_VOL_KEY,SFX_VOL_DEF);}
+function musicVol(){return _sndPct(MUSIC_VOL_KEY,MUSIC_VOL_DEF);}
+function setSfxVol(v){_sndSet(SFX_VOL_KEY,Math.max(0,Math.min(100,Math.round(+v||0))));}
+function setMusicVol(v){_sndSet(MUSIC_VOL_KEY,Math.max(0,Math.min(100,Math.round(+v||0))));_muApplyVol();}
+function vibeSupported(){try{return typeof navigator!=="undefined"&&typeof navigator.vibrate==="function";}catch(e){return false;}}
+function sfxVibeOn(){return _sndGet(SFX_VIBE_KEY)==="1";}
+function musicVibeOn(){return _sndGet(MUSIC_VIBE_KEY)==="1";}
+function setSfxVibe(on){_sndSet(SFX_VIBE_KEY,on?"1":"0");}
+function setMusicVibe(on){_sndSet(MUSIC_VIBE_KEY,on?"1":"0");}
+let _vibeLast=0,_vibeCount={sfx:0,music:0};
+function _vibe(pat,kind){if(!vibeSupported())return false;const now=Date.now();if(now-_vibeLast<120)return false;_vibeLast=now;try{navigator.vibrate(pat);_vibeCount[kind]=(_vibeCount[kind]||0)+1;return true;}catch(e){return false;}}
+/* sound-effect buzz: hits taken ("hit"), level-ups ("level"), a boss coming into view ("boss"). Works with SOUND off too. */
+function sfxVibe(what){if(!sfxVibeOn())return false;return _vibe(what==="boss"?[90,60,90,60,160]:what==="level"?[40,50,40,50,120]:35,"sfx");}
+/* music buzz: a short double pulse when the music changes (a new biome, a boss theme, a rare track) */
+function musicVibe(){if(!musicVibeOn())return false;return _vibe([25,70,25],"music");}
+function vibeStats(){return{supported:vibeSupported(),sfx:sfxVibeOn(),music:musicVibeOn(),count:Object.assign({},_vibeCount)};}
+/* carry-over: before MOB-81, SOUND off also silenced the music. The first time this build runs for a player who had
+   SOUND off, MUSIC is switched off too, so nothing starts playing that was silent before. sda_music_vol marks it done. */
+(function(){try{if(typeof localStorage==="undefined")return;if(localStorage.getItem(MUSIC_VOL_KEY)!=null)return;
+ if(localStorage.getItem("sda_mute")==="1"&&localStorage.getItem("sda_music")!=="1")localStorage.setItem("sda_music","0");
+ localStorage.setItem(MUSIC_VOL_KEY,String(MUSIC_VOL_DEF));}catch(e){}})();
 
 function _getAC() {
   if (!_ac) {
@@ -20,6 +52,7 @@ function _getAC() {
 /* oscillator tone: type, start-freq, end-freq (or null), duration, peak-gain */
 function _osc(type, freq, freqEnd, dur, gain) {
   if (SFX_MUTED) return;
+  const vol = sfxVol() / 100; if (vol <= 0) return; gain = gain * vol; /* MOB-81 */
   const ac = _getAC(); if (!ac) return;
   const o = ac.createOscillator(), g = ac.createGain();
   o.connect(g); g.connect(ac.destination);
@@ -34,6 +67,7 @@ function _osc(type, freq, freqEnd, dur, gain) {
 /* short burst of bandpass-filtered white noise */
 function _noise(dur, gain, bpFreq) {
   if (SFX_MUTED) return;
+  const vol = sfxVol() / 100; if (vol <= 0) return; gain = gain * vol; /* MOB-81 */
   const ac = _getAC(); if (!ac) return;
   const n = Math.ceil(ac.sampleRate * dur);
   const buf = ac.createBuffer(1, n, ac.sampleRate);
@@ -57,6 +91,7 @@ function sfxKneeCrack() {
 
 /* "Oof": descending grunt — the universal language of a dad who just took a hit */
 function sfxOof() {
+  sfxVibe("hit"); /* MOB-81 */
   _osc("sine", 230, 85, 0.18, 0.26);
   _osc("triangle", 155, 65, 0.14, 0.13);
 }
@@ -84,7 +119,7 @@ function sfxUnlock() {
 function sfxToggleMute() {
   SFX_MUTED = !SFX_MUTED;
   if (typeof localStorage !== "undefined") localStorage.setItem("sda_mute", SFX_MUTED ? "1" : "0");
-  if (typeof musicUpdate === "function") musicUpdate(); /* MOB-78: SOUND off silences the music too */
+  /* MOB-81: SOUND no longer silences the music (MUSIC has its own switch in the SOUND & MOTION sheet) */
 }
 
 /* ===== MOB-78: BACKGROUND MUSIC (Music 1 of 3, from MOB-51) =====
@@ -96,7 +131,9 @@ function sfxToggleMute() {
    WebAudio buffer loop (gapless), about 0.5 s fades on a switch. Files with have:false are never requested,
    and a file that fails to load or decode is skipped quietly (remembered as bad for this page load).
    musicUpdate() is called from syncUI (js/ui.js); it is cheap when nothing changes. */
-const MUSIC_KEY="sda_music",MUSIC_FADE=0.5,MUSIC_VOL=0.32;
+const MUSIC_KEY="sda_music",MUSIC_FADE=0.5;
+function _muGain(){return MUSIC_VOL_MAX*musicVol()/100;}/* MOB-81: was a fixed 0.32 */
+function _muApplyVol(){if(!_muCur||!_ac)return;try{const t=_ac.currentTime;_muCur.g.gain.cancelScheduledValues(t);_muCur.g.gain.setValueAtTime(_muCur.g.gain.value,t);_muCur.g.gain.linearRampToValueAtTime(_muGain(),t+0.08);}catch(e){}}
 let _muCur=null,_muBuf={},_muLoading={},_muBad={},_muWant=null,_muHidden=false;
 function musicOn(){let v=null;try{v=localStorage.getItem(MUSIC_KEY);}catch(e){}return v!=="0";}
 function musicSetOn(on){try{localStorage.setItem(MUSIC_KEY,on?"1":"0");}catch(e){}syncMusicBtn();musicUpdate();}
@@ -126,22 +163,22 @@ function _muStop(fade){if(!_muCur)return;const c=_muCur;_muCur=null;
 function _muStart(k){const ac=_getAC();if(!ac||ac.state!=="running")return false;const buf=_muBuf[k];if(!buf)return false;
  try{const s=ac.createBufferSource(),g=ac.createGain();s.buffer=buf;s.loop=true;s.connect(g);g.connect(ac.destination);
   const lp=_muLoopPts(buf,(_muTrack(k)||{}).len);if(lp){s.loopStart=lp[0];s.loopEnd=lp[1];}
-  const t=ac.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(MUSIC_VOL,t+MUSIC_FADE);s.start(t,lp?lp[0]:0);_muCur={k:k,s:s,g:g};return true;}catch(e){_muBad[k]=1;return false;}}
+  const t=ac.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(_muGain(),t+MUSIC_FADE);s.start(t,lp?lp[0]:0);_muCur={k:k,s:s,g:g};return true;}catch(e){_muBad[k]=1;return false;}}
 /* MOB-80: loop exactly len seconds of the loop body. Some browsers keep the MP3 encoder's lead-in (a few ms of near-silence)
    in the decoded buffer and some trim it; skip it if present, so the seam lands where tools_make_loops.js blended it. */
 function _muLoopPts(buf,len){try{if(!(len>0))return null;const d=buf.getChannelData(0),sr=buf.sampleRate,lim=Math.min(d.length,Math.floor(sr*0.08));
  let i=0;while(i<lim&&Math.abs(d[i])<1e-4)i++;if(i>=lim)i=0;const a=i/sr,b=a+len;if(b>buf.duration+0.002)return null;return[a,Math.min(b,buf.duration)];}catch(e){return null;}}
 function musicUpdate(){
  let k=null;
- try{k=(!_muHidden&&musicOn()&&!SFX_MUTED)?musicWanted():null;}catch(e){k=null;}
+ try{k=(!_muHidden&&musicOn()&&musicVol()>0)?musicWanted():null;}catch(e){k=null;}/* MOB-81: SOUND off no longer silences music; volume 0 does */
  _muWant=k;
  if(_muCur&&_muCur.k===k)return;
  const t=_muTrack(k);
  if(!k||!t||!t.have||_muBad[k]){_muStop(true);return;}
  if(!_muBuf[k]){_muLoad(k,t);return;}/* keep the old loop until the new one is ready; musicUpdate runs again on load */
  if(!_ac||_ac.state!=="running"){_getAC();return;}/* iOS: waits for the first tap (durable.js unlock) */
- _muStop(true);_muStart(k);}
-function musicStats(){return{on:musicOn(),want:_muWant,playing:_muCur?_muCur.k:null,loaded:Object.keys(_muBuf),bad:Object.keys(_muBad),hidden:_muHidden,ctx:_ac?_ac.state:null};}
+ const had=!!_muCur;_muStop(true);if(_muStart(k)&&had)musicVibe();}/* MOB-81: buzz when one loop hands over to another */
+function musicStats(){return{on:musicOn(),vol:musicVol(),gain:_muCur?_muCur.g.gain.value:null,want:_muWant,playing:_muCur?_muCur.k:null,loaded:Object.keys(_muBuf),bad:Object.keys(_muBad),hidden:_muHidden,ctx:_ac?_ac.state:null};}
 if(typeof document!=="undefined"&&document.addEventListener){
  document.addEventListener("visibilitychange",()=>{_muHidden=document.visibilityState==="hidden";if(_muHidden)_muStop(false);musicUpdate();});
  /* after the first gesture unlocks audio (durable.js), start whatever is waiting */

@@ -181,7 +181,7 @@ function _jzBegin(){if(!juiceOn())return null;const n=_rNow(),mo=juiceMotion();
     const kx=Math.sign(e.x-game.px),ky=Math.sign(e.y-game.py);if((kx||ky)&&Math.abs(e.x-game.px)<=1&&Math.abs(e.y-game.py)<=1){r.kn={dx:kx,dy:ky,t0:n};_jzStats.knocks++;requestAnim(JUICE_KNOCK_MS+30);}
     if(-d>=Math.max(6,(e.maxhp||1)*0.4))_jzShakeAt(e.isBoss?3:2,150,n);}else _jzFloat(e.x,e.y,"+"+d,"#7be36a",n);}
   r.hp=e.hp;
-  if(e.isBoss&&v&&!_jzBossSeen.has(e)){_jzBossSeen.add(e);_jzBannerAt("BOSS: "+(e.def.name||"Something Large").toUpperCase(),JUICE_BOSS_SUBS[_tileHash(game.depth|0,7,3)%JUICE_BOSS_SUBS.length],n);}
+  if(e.isBoss&&v&&!_jzBossSeen.has(e)){_jzBossSeen.add(e);if(typeof sfxVibe==="function")sfxVibe("boss");/* MOB-81 */_jzBannerAt("BOSS: "+(e.def.name||"Something Large").toUpperCase(),JUICE_BOSS_SUBS[_tileHash(game.depth|0,7,3)%JUICE_BOSS_SUBS.length],n);}
   if(e.hoaPhase!==r.ph){if(r.ph!==undefined&&e.hoaPhase>r.ph&&typeof HOA_PHASES!=="undefined"&&HOA_PHASES[e.hoaPhase-1]){const P=HOA_PHASES[e.hoaPhase-1];_jzBannerAt("PHASE "+e.hoaPhase+": "+String(P.name||"").toUpperCase(),"The meeting is not over. The meeting is never over.",n);if(mo)_jzShakeAt(4,350,n);}r.ph=e.hoaPhase;}
   cur.push({e:e,x:e.x,y:e.y,boss:!!e.isBoss,v:v});}
  /* a visible enemy that vanished from the same floor was defeated: puff + KO */

@@ -153,6 +153,7 @@ function barAction(a){
  if(mode!==State.PLAY||pendingConfirm||pendingMenu||aiming||placing||ovInv||ovDad||ovBest||ovInstr||ovMap||ovCodex||ovGrave||shopOpen)return;
  if(a==="more"){setMoreOpen(!_m8More);return;}
  if(a==="backup"){setMoreOpen(false);if(typeof openSaveBackup==="function")openSaveBackup();return;}
+ if(a==="audio"){setMoreOpen(false);if(typeof openSoundSheet==="function")openSoundSheet();return;}/* MOB-81 */
  if(a==="share"){setMoreOpen(false);if(typeof openShare==="function")openShare();return;}
  if(a==="feedback"){setMoreOpen(false);if(typeof openFeedback==="function")openFeedback();return;}
  if(a==="barcfg"){setMoreOpen(false);if(typeof openBarCfg==="function")openBarCfg(true);return;}

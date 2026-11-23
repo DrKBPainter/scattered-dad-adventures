@@ -6,7 +6,7 @@
    A changed sw.js installs in the background and WAITS; the page shows a
    "New version available" banner and only swaps when the player taps Reload,
    so a run in progress is never switched to new code mid-floor. */
-const BUILD="1.0.0-ac8091a795";
+const BUILD="1.0.0-c989e0776f";
 const CACHE="sda-shell-"+BUILD;
 const ASSETS=[
  "./",
@@ -42,6 +42,7 @@ const ASSETS=[
  "js/durable.js",
  "js/share.js",
  "js/feedback.js",
+ "js/soundmotion.js",
  "assets/ui/qr-share.png",
  "icons/icon-192.png",
  "icons/icon-512.png",
