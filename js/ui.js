@@ -15,10 +15,11 @@ function statusChip(id){const S=STATUSES[id];if(!S)return "";const shakes=(id===
 function kbStrip(h){return (typeof COMPACT!=="undefined"&&COMPACT)?String(h).replace(/\[(?:[A-Z]|[0-9]+|ENTER|Esc)\]\s?/g,""):h;}
 function syncUI(){
  if(typeof musicUpdate==="function")musicUpdate();/* MOB-78: background music follows the run state (js/audio.js) */
+ if(typeof m45Tick==="function")m45Tick();/* MOB-45: first-run tutorial cards */
  try{document.body.classList.toggle("has-ally",!!(mode===State.PLAY&&game&&game.ally&&game.ally.following));}catch(e){}/* MOB-28: COMPANION button only with a following companion */
  if(typeof scanPick!=="undefined"&&scanPick&&mode!==State.PLAY)setScanPick(false);// MOB-36
  if(typeof _m6SetMode==="function")_m6SetMode(mode===State.PLAY);
- if(mode===State.PLAY&&game&&!_m7Hinted&&typeof COMPACT!=="undefined"&&COMPACT){_m7Hinted=true;log("Field manual: swipe the map to step, tap a tile to walk there, tap your Dad (or WAIT) to wait, press and hold to inspect, tap a status chip to read it. MORE opens the junk drawer: map, Dadvice, codex, traps, zoom, sound. Taped inside the cover, in crayon: \"you are the best dad.\"","dim");}
+ if(mode===State.PLAY&&game&&!_m7Hinted&&typeof COMPACT!=="undefined"&&COMPACT){_m7Hinted=true;if(!(typeof m45Active==="function"&&m45Active()))/* MOB-45: the tutorial cards replace this line while they run */log("Field manual: swipe the map to step, tap a tile to walk there, tap your Dad (or WAIT) to wait, press and hold to inspect, tap a status chip to read it. MORE opens the junk drawer: map, Dadvice, codex, traps, zoom, sound. Taped inside the cover, in crayon: \"you are the best dad.\"","dim");}
  if(mode===State.TITLE){const n=Object.keys(discovered).length;const gn=loadGraveyard().length;const dRec=todaysDailyRecord();const dStat=dRec?('best: <b class="l-gold">'+(dRec.outcome==="win"?"WON":"Floor "+dRec.depth)+'</b> as '+dRec.clsName+' ('+dRec.attempts+' attempt'+(dRec.attempts===1?"":"s")+')'):'not yet attempted';elStat.innerHTML='<b style="font-size:16px">SCATTERED DAD ADVENTURES</b> <span class="dim">v'+GAME_VERSION+'</span>';elStatuses.innerHTML="";elLog.innerHTML=kbStrip('<div class="ti-opt" data-title="new">[ENTER] New Adventure</div>'+(hasSave()?'<div class="ti-opt" data-title="continue">[C] Continue Run</div>':'')+((typeof DAILY_TBD!=="undefined"&&DAILY_TBD)?'<div class="m87-tbd" style="color:#777;opacity:.6;cursor:default;line-height:1.25">Daily Challenge<br>TBD</div>'/* MOB-87 */:'<div class="ti-opt" data-title="daily">[D] Daily Challenge ('+dailyDateStr()+') &middot; <span class="l-dim">'+dStat+'</span></div>')+'<div><span class="ti-opt" data-title="help">[H] The Dad Manual</span> &nbsp; <span class="ti-opt" data-title="best">[B] Discovered Creatures ('+n+'/'+(CREATURES.length+BOSSES.length)+')</span> &nbsp; <span class="ti-opt" data-title="grave">[G] Graveyard ('+gn+')</span> &nbsp; <span class="ti-opt" data-title="backup">[S] Save Backup</span> &nbsp; <span class="ti-opt" data-title="share">[Q] Share the Game</span> &nbsp; <span class="ti-opt" data-title="feedback">[F] Send Feedback</span></div>'+'<div class="ti-opt l-dim" data-title="feedback" style="margin-top:6px">BETA EDITION: Some assembly required. Several parts left over. Press [F] (Send Feedback) if Dad finds one.</div>'/* MOB-77 */);}
  else if(mode===State.CLASS){elStat.innerHTML='<b>CHOOSE YOUR DAD'+(pendingDaily?' &mdash; DAILY CHALLENGE':'')+'</b> <span class="dim">'+((typeof COMPACT!=="undefined"&&COMPACT)?'(tap a Dad to choose &middot; tap the arrows to change skin)':'(UP/DOWN pick Dad, [ / ] pick skin, ENTER)')+'</span>';const _sk=(typeof SKIN_SWATCHES!=="undefined")?SKIN_SWATCHES[((skinCursor%SKIN_SWATCHES.length)+SKIN_SWATCHES.length)%SKIN_SWATCHES.length]:null;elStatuses.innerHTML=_sk?('<div>Skin Tone: <b>'+_sk.name+'</b> <span class="ti-opt" data-skin="next" title="Click to cycle skin tone" style="display:inline-block;width:12px;height:12px;vertical-align:middle;border:1px solid #000;background:'+_sk.f+'"></span> <span class="l-dim"><span class="ti-opt" data-skin="prev">&larr; [</span> &nbsp; <span class="ti-opt" data-skin="next">] &rarr;</span></span></div>'):"";let h="";CLASSES.forEach((c,i)=>{h+='<div class="ti-opt '+(i===classCursor?"l-gold":"")+'" data-class="'+i+'">'+(i===classCursor?"&#9654; ":"&nbsp;&nbsp; ")+'<b>'+c.name+'</b> &mdash; HP'+c.hp+' STR'+c.str+' DEF'+c.def+' PER'+c.per+' WIS'+c.wis+' &middot; <span class="l-dim">'+c.blurb+'</span></div>';});elLog.innerHTML=h;}
  else if(mode===State.DIFF){elStat.innerHTML='<b>CHOOSE DIFFICULTY'+(pendingDaily?' &mdash; DAILY CHALLENGE':'')+'</b> <span class="dim">'+kbTxt('(UP/DOWN, ENTER &middot; Esc = back)','(tap a difficulty)')+'</span>';elStatuses.innerHTML='<span class="dim">Chosen dad: <b class="l-gold">'+(pendingClass?pendingClass.name:'')+'</b></span>';let h='';DIFFICULTY_MODES.forEach((d,i)=>{h+='<div class="ti-opt '+(i===diffCursor?'l-gold':'')+'" data-diff="'+i+'">'+(i===diffCursor?'&#9654; ':'&nbsp;&nbsp; ')+'<b>'+d.name+'</b> &mdash; <span class="l-dim">'+d.blurb+'</span></div>';});h+='<div class="ti-opt l-dim" data-diff="back" style="margin-top:6px">&larr; Back to Dad select</div>';elLog.innerHTML=h;}
@@ -33,7 +34,7 @@ function syncUI(){
 /* ===== overlays ===== */
 const oI=document.getElementById("ovInstr"),oInv=document.getElementById("ovInv"),oD=document.getElementById("ovDad"),oShop=document.getElementById("ovShop"),oB=document.getElementById("ovBest"),oMap=document.getElementById("ovMap"),oCodex=document.getElementById("ovCodex"),oGrave=document.getElementById("ovGrave"),cf=document.getElementById("confirm"),cfT=document.getElementById("cf-text"),cfBtns=document.getElementById("cf-btns");
 const elStat=document.getElementById("statline"),elStatuses=document.getElementById("statuses"),elLog=document.getElementById("log");
-function syncOverlays(){oI.classList.toggle("show",ovInstr);oInv.classList.toggle("show",ovInv);oD.classList.toggle("show",ovDad);oShop.classList.toggle("show",shopOpen);oB.classList.toggle("show",ovBest);oMap.classList.toggle("show",ovMap);oCodex.classList.toggle("show",ovCodex);oGrave.classList.toggle("show",ovGrave);cf.classList.toggle("show",!!pendingConfirm||!!pendingMenu);const _oc=document.getElementById("ovClose");if(_oc)_oc.style.display=(ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave)&&!pendingConfirm&&!pendingMenu?"block":"none";syncDpad();syncActionBar();syncAimBar();_m9Body();syncTgtBox();/* MOB-08 */syncEndCard();/* MOB-59 */}
+function syncOverlays(){oI.classList.toggle("show",ovInstr);oInv.classList.toggle("show",ovInv);oD.classList.toggle("show",ovDad);oShop.classList.toggle("show",shopOpen);oB.classList.toggle("show",ovBest);oMap.classList.toggle("show",ovMap);oCodex.classList.toggle("show",ovCodex);oGrave.classList.toggle("show",ovGrave);cf.classList.toggle("show",!!pendingConfirm||!!pendingMenu);const _oc=document.getElementById("ovClose");if(_oc)_oc.style.display=(ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave)&&!pendingConfirm&&!pendingMenu?"block":"none";syncDpad();syncActionBar();syncAimBar();_m9Body();syncTgtBox();/* MOB-08 */syncEndCard();/* MOB-59 */if(typeof m45Tick==="function")m45Tick();/* MOB-45 */}
 /* MOB-59 (2026-11-15): on phones the end of a run (tapped out, or victory) is a pop-up card with one button per next step, in place of
    the tap-the-log-row menu. Desktop keeps the log rows. Hidden while an overlay or confirm is open (Bestiary, etc.); the Share and
    Feedback sheets sit above it. Buttons call doEndAction() in input.js. */
@@ -176,6 +177,7 @@ function buildInstr(){const cp=(typeof COMPACT!=="undefined"&&COMPACT),K=(d,m)=>
  +(typeof openSaveBackup==="function"?pg('data-m12open="1" title="Back up, restore, or install"',' m43-util','Save Backup &amp; Install','Copy your saves to a code or file, restore them on another device, or install the game.'):'')
  +pg('data-m18open="1" title="QR code and link"',' m43-util','Share the Game','A QR code and a link, for recruiting other dads.')
  +(typeof openFeedback==="function"?pg('data-m42open="1" title="Report a bug or idea"',' m43-util','Send Feedback','Found a bug or have an idea? Opens a short form; the game fills in its version, floor and screen size.'):'')
+ +(typeof m45Replay==="function"?pg('data-m45replay="1" title="Show the floor-1 tutorial again"',' m43-util','Replay the Tutorial','The floor-1 coach cards, again, for the dad who skipped them. Every dad skips them.'):'')/* MOB-45 */
  +'</div><p class="m43-note">'+M43_NOTE+'</p>'+_m80Credit()+K('<p class="dim">Press H or Esc to return.</p>','<p class="dim">Tap &#10005; Close to return.</p>');
  _m43Wire();}
 /* MOB-80: CC BY 4.0 credit for the background music (titles from the MUSIC table, only loops present in the game) */
@@ -188,7 +190,8 @@ function openManualPage(n){const P=_m43Last||_m43Pages(),p=P[n],s=typeof documen
  if(typeof markDirty==="function")markDirty();}
 function closeManualPage(){const s=typeof document!=="undefined"&&document.getElementById("m43man");_m43Open=false;if(!s)return;s.classList.remove("show");try{const f=document.activeElement;if(f&&s.contains(f)&&f.blur)f.blur();}catch(e){}if(typeof markDirty==="function")markDirty();}
 function _m43Wire(){if(_m43Wired||typeof document==="undefined"||!document.getElementById)return;_m43Wired=true;
- if(oI&&oI.addEventListener)oI.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest("[data-m43]");if(b){ev.preventDefault();openManualPage(+b.dataset.m43);}});
+ if(oI&&oI.addEventListener)oI.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest("[data-m43]");if(b){ev.preventDefault();openManualPage(+b.dataset.m43);}
+  const r=ev.target.closest&&ev.target.closest("[data-m45replay]");if(r&&typeof m45Replay==="function"){ev.preventDefault();const sm=r.querySelector("small");const msg=m45Replay();if(sm)sm.textContent=msg;}/* MOB-45 */});
  const s=document.getElementById("m43man");
  if(s)s.addEventListener("click",ev=>{if(ev.target===s||(ev.target.closest&&ev.target.closest("[data-m43c]")))closeManualPage();});
  /* While a page is open, game keys must not reach the game; Esc closes only the page. */
@@ -815,3 +818,63 @@ function tgtCycle(n){const L=tgtTargets();if(L.length<2){syncTgtBox();return;}le
 function tgtAttack(){if(mode!==State.PLAY||!game||_tgtBusy())return;const L=tgtTargets();const t=L.find(x=>x.e===_tgtSel)||L[0];if(!t){syncTgtBox();return;}_tgtSel=t.e;
  if(typeof scanPick!=="undefined"&&scanPick&&typeof setScanPick==="function")setScanPick(false);
  game.clickPath=[];game.clickDoor=null;clearMouseInspect();reachStrike(t.e);syncUI();}
+/* MOB-45 (KBP 2026-11-11; draft approved 2026-11-24, plus a closing card): a quirky first-run tutorial on floor 1.
+   Coach cards (#m45tut, built here; CSS in the HTML) show once each, the first time their trigger happens on floor 1,
+   sit above the bottom of the map, never block movement, and close with one tap (OK) or "Skip the manual" (all, for good).
+   Lifetime key sda_tut_v1 = {v:1,seen:[ids],done:bool}; done is set when the closing card (t9) is dismissed or the manual
+   is skipped. Leaving floor 1 before the end shows t9 on arrival below. No DOM (harness) = no tutorial. Replay: The Dad Manual. */
+var M45_KEY="sda_tut_v1";
+var _m45={st:null,g:null,base:null,fired:{},cur:null,scan:false,el:null};
+var M45_STEPS=[
+ {id:"t1",t:"Chapter One",d:"You are Dad. This is the House. Somewhere below lies the Remote. The arrow keys (or WASD) take one step. A click on a tile works too.",m:"You are Dad. This is the House. Somewhere below lies the Remote. Swipe the map, or tap a tile next to Dad, to take one step."},
+ {id:"t2",t:"Walking",d:"Superb walking. Click any tile you have seen and Dad walks there himself, stopping the moment something goes wrong. Something will go wrong.",m:"Superb walking. Tap any tile you have seen and Dad walks there himself, stopping the moment something goes wrong. Something will go wrong."},
+ {id:"t3",t:"Hostiles",d:"A creature. Bump it with the arrow keys to attack. Diagonals count. Feelings do not.",m:"A creature. Walk into it to attack. Diagonals count. Feelings do not."},
+ {id:"t4",t:"Loot",d:"Loot. It lives in the BAG (I opens it). Click an item there to Use, Equip, Drop, Throw or Combine it. Unidentified things are a gamble. So was the minivan.",m:"Loot. It lives in the BAG. Tap an item there to Use, Equip, Drop, Throw or Combine it. Unidentified things are a gamble. So was the minivan."},
+ {id:"t5",t:"Doors",d:"A door. Walk into it and Dad asks what to do about it. It will not hold itself open for you. Nobody here will.",m:"A door. Walk into it, or tap it, and Dad asks what to do about it. It will not hold itself open for you. Nobody here will."},
+ {id:"t6",t:"Snacks",d:"Those meters are Hunger and Thirst. Let either fill and Dad takes damage. Eat food. Drink fluids. This also works outside the game.",m:"Those meters are Hunger and Thirst. Let either fill and Dad takes damage. Eat food. Drink fluids. This also works outside the game."},
+ {id:"t7",t:"Scanning",d:"X (or the SCAN button) sweeps the area for traps, hidden spaces and items. A suspicious wall deserves suspicion.",m:"SCAN, tapped twice, sweeps the area for traps, hidden spaces and items. SCAN, then a tap on one tile, says what is there. A suspicious wall deserves suspicion."},
+ {id:"t8",t:"The Stairs",d:"The stairs. Step onto them and Dad asks whether to go down; if you say not now, Space on the stairs asks again. Every floor is worse than the last. You are ready anyway. Somebody small thinks you are the best dad, and they have checked.",m:"The stairs. Step onto them and Dad asks whether to go down; if you say not now, tap Dad (or WAIT) on the stairs to be asked again. Every floor is worse than the last. You are ready anyway. Somebody small thinks you are the best dad, and they have checked."},
+ {id:"t9",t:"The End",d:"The rest you'll probably figure out. Who needs instructions anyway?",m:"The rest you'll probably figure out. Who needs instructions anyway?"}];
+function _m45Load(){if(_m45.st)return _m45.st;let o=null;try{o=JSON.parse(localStorage.getItem(M45_KEY)||"null");}catch(e){o=null;}
+ if(!o||typeof o!=="object"||!Array.isArray(o.seen))o={v:1,seen:[],done:false};_m45.st=o;return o;}
+function _m45Save(){try{localStorage.setItem(M45_KEY,JSON.stringify(_m45.st));}catch(e){}}
+function _m45Dom(){return typeof document!=="undefined"&&!!document.body&&typeof window!=="undefined";}
+function m45Active(){return _m45Dom()&&!_m45Load().done&&mode===State.PLAY&&!!game&&!game.ascent;}
+function m45Note(what){if(what==="scan")_m45.scan=true;}
+function _m45Blocked(){return !!(pendingConfirm||pendingMenu||ovInstr||ovInv||ovDad||shopOpen||ovBest||ovMap||ovCodex||ovGrave||_m43Open||_barCfgOpen||_m8More||(typeof _m41!=="undefined"&&_m41.open)||(typeof _m52Open!=="undefined"&&_m52Open)||!game||game.hp<=0);}
+function _m45Vis(x,y){return !!(game.vis&&game.vis[y]&&game.vis[y][x]);}
+function _m45Check(){const g=game,b=_m45.base,F=_m45.fired,S=_m45.st.seen;
+ F.t1=true;
+ if(S.indexOf("t1")>=0&&(g.px!==b.x||g.py!==b.y))F.t2=true;
+ if((g.enemies||[]).some(e=>_m45Vis(e.x,e.y)))F.t3=true;
+ if((g.itemsFound||0)>b.it)F.t4=true;
+ if((g.doors||[]).some(d=>!d.open&&Math.max(Math.abs(d.x-g.px),Math.abs(d.y-g.py))===1&&g.seen&&g.seen[d.y]&&g.seen[d.y][d.x]))F.t5=true;
+ if((g.hunger||0)>=(g.hungerCap||100)*0.7||(g.hydra||0)>=(g.hydraCap||100)*0.7)F.t6=true;
+ if(!_m45.scan&&(g.turn||0)-b.turn>=25)F.t7=true;
+ if(g.stairs&&_m45Vis(g.stairs.x,g.stairs.y))F.t8=true;}
+function m45Tick(){if(!_m45Dom())return;const st=_m45Load();
+ if(st.done||mode!==State.PLAY||!game||game.ascent){_m45Show(false);return;}
+ if(_m45.g!==game){_m45.g=game;_m45.base={x:game.px,y:game.py,it:game.itemsFound||0,turn:game.turn||0};_m45.fired={};_m45.cur=null;_m45.scan=false;}
+ if(game.depth===1)_m45Check();else if(!st.seen.length){_m45Show(false);return;}/* never started (an old run below floor 1): wait for floor 1 of a later run */else if(_m45.cur!=="t9"){_m45.fired={t9:true};_m45.cur=null;}
+ if(!_m45.cur){const nx=M45_STEPS.find(s=>_m45.fired[s.id]&&st.seen.indexOf(s.id)<0);_m45.cur=nx?nx.id:null;if(_m45.cur)_m45Paint();}
+ _m45Show(!!_m45.cur&&!_m45Blocked());}
+function _m45El(){if(_m45.el)return _m45.el;const d=document.createElement("div");d.id="m45tut";d.setAttribute("role","status");d.setAttribute("aria-live","polite");
+ d.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest("[data-m45]");if(!b)return;ev.preventDefault();ev.stopPropagation();m45Dismiss(b.dataset.m45==="skip");});
+ document.body.appendChild(d);_m45.el=d;if(window.addEventListener)window.addEventListener("resize",()=>{if(_m45.el&&_m45.el.classList.contains("show"))_m45Place();});return d;}
+function _m45Paint(){const s=M45_STEPS.find(x=>x.id===_m45.cur);if(!s)return;const el=_m45El(),cp=(typeof COMPACT!=="undefined"&&COMPACT),n=M45_STEPS.indexOf(s)+1;
+ el.innerHTML='<div class="atc m45-card"><div class="atc-mast"><span>DAD MANUAL</span><span class="atc-who">'+s.t+' &middot; '+n+' of '+M45_STEPS.length+'</span></div><div class="atc-body"><div class="m45-txt">'+(cp?s.m:s.d)+'</div>'
+ +'<div class="m45-btns">'+(s.id!=="t9"?'<button type="button" class="m45-skip" data-m45="skip">Skip the manual</button>':'')+'<button type="button" class="m45-ok" data-m45="ok">'+(s.id==="t9"?'Fine':'OK')+'</button></div></div></div>';}
+function _m45Place(){const el=_m45.el,cv=document.getElementById("screen");if(!el||!cv)return;const r=cv.getBoundingClientRect(),H=window.innerHeight||800,W=window.innerWidth||1200;
+ const w=Math.max(220,Math.min(440,r.width-12,W-16));el.style.width=w+"px";el.style.left=Math.max(8,Math.min(W-w-8,r.left+(r.width-w)/2))+"px";el.style.top="auto";
+ /* compact portrait: just above the action bar (over the HUD), so the map stays clear; otherwise over the bottom of the map */
+ const ab=document.getElementById("actionbar"),abr=ab&&ab.getBoundingClientRect(),land=document.body.classList.contains("m-land");
+ const cp=(typeof COMPACT!=="undefined"&&COMPACT);let bot=(cp&&!land&&abr&&abr.height>0&&abr.top>r.top+40)?H-abr.top+6:H-Math.min(r.bottom,H)+8;el.style.bottom=Math.max(8,bot)+"px";
+ /* never cover Dad: if his tile is under the card, move the card to the top of the map */
+ try{if(game&&typeof camX==="number"&&typeof VIEW_W==="number"&&VIEW_W>0){const ts=r.width/VIEW_W,dx=r.left+(game.px-camX)*ts,dy=r.top+(game.py-camY)*ts,c=el.getBoundingClientRect();
+  if(c.height>0&&dx<c.right&&dx+ts>c.left&&dy-4<c.bottom&&dy+ts+4>c.top){el.style.bottom="auto";el.style.top=Math.max(8,r.top+8)+"px";}}}catch(e){}}
+function _m45Show(on){const el=on?_m45El():_m45.el;if(!el)return;if(on){el.classList.add("show");_m45Place();/* the layout settles after syncUI (play-mode HUD, glide): place again next frame */if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>{if(el.classList.contains("show"))_m45Place();});}else el.classList.remove("show");}
+function m45Dismiss(skip){const st=_m45Load(),id=_m45.cur;if(!id)return;
+ if(skip){st.done=true;}else{if(st.seen.indexOf(id)<0)st.seen.push(id);if(id==="t8")_m45.fired.t9=true;if(id==="t9")st.done=true;}
+ _m45Save();_m45.cur=null;_m45Show(false);m45Tick();if(typeof markDirty==="function")markDirty();}
+function m45Replay(){_m45.st={v:1,seen:[],done:false};_m45Save();_m45.g=null;_m45.cur=null;_m45Show(false);
+ return (mode===State.PLAY&&game&&game.depth===1&&!game.ascent)?"Done. The manual starts again when you close this.":"Done. The manual returns on floor 1 of your next run.";}

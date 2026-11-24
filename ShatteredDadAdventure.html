@@ -735,6 +735,20 @@ body.m-compact .m43-grid{grid-template-columns:1fr 1fr;gap:9px}
 body.m-compact .m42-howto button{min-height:44px}
 .m18-howto button{font:bold 12px monospace;color:#1a1a1a;background:var(--gold);border:1px solid var(--gold);border-radius:5px;min-height:36px;padding:4px 12px;cursor:pointer}
 body.m-compact .m18-howto button{min-height:44px}
+/* MOB-45: first-run tutorial coach card (ui.js m45Tick); sits over the bottom of the map, never takes the keys */
+#m45tut{display:none;position:fixed;z-index:119;box-sizing:border-box;pointer-events:auto}
+#m45tut.show{display:block;animation:m45in .18s ease-out}
+@keyframes m45in{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){#m45tut.show{animation:none}}
+#m45tut .m45-card{margin:0;box-shadow:4px 4px 0 #000,0 6px 18px rgba(0,0,0,.45)}
+#m45tut .m45-txt{font-size:12px;line-height:1.3}
+#m45tut .atc-body{padding:5px 8px 6px}
+#m45tut .atc-mast{padding:2px 8px}
+#m45tut .atc-mast span:first-child{font-size:14px}
+#m45tut .m45-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+#m45tut button{font-family:var(--comic);font-size:15px;letter-spacing:.5px;min-height:40px;padding:2px 12px;white-space:nowrap;border:2px solid #000;border-radius:6px;box-shadow:2px 2px 0 #000;cursor:pointer;color:#111}
+#m45tut .m45-ok{background:#ffe14a;min-width:72px}
+#m45tut .m45-skip{background:#fff;font-size:13px}
 </style>
 </head>
 <body>
