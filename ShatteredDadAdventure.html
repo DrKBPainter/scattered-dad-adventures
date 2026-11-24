@@ -339,6 +339,17 @@
   #ovShop .m53-grid{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));}
   #ovShop .m53-act{display:block;width:100%;min-height:44px;margin:0 0 5px;font-weight:bold;font-size:12px;}
   #ovShop .m53-off{opacity:.5;}
+  /* MOB-93 (2026-11-24): Firefox for Android would not start a touch scroll on a 3D flip card (only in the gaps between cards).
+     Shop cards drop the 3D context (perspective / preserve-3d / backface) and flip with a short flat squash instead. */
+  #ovShop .bc-card{perspective:none;}
+  #ovShop .bc-inner{transform-style:flat;transition:none;}
+  #ovShop .bc-card.flipped .bc-inner{transform:none;}
+  #ovShop .bc-face{-webkit-backface-visibility:visible;backface-visibility:visible;}
+  #ovShop .bc-back{transform:none;visibility:hidden;}
+  #ovShop .bc-card.flipped .bc-back{visibility:visible;} #ovShop .bc-card.flipped .bc-front{visibility:hidden;}
+  #ovShop .bc-card.m93t .bc-inner{animation:m93a .24s ease-out;} #ovShop .bc-card.m93t.flipped .bc-inner{animation:m93b .24s ease-out;}
+  @keyframes m93a{from{transform:scaleX(.08);}to{transform:scaleX(1);}} @keyframes m93b{from{transform:scaleX(.08);}to{transform:scaleX(1);}}
+  @media (prefers-reduced-motion:reduce){#ovShop .bc-card.m93t .bc-inner,#ovShop .bc-card.m93t.flipped .bc-inner{animation:none;}}
   .bc-und .bc-front{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1.4px) 0 0/6px 6px,linear-gradient(#1a1d26,#0e1016);border-style:dashed;border-color:#3a4358;box-shadow:none;}
   .bc-und .bc-mast{background:#2a2f3c;color:#8a92a6;border-bottom-color:#3a4358;} .bc-und .bc-mast span:first-child{color:#8a92a6;}
   .bc-und .bc-art::before{display:none;}

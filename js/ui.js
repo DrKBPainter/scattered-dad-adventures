@@ -604,7 +604,7 @@ document.addEventListener("keydown",(e)=>{const k=e.key;
 /* ===== mouse (shop buy + slot unequip) ===== */
 oShop.addEventListener("click",(ev)=>{
  const _tb=ev.target.closest("[data-m53tab]");if(_tb){_m53Tab=+_tb.dataset.m53tab;buildShop();return;}/* MOB-53: cards flip first; the back's button buys or sells */
- const _cd=ev.target.closest(".bc-card[data-cx]");if(_cd){if(!_cd.classList.contains("flipped")){_cd.classList.add("flipped");return;}if(!ev.target.closest("[data-sell],[data-shop]")){_cd.classList.remove("flipped");return;}if(ev.target.closest(".m53-off")){log("Sold out. He checks the back. He returns with nothing and a long story about his supplier.","dim");syncUI();return;}}
+ const _cd=ev.target.closest(".bc-card[data-cx]");if(_cd){if(!_cd.classList.contains("flipped")){_cd.classList.add("m93t","flipped");return;}if(!ev.target.closest("[data-sell],[data-shop]")){_cd.classList.add("m93t");_cd.classList.remove("flipped");return;}if(ev.target.closest(".m53-off")){log("Sold out. He checks the back. He returns with nothing and a long story about his supplier.","dim");syncUI();return;}}
  const sellRow=ev.target.closest("[data-sell]");
  if(sellRow){const idx=+sellRow.dataset.sell;const e=game.inv[idx];if(!e)return;const sp=sellPrice(e.it);openConfirm("Sell "+itemNameSlot(e.it)+" for "+sp+" moolah?"+kbTxt(" ([Y] confirm / [N] cancel)",""),()=>sellItem(idx));return;}
  const buyRow=ev.target.closest("[data-shop]");if(!buyRow)return;
