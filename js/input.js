@@ -15,6 +15,7 @@ function canvasTap(ev,touchy){if(mode!==State.PLAY)return;
  if(scanPick){setScanPick(false);if(game){game.clickPath=[];game.clickDoor=null;}clearMouseInspect();showScanPop(x,y);return;}// MOB-36: armed SCAN, this tap identifies the tile in a pop-up (no turn)
  // Shift+click directs the active companion: shift+click an enemy = attack it, shift+click a tile = move there.
  if(ev.shiftKey&&game&&game.ally&&game.ally.following){game.clickPath=[];orderAlly(x,y);return;}
+ if(game&&game.ally&&game.ally.following&&game.ally.x===x&&game.ally.y===y&&!(x===game.px&&y===game.py)&&game.vis&&game.vis[y]&&game.vis[y][x]&&typeof openAllyCard==="function"){game.clickPath=[];game.clickDoor=null;clearMouseInspect();openAllyCard();return;}// MOB-60: tap or click the companion = its card (orders, gear, bag)
  if(game){game.clickPath=[];game.clickDoor=null;}// cancel any existing path
  // Doors auto-close; clicking an open door inspects it
  const _dr=doorAt(x,y);if(_dr&&_dr.open&&!touchy){showInspect(x,y);return;}// MOB-36: on touch only SCAN identifies things; tapping an open door walks to it

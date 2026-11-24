@@ -545,7 +545,7 @@ const ALLIES = [
   {
     id:"chad", name:"Chad From Next Door",
     ability:{kind:"status",status:"atkup",turns:8,name:"Bro Hype",text:'Chad: "Bro. BRO. You\'ve got this." It should not work. It works. Pumped Up: +3 ATK for 8 turns.'},
-    hp:24, maxhp:24, atk:5, def:2,
+    hp:24, maxhp:24, atk:5, def:2, carry:4,
     sprite:SPR_A_CHAD,
     intro:'"Sup. Need help? I\'m not doing anything." He was clearly doing something. He abandons it without explanation.',
     flavor:"Teenager. Swings hard. Takes hits philosophically. Occasionally says 'bro' during combat. This is unexpectedly encouraging.",
@@ -557,7 +557,7 @@ const ALLIES = [
   {
     id:"karen_s", name:"Sharon (Next Door)",
     ability:{kind:"snack",amount:30,name:"Casserole Delivery",text:'Sharon produces a foil-covered casserole from somewhere on her person. "You need to eat." You eat it standing up. Hunger -30.'},
-    hp:20, maxhp:20, atk:4, def:3,
+    hp:20, maxhp:20, atk:4, def:3, carry:4,
     sprite:SPR_A_KAREN,
     intro:'"I heard something going on over here." She appears with a casserole and what appears to be a socket wrench. The casserole is for later. The wrench is for now.',
     flavor:"Sharon from next door. She has raised three teenagers and attended every PTA meeting for eleven years. She is exactly as effective in combat as this implies.",
@@ -569,7 +569,7 @@ const ALLIES = [
   {
     id:"uncle_ron", name:"Uncle Ron (From Florida)",
     ability:{kind:"status",status:"guard",turns:8,name:"Florida Stance",text:'Uncle Ron steps half in front of you. "In Florida we call this a Tuesday." Guard Stance: +2 DEF for 8 turns.'},
-    hp:36, maxhp:36, atk:6, def:5,
+    hp:36, maxhp:36, atk:6, def:5, carry:4,
     sprite:SPR_A_UNCLE_RON,
     intro:'"I was in the area." He was in Florida. He drove sixteen hours. He does not explain this and you do not ask.',
     flavor:"Built like a retired linebacker and operates accordingly. Hits extremely hard. Complains continuously but not about the fighting, which he seems to find restorative.",
@@ -581,7 +581,7 @@ const ALLIES = [
   {
     id:"little_timmy", name:"Little Timmy (Your Kid)",
     ability:{kind:"heal",pct:0.2,name:"Unscheduled Hug",text:'Little Timmy hugs your leg mid-dungeon. "You\'re the best dad." +{n} HP. Science cannot explain it. Science was not invited.'},
-    hp:14, maxhp:14, atk:3, def:1,
+    hp:14, maxhp:14, atk:3, def:1, carry:2,
     sprite:SPR_A_LITTLE_TIMMY,
     intro:'"Dad, I want to help." He is eight. You take a moment. The moment passes. You accept the help.',
     flavor:"Recklessly brave in ways that imply a philosophical difference about risk. Surprisingly effective. Low center of gravity means he spots floor hazards before you do. You're going to have a talk about all of this after.",
@@ -593,7 +593,7 @@ const ALLIES = [
   {
     id:"officer_doug", name:"Officer Doug (Off-Duty)",
     ability:{kind:"stun",turns:2,name:"Off-Duty Presence",text:'Officer Doug clears his throat. The {foe} stops to reconsider its choices. Stunned for 2 turns.'},
-    hp:32, maxhp:32, atk:8, def:4,
+    hp:32, maxhp:32, atk:8, def:4, carry:6,
     sprite:SPR_A_OFFICER_DOUG,
     intro:'"Just passing through." The badge on his belt says otherwise. He does not address the badge.',
     flavor:"Massive. Technically off-duty. Has a presence that causes enemies to briefly reconsider their choices before proceeding anyway. Hits decisively. Files nothing.",

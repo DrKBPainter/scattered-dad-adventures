@@ -428,6 +428,95 @@ function giveToAlly(e){const A=game.ally;if(!e||!allyCanTakeHeal(e.it)){log("Nob
  log("You hand "+nm+" the "+e.it.name+". +"+(A.hp-before)+" HP ("+A.hp+"/"+A.maxhp+"). "+M84_LINES[(game.turn||0)%M84_LINES.length].replace("{n}",nm),"grn");
  if(A.dBleed>0){A.dBleed=0;A.dBleedN=0;log(nm+"'s bleeding stops.","grn");}
  removeEntry(e,1);endTurn();return true;}
+/* ===== MOB-60: companion kit and carry bag =====
+   A following companion can wear one weapon plus head, torso, legs and feet armor (no charms) and carries a small bag sized by the companion
+   (ALLIES[].carry: Little Timmy 2, most adults 4, Officer Doug 6). Worn gear adds its ATK/DEF (affixes included) to the companion's own.
+   Cursed gear sticks to the companion too. Handing things over or taking them back costs no turn and needs the companion on one of the 8
+   tiles next to Dad. When the companion falls, everything worn or carried drops on its tile. Saved in game.ally.kit / game.ally.bag
+   (older saves load with an empty kit and bag). Opened by tapping or clicking the companion, the COMPANION button, or O. */
+var ALLY_KIT_SLOTS=["weapon","head","torso","legs","feet"];
+var M60_SLOT_NAMES={weapon:"Weapon",head:"Head",torso:"Torso",legs:"Legs",feet:"Feet"};
+var M60_GIVE_LINES=["{n} takes it without asking what it is. Trust is a beautiful thing.","{n} accepts it with both hands, like a casserole dish.","{n} tucks it away somewhere. You will not see where. You never do.","{n} nods. The handoff is clean. Somewhere a youth coach would be proud."];
+var M60_WEAR_LINES=["{n} puts it on. It is not their size. They make it work.","{n} wears it with the confidence of someone who did not read the tag.","{n} suits up. You feel a small, unexpected surge of pride. You raised a team player, or at least met one."];
+function allyDefOf(){return (game&&game.ally&&typeof ALLIES!=="undefined")?(ALLIES.find(a=>a.id===game.ally.defId)||null):null;}
+function allyKit(){const A=game&&game.ally;if(!A)return {};if(!A.kit||typeof A.kit!=="object"||Array.isArray(A.kit))A.kit={};return A.kit;}
+function allyBag(){const A=game&&game.ally;if(!A)return [];if(!Array.isArray(A.bag))A.bag=[];return A.bag;}
+function allyBagCap(d){d=d||allyDefOf();return d&&d.carry>0?d.carry:4;}
+function allyGearSum(stat){const k=(game&&game.ally&&game.ally.kit)||{};let s=0;for(const sl of ALLY_KIT_SLOTS)if(k[sl])s+=itemStat(k[sl],stat);return s;}
+function allyAtk(d){return Math.max(1,((d&&d.atk)||0)+allyGearSum("atk"));}
+function allyDefStat(d){return Math.max(0,((d&&d.def)||0)+allyGearSum("def"));}
+function allyKitSlot(it){if(!it)return null;if(it.kind==="weapon")return "weapon";if(it.kind==="armor"&&ALLY_KIT_SLOTS.indexOf(it.slot)>=0)return it.slot;return null;}
+function allyNear(){const A=game&&game.ally;return !!(A&&A.following&&A.hp>0&&Math.max(Math.abs(A.x-game.px),Math.abs(A.y-game.py))<=1);}
+function _m60Copy(it){return JSON.parse(JSON.stringify(it));}
+// Put one item in the companion's bag (stacks like Dad's bag); false when the bag is full.
+function _m60Stow(it){const B=allyBag();if(stackable(it)){const ms=maxStack(it);const b=B.find(b=>b.it.kind===it.kind&&b.it.id===it.id&&b.qty<ms);if(b){b.qty++;return true;}}if(B.length>=allyBagCap())return false;B.push({it:it,qty:1});return true;}
+// Hand one of Dad's bag entries to the companion: wearable gear goes on (the piece it replaces goes to the companion's bag, else Dad's bag, else the floor); anything else goes in the companion's bag.
+function allyGive(e){const A=game.ally,d=allyDefOf();if(!A||!A.following||!d||!e||game.inv.indexOf(e)<0)return false;const nm=d.name,it=e.it,sl=allyKitSlot(it);
+ if(!allyNear()){log(nm+" is too far away. Hand-offs happen at arm's length. Get next to them first.","dim");syncUI();return false;}
+ if(sl){const K=allyKit(),old=K[sl];
+  if(old&&isCursed(old)){log("The "+old.name+" will not come off "+nm+". It is cursed, and it has decided this is home now. Find a receipt.","red");syncUI();return false;}
+  removeEntry(e,1);K[sl]=it;noteGearSeen(it);
+  log("You hand "+nm+" the "+it.name+". "+M60_WEAR_LINES[(game.turn||0)%M60_WEAR_LINES.length].replace("{n}",nm)+" ("+nm+": ATK "+allyAtk(d)+", DEF "+allyDefStat(d)+")","grn");
+  if(isCursed(it))log("The "+it.name+" tightens its grip on "+nm+". It is cursed. They are being very brave about it.","red");
+  if(old){if(_m60Stow(old))log(nm+" keeps the "+old.name+" in their bag.","dim");else{log(nm+" hands the "+old.name+" back to you.","dim");_m71KeepOld(old);}}
+ }else{const one=(e.qty>1)?_m60Copy(it):it;
+  if(!_m60Stow(one)){log(nm+"'s hands are full ("+allyBagCap(d)+" of "+allyBagCap(d)+"). Take something back first.","dim");syncUI();return false;}
+  removeEntry(e,1);log("You hand "+nm+" the "+it.name+". "+M60_GIVE_LINES[(game.turn||0)%M60_GIVE_LINES.length].replace("{n}",nm),"grn");}
+ saveRun();syncUI();return true;}
+// Take back a worn piece ({slot}) or a whole bag stack ({bag:index}) into Dad's bag.
+function allyTake(ref){const A=game.ally,d=allyDefOf();if(!A||!A.following||!d||!ref)return false;const nm=d.name;
+ if(!allyNear()){log(nm+" is too far away to hand anything back. Get next to them first.","dim");syncUI();return false;}
+ if(ref.slot){const K=allyKit(),it=K[ref.slot];if(!it)return false;
+  if(isCursed(it)){log("The "+it.name+" refuses to come off "+nm+". It is cursed. "+nm+" says it is fine. It is not fine.","red");syncUI();return false;}
+  if(game.inv.length>=invCap()){log("Inventory full ("+invCap()+" slots). Make room before taking the "+it.name+" back.","red");syncUI();return false;}
+  delete K[ref.slot];addItem(it);log(nm+" hands back the "+it.name+". ("+nm+": ATK "+allyAtk(d)+", DEF "+allyDefStat(d)+")","grn");}
+ else{const B=allyBag(),b=B[ref.bag];if(!b)return false;let got=0;
+  while(b.qty>0){const one=(b.qty>1)?_m60Copy(b.it):b.it;if(!addItem(one))break;b.qty--;got++;}
+  if(b.qty<=0)B.splice(ref.bag,1);
+  if(!got){syncUI();return false;}
+  log(nm+" hands back the "+b.it.name+(got>1?" (x"+got+")":"")+".","grn");}
+ saveRun();syncUI();return true;}
+// The companion falls: defeat line, then everything worn or carried lands on its tile (the tile beside it if that is a staircase).
+function allyFall(def){const A=game.ally;const nm=def?def.name:"Your companion";log(def&&def.defeatMsg?def.defeatMsg:(nm+" has been defeated. They did what they could."),"red");
+ const drops=[];if(A){const K=A.kit||{};for(const sl of ALLY_KIT_SLOTS)if(K[sl])drops.push(K[sl]);for(const b of (Array.isArray(A.bag)?A.bag:[]))for(let i=0;i<(b.qty||1);i++)drops.push(i?_m60Copy(b.it):b.it);}
+ if(A&&drops.length){let dx=A.x,dy=A.y;if(onStairs(dx,dy)){for(const[ox,oy]of[[0,1],[1,0],[0,-1],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]){const nx=dx+ox,ny=dy+oy;if(nx>=0&&ny>=0&&nx<MAP_W&&ny<MAP_H&&game.floor.grid[ny][nx]===0&&!onStairs(nx,ny)){dx=nx;dy=ny;break;}}}
+  for(const it of drops)game.loot.push({x:dx,y:dy,item:it});
+  log("Everything "+nm+" had on them ends up on the floor where they fell: "+drops.length+" item"+(drops.length===1?"":"s")+". Nobody in this family packs light.","gold");}
+ game.ally=null;game.allyOrder=null;}
+// The companion card (comic card like ATTRIBUTES): stats with gear bonus in [brackets], stance, worn gear, bag; orders and hand-offs below. No turn.
+function openAllyCard(){if(!game||!game.ally||!game.ally.following)return _m60StanceList();const A=game.ally,d=allyDefOf();if(!d)return;
+ const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");const K=allyKit(),B=allyBag(),cap=allyBagCap(d),near=allyNear(),cur=allyStance();
+ const val=(k,b,e)=>(typeof _atcVal==="function"?_atcVal(k,b,e):(k+" = "+e));
+ const row=(h,t)=>'<div class="atc-row">'+h+'<div class="atc-t">'+t+'</div></div>';
+ const worn=ALLY_KIT_SLOTS.map(sl=>'<div>'+M60_SLOT_NAMES[sl]+': '+(K[sl]?'<b>'+esc(itemNameSlot?K[sl].name:K[sl].name)+'</b>'+(isCursed(K[sl])&&K[sl].idd?' <span class="l-red">(cursed)</span>':''):'<span class="dim">nothing</span>')+'</div>').join("");
+ const bag=B.length?B.map(b=>'<div>'+esc(b.it.name)+(b.qty>1?' x'+b.qty:'')+'</div>').join(""):'<div class="dim">Empty.</div>';
+ const html='<div class="atc m60card"><div class="atc-mast"><span>COMPANION</span><span class="atc-who">'+esc(d.name)+'</span></div>'
+  +'<div class="atc-body"><div class="atc-sub">Orders, gear and the bag. Changing orders or handing things over costs no turn. Gear bonuses are in [brackets].</div>'
+  +row('<span class="atc-eq">HP = '+Math.max(0,A.hp)+' / '+A.maxhp+'</span>','When this hits zero, they head home and leave everything they had on the floor.')
+  +row(val('ATK',d.atk,allyAtk(d)),'Their swing, plus any weapon you gave them.')
+  +row(val('DEF',d.def,allyDefStat(d)),'Every hit they take is cut by their DEF.')
+  +row('<span class="atc-eq">STANCE = '+allyStanceLabel()+'</span>',(function(t){return t.charAt(0).toUpperCase()+t.slice(1);})((ALLY_STANCES.find(s=>s[0]===cur)||ALLY_STANCES[1])[2])+'.')
+  +'<div class="atc-row"><span class="atc-eq">WEARING</span><div class="atc-t m60list">'+worn+'</div></div>'
+  +'<div class="atc-row"><span class="atc-eq">BAG = '+B.length+' / '+cap+'</span><div class="atc-t m60list">'+bag+'</div></div>'
+  +(near?'':'<div class="atc-sub">Stand next to '+esc(d.name)+' to hand things over or take them back.</div>')
+  +'<div class="atc-flav">'+esc(d.flavor)+'</div></div></div>';
+ const opts=ALLY_STANCES.map(s=>({label:"Stance: <b>"+s[1].toUpperCase()+"</b>"+(s[0]===cur?" (current)":""),fn:function(){setAllyStance(s[0]);}}));
+ if(near){opts.push({label:"Give them something...",fn:_m60GiveList});
+  if(B.length||ALLY_KIT_SLOTS.some(sl=>K[sl]))opts.push({label:"Take something back...",fn:_m60TakeList});}
+ openMenu(html,opts);}
+function _m60GiveList(){const d=allyDefOf();if(!d||!allyNear())return openAllyCard();const A=game.ally,opts=[];
+ for(const e of game.inv){const it=e.it,sl=allyKitSlot(it);const nmq=itemNameSlot(it)+(e.qty>1?" x"+e.qty:"");
+  if(allyCanTakeHeal(it)&&(A.hp<A.maxhp||A.dBleed>0))opts.push({label:"Feed: "+nmq+" <span class=\"dim\">(+"+it.heal+" HP now, takes a turn)</span>",fn:function(){giveToAlly(e);}});
+  opts.push({label:(sl?"Wear: ":"Carry: ")+nmq+(sl&&allyKit()[sl]?' <span class="dim">(swaps out the '+allyKit()[sl].name+')</span>':''),fn:function(){allyGive(e);openAllyCard();}});}
+ if(!opts.length){log("Your bag is empty. There is nothing to give but encouragement. You give that. It is received.","dim");syncUI();return openAllyCard();}
+ opts.push({label:"Back",fn:openAllyCard});
+ openMenu("Give "+d.name+" what? <span class=\"dim\">(their bag: "+allyBag().length+" / "+allyBagCap(d)+")</span>",opts);}
+function _m60TakeList(){const d=allyDefOf();if(!d||!allyNear())return openAllyCard();const K=allyKit(),B=allyBag(),opts=[];
+ for(const sl of ALLY_KIT_SLOTS)if(K[sl]){const _s=sl;opts.push({label:M60_SLOT_NAMES[sl]+": "+K[sl].name,fn:function(){allyTake({slot:_s});openAllyCard();}});}
+ B.forEach((b,i)=>{opts.push({label:"Bag: "+b.it.name+(b.qty>1?" x"+b.qty:""),fn:function(){allyTake({bag:i});openAllyCard();}});});
+ if(!opts.length)return openAllyCard();
+ opts.push({label:"Back",fn:openAllyCard});
+ openMenu("Take what back from "+d.name+"?",opts);}
 /* ===== survival + statuses ===== */
 function survivalTick(){const hr=(game.cls.hungerRate||0.5)*0.5,hy=Math.max(0.05,((game.cls.hydraRate||0.7)*0.5)-(game.hydraSlow||0)*0.5);
  const hcap=game.hungerCap||100,dcap=game.hydraCap||100;
@@ -928,12 +1017,12 @@ function allyStepToward(tx,ty){
  for(const [mx,my] of steps){if(mx===0&&my===0)continue;const nx=A.x+mx,ny=A.y+my;if(canStep(nx,ny)){A.x=nx;A.y=ny;return true;}}
  return false;}
 function allyHit(def,t){if(typeof allyAnimAttack==="function"&&game.ally)allyAnimAttack(t.x-game.ally.x,t.y-game.ally.y);/* MOB-61 attack lunge (visual only) */
- const dmg=Math.max(1,def.atk-Math.floor(t.def.def/3));t.hp-=dmg;t.shownHP=true;addFX({kind:"blast",cells:[{x:t.x,y:t.y}],t:0,life:6,color:"#37b0b0"});log(def.name+" hits "+t.def.name+" for "+dmg+".","dim");if(def.dtype&&t.hp>0&&Math.random()<DT_PROC_CREATURE)dtApplyUnit(t,def.dtype);/* MOB-69 (no companion has a type yet) */
+ const dmg=Math.max(1,allyAtk(def)-Math.floor(t.def.def/3));/* MOB-60: base ATK + worn gear */t.hp-=dmg;t.shownHP=true;addFX({kind:"blast",cells:[{x:t.x,y:t.y}],t:0,life:6,color:"#37b0b0"});log(def.name+" hits "+t.def.name+" for "+dmg+".","dim");if(def.dtype&&t.hp>0&&Math.random()<DT_PROC_CREATURE)dtApplyUnit(t,def.dtype);/* MOB-69 (no companion has a type yet) */
  if(t.hp<=0){log(t.def.name+" defeated by "+def.name+".","gold");gainXP(Math.floor(t.def.xp/2));game.gold+=Math.floor(t.def.gold/2);tryCompleteHuntQuest(t);game.enemies=game.enemies.filter(x=>x!==t);if(game.allyOrder&&game.allyOrder.type==="attack"&&game.allyOrder.target===t)game.allyOrder=null;}}
 function allySufferAdjacent(def){
  const A=game.ally;const hits=game.enemies.filter(en=>!en.isDog&&Math.abs(en.x-A.x)+Math.abs(en.y-A.y)===1);
- for(const h of hits){const dmg=Math.max(0,(h.scaledAtk||h.def.atk)-def.def);if(dmg>0){A.hp-=dmg;const _ct=dtCreatureType(h);if(_ct&&A.hp>0&&Math.random()<DT_PROC_CREATURE)dtApplyUnit(A,_ct,{ally:true,def:def});}}/* MOB-69 */
- if(A.hp<=0){const _defMsg=def.defeatMsg?def.defeatMsg:(def.name+" has been defeated. They did what they could.");log(_defMsg,"red");game.ally=null;game.allyOrder=null;}}
+ for(const h of hits){const dmg=Math.max(0,(h.scaledAtk||h.def.atk)-allyDefStat(def));/* MOB-60: base DEF + worn gear */if(dmg>0){A.hp-=dmg;const _ct=dtCreatureType(h);if(_ct&&A.hp>0&&Math.random()<DT_PROC_CREATURE)dtApplyUnit(A,_ct,{ally:true,def:def});}}/* MOB-69 */
+ if(A.hp<=0){allyFall(def);/* MOB-60: logs the defeat and drops the kit + bag */}}
 function allyTurn(){
  if(!game.ally||!game.ally.following)return;
  const def=typeof ALLIES!=="undefined"?ALLIES.find(a=>a.id===game.ally.defId):null;
@@ -941,7 +1030,7 @@ function allyTurn(){
  const A=game.ally;
  // Little Timmy asks the questions every dad knows. You do not have to answer.
  if(def.id==="little_timmy"&&typeof TIMMY_QUESTIONS!=="undefined"&&Math.random()<0.12){log("Little Timmy: \""+TIMMY_QUESTIONS[Math.floor(Math.random()*TIMMY_QUESTIONS.length)]+"\"","dim");}
- {const _dt=dtTickUnit(A,true,def);/* MOB-69 */if(_dt==="dead"){const _defMsg=def.defeatMsg?def.defeatMsg:(def.name+" has been defeated. They did what they could.");log(_defMsg,"red");game.ally=null;game.allyOrder=null;return;}if(_dt==="skip"){allySufferAdjacent(def);return;}if(A.dFrozen>0){A.dFrozen--;const _fa=allyStance()!=="passive"?game.enemies.find(en=>!en.isDog&&Math.abs(en.x-A.x)+Math.abs(en.y-A.y)===1):null;log(def.name+" is Frozen Solid and stays put.","dim");if(_fa)allyHit(def,_fa);else allySufferAdjacent(def);return;}}
+ {const _dt=dtTickUnit(A,true,def);/* MOB-69 */if(_dt==="dead"){allyFall(def);/* MOB-60 */return;}if(_dt==="skip"){allySufferAdjacent(def);return;}if(A.dFrozen>0){A.dFrozen--;const _fa=allyStance()!=="passive"?game.enemies.find(en=>!en.isDog&&Math.abs(en.x-A.x)+Math.abs(en.y-A.y)===1):null;log(def.name+" is Frozen Solid and stays put.","dim");if(_fa)allyHit(def,_fa);else allySufferAdjacent(def);return;}}
  allyAbilityTick(def);/* MOB-28 */
  // Validate any active order
  let order=game.allyOrder;
@@ -992,7 +1081,9 @@ function allyAbilityTick(def){const A=game.ally,ab=def.ability;if(!A||!ab)return
  else if(ab.kind==="stun"){const t=game.enemies.filter(en=>inView(en)&&!en.isBoss).sort((a,b)=>(Math.abs(a.x-game.px)+Math.abs(a.y-game.py))-(Math.abs(b.x-game.px)+Math.abs(b.y-game.py)))[0];if(t){t.stun=Math.max(t.stun||0,ab.turns);log(ab.text.replace("{foe}",t.def.name),"grn");used=true;}}
  if(used)A.abCd=ALLY_ABILITY_GAP[0]+Math.floor(Math.random()*(ALLY_ABILITY_GAP[1]-ALLY_ABILITY_GAP[0]+1));}
 // Stance chooser: MORE > COMPANION on phones, the COMPANION button or the O key on desktop. Costs no turn.
-function openStanceMenu(){if(!game||!game.ally||!game.ally.following){log("No companion to brief right now. You give the pep talk to yourself. It goes fine.","dim");syncUI();return;}
+// MOB-60: those now open the companion card (stance, gear, bag); the plain stance list stays as _m60StanceList.
+function openStanceMenu(){if(typeof openAllyCard==="function"&&game&&game.ally&&game.ally.following){openAllyCard();return;}_m60StanceList();}
+function _m60StanceList(){if(!game||!game.ally||!game.ally.following){log("No companion to brief right now. You give the pep talk to yourself. It goes fine.","dim");syncUI();return;}
  const cur=allyStance();
  openMenu("COMPANION STANCE &mdash; "+allyName()+'<br><span class="dim">Now: '+allyStanceLabel()+". Changing it costs no turn.</span>",ALLY_STANCES.map(s=>({label:"<b>"+s[1].toUpperCase()+"</b> &mdash; "+s[2]+(s[0]===cur?" (current)":""),fn:function(){setAllyStance(s[0]);}})));}
 function setAllyStance(s){if(!game||!game.ally||!game.ally.following)return;game.ally.stance=(s==="aggressive"||s==="passive")?s:"neutral";log(ALLY_STANCE_LINES[allyStance()].replace("{name}",allyName()),"grn");saveRun();syncUI();}
@@ -1128,7 +1219,7 @@ function hoaFinaleTick(){
   if(R)for(const t of R)log(t,"gold");
  }
 }
-function saveRun(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({clsId:game.cls.id,skin:game.skin||0,seed:game.seed,isDaily:!!game.isDaily,ascent:!!game.ascent,ascentDone:!!game.ascentDone,dailyDate:game.dailyDate||null,depth:game.depth,diffId:game.diff?game.diff.id:"weekend_warrior",hp:game.hp,maxhp:game.maxhp,str:game.str,def:game.def,per:game.per,wis:game.wis,moxie:game.moxie,maxmoxie:game.maxmoxie,level:game.level,xp:game.xp,xpNext:game.xpNext,gold:game.gold,equip:game.equip,inv:game.inv,dadisms:game.dadisms,statuses:game.statuses,inspectPts:game.inspectPts,hydraSlow:game.hydraSlow,kneeChance:game.kneeChance,backChance:game.backChance,px:game.px,py:game.py,ally:game.ally?{defId:game.ally.defId,hp:game.ally.hp,maxhp:game.ally.maxhp,x:game.ally.x,y:game.ally.y,following:!!game.ally.following,questDone:!!game.ally.questDone,questOffered:!!game.ally.questOffered,stance:allyStance(),dBurn:game.ally.dBurn||0,dWet:game.ally.dWet||0,dZap:game.ally.dZap||0,dChill:game.ally.dChill||0,dChillN:game.ally.dChillN||0,dChillAlt:!!game.ally.dChillAlt,dFrozen:game.ally.dFrozen||0,dBleed:game.ally.dBleed||0,dBleedN:game.ally.dBleedN||0,dDoubt:game.ally.dDoubt||0/* MOB-69 */}:null,allyMet:game.allyMet||[],biomesSeen:game.biomesSeen||[],knownRecipes:game.knownRecipes||[],triedPairs:game.triedPairs||[],returning:game.returning||[],knownConsumables:game.knownConsumables||[],keyring:game.keyring||[],floorCache:game.floorCache||{},ledger:game.ledger||{},kills:game.kills||0,consumed:game.consumed||0,talentPicks:game.talentPicks||0,talents:game.talents||[],foodLuck:game.foodLuck||0,lightStep:!!game.lightStep,foodEaten:game.foodEaten||0,drinksTaken:game.drinksTaken||0,moolahEarned:game.moolahEarned||0,itemsFound:game.itemsFound||0,notesFound:game.notesFound||0,comedyFloors:game.comedyFloors||[],comedyShown:game.comedyShown||[],hoaSeen:!!game.hoaSeen,hoaDone:!!game.hoaDone}));}catch(e){}}
+function saveRun(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({clsId:game.cls.id,skin:game.skin||0,seed:game.seed,isDaily:!!game.isDaily,ascent:!!game.ascent,ascentDone:!!game.ascentDone,dailyDate:game.dailyDate||null,depth:game.depth,diffId:game.diff?game.diff.id:"weekend_warrior",hp:game.hp,maxhp:game.maxhp,str:game.str,def:game.def,per:game.per,wis:game.wis,moxie:game.moxie,maxmoxie:game.maxmoxie,level:game.level,xp:game.xp,xpNext:game.xpNext,gold:game.gold,equip:game.equip,inv:game.inv,dadisms:game.dadisms,statuses:game.statuses,inspectPts:game.inspectPts,hydraSlow:game.hydraSlow,kneeChance:game.kneeChance,backChance:game.backChance,px:game.px,py:game.py,ally:game.ally?{defId:game.ally.defId,hp:game.ally.hp,maxhp:game.ally.maxhp,x:game.ally.x,y:game.ally.y,following:!!game.ally.following,questDone:!!game.ally.questDone,questOffered:!!game.ally.questOffered,stance:allyStance(),dBurn:game.ally.dBurn||0,dWet:game.ally.dWet||0,dZap:game.ally.dZap||0,dChill:game.ally.dChill||0,dChillN:game.ally.dChillN||0,dChillAlt:!!game.ally.dChillAlt,dFrozen:game.ally.dFrozen||0,dBleed:game.ally.dBleed||0,dBleedN:game.ally.dBleedN||0,dDoubt:game.ally.dDoubt||0/* MOB-69 */,kit:game.ally.kit||{},bag:game.ally.bag||[]/* MOB-60 */}:null,allyMet:game.allyMet||[],biomesSeen:game.biomesSeen||[],knownRecipes:game.knownRecipes||[],triedPairs:game.triedPairs||[],returning:game.returning||[],knownConsumables:game.knownConsumables||[],keyring:game.keyring||[],floorCache:game.floorCache||{},ledger:game.ledger||{},kills:game.kills||0,consumed:game.consumed||0,talentPicks:game.talentPicks||0,talents:game.talents||[],foodLuck:game.foodLuck||0,lightStep:!!game.lightStep,foodEaten:game.foodEaten||0,drinksTaken:game.drinksTaken||0,moolahEarned:game.moolahEarned||0,itemsFound:game.itemsFound||0,notesFound:game.notesFound||0,comedyFloors:game.comedyFloors||[],comedyShown:game.comedyShown||[],hoaSeen:!!game.hoaSeen,hoaDone:!!game.hoaDone}));}catch(e){}}
 function clearRun(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 function hasSave(){try{return !!localStorage.getItem(SAVE_KEY);}catch(e){return false;}}
 function continueRun(){let s;try{s=JSON.parse(localStorage.getItem(SAVE_KEY));}catch(e){return false;}if(!s)return false;
