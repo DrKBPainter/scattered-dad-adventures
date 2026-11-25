@@ -117,6 +117,8 @@ function tileGroup(D){
   list.push({key:"tile:"+b+":floor:2",spr:fl,px:tileDetail(tileBase(fl,PAL,{wrap:1,noise:0.012,seed:seed+2}),"specks",seed+2)});
   list.push({key:"tile:"+b+":wall:0",spr:wa,px:tileBase(wa,PAL,{wrap:1,noise:0.01,seed:seed+3})});
   list.push({key:"tile:"+b+":wall:1",spr:wa,px:tileDetail(tileBase(wa,PAL,{wrap:1,noise:0.01,seed:seed+4}),"crack",seed+4)});
+  /* MOB-37: Park only: concrete block wall variants for closed rooms (tile:park:cwall:<n>) */
+  if(b==="park"&&SPR.SPR_WALL_CONCRETE){const cw=SPR.SPR_WALL_CONCRETE;list.push({key:"tile:park:cwall:0",spr:cw,px:tileBase(cw,PAL,{wrap:1,noise:0.01,seed:seed+5})});list.push({key:"tile:park:cwall:1",spr:cw,px:tileDetail(tileBase(cw,PAL,{wrap:1,noise:0.01,seed:seed+6}),"crack",seed+6)});}
   /* shadow colour: the wall's darkest colour pushed toward the outline ink */
   let dk=null;for(const row of wa)for(const c of row){const v=hex(PAL[c]);if(v&&(!dk||lum(v)<lum(dk)))dk=v;}
   const sc=(dk||OUTLINE).map((v,k)=>clamp(v*0.35+OUTLINE[k]*0.65));
@@ -131,7 +133,7 @@ function tileGroup(D){
  const wt=SPR.SPR_WATER;
  if(wt){const shiftX=(s,n)=>s.map(r=>r.slice(n)+r.slice(0,n)),shiftY=(s,n)=>s.slice(n).concat(s.slice(0,n));
   [wt,shiftX(wt,16),shiftY(shiftX(wt,8),12)].forEach((w,n)=>list.push({key:"tile:all:water:"+n,spr:w,px:tileBase(w,PAL,{wrap:1,noise:0.014,seed:500+n})}));}
- for(const n of["SPR_DOOR","SPR_DOOR_L","SPR_DOOR_OPEN","SPR_STAIRS","SPR_STAIRS_UP","SPR_BIOME_GATE","SPR_BIOME_GATE_UP"])
+ for(const n of["SPR_DOOR","SPR_DOOR_L","SPR_DOOR_OPEN","SPR_GATE","SPR_GATE_OPEN","SPR_STAIRS","SPR_STAIRS_UP","SPR_BIOME_GATE","SPR_BIOME_GATE_UP"])
   if(SPR[n])list.push({key:n,spr:SPR[n],px:tileBase(SPR[n],PAL,{noise:0.008,seed:700})});
  return list;
 }
