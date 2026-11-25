@@ -32,7 +32,7 @@
 | BUG-021 | Crafted item lost when a worn cap item is consumed with a full bag (MOB-57) | `js/game.js` | resolved | 2026-11-15 |
 | BUG-022 | Ally hunt quest target missing, quest cannot be completed (MOB-58) | `js/game.js` | resolved | 2026-11-15 |
 | BUG-023 | Locked rooms could be entered without the key (diagonal corner step / secret wall beside the corner) (MOB-22) | `js/game.js` | resolved | 2026-11-16 |
-| BUG-024 | Gym Dad door option 'Kick it down' throws ReferenceError (kickDoor is not defined) | `js/game.js` | open | 2026-11-16 |
+| BUG-024 | Gym Dad door option 'Kick it down' throws ReferenceError (kickDoor is not defined) | `js/game.js` | resolved | 2026-11-16 |
 | BUG-025 | Target box covered the creature it listed (and Dad or items) in the lower-right corner of the map (MOB-68) | `js/ui.js` | resolved | 2026-11-17 |
 | BUG-026 | Gear lost kneeRelief: mkGear did not copy it (Compression Knee Sleeves, Tactical Compression Cargo System gave no knee relief) | `js/game.js` | resolved | 2026-11-17 |
 | BUG-027 | Plywood Barricade places an HOA Violation Notice instead of a barricade | `js/data.js, js/game.js` | open | 2026-11-17 |
@@ -40,6 +40,8 @@
 | BUG-029 | Equipping a charm (or any gear) with a full bag destroyed the item taken off | `js/game.js` | resolved | 2026-11-18 |
 | BUG-030 | Vendor stock never ran out | `js/ui.js` | resolved | 2026-11-18 |
 | BUG-031 | Vendor revealed hidden curses and upgrades on unidentified gear (MOB-53) | `js/game.js, js/ui.js` | resolved | 2026-11-21 |
+| BUG-032 | MOB-93: vendor BUY/SELL card list scrolls only from the gaps between cards (Firefox Android) | `ShatteredDadAdventure.html, js/ui.js` | resolved | 2026-11-24 |
+| BUG-033 | Gym Dad 'Kick it down' door option calls an undefined kickDoor() | `js/game.js` | resolved | 2026-11-25 |
 
 ---
 
@@ -115,17 +117,6 @@
 
 
 
-### BUG-024 — Gym Dad door option 'Kick it down' throws ReferenceError (kickDoor is not defined)
-
-- **File:** `js/game.js`
-- **Status:** open
-- **Logged:** 2026-11-16
-
-**Description:** doorOptions() in js/game.js offers 'Kick it down' to the Gym Dad, but no kickDoor() function exists anywhere in the project, so choosing it throws and the door stays shut. Found during the 2026-11-16 nightly run 4 (MOB-66/67 door tests); not fixed tonight (no item covers it).
-
-**Repro steps:** Start a Gym Dad run, bump a closed door, choose 'Kick it down': console shows ReferenceError: kickDoor is not defined (reproduced in Playwright on the current build and the build before tonight's changes).
-
----
 
 ### BUG-027 — Plywood Barricade places an HOA Violation Notice instead of a barricade
 
@@ -138,8 +129,49 @@
 **Repro steps:** Craft Screws + Plywood as DIY, PLACE TRAP next to Dad: the tile holds an HOA Violation Notice; creatures walk onto it.
 
 ---
+
+### BUG-032 — MOB-93: vendor BUY/SELL card list scrolls only from the gaps between cards (Firefox Android)
+
+- **File:** `ShatteredDadAdventure.html, js/ui.js`
+- **Status:** resolved
+- **Logged:** 2026-11-24
+
+**Description:** Galaxy S25+ Firefox, installed, build 1.0.0-cc004cfc1f, floor 45: scrolling the vendor's BUY/SELL cards glitches and is mostly unresponsive; a drag only scrolls when it starts in the thin gap between cards. Shop cards (MOB-53) reuse the 3D flip cards (.bc-card perspective, .bc-inner preserve-3d, backface-visibility). Not reproduced in emulated Chromium (touch drags on a card scroll normally there).
+
+**Repro steps:** Firefox for Android: open a vendor, drag up starting on a card (does not scroll) vs starting in the gap between two cards (scrolls).
+
+
+**Fix:** The shop cards flip flat (no 3D context) inside #ovShop; only the tapped card plays a short squash (MOB-93). KBP closed MOB-93 on 2026-11-24 after his Galaxy S25+ check.
+---
+
 ## Resolved Bugs
 
+### BUG-033 — Gym Dad 'Kick it down' door option calls an undefined kickDoor()
+
+- **File:** `js/game.js`
+- **Status:** resolved
+- **Logged:** 2026-11-25
+
+**Description:** js/game.js doorOptions() offers 'Kick it down' to the Gym Dad on every closed door (and, since MOB-37, Park gates), but no kickDoor function exists in any js file, so choosing it throws ReferenceError and nothing happens. Found by the 2026-11-25 nightly run while reading the door code for MOB-37; tracked as MOB-94.
+
+**Repro steps:** Play the Gym Dad, bump a closed unlocked door, choose Kick it down.
+
+
+**Fix:** js/game.js now defines kickDoor(d) (MOB-94, 2026-11-25): the Gym Dad's "Kick it down" costs 1 turn and removes the door or Park gate from the floor, locked or not, with a log line. Same bug as BUG-024.
+---
+### BUG-024 — Gym Dad door option 'Kick it down' throws ReferenceError (kickDoor is not defined)
+
+- **File:** `js/game.js`
+- **Status:** resolved
+- **Logged:** 2026-11-16
+
+**Description:** doorOptions() in js/game.js offers 'Kick it down' to the Gym Dad, but no kickDoor() function exists anywhere in the project, so choosing it throws and the door stays shut. Found during the 2026-11-16 nightly run 4 (MOB-66/67 door tests); not fixed tonight (no item covers it).
+
+**Repro steps:** Start a Gym Dad run, bump a closed door, choose 'Kick it down': console shows ReferenceError: kickDoor is not defined (reproduced in Playwright on the current build and the build before tonight's changes).
+
+
+**Fix:** js/game.js now defines kickDoor(d) (MOB-94, 2026-11-25): the Gym Dad's "Kick it down" costs 1 turn and removes the door or Park gate from the floor, locked or not, with a log line. Duplicate of BUG-033.
+---
 ### BUG-018 — MOB-39: light around Dad flickers during auto-travel with MOTION on
 
 - **File:** `js/render.js`

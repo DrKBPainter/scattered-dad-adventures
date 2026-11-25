@@ -1305,6 +1305,12 @@ function applyAttrBoost(boost,e){
  else if(boost.stat==="wis"){game.wis+=boost.amount;log("PERMANENT WIS +"+boost.amount+"! Dadism power improved.","gold");}
  removeEntry(e.it?game.inv.find(x=>x===e):game.inv.find(x=>x.it===e.it),1);endTurn();}
 /* ===== interactable doors (#28/#30) ===== */
+/* MOB-94 (BUG-033): the Gym Dad's "Kick it down". 1 turn; the door (or Park gate) leaves the floor for good, locked or not. */
+function kickDoor(d){if(!d||!game.doors.includes(d))return;const wasLocked=!!d.locked,gate=!!d.gate;
+ game.doors=game.doors.filter(x=>x!==d);
+ if(typeof addFX==="function")addFX({kind:"blast",cells:[{x:d.x,y:d.y}],t:0,life:8,color:"#c8a060"});
+ log(gate?"You kick the park gate clean off its hinges. Somewhere, a parks department form is being filled out in triplicate. (1 turn)":wasLocked?"Locked? Not anymore. You lower a shoulder and the door leaves its frame in one piece, which is more than can be said for the frame. The gym membership has finally paid for itself. (1 turn)":"You kick the door off its hinges. It was not locked. You knew that. It needed to learn anyway. (1 turn)",wasLocked?"gold":"dim");
+ computeVis();endTurn();}
 function doorOpen(d,msg){d.open=true;d.openTurn=game.turn;d.playerWasOn=false;msg=msg||"You open the door. (1 turn)";if(d.gate)msg=msg.replace(/door/g,"gate");/* MOB-37 */log(msg,"dim");computeVis();endTurn();}
 // Lockpicking (DIY class). Turn cost scales inversely with experience: green dads fumble for many
 // turns, veterans breeze it. A picked door is opened but NOT unlocked — it may seal itself again.
