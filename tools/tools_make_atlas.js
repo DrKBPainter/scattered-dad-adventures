@@ -64,6 +64,7 @@ function groupDefs(D){
   ["SPR_GEAR_W","SPR_GEAR_A","SPR_POTION","SPR_OBJECT","SPR_KEY","SPR_CHARM"].forEach(n=>add(SPR[n]));
   for(const a of["WEAPONS","ARMORS","CHARMS","CONSUMABLES","KEYS","OBJECTS"])for(const it of(G[a]||[]))add(it&&it.sprite);
   add(SPR.SPR_FRIDGE_NOTE);/* M16 floor pickup (appended last so earlier cells keep their place) */
+  ["SPR_U_FOOD","SPR_U_DRINK","SPR_U_MEDICINE","SPR_U_ODD","SPR_U_WEAPON","SPR_U_HEAD","SPR_U_TORSO","SPR_U_ARMS","SPR_U_LEGS","SPR_U_FEET","SPR_U_CHARM"].forEach(n=>add(SPR[n]));/* MOB-62: shared unidentified pictures */
   out.items={chunk:"M13",list};}
  /* heroes: generic dad + one per class (dadSprite() naming), allies, family dog */
  {const list=[],seen=new Set();const add=n=>{if(SPR[n]&&!seen.has(n)){seen.add(n);list.push({key:n,spr:SPR[n]});}};

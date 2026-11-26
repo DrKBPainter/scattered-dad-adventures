@@ -824,26 +824,26 @@ const CONSUMABLES=[
  {id:"ibuprofen",name:"Ibuprofen (Family Size)",heal:3,cures:["knee","back"],desc:"+3 HP. Cures Dad-body ailments.",sprite:SPR_Q_IBUPROFEN}
 ,
  // ── NIGHTLY ADDITIONS (2026-06-18) ──
- {id:"acetaminophen",name:"Acetaminophen (Store Brand)",defBuff:10,desc:"+2 DEF for 10 turns. Read the label: do not combine with alcohol. (Nobody reads the label.)",sprite:SPR_Q_IBUPROFEN},
- {id:"hotdog",name:"Gas Station Hot Dog",heal:10,nourish:35,causes:"thirst",desc:"On the roller since yesterday. Structurally confident.",sprite:SPR_Q_MEATBALL},
- {id:"proteinbar",name:"Chalky Protein Bar",heal:4,nourish:30,desc:"Flavor: 'Vanilla.' Contains neither.",sprite:SPR_Q_GRANOLA},
- {id:"sportsdrink",name:"Red Sports Drink",heal:3,hydrate:50,cures:["hangry"],desc:"Neon red. The lab report is outstanding.",sprite:SPR_Q_GATORADE},
- {id:"kombucha",name:"Experimental Kombucha",heal:6,hydrate:30,moxie:2,cures:["hangover"],desc:"+Patience. 14-day fermentation. 40% chance this one is fine.",sprite:SPR_Q_WATER},
- {id:"coldpizza",name:"Cold Pizza (Breakfast)",heal:14,nourish:45,desc:"A complete meal. A lifestyle. A statement.",sprite:SPR_Q_CASSEROLE},
- {id:"dinnermints",name:"Restaurant Mints (Handful)",heal:1,nourish:5,moxie:1,desc:"From the bowl by the door. Free. Technically.",sprite:SPR_Q_GRANOLA},
- {id:"glucosamine",name:"Glucosamine Chondroitin",cures:["knee","back"],desc:"Taken daily since 2019. Results: the jury remains out. The knees remain problematic.",sprite:SPR_Q_IBUPROFEN},
- {id:"antacid",name:"Chalky Antacid Tablet",heal:4,cures:["hangry"],desc:"Fruit-flavored. Chalky. Works instantly and publicly.",sprite:SPR_Q_IBUPROFEN},
- {id:"applejuice",name:"Juice Pouch (Apple)",heal:2,hydrate:35,nourish:10,desc:"The straw takes 4 attempts. Every time.",sprite:SPR_Q_PEDIALYTE},
- {id:"fruitcup",name:"Fruit Cup (Syrup-Packed)",heal:6,nourish:20,hydrate:15,desc:"The fruit is optional. The syrup is the point.",sprite:SPR_Q_CASSEROLE},
+ {id:"acetaminophen",name:"Acetaminophen (Store Brand)",defBuff:10,desc:"+2 DEF for 10 turns. Read the label: do not combine with alcohol. (Nobody reads the label.)",sprite:SPR_Q_BLISTER},
+ {id:"hotdog",name:"Gas Station Hot Dog",heal:10,nourish:35,causes:"thirst",desc:"On the roller since yesterday. Structurally confident.",sprite:SPR_Q_HOTDOG},
+ {id:"proteinbar",name:"Chalky Protein Bar",heal:4,nourish:30,desc:"Flavor: 'Vanilla.' Contains neither.",sprite:SPR_Q_PROTEINBAR},
+ {id:"sportsdrink",name:"Red Sports Drink",heal:3,hydrate:50,cures:["hangry"],desc:"Neon red. The lab report is outstanding.",sprite:SPR_Q_SPORTSDRINK},
+ {id:"kombucha",name:"Experimental Kombucha",heal:6,hydrate:30,moxie:2,cures:["hangover"],desc:"+Patience. 14-day fermentation. 40% chance this one is fine.",sprite:SPR_Q_KOMBUCHA},
+ {id:"coldpizza",name:"Cold Pizza (Breakfast)",heal:14,nourish:45,desc:"A complete meal. A lifestyle. A statement.",sprite:SPR_Q_COLDPIZZA},
+ {id:"dinnermints",name:"Restaurant Mints (Handful)",heal:1,nourish:5,moxie:1,desc:"From the bowl by the door. Free. Technically.",sprite:SPR_Q_MINTS},
+ {id:"glucosamine",name:"Glucosamine Chondroitin",cures:["knee","back"],desc:"Taken daily since 2019. Results: the jury remains out. The knees remain problematic.",sprite:SPR_Q_GLUCOSAMINE},
+ {id:"antacid",name:"Chalky Antacid Tablet",heal:4,cures:["hangry"],desc:"Fruit-flavored. Chalky. Works instantly and publicly.",sprite:SPR_Q_ANTACID},
+ {id:"applejuice",name:"Juice Pouch (Apple)",heal:2,hydrate:35,nourish:10,desc:"The straw takes 4 attempts. Every time.",sprite:SPR_Q_APPLEJUICE},
+ {id:"fruitcup",name:"Fruit Cup (Syrup-Packed)",heal:6,nourish:20,hydrate:15,desc:"The fruit is optional. The syrup is the point.",sprite:SPR_Q_FRUITCUP},
  // ── NIGHTLY ADDITIONS (2026-06-21) N6 ──
- {id:"banana",name:"Lone Banana (Slightly Bruised)",heal:5,nourish:18,cures:["knee"],desc:"Potassium. The official fruit of the man who is fine. The bruise is where the flavor lives.",sprite:SPR_Q_GRANOLA},
- {id:"hose_water",name:"Garden Hose Water",hydrate:48,desc:"Warm, rubbery, faintly metallic. The way water was meant to be taken. Free, and it builds character.",sprite:SPR_Q_WATER},
- {id:"tums_roll",name:"Roll of Antacids (Pocket Lint Included)",heal:3,cures:["hangry","saltdry"],desc:"Chalk in three flavors, all of them chalk. Found in every coat he owns.",sprite:SPR_Q_IBUPROFEN},
- {id:"icyhot",name:"Tube of Menthol Heat Rub",cures:["back","knee"],desc:"Cures The Back and The Knee at once. The aroma announces you to a room before you enter it.",sprite:SPR_Q_IBUPROFEN},
- {id:"epsom",name:"Epsom Salt Soak (Travel Packet)",heal:8,cures:["back"],desc:"+8 HP. A grown man's bath bomb. He earned this and he will tell you why.",sprite:SPR_Q_PEDIALYTE},
- {id:"coconut_water",name:"Coconut Water (Impulse Buy)",heal:4,hydrate:42,cures:["hangover"],desc:"He read it was good for you. He did not enjoy it. He finished it on principle.",sprite:SPR_Q_GATORADE},
- {id:"ginger_ale",name:"Flat Ginger Ale",heal:5,hydrate:20,cures:["hangry","hangover"],desc:"The household cure for the flu, a bad mood, and existential dread. Carbonation: a memory.",sprite:SPR_Q_PEDIALYTE},
- {id:"crockpot",name:"All-Day Slow Cooker Stew",heal:20,nourish:55,desc:"In since 6 a.m. He told everyone about it. Repeatedly. It was, in fact, worth it.",sprite:SPR_Q_CASSEROLE}
+ {id:"banana",name:"Lone Banana (Slightly Bruised)",heal:5,nourish:18,cures:["knee"],desc:"Potassium. The official fruit of the man who is fine. The bruise is where the flavor lives.",sprite:SPR_Q_BANANA},
+ {id:"hose_water",name:"Garden Hose Water",hydrate:48,desc:"Warm, rubbery, faintly metallic. The way water was meant to be taken. Free, and it builds character.",sprite:SPR_Q_HOSEWATER},
+ {id:"tums_roll",name:"Roll of Antacids (Pocket Lint Included)",heal:3,cures:["hangry","saltdry"],desc:"Chalk in three flavors, all of them chalk. Found in every coat he owns.",sprite:SPR_Q_TUMSROLL},
+ {id:"icyhot",name:"Tube of Menthol Heat Rub",cures:["back","knee"],desc:"Cures The Back and The Knee at once. The aroma announces you to a room before you enter it.",sprite:SPR_Q_HEATRUB},
+ {id:"epsom",name:"Epsom Salt Soak (Travel Packet)",heal:8,cures:["back"],desc:"+8 HP. A grown man's bath bomb. He earned this and he will tell you why.",sprite:SPR_Q_EPSOM},
+ {id:"coconut_water",name:"Coconut Water (Impulse Buy)",heal:4,hydrate:42,cures:["hangover"],desc:"He read it was good for you. He did not enjoy it. He finished it on principle.",sprite:SPR_Q_COCONUTWATER},
+ {id:"ginger_ale",name:"Flat Ginger Ale",heal:5,hydrate:20,cures:["hangry","hangover"],desc:"The household cure for the flu, a bad mood, and existential dread. Carbonation: a memory.",sprite:SPR_Q_GINGERALE},
+ {id:"crockpot",name:"All-Day Slow Cooker Stew",heal:20,nourish:55,desc:"In since 6 a.m. He told everyone about it. Repeatedly. It was, in fact, worth it.",sprite:SPR_Q_STEW}
 ];
 
 /* ===== KEYS ===== */

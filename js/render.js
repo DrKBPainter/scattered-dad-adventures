@@ -234,7 +234,19 @@ function _jzScreenFx(J){if(!J)return;const n=J.n,CW=VIEW_W*TILE,CH=VIEW_H*TILE;
 function _jzEnd(J){if(!J)return;if((J.ox||J.oy)&&ctx.setTransform)ctx.setTransform(RENDER_SCALE,0,0,RENDER_SCALE,0,0);_jzScreenFx(J);}
 function lootSprite(it){return it.kind==="note"&&typeof SPR_FRIDGE_NOTE!=="undefined"?SPR_FRIDGE_NOTE:it.kind==="weapon"?SPR_GEAR_W:it.kind==="armor"?SPR_GEAR_A:it.kind==="charm"?SPR_CHARM:it.kind==="key"?SPR_KEY:it.kind==="object"?SPR_OBJECT:SPR_POTION;}
 /* itemIconSprite: returns 32x32 sprite for inventory icon if available, else 16x16 fallback */
-function itemIconSprite(it){return(it&&it.sprite)?it.sprite:lootSprite(it);}
+/* MOB-62 (KBP 2026-11-15, 2026-11-23): until an item is identified it shows one shared picture for its type:
+   gear by slot (all unidentified trousers look the same), consumables by kind (food, drink, medicine, odd stuff). */
+var CONS_UNID_TYPE={rehab:"odd",binder:"odd"};
+function consUnidType(it){if(!it)return "odd";if(CONS_UNID_TYPE[it.id])return CONS_UNID_TYPE[it.id];const d=(typeof CONSUMABLES!=="undefined"&&CONSUMABLES.find(c=>c.id===it.id))||it;
+ const n=d.nourish||0,h=d.hydrate||0;if(d.alcohol||h>n)return "drink";if(n>0)return "food";if(d.heal||d.cures||d.defBuff)return "medicine";return "odd";}
+function unidItemSprite(it){if(!it)return null;
+ if((it.kind==="weapon"||it.kind==="armor"||it.kind==="charm")&&it.idd===false){
+  if(it.kind==="weapon")return typeof SPR_U_WEAPON!=="undefined"?SPR_U_WEAPON:null;if(it.kind==="charm")return typeof SPR_U_CHARM!=="undefined"?SPR_U_CHARM:null;
+  const s=it.slot;return s==="head"&&typeof SPR_U_HEAD!=="undefined"?SPR_U_HEAD:s==="torso"&&typeof SPR_U_TORSO!=="undefined"?SPR_U_TORSO:s==="arms"&&typeof SPR_U_ARMS!=="undefined"?SPR_U_ARMS:s==="legs"&&typeof SPR_U_LEGS!=="undefined"?SPR_U_LEGS:s==="feet"&&typeof SPR_U_FEET!=="undefined"?SPR_U_FEET:null;}
+ if(it.kind==="consumable"&&typeof consKnown==="function"&&!consKnown(it)){const k=consUnidType(it);
+  return k==="food"&&typeof SPR_U_FOOD!=="undefined"?SPR_U_FOOD:k==="drink"&&typeof SPR_U_DRINK!=="undefined"?SPR_U_DRINK:k==="medicine"&&typeof SPR_U_MEDICINE!=="undefined"?SPR_U_MEDICINE:typeof SPR_U_ODD!=="undefined"?SPR_U_ODD:null;}
+ return null;}
+function itemIconSprite(it){const u=unidItemSprite(it);if(u)return u;return(it&&it.sprite)?it.sprite:lootSprite(it);}
 function showEnemyHP(e){return game.globalReveal||e.shownHP||effPer()>=SHOW_HP_PER;}
 /* M4 FRAME LOOP (mobile plan). render() is the requestAnimationFrame callback, but it only redraws when
    something may have changed: markDirty() was called, an animation window from requestAnim(ms) is open, or the

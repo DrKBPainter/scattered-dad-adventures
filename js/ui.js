@@ -279,7 +279,7 @@ function _m53Entry(it,o){const gear=["weapon","armor","charm"].includes(it.kind)
  else if(it.kind==="consumable"){if(cunk)ln.push('??? unidentified');else{if(it.heal)st.push(['HP','+'+it.heal]);if(it.nourish)st.push(['FOOD',it.nourish]);if(it.hydrate)st.push(['DRINK',it.hydrate]);if(it.cures)ln.push('Cures: '+it.cures.join('/'));}if(it.throw)ln.push('throwable');}
  else{if(it.throw)ln.push('throwable');if(it.placeable)ln.push('placeable trap');}
  ln.push(o.note);const slot=itemSlotLabel(it);
- return {met:true,pal:_m53Pal(it),tag:o.tag,name:esc(o.buy?it.name:itemDisplayName(it))+(o.qty>1?' &times;'+o.qty:''),spr:itemIconSprite(it),stats:st.slice(0,4),lines:ln,flav:(unid||cunk)?'':(it.desc||''),
+ return {met:true,pal:_m53Pal(it),tag:o.tag,name:esc(o.buy?it.name:itemDisplayName(it))+(o.qty>1?' &times;'+o.qty:''),spr:(o.buy&&it.kind==="consumable"&&it.sprite)?it.sprite/* MOB-62: stock is named in full */:itemIconSprite(it),stats:st.slice(0,4),lines:ln,flav:(unid||cunk)?'':(it.desc||''),
   combo:'<button type="button" class="cf-btn m53-act'+(o.off?' m53-off':'')+'" '+o.attr+(o.off?' aria-disabled="true"':'')+'>'+o.btn+'</button>'+(slot?'<div class="bc-seen">Slot: '+slot+'</div>':'')};}
 function _m53Cards(){const v=game.vendor.def;_m14Sprs=[];let h='<h1>'+v.name+'</h1><p class="dim">'+v.greet+'</p><p><b>'+game.gold+' moolah</b> &middot; tap a card to flip it, then tap the button on the back</p>';
  h+='<div class="cdx-tabs"><button type="button" class="cdx-tab'+(_m53Tab===0?' cdx-tab-sel':'')+'" data-m53tab="0">BUY</button><button type="button" class="cdx-tab'+(_m53Tab===1?' cdx-tab-sel':'')+'" data-m53tab="1">SELL ('+game.inv.length+')</button></div>';
