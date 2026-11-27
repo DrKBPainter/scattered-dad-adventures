@@ -28,9 +28,37 @@ function syncUI(){
   elLog.innerHTML=messages.map(m=>'<div class="l-'+m.c+'">'+m.t+'</div>').join("");}
  else if(mode===State.DEAD||mode===State.WIN){const won=mode===State.WIN;elStat.innerHTML='<b style="font-size:16px" class="'+(won?"l-grn":"l-red")+'">'+(won?"VICTORY":"YOU TAPPED OUT")+(game.isDaily?' <span class="l-gold" style="font-size:12px">— DAILY CHALLENGE ('+(game.dailyDate||"")+')</span>':'')+'</b>';elStatuses.innerHTML=(won?'<span class="dim">'+(game.ascentDone?'The Remote is home. Daylight confirmed. Someone has already mentioned the gutters.':'The Remote is recovered. Thermostat: 72.')+'</span>':'<span class="dim">Not defeated. Merely... done for the day. Reached floor '+game.depth+'.</span>')+(game.isDaily?' <span class="dim">Daily result recorded.</span>':'');elLog.innerHTML=(won?'<div class="l-grn">All discovered creatures retained.</div>':((typeof deathReport!=="undefined"&&deathReport)?deathReport.map(m=>'<div class="l-'+m.c+'">'+m.t+'</div>').join(''):'<div class="l-grn">All discovered creatures retained.</div>'))+kbStrip('<div class="l-gold"><span class="ti-opt" data-end="title">[ENTER] Title</span> &nbsp; <span class="ti-opt" data-end="best">[B] Bestiary</span> &nbsp; <span class="ti-opt" data-end="share">[Q] Share the Game</span> &nbsp; <span class="ti-opt" data-end="feedback">[F] Send Feedback</span>'+(won&&!game.ascentDone&&!game.ascent?' &nbsp; <span class="ti-opt" data-end="ascent">[A] ASCENT &mdash; carry it home (everything is angrier)</span>':'')+'</div>');}
  if(typeof syncDadSelect==="function")syncDadSelect();
+ if(typeof syncDiffSelect==="function")syncDiffSelect();/* MOB-96 */
  if(typeof syncTitleCover==="function")syncTitleCover();
  if(typeof syncDurable==="function")syncDurable();
  syncOverlays();}
+/* ===== MOB-96 (2026-11-27): phone Choose Difficulty screen. Compact layouts only (desktop keeps the text list).
+   Comic panels like the Dad deck: tap a panel to pick it, the gold button starts the run, Back returns to the deck.
+   Keys still work (UP/DOWN + ENTER via the existing DIFF key handler; this screen follows diffCursor). ===== */
+var _m96El=null,_m96On=false,_m96Shown=-1;
+const M96_ACC=["#3fae5a","#3b82d6","#e8862a","#d0021b"];
+function _m96Pct(v){return Math.round((v||1)*100)+"%";}
+function _m96Build(){if(_m96El||typeof document==="undefined"||!document.body)return;const el=document.createElement("div");el.id="m96diff";el.setAttribute("aria-label","Choose difficulty");
+ let h='<div class="m96-head"><span class="m96-daily">DAILY CHALLENGE</span><b>CHOOSE DIFFICULTY</b><span class="m96-dad"></span></div><div class="m96-list">';
+ DIFFICULTY_MODES.forEach((d,i)=>{let pips="";for(let p=0;p<DIFFICULTY_MODES.length;p++)pips+='<i'+(p<=i?' class="on"':'')+'></i>';
+  h+='<button type="button" class="m96-card" data-m96="'+i+'" style="--m96-acc:'+M96_ACC[i%M96_ACC.length]+'"><span class="m96-pick">PICKED</span><span class="m96-name">'+d.name+'</span><span class="m96-blurb">'+d.blurb+'</span><span class="m96-threat"><span class="m96-tl">THREAT</span><span class="m96-pips">'+pips+'</span></span><span class="m96-num">Creature HP '+_m96Pct(d.hpMul)+' &middot; Hits '+_m96Pct(d.atkMul)+' &middot; Crowds '+_m96Pct(d.cntMul)+'</span></button>';});
+ h+='</div><div class="m96-note">Taped to the fridge, in crayon: &ldquo;Any setting is the right setting, Dad. You showed up.&rdquo;</div><div class="ds-btns m96-btns"><button type="button" class="ds-back" data-m96="back">&#9664; Back</button><button type="button" class="ds-go m96-go" data-m96="go">Start</button></div>';
+ el.innerHTML=h;document.body.appendChild(el);_m96El=el;
+ el.addEventListener("click",ev=>{const b=ev.target.closest("[data-m96]");if(!b||mode!==State.DIFF)return;const v=b.dataset.m96;
+  if(v==="back"){mode=State.CLASS;syncUI();return;}
+  if(v==="go"){diffStart(diffCursor);return;}
+  diffCursor=+v;syncUI();});}
+/* Same start as the desktop row click (input.js) and ENTER: log the flavor line, then newRun. */
+function diffStart(i){if(mode!==State.DIFF||!pendingClass)return;diffCursor=i;const _diff=DIFFICULTY_MODES[diffCursor];log(pendingClass.name+" on "+_diff.name+": "+_diff.flavor,"gold");const _dseed=pendingDaily?dailySeedFor(dailyDateStr()):undefined;pendingDaily=false;newRun(pendingClass,_diff,_dseed);}
+function syncDiffSelect(){if(typeof document==="undefined"||!document.body)return;
+ const want=(mode===State.DIFF)&&(typeof COMPACT!=="undefined"&&COMPACT);
+ if(!want){if(_m96On){_m96On=false;document.body.classList.remove("m-diffsel");}return;}
+ _m96Build();if(!_m96El)return;const first=!_m96On;if(first){_m96On=true;document.body.classList.add("m-diffsel");}
+ _m96El.classList.toggle("daily",!!pendingDaily);
+ const dn=_m96El.querySelector(".m96-dad");if(dn)dn.textContent=pendingClass?("Chosen Dad: "+pendingClass.name):"";
+ _m96El.querySelectorAll(".m96-card").forEach(c=>{const on=+c.dataset.m96===diffCursor;c.classList.toggle("on",on);c.setAttribute("aria-pressed",on?"true":"false");});
+ const go=_m96El.querySelector(".m96-go");if(go&&DIFFICULTY_MODES[diffCursor])go.textContent="Start on "+DIFFICULTY_MODES[diffCursor].name;
+ if(first||_m96Shown!==diffCursor){_m96Shown=diffCursor;const c=_m96El.querySelector('.m96-card[data-m96="'+diffCursor+'"]');if(c&&c.scrollIntoView&&!first)try{c.scrollIntoView({block:"nearest"});}catch(e){}}}
 /* ===== overlays ===== */
 const oI=document.getElementById("ovInstr"),oInv=document.getElementById("ovInv"),oD=document.getElementById("ovDad"),oShop=document.getElementById("ovShop"),oB=document.getElementById("ovBest"),oMap=document.getElementById("ovMap"),oCodex=document.getElementById("ovCodex"),oGrave=document.getElementById("ovGrave"),cf=document.getElementById("confirm"),cfT=document.getElementById("cf-text"),cfBtns=document.getElementById("cf-btns");
 const elStat=document.getElementById("statline"),elStatuses=document.getElementById("statuses"),elLog=document.getElementById("log");
