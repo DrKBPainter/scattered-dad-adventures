@@ -41,7 +41,7 @@ function pickViewport(w,h){const o=_viewOverride();if(o)return o;
  if(h>w*1.15)return w>=700?[11,15]:[9,13];
  if(_coarsePointer()&&Math.min(w,h)>=600)return[17,12];
  return[15,10];}
-function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;const _l=_m6Layout(iw,ih);const v=pickViewport(iw,ih);
+function fitCanvas(){const _m101=_m101Size(window.innerWidth||0,window.innerHeight||0),iw=_m101[0],ih=_m101[1];const _l=_m6Layout(iw,ih);const v=pickViewport(iw,ih);
  /* MOB-55: phone/tablet landscape: the map fills the left column, so its tile count follows that column's shape
     (rows stay as picked; columns = rows x column width / height, at most 20, so a wide column shows more tiles instead of
     black bars). ?view=WxH still wins. */
@@ -69,6 +69,25 @@ function fitCanvas(){const iw=window.innerWidth||0,ih=window.innerHeight||0;cons
    canvas does not jump when the D-pad hides for an overlay or the aim bar appears. */
 let COMPACT=false,LANDSCAPE_UI=false,_m6Play=false,_m6HudMax=0,_m6CtlMax=0,_m6Key="";
 function _isCompact(w,h){return w>0&&h>0&&(w<760||h<560||_coarsePointer());}
+/* ===== MOB-101 PHONE LAYOUT ONLY (KBP 2026-11-26) =====
+   A window that would get the desktop layout (a computer: wide, tall enough, mouse) shows the portrait phone layout instead,
+   in a centered phone-width column (body.m101-col: up to M101_COL_W px wide, full height). The column carries a transform, so
+   the full-screen sheets (overlays, Choose Your Dad deck, title cover, Bestiary, pop-ups) stay inside it. Every size the
+   layout code reads comes from the column (m101Box()), so a computer behaves like a phone of that size; keys still work.
+   ?desktop keeps the old desktop layout, for testing only. Phones and tablets (already compact) are unchanged. */
+var M101_COL_W=480,M101_COL=false;
+function _m101Desk(){try{return typeof location!=="undefined"&&/[?&]desktop(=|&|$)/.test(location.search||"");}catch(e){return false;}}
+function _m101Size(iw,ih){let rw=iw,rh=ih;
+ try{const de=document.documentElement;if(de&&de.clientWidth>0)rw=Math.min(rw||de.clientWidth,de.clientWidth);if(de&&de.clientHeight>0)rh=Math.min(rh||de.clientHeight,de.clientHeight);}catch(e){}
+ const col=!_m101Desk()&&rw>0&&rh>0&&!_isCompact(rw,rh);
+ if(col!==M101_COL){M101_COL=col;try{document.documentElement.classList.toggle("m101-col",col);document.body.classList.toggle("m101-col",col);}catch(e){}}
+ const w=col?Math.min(M101_COL_W,rw):rw;
+ try{const r=document.documentElement.style;if(col)r.setProperty("--m101-vw",(w/100)+"px");else r.removeProperty("--m101-vw");}catch(e){}
+ return col?[w,rh]:[iw,ih];}
+/* The box fixed-position UI lives in: the column on a computer, else the window. left is its offset from the window's left edge. */
+function m101Box(){try{if(M101_COL&&document.body){const r=document.body.getBoundingClientRect();return{left:r.left,top:r.top,width:r.width,height:r.height};}}catch(e){}
+ let w=0,h=0;try{const de=document.documentElement;w=de.clientWidth||window.innerWidth||0;h=de.clientHeight||window.innerHeight||0;}catch(e){}
+ return{left:0,top:0,width:w||1200,height:h||800};}
 function _m6H(id){try{const e=document.getElementById(id);return(e&&e.offsetHeight>0)?e.offsetHeight:0;}catch(e){return 0;}}
 function _m6Layout(iw,ih){
  /* innerWidth/Height grow when content overflows on mobile (page zooms out), so size from the layout viewport. */

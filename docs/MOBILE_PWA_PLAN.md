@@ -57,7 +57,7 @@ Chunk IDs use an `M` prefix so they do not collide with nightly `N` chunks. Grap
   - Long-press = inspect (replaces hover and right-click `contextmenu`).
   - Tap status chip = tooltip (replaces `:hover`).
   - Throw/Place aiming: tap target, confirm button.
-- **M8 Action bar redesign.** 4-5 primary thumb buttons (Bag, Scan, Wait, Throw, More). "More" opens a drawer with Dadvice, Map, Bestiary, Codex, Graveyard, Help, Sound, Menu. Minimum touch target 44x44 CSS px.
+- **M8 Action bar redesign.** 4-5 primary thumb buttons (Bag, Scan, Wait, Throw, More). "More" opens a drawer with Dadvice, Map, Bestiary, Codex, Graveyard, Help, Sound, Menu. Minimum touch target 44x44 CSS px. (MOB-06, 2026-11-10: now 2 rows x 4 -- Bag, Scan, Wait, Throw / Dadvice, Map, Place Trap, More -- player-customizable via MORE > CUSTOMIZE BAR; layout in localStorage `sda_bar_v1`; the drawer hides whatever is on the bar. MOB-46, 2026-11-11: the Tool Belt also offers 1 ROW = 3 + MORE; `sda_bar_v1` then holds 3 names.)
 - **M9 Overlay redesign.** Overlays become full-screen sheets with sticky header + Close. Inventory grid becomes `repeat(auto-fill, minmax(56px,1fr))`; item detail becomes a bottom sheet with Use/Equip/Drop/Combine buttons. Codex grid collapses to 2 columns. The Bestiary already uses the protected comic-card grid (`js/bestcards.js`) on compact layouts; keep it (only wrap it in the new sheet header/Close).
 
 ### Protected user-designed screens (locked 2026-11-05, user request)
@@ -116,6 +116,8 @@ Critical path rationale: M3 (sprite cache) is the single prerequisite for both m
 ## 7. Definition of Done
 
 A player opens a URL on an iPhone or Android phone, installs to the home screen without an app store, plays a full run Floor 1 -> 100 in portrait using touch only, offline, with hand-authored or upgraded shaded/outlined sprites, biome tile art, and animated movement/combat, and the save survives closing the app. Desktop build and harness 7/7 still pass.
+
+MOB-101 (KBP 2026-11-26, built 2026-11-27): the game is phone-layout only. A computer window shows the portrait phone layout in a centered phone-width column (up to 480 px); the old desktop layout is reached only with `?desktop` and is kept working for testing and regression checks. "Desktop build still passes" now means: `?desktop` unchanged, and the computer column matches the phone layout of the same size.
 
 ## 8. Progress Log
 

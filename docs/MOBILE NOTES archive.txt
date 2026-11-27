@@ -4,6 +4,11 @@ Companion to docs/MOBILE NOTES.txt (created 2026-11-06). Runs append here; nothi
 =====================================================================
 LAST UPDATED HISTORY  (newest first; displaced "Previously:" lines from MOBILE NOTES.txt)
 =====================================================================
+Previously: 2026-11-27 (nightly run). Census: [ ] 0 | [-] 0 | [k] 2 | [c] 5 | [!] 22 | [x] awaiting archive 0. INBOX: 2 lines (2 FORM lines on the 1-day hold; eligible 2026-11-28).   [displaced 2026-11-27 nightly run 3]
+Previously: 2026-11-26 (nightly run 2). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 4 | [!] 17 | [x] awaiting archive 0. INBOX: 1 line (1 FORM line on the 1-day hold; eligible 2026-11-27).   [displaced 2026-11-27 nightly run 2]
+Previously: 2026-11-26 (nightly run). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 4 | [!] 17 | [x] awaiting archive 0. INBOX: 0 lines (0 FORM lines on hold).   [displaced 2026-11-27 nightly run]
+Previously: 2026-11-25 (nightly run 3). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 3 | [!] 17 | [x] awaiting archive 0. INBOX: 0 lines (0 FORM lines on hold).   [displaced 2026-11-26 nightly run 2]
+Previously: 2026-11-25 (nightly run 2). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 3 | [!] 17 | [x] awaiting archive 0. INBOX: 0 lines (0 FORM lines on hold).   [displaced 2026-11-26 nightly run]
 Previously: 2026-11-25 (nightly run). Census: [ ] 0 | [-] 1 | [k] 0 | [c] 2 | [!] 17 | [x] awaiting archive 0. INBOX: 0 lines (0 FORM lines on hold).   [displaced 2026-11-25 nightly run 3]
 Previously: 2026-11-24 (nightly run 3). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 1 | [!] 18 | [x] awaiting archive 0. INBOX: 0 lines (0 FORM lines on hold).   [displaced 2026-11-25 nightly run 2]
 Previously: 2026-11-24 (nightly run 2). Census: [ ] 0 | [-] 0 | [k] 0 | [c] 3 | [!] 19 | [x] awaiting archive 0. INBOX: 0 lines (0 FORM lines on hold).   [displaced 2026-11-25 nightly run]
@@ -2026,6 +2031,55 @@ COMPLETED ITEMS  ([x] items moved verbatim, newest first)
 =====================================================================
 RUN LOGS  (one short block per nightly run that did work, newest first)
 =====================================================================
+RUN 2026-11-27 (nightly run 3)
+- Form import: Sheet read; 14 rows, none newer than FORM SYNC 11/26/2026 23:03:01. FORM SYNC unchanged. The 2 FORM lines from 11/26 stay on the 1-day hold until 2026-11-28.
+- Skip check: (d) [!] items waiting; no eligible INBOX lines, no unanswered KBP notes, no [-], no [x].
+- Archived: none. Triaged: none. KBP notes: none unanswered.
+- Worked: MOB-74 [!], draft step only (no code): 22 talking creatures across all 10 biomes (question, answer type, the one right answer, calm and upset lines), plus the ask/calm/upset rules and the shared question sheet (with MOB-27). Stays [!], waiting on a KBP note.
+- Verification: creature names checked against js/data.js CREATURES (64); notes file edited with str.replace + assert count==1; end-of-run structure checks on the notes file (one trailing ASK/NEXT STEP per item, unique IDs, INBOX holds only the 2 FORM lines on hold, no contact details). No game files changed, so no class clears or phone-profile runs.
+- Files changed: docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none new; none resolved.
+- Still open: [c] MOB-37, 45, 62, 94, 96, 101 | [k] MOB-98, 100 | [!] MOB-19, 24, 26, 27, 51, 73, 74, 75, 79, 82, 83, 85, 88, 89, 91, 92, 95, 97, 99, 102, 103.
+RUN 2026-11-27 (nightly run 2)
+- Form import: Sheet read; 14 rows, none newer than FORM SYNC 11/26/2026 23:03:01. FORM SYNC unchanged. The 2 FORM lines from 11/26 stay on the 1-day hold until 2026-11-28.
+- Skip check: (d) [!] items waiting; no eligible INBOX lines, no unanswered KBP notes, no [-], no [x].
+- Archived: none. Triaged: none. KBP notes: none unanswered.
+- Worked: MOB-101 [!] -> [c]: audit found every phone screen already in the phone look (end card MOB-59, Choose Difficulty MOB-96); computers now show the portrait phone layout in a centered 480-px column (js/config.js _m101Size/m101Box, body transform keeps sheets inside the column, CSS vw sizes follow the column via --m101-vw); ?desktop keeps the old desktop layout for testing.
+- Verification: node --check all js + sw.js; 7/7 class clears; Playwright phones + ?desktop old vs new md5-identical 40/40 (iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape, 8 screens each); computer column vs old build at 480x800 near-identical (max 5/255); computer checks 19/19; protected screens 33/33 (iPhone SE, iPhone 13, computer column); sw.js re-stamped 1.0.0-645d1a56ff -> 1.0.0-83f243cc86 in the folder, --check OK; folder md5 = working copy.
+- Files changed: js/config.js, js/ui.js, js/input.js, ShatteredDadAdventure.html, sw.js, CLAUDE.md, docs/MOBILE_PWA_PLAN.md, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none new; none resolved.
+- Still open: [c] MOB-37, 45, 62, 94, 96, 101 | [k] MOB-98, 100 | [!] MOB-19, 24, 26, 27, 51, 73, 74, 75, 79, 82, 83, 85, 88, 89, 91, 92, 95, 97, 99, 102, 103.
+RUN 2026-11-27 (nightly run)
+- Form import: Sheet read; 14 rows, 2 newer than FORM SYNC 11/26/2026 12:34:09: (1) Idea: the tutorial should reset the player who ignores it, scold like a parent, and warn players who skip it (Grillmaster, floor 2); (2) Looks wrong: never two doors back to back (Grillmaster, floor 5). Both build 1.0.0-43b4846207; added to INBOX on the 1-day hold until 2026-11-28. FORM SYNC -> 11/26/2026 23:03:01.
+- Skip check: (a) two responses imported; (b) 7 KBP INBOX lines and 1 eligible FORM line; (d) [!] items waiting.
+- Archived: none. KBP notes: none unanswered.
+- Triaged: FORM 11/26 12:34 -> MOB-96 [UX] [-]; KBP lines -> MOB-97 [CONTENT] [!] (universal upgrade items), MOB-98 [BALANCE] [k] (stat bars for top weapons; proposal + ASK), MOB-99 [CONTENT] [!] (10 creatures per biome; 37 new), MOB-100 [CONTENT] [k] (25 weapons + 25 armor vs today's 25 + 34; ASK), MOB-101 [UX] [!] (phone layout only, every screen), MOB-102 [CONTENT] [!] (The G-paw unlockable Dad), MOB-103 [CONTENT] [!] (hit-and-run lawn kid + badge). Next unused MOB-104.
+- Worked: MOB-96 [-] -> [c]: phone Choose Difficulty page (#m96diff, js/ui.js syncDiffSelect/diffStart, CSS in the HTML); desktop unchanged.
+- Verification: node --check all js + sw.js; 7/7 class clears; Playwright 4 phone profiles before 20/20, after 72/72; desktop 7/7 md5-identical; protected screens 20/20 (iPhone SE + iPhone 13); sw.js re-stamped 1.0.0-43b4846207 -> 1.0.0-645d1a56ff, --check OK.
+- Files changed: js/ui.js, ShatteredDadAdventure.html, sw.js, docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none new; none resolved.
+- Still open: [c] MOB-37, 45, 62, 94, 96 | [k] MOB-98, 100 | [!] MOB-19, 24, 26, 27, 51, 73, 74, 75, 79, 82, 83, 85, 88, 89, 91, 92, 95, 97, 99, 101, 102, 103.
+
+RUN 2026-11-26 (nightly run 2)
+- Form import: Sheet read; 12 rows, 1 newer than FORM SYNC: 11/26/2026 12:34:09 (Looks wrong: the Choose your difficulty screen looks like the desktop version on phones; Gym Dad, floor 1, build 1.0.0-43b4846207). Added to INBOX; on the 1-day hold until 2026-11-27. FORM SYNC -> 11/26/2026 12:34:09.
+- Skip check: (a) one response imported; (d) [!] items waiting. No eligible INBOX lines, no unanswered KBP notes, no [-], no [x].
+- Archived: none. Triaged: none (the FORM line is on hold). KBP notes: none unanswered.
+- Worked: MOB-73 [!], review step only (no code): motion kit, per-creature and per-boss idle + attack motion for all 64 creatures and 12 bosses, 7 creatures needing a new frame, rules (MOTION off, reduced motion, governor), and a cost measurement. Stays [!], waiting on a KBP note.
+- Verification: node --check on all js (folder and cloud copy); Playwright (cloud Chromium, 4x CPU throttle on Pixel 5 and iPhone SE, desktop 1x) timing drawFrame() with 8 creatures in view, with and without a transform wrapper on each creature blit: all under 1 ms per frame, within noise; GPU raster and battery not measured; no page errors. No game files changed, so no class clears or phone-profile regression run.
+- Files changed: docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none new; none resolved.
+- Still open: [c] MOB-37, MOB-45, MOB-62, MOB-94 | [!] MOB-19, 24, 26, 27, 51, 73, 74, 75, 79, 82, 83, 85, 88, 89, 91, 92, 95.
+
+RUN 2026-11-26 (nightly run)
+- Form import: Sheet read; 11 rows, none newer than FORM SYNC (11/22/2026 22:10:26). FORM SYNC unchanged.
+- Skip check: (d) [!] items waiting; nothing else (INBOX empty, no unanswered KBP notes, no [-], no [x]).
+- Archived: none. Triaged: none. KBP notes: none unanswered.
+- Worked: MOB-62 [!] -> [c]: audit contact sheet (docs/mobile_screens/MOB-62_items_before.png / _after.png); 19 consumables get their own sprites; 11 shared 'unidentified' pictures (4 consumable types, 7 gear slots) shown until an item is identified (render.js unidItemSprite in itemIconSprite); Cargo Shorts, Khaki Pants, Tube Socks redrawn. Remaining gear/charm misfits split into new [!] MOB-95.
+- Verification: node --check all; 7/7 class clears (one class per process); atlas run + --check (309 sprites) + harness atlas; sw stamp + --check (in the folder); Playwright 95/95 on iPhone SE, iPhone 13, Pixel 5, iPhone 13 landscape + desktop incl. before/after; old-build save continues; desktop title + 5 play frames md5-identical; protected screens 50/50 with md5-identical cover/Bestiary/deck screenshots old vs new. Folder md5 = working copy. Real phones not tested.
+- Files changed: js/sprites.js, js/data.js, js/render.js, js/ui.js, tools/tools_make_atlas.js, assets/sprites/atlas.js, assets/sprites/items.png, sw.js (BUILD 1.0.0-e10beca808 -> 1.0.0-43b4846207), docs/mobile_screens/MOB-62_*.png (3 new), docs/MOBILE NOTES.txt, docs/MOBILE NOTES archive.txt.
+- Bugs: none new; none resolved.
+- Still open: [c] MOB-37, MOB-45, MOB-62, MOB-94 | [!] MOB-19, 24, 26, 27, 51, 73, 74, 75, 79, 82, 83, 85, 88, 89, 91, 92, 95.
+
 RUN 2026-11-25 (nightly run 3)
 - Form import: Sheet read; 11 rows, none newer than FORM SYNC (11/22/2026 22:10:26). FORM SYNC unchanged.
 - Skip check: (b) one KBP INBOX line (Gym Dad kick limits); (d) [!] items waiting.

@@ -75,8 +75,8 @@ canvas.addEventListener("pointercancel",()=>{_m7End();});
 function _m7CloseTips(keep){try{document.querySelectorAll(".st-chip.st-open").forEach(c=>{if(c!==keep)c.classList.remove("st-open");});}catch(e){}}
 elStatuses.addEventListener("click",(ev)=>{const chip=ev.target.closest(".st-chip");if(!chip)return;const open=!chip.classList.contains("st-open");_m7CloseTips(chip);chip.classList.toggle("st-open",open);if(!open)return;
  const tip=chip.querySelector(".st-tip");if(!tip)return;tip.style.left="";tip.style.top="";tip.style.bottom="";
- const vw=document.documentElement.clientWidth||window.innerWidth;let r=tip.getBoundingClientRect();
- if(r.right>vw-4)tip.style.left=(-(r.right-(vw-4)))+"px";r=tip.getBoundingClientRect();if(r.left<4)tip.style.left=((parseFloat(tip.style.left)||0)+(4-r.left))+"px";
+ const _bx=typeof m101Box==="function"?m101Box():{left:0,width:document.documentElement.clientWidth||window.innerWidth},L0=_bx.left,vw=_bx.left+_bx.width;let r=tip.getBoundingClientRect();/* MOB-101: clamp to the phone column on a computer */
+ if(r.right>vw-4)tip.style.left=(-(r.right-(vw-4)))+"px";r=tip.getBoundingClientRect();if(r.left<L0+4)tip.style.left=((parseFloat(tip.style.left)||0)+(L0+4-r.left))+"px";
  if(r.top<4){tip.style.bottom="auto";tip.style.top="130%";}});
 document.addEventListener("pointerdown",(ev)=>{const t=ev.target;if(!(t&&t.closest&&t.closest(".st-chip")))_m7CloseTips(null);},true);
 canvas.addEventListener("contextmenu",(ev)=>{ev.preventDefault();if(mode===State.PLAY){const {x,y}=tileFromEvent(ev);if(x<0||y<0||x>=MAP_W||y>=MAP_H)return;/* MOB-04: a zoomed-out view can extend past the map */showInspect(x,y);}});

@@ -148,9 +148,9 @@ function barCfgTap(t){if(!t||!t.closest)return;const s=t.closest("[data-bqslot]"
 /* M8: compact "More" drawer (#moresheet). Opened by the MORE button; closes on backdrop tap, Close, Esc, or any action except SOUND / D-PAD. */
 var _m8More=false;
 /* The sheet sits just above the action bar (portrait) or left of the side column (landscape), so the bar stays visible and tappable. */
-function _m8Place(){const s=document.getElementById("moresheet"),ab=document.getElementById("actionbar");if(!s||!ab)return;const de=document.documentElement,vw=de.clientWidth||window.innerWidth,vh=de.clientHeight||window.innerHeight;
+function _m8Place(){const s=document.getElementById("moresheet"),ab=document.getElementById("actionbar");if(!s||!ab)return;const de=document.documentElement,_bx=typeof m101Box==="function"?m101Box():null,vw=_bx?_bx.width:(de.clientWidth||window.innerWidth),vh=_bx?_bx.height:(de.clientHeight||window.innerHeight);/* MOB-101: column size on a computer */
  if(typeof LANDSCAPE_UI!=="undefined"&&LANDSCAPE_UI){const h=document.getElementById("hud");const l=Math.min(h?h.getBoundingClientRect().left:vw,ab.getBoundingClientRect().left);s.style.setProperty("--ms-b","0px");s.style.setProperty("--ms-r",Math.max(0,Math.round(vw-l+4))+"px");}
- else{const t=ab.getBoundingClientRect().top;s.style.setProperty("--ms-b",Math.max(0,Math.round(vh-t+4))+"px");s.style.setProperty("--ms-r","0px");}}
+ else{const t=ab.getBoundingClientRect().top-(_bx?_bx.top:0);s.style.setProperty("--ms-b",Math.max(0,Math.round(vh-t+4))+"px");s.style.setProperty("--ms-r","0px");}}
 const M8_NOTES=["Taped to the drawer, in crayon: \"DAD YOU ARE THE STRONGEST. EVEN YOUR BACK SAYS SO.\"","A sticky note in a child's handwriting: \"thank you for fixing my bike. it is the fastest bike now.\"","A drawing of a stick figure holding a wrench. The caption reads: \"BEST DAD (TRIED HIS BEST)\".","On the back of a receipt: \"we know you are tired. we noticed. love you.\"","Glitter glue, still damp: \"You are doing a good job, Dad. Mom said so too.\"","Folded twice: \"you always come back up the stairs. that is the bravest part.\""];
 /* MOB-23: ATTRIBUTES (MORE drawer on phones): live stats and what each one does, from the rules as coded.
    MOB-34: drawn as a comic card (.atc-*, modeled on the Bestiary cards; the Bestiary itself is untouched). Each stat shows
@@ -892,13 +892,15 @@ function _m45El(){if(_m45.el)return _m45.el;const d=document.createElement("div"
 function _m45Paint(){const s=M45_STEPS.find(x=>x.id===_m45.cur);if(!s)return;const el=_m45El(),cp=(typeof COMPACT!=="undefined"&&COMPACT),n=M45_STEPS.indexOf(s)+1;
  el.innerHTML='<div class="atc m45-card"><div class="atc-mast"><span>DAD MANUAL</span><span class="atc-who">'+s.t+' &middot; '+n+' of '+M45_STEPS.length+'</span></div><div class="atc-body"><div class="m45-txt">'+(cp?s.m:s.d)+'</div>'
  +'<div class="m45-btns">'+(s.id!=="t9"?'<button type="button" class="m45-skip" data-m45="skip">Skip the manual</button>':'')+'<button type="button" class="m45-ok" data-m45="ok">'+(s.id==="t9"?'Fine':'OK')+'</button></div></div></div>';}
-function _m45Place(){const el=_m45.el,cv=document.getElementById("screen");if(!el||!cv)return;const r=cv.getBoundingClientRect(),H=window.innerHeight||800,W=window.innerWidth||1200;
+function _m45Place(){const el=_m45.el,cv=document.getElementById("screen");if(!el||!cv)return;const _bx=typeof m101Box==="function"?m101Box():{left:0,top:0,width:window.innerWidth||1200,height:window.innerHeight||800};
+ /* MOB-101: rects are window-relative; the card is placed inside m101Box() (the phone column on a computer) */
+ const _r0=cv.getBoundingClientRect(),r={left:_r0.left-_bx.left,right:_r0.right-_bx.left,top:_r0.top-_bx.top,bottom:_r0.bottom-_bx.top,width:_r0.width,height:_r0.height},H=_bx.height||800,W=_bx.width||1200;
  const w=Math.max(220,Math.min(440,r.width-12,W-16));el.style.width=w+"px";el.style.left=Math.max(8,Math.min(W-w-8,r.left+(r.width-w)/2))+"px";el.style.top="auto";
  /* compact portrait: just above the action bar (over the HUD), so the map stays clear; otherwise over the bottom of the map */
- const ab=document.getElementById("actionbar"),abr=ab&&ab.getBoundingClientRect(),land=document.body.classList.contains("m-land");
+ const ab=document.getElementById("actionbar"),_ab0=ab&&ab.getBoundingClientRect(),abr=_ab0&&{top:_ab0.top-_bx.top,height:_ab0.height},land=document.body.classList.contains("m-land");
  const cp=(typeof COMPACT!=="undefined"&&COMPACT);let bot=(cp&&!land&&abr&&abr.height>0&&abr.top>r.top+40)?H-abr.top+6:H-Math.min(r.bottom,H)+8;el.style.bottom=Math.max(8,bot)+"px";
  /* never cover Dad: if his tile is under the card, move the card to the top of the map */
- try{if(game&&typeof camX==="number"&&typeof VIEW_W==="number"&&VIEW_W>0){const ts=r.width/VIEW_W,dx=r.left+(game.px-camX)*ts,dy=r.top+(game.py-camY)*ts,c=el.getBoundingClientRect();
+ try{if(game&&typeof camX==="number"&&typeof VIEW_W==="number"&&VIEW_W>0){const ts=r.width/VIEW_W,dx=r.left+(game.px-camX)*ts,dy=r.top+(game.py-camY)*ts,_c0=el.getBoundingClientRect(),c={left:_c0.left-_bx.left,right:_c0.right-_bx.left,top:_c0.top-_bx.top,bottom:_c0.bottom-_bx.top,height:_c0.height};
   if(c.height>0&&dx<c.right&&dx+ts>c.left&&dy-4<c.bottom&&dy+ts+4>c.top){el.style.bottom="auto";el.style.top=Math.max(8,r.top+8)+"px";}}}catch(e){}}
 function _m45Show(on){const el=on?_m45El():_m45.el;if(!el)return;if(on){el.classList.add("show");_m45Place();/* the layout settles after syncUI (play-mode HUD, glide): place again next frame */if(typeof requestAnimationFrame==="function")requestAnimationFrame(()=>{if(el.classList.contains("show"))_m45Place();});}else el.classList.remove("show");}
 function m45Dismiss(skip){const st=_m45Load(),id=_m45.cur;if(!id)return;
