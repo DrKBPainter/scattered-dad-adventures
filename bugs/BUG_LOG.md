@@ -42,6 +42,7 @@
 | BUG-031 | Vendor revealed hidden curses and upgrades on unidentified gear (MOB-53) | `js/game.js, js/ui.js` | resolved | 2026-11-21 |
 | BUG-032 | MOB-93: vendor BUY/SELL card list scrolls only from the gaps between cards (Firefox Android) | `ShatteredDadAdventure.html, js/ui.js` | resolved | 2026-11-24 |
 | BUG-033 | Gym Dad 'Kick it down' door option calls an undefined kickDoor() | `js/game.js` | resolved | 2026-11-25 |
+| BUG-034 | Weapon level requirements never applied (mkGear does not copy reqLevel) | `js/game.js` | resolved | 2026-11-27 |
 
 ---
 
@@ -144,7 +145,22 @@
 **Fix:** The shop cards flip flat (no 3D context) inside #ovShop; only the tapped card plays a short squash (MOB-93). KBP closed MOB-93 on 2026-11-24 after his Galaxy S25+ check.
 ---
 
+
 ## Resolved Bugs
+
+### BUG-034 — Weapon level requirements never applied (mkGear does not copy reqLevel)
+
+- **File:** `js/game.js`
+- **Status:** resolved
+- **Logged:** 2026-11-27
+
+**Description:** js/game.js mkGear copies atk/def/per/... but not reqLevel, so equip() never saw it.reqLevel on dropped or bought weapons; a Level 1 Dad could wield the Great PTO Reaper (reqLevel 8). Found while building MOB-98.
+
+**Repro steps:** Start a run, give Dad a mkGear ptoreaper, equip it at Level 1: it equips.
+
+
+**Fix:** MOB-98 (2026-11-27): equip() reads reqLevel, and the new reqStat bars, from the WEAPONS template (weaponReqLevel/weaponStatReq in js/game.js), so drops, vendor stock and gear in old saves are all gated; mkGear is unchanged.
+---
 
 ### BUG-033 — Gym Dad 'Kick it down' door option calls an undefined kickDoor()
 

@@ -361,12 +361,21 @@ function stackable(it){return it.kind==="consumable"||it.kind==="object"||it.kin
 function maxStack(it){if(it.societyItem)return 9;if(it.placeable)return 5;if(it.throw)return 9;if(it.kind==="consumable")return 5;return Infinity;}
 function addItem(it){noteGearSeen(it);/* MOB-07 */if(it.kind==="gold"){game.gold+=it.amount;return true;}if(it.kind==="key"){if(!game.keyring)game.keyring=[];if(it.floor&&game.keyring.some(k=>k.floor===it.floor))return true;game.keyring.push(it);return true;}if(stackable(it)){const ms=maxStack(it);const e=game.inv.find(e=>e.it.kind===it.kind&&e.it.id===it.id&&e.qty<ms);if(e){e.qty++;return true;}}if(game.inv.length>=invCap()){log("Inventory full ("+invCap()+" slots). Drop something.","red");return false;}game.inv.push({it,qty:1});return true;}
 function removeEntry(e,n){n=n||1;e.qty-=n;if(e.qty<=0){const i=game.inv.indexOf(e);if(i>=0)game.inv.splice(i,1);}}
+/* MOB-98: weapon requirements come from the WEAPONS template (old saves and every drop follow the same rules; mkGear never copied reqLevel, BUG-034).
+   reqStat bars are checked against the current stat with gear, minus the weapon being swapped out. */
+function _wTpl(it){return (it&&it.kind==="weapon"&&typeof WEAPONS!=="undefined")?(WEAPONS.find(w=>w.id===it.id)||null):null;}
+function weaponReqLevel(it){if(!it)return 0;if(it.reqLevel)return it.reqLevel;const t=_wTpl(it);return (t&&t.reqLevel)||0;}
+var W_STAT_NAME={str:"STR",per:"PER",wis:"WIS"};
+function weaponStatHave(k,it){const cur=game.equip&&game.equip.weapon;const v=k==="str"?game.str+gearSum("str"):k==="per"?effPer():k==="wis"?effWis():(game[k]||0)+gearSum(k);return v-((cur&&cur!==it)?itemStat(cur,k):0);}
+function weaponReqStats(it){const t=_wTpl(it);const r=(it&&it.reqStat)||(t&&t.reqStat)||null;return r?Object.keys(r).map(k=>({k,need:r[k],have:weaponStatHave(k,it),label:W_STAT_NAME[k]||k.toUpperCase()})):[];}
+function weaponStatReq(it){return weaponReqStats(it).find(q=>q.have<q.need)||null;}
 function equip(itOrE,silent,slotPick){const it=itOrE.it?itOrE.it:itOrE;let slot;if(it.kind==="weapon")slot="weapon";else if(it.kind==="armor")slot=it.slot;else if(it.kind==="charm"){
   if(slotPick==="charm1"||slotPick==="charm2")slot=slotPick;
   else if(game.equip.charm1&&game.equip.charm2&&!silent){/* MOB-71: both charm slots full: ask which one to swap out */const _it=it;
    openMenu("Both charm slots are taken. Swap out which charm for the "+it.name+"?",["charm1","charm2"].map((k,n)=>({label:"Charm slot "+(n+1)+": "+game.equip[k].name+(isCursed(game.equip[k])?" (cursed)":""),fn:function(){equip(_it,false,k);if(typeof ovInv!=="undefined"&&ovInv&&typeof buildInv==="function")buildInv();syncUI();}})));return;}
   else slot=!game.equip.charm1?"charm1":(!game.equip.charm2?"charm2":"charm1");}else return;
- if(it.reqLevel&&game.level<it.reqLevel&&!silent){const bonus=(game.cls&&game.cls.id==="tactical"&&it.reqLevel>1)?1:0;if(game.level<it.reqLevel-bonus){log("Requires Level "+it.reqLevel+(bonus?" (Tactical: "+( it.reqLevel-bonus)+")":"")+" to wield "+it.name+". (You are Level "+game.level+".)","red");return;}}
+ {const _rl=weaponReqLevel(it);if(_rl&&game.level<_rl&&!silent){const bonus=(game.cls&&game.cls.id==="tactical"&&_rl>1)?1:0;if(game.level<_rl-bonus){log("Requires Level "+_rl+(bonus?" (Tactical: "+(_rl-bonus)+")":"")+" to wield "+it.name+". (You are Level "+game.level+".)","red");return;}}}
+ if(!silent){const _rs=weaponStatReq(it);if(_rs){log("Requires "+_rs.label+" "+_rs.need+". You have "+_rs.have+". "+(/^The /.test(it.name)?it.name:"The "+it.name)+" remains unconvinced.","red");return;}}/* MOB-98 */
  if(isCursed(game.equip[slot])){log("The "+game.equip[slot].name+" refuses to budge — the curse won't let you swap it out. (Remove the curse first.)","red");return;}
  const wasIdd=it.idd;it.idd=true;const old=game.equip[slot];game.equip[slot]=it;const e=game.inv.find(e=>e.it===it);if(e)removeEntry(e,1);if(old)_m71KeepOld(old);if(!silent){const _q=(typeof EQUIP_MSGS!=="undefined"&&EQUIP_MSGS[it.id])?(" "+EQUIP_MSGS[it.id]):"";log("Equipped "+it.name+(it.kind==="charm"?(" ("+(it.wear||"charm")+")"):"")+"."+_q,"grn");}if(!silent&&!wasIdd&&(it.affixes||[]).length)log("As you put it on, you can tell what it is by the way that it is.","blu");}
 /* MOB-71: the piece taken off goes in the bag; if the swap shrank the bag (a charm or shorts that gave extra slots), it lands at Dad's feet instead of vanishing */

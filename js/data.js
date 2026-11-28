@@ -711,9 +711,9 @@ const WEAPONS=[
  {id:"plunger",name:"Plunger",atk:5,sprite:SPR_WPN_PLUNGER,desc:"The hero Dad always needed. The hero he never acknowledged."},
  {id:"rake",name:"Leaf Rake",atk:4,sprite:SPR_WPN_RAKE,desc:"Technically seasonal. Violence is not."},
  {id:"caulkgun",name:"Caulk Gun",atk:5,sprite:SPR_WPN_CAULKGUN,desc:"Point at enemy. Express opinions firmly."},
- {id:"blowtorch",powered:true,name:"Mini Blowtorch",atk:7,sprite:SPR_WPN_BLOWTORCH,reqLevel:3,desc:"For the creme brulee. And now this."},
+ {id:"blowtorch",powered:true,name:"Mini Blowtorch",atk:7,sprite:SPR_WPN_BLOWTORCH,reqLevel:3,reqStat:{per:3},desc:"For the creme brulee. And now this."},
  {id:"broomhandle",name:"Broom Handle",atk:4,sprite:SPR_WPN_BROOMHANDLE,desc:"The broom part is gone. The handle remains. The handle is enough."},
- {id:"flamespat",powered:true,name:"The Flame Spatula",atk:9,sprite:SPR_WPN_FLAMESPAT,reqLevel:5,desc:"OSHA has questions. The burgers do not."},
+ {id:"flamespat",powered:true,name:"The Flame Spatula",atk:9,sprite:SPR_WPN_FLAMESPAT,reqLevel:5,reqStat:{per:4},desc:"OSHA has questions. The burgers do not."},
  {id:"brick",name:"Half a Brick",atk:5,sprite:SPR_WPN_BRICK,throw:{dmg:6},desc:"Found in the yard. Origin unknown. Purposes: many."},
  // --- Standard additions (drops 11–17) ---
  {reqLevel:3,id:"leafblower",powered:true,name:"The Leafblight Devastator",atk:6,reach:2,sprite:SPR_WPN_LEAFBLOWER,desc:"An ancient wind-cannon said to strip entire kingdoms of loose paperwork and decorative mulch. Wielded annually during the Season of Fallen Oaks."},
@@ -722,19 +722,19 @@ const WEAPONS=[
  {id:"pressurewand",powered:true,name:"The Pressure Wand of Aquatic Judgment",atk:5,reach:3,sprite:SPR_WPN_PRESSUREWAND,throw:{dmg:4,range:4},desc:"A hydrokinetic staff that reveals the true color of all surfaces and accidentally strips paint from neighboring dimensions."},
  {id:"orbital_sander",powered:true,name:"Orbital Sander of Reckoning",atk:6,sprite:SPR_WPN_RATCHET,reqLevel:4,desc:"Spins at 12,000 RPM. Intended for drywall. The enemy counts as drywall now."},
  {id:"extensioncord",name:"The Extension Cord of Endless Horizons",atk:4,reach:4,sprite:SPR_WPN_EXTENSIONCORD,throw:{dmg:3,range:6},desc:"A serpentine cable-beast stretching across battlefields, driveways, and occasionally international borders."},
- {reqLevel:5,id:"ladder",name:"The Ladder of Ascendant Peril",atk:8,reach:2,sprite:SPR_WPN_LADDER,desc:"A towering relic whose wielders gain temporary flight, followed by immediate wisdom regarding gravity."},
+ {reqLevel:5,reqStat:{str:7},id:"ladder",name:"The Ladder of Ascendant Peril",atk:8,reach:2,sprite:SPR_WPN_LADDER,desc:"A towering relic whose wielders gain temporary flight, followed by immediate wisdom regarding gravity."},
  // --- Legendary weapons (rare drops; baseRarity forces Legendary tier) ---
- {reqLevel:5,id:"orbitaledger",name:"The Orbital Edger of Property-Line Wars",atk:10,reach:2,baseRarity:"Legendary",sprite:SPR_WPN_ORBITALEDGER,throw:{dmg:8,range:4},desc:"Said to carve trenches so precise they have started blood feuds lasting generations."},
- {reqLevel:6,id:"hexhammer",name:"The Hexhammer of Weekend Intentions",atk:11,reach:1,baseRarity:"Legendary",sprite:SPR_WPN_HEXHAMMER,throw:{dmg:9,range:3},desc:"Every strike repairs one thing and reveals three new projects."},
- {reqLevel:8,id:"ptoreaper",powered:true,name:"The Great PTO Reaper",atk:14,reach:1,baseRarity:"Legendary",sprite:SPR_WPN_PTOREAPER,desc:"A chainsaw of mythic power whose roar awakens ancient spirits and prompts neighbors to inspect trees they weren't worried about five minutes earlier."},
- {reqLevel:10,id:"justincase",name:"The Justin Case Bucket of Miscellaneous Screws",atk:4,reach:1,baseRarity:"Legendary",sprite:SPR_WPN_JUSTINCASE,throw:{dmg:10,range:7},desc:"Contains every fastener required to save the realm except the one currently needed."},
+ {reqLevel:5,reqStat:{per:6},id:"orbitaledger",name:"The Orbital Edger of Property-Line Wars",atk:10,reach:2,baseRarity:"Legendary",sprite:SPR_WPN_ORBITALEDGER,throw:{dmg:8,range:4},desc:"Said to carve trenches so precise they have started blood feuds lasting generations."},
+ {reqLevel:6,reqStat:{str:9},id:"hexhammer",name:"The Hexhammer of Weekend Intentions",atk:11,reach:1,baseRarity:"Legendary",sprite:SPR_WPN_HEXHAMMER,throw:{dmg:9,range:3},desc:"Every strike repairs one thing and reveals three new projects."},
+ {reqLevel:10,reqStat:{str:11},id:"ptoreaper",powered:true,name:"The Great PTO Reaper",atk:14,reach:1,baseRarity:"Legendary",sprite:SPR_WPN_PTOREAPER,desc:"A chainsaw of mythic power whose roar awakens ancient spirits and prompts neighbors to inspect trees they weren't worried about five minutes earlier."},
+ {reqLevel:10,reqStat:{wis:6},id:"justincase",name:"The Justin Case Bucket of Miscellaneous Screws",atk:4,reach:1,baseRarity:"Legendary",sprite:SPR_WPN_JUSTINCASE,throw:{dmg:10,range:7},desc:"Contains every fastener required to save the realm except the one currently needed."},
  // ── NIGHTLY ADDITIONS N5 (2026-06-18) ──
  {id:"shopvac",powered:true,name:"The Shop-Vac of Infinite Suction",atk:6,reach:2,sprite:SPR_WPN_LEAFBLOWER,throw:{dmg:5,range:3},desc:"A roaring drum-beast that inhales sawdust, loose screws, and the occasional sock. Filter status: unknown for years."},
  {id:"pizzacutter",name:"The Pizza Cutter of a Thousand Slices",atk:5,sprite:SPR_WPN_RATCHET,desc:"A wheeled blade forged for Friday nights. Cuts crust, cardboard, and ambition in perfectly uneven portions."},
  {id:"snowshovel",name:"The Snow Shovel of Seasonal Vengeance",atk:6,reach:2,sprite:SPR_WPN_RAKE,desc:"Lives in the garage eleven months a year, dreaming of the twelfth. The driveway remembers. So does his back."},
- {reqLevel:4,id:"tikitorch",powered:true,name:"The Backyard Tiki Torch of Ambient Menace",atk:7,reach:2,sprite:SPR_WPN_BLOWTORCH,desc:"Citronella-scented and faintly threatening. Keeps mosquitoes, raccoons, and party guests at a respectful distance."},
+ {reqLevel:4,reqStat:{per:4},id:"tikitorch",powered:true,name:"The Backyard Tiki Torch of Ambient Menace",atk:7,reach:2,sprite:SPR_WPN_BLOWTORCH,desc:"Citronella-scented and faintly threatening. Keeps mosquitoes, raccoons, and party guests at a respectful distance."},
  {id:"gardenhose",name:"The Garden Hose of Unspooling Doom",atk:4,reach:4,sprite:SPR_WPN_EXTENSIONCORD,throw:{dmg:3,range:5},desc:"A serpent that kinks at the precise moment of maximum need. Never rewinds correctly. Vengeance comes in PSI."},
- {reqLevel:5,id:"crowbar",name:"The Pry Bar of Last Resort",atk:8,reach:1,sprite:SPR_WPN_HEXHAMMER,throw:{dmg:7,range:3},desc:"When persuasion fails and the WG-40 is empty, the realm turns to leverage. Leverage does not negotiate."}
+ {reqLevel:5,reqStat:{str:7},id:"crowbar",name:"The Pry Bar of Last Resort",atk:8,reach:1,sprite:SPR_WPN_HEXHAMMER,throw:{dmg:7,range:3},desc:"When persuasion fails and the WG-40 is empty, the realm turns to leverage. Leverage does not negotiate."}
 ];
 
 /* ===== ARMOR (slots: head/torso/arms/legs/feet) ===== */
