@@ -1,0 +1,135 @@
+SCATTERED DAD ADVENTURES — TALKING CREATURES (MOB-74: about 1 in 5 of each species stops Dad with a question; * = the one answer that calms it)
+Auto-generated from the build (v1.0.0). Edit the matching data array in js/data.js; this mirrors it.
+================================================================
+
+The Permission Slip  [The House]
+  "Has this been signed by a parent or guardian?"
+  Yes/No: *Yes | No
+  Calm: The Permission Slip folds itself neatly and goes to wait in a backpack, where it will be forgotten again.
+  Upset: The Permission Slip is now Due Yesterday. It has gained urgency.
+
+The Thermostat Phantom  [The House]
+  "What is the thermostat set to?"
+  Typed answer. Accepted: 68 / sixty eight / sixtyeight / 68 degrees / 68f / sixty eight degrees
+  Calm: Correct. The Phantom nods. Somewhere, a furnace sighs in relief.
+  Upset: The Phantom adjusts itself two degrees out of spite. It is coming for you.
+
+The Unread Text  [The House]
+  "Quick question?"
+  Multiple choice: *Sure, what's up? | Can I call you later? | (Leave it on Read.)
+  Calm: It was, against all odds, just a quick question. It leaves satisfied.
+  Upset: It was not a quick question. It was forty-one questions.
+
+The Unfindable Associate  [Lowe & Behold]
+  "Can I help you find anything?"
+  Multiple choice: *Just looking. | Where are the 3/8 hex bolts? | Do you work here?
+  Calm: The Associate vanishes with practiced ease. You will never see each other again. That was the deal.
+  Upset: A real question. The Associate's eyes go dark. It was trained for this.
+
+Self-Checkout Sentinel  [Lowe & Behold]
+  "Unexpected item in the bagging area. Did you place an item in the bagging area?"
+  Yes/No: Yes | *No
+  Calm: Please wait for assistance. Assistance will not come. The Sentinel powers down to wait for it.
+  Upset: Admission detected. Please remove the item. The item is you.
+
+Weekend Warrior  [Lowe & Behold]
+  "Want to hear about my deck project?"
+  Multiple choice: *Absolutely. | Maybe another time. | Did you pull a permit?
+  Calm: He talks for eleven minutes. You learn nothing. He leaves fulfilled, one step closer to Lumbar Injury III.
+  Upset: Another time. He has heard that before. There is never another time.
+
+The Membership Card Inspector  [Vastco]
+  "Card?"
+  Multiple choice: (Show the card.) | It's in the car. | *My wife has it.
+  Calm: The Inspector has heard this nine thousand times. It is, somehow, always true. You may pass.
+  Upset: The Inspector does not believe you.
+
+Extended Warranty Wraith  [Vastco]
+  "Would you like to protect your purchase?"
+  Multiple choice: Yes. | No. | *I'll think about it.
+  Calm: The Wraith recedes to wait at the next register. It will ask again. It always asks again.
+  Upset: There is no correct answer. You have found one of the incorrect ones.
+
+The Sample Station  [Vastco]
+  "Would you like to try a sample?"
+  Yes/No: *Yes | No
+  Calm: You eat a cube of something on a toothpick. You both agree not to discuss it.
+  Upset: Rejected. The Sample Station has never been rejected. It reheats itself to a dangerous temperature.
+
+The Jogger (Headphones In)  [The Park]
+  "Sorry -- what?"
+  Multiple choice: *Nothing. | Your shoe's untied. | Nice day for it!
+  Calm: The Jogger nods and resumes. You have both agreed this never happened.
+  Upset: He stops to check. He has lost his pace. He will never forgive you.
+
+The Youth Soccer Coach  [The Park]
+  "Can you run the snack schedule this season?"
+  Yes/No: *Yes | No
+  Calm: You are now Snack Coordinator. The Coach jogs off happy. This will cost you later.
+  Upset: The Coach writes your name on the clipboard. Not the good list.
+
+The Stats Dad  [Soccer Complex]
+  "What's your kid's goals-per-game this season?"
+  Typed answer. Accepted: i dont know / idk / dont know / no idea / no clue / i do not know / dunno
+  Calm: Relief floods the Stats Dad's face. Someone finally does not care. He sits down.
+  Upset: A number. He has a better number. He opens the spreadsheet.
+
+The Sideline Parent  [Soccer Complex]
+  "Did you SEE that call?!"
+  Multiple choice: *Terrible call. | Looked fair to me. | What call?
+  Calm: The Sideline Parent has found an ally. It returns to yelling at someone else.
+  Upset: You missed it. The Sideline Parent will now describe it to you, at volume, with its fists.
+
+The Welcoming Committee  [The School]
+  "Be honest. Do you think you're doing a good job as a dad?"
+  Yes/No: *Yes | No
+  Calm: "Good. The dads who worry about it usually are." The Committee hands you a sticker. It says GOOD JOB. You keep it.
+  Upset: "Wrong answer. You are, though." The Committee is upset, but only because you were wrong.
+
+The Science Fair Project  [The School]
+  "What is my hypothesis?"
+  Multiple choice: Plants need sunlight. | Baking soda volcanoes erupt. | *This was due tomorrow.
+  Calm: Accurate. Understood at last, the Project collapses into a trifold board.
+  Upset: The Project has been misunderstood. The volcano was never baking soda.
+
+The Wait  [The Family Restaurant]
+  "How many in your party?"
+  Typed answer. Accepted: the party size (1, or 2 with a companion following)
+  Calm: The Wait hands you a buzzer. It is a start.
+  Upset: Incorrect headcount. The Wait adds forty-five minutes. And teeth.
+
+The Check  [The Family Restaurant]
+  "One check or separate?"
+  Multiple choice: *One check. | Separate. | We'll figure it out.
+  Calm: Dad reaches for The Check. The Check is honored. The wallet is not.
+  Upset: Nobody has ever figured it out. The Check splits into rage.
+
+The IDKEA Employee  [IDKEA]
+  "Have you been following the arrows on the floor?"
+  Multiple choice: *Yes. | There are arrows? | I took a shortcut.
+  Calm: The Employee nods slowly. You may continue toward Bedrooms. Everyone continues toward Bedrooms.
+  Upset: There are no shortcuts. There have never been shortcuts.
+
+The Assembly Instructions  [IDKEA]
+  "Step 14. Which tool is required?"
+  Typed answer. Accepted: allen wrench / allen key / hex key / hex wrench / an allen wrench / the allen wrench / allen
+  Calm: The Instructions shuffle back into the box, satisfied. Four screws remain. They always remain.
+  Upset: Incorrect tool. The Instructions turn to a page with no words and one angry man.
+
+The Persistent Entrepreneur  [The Neighborhood]
+  "Have you heard about an exciting opportunity?"
+  Yes/No: *Yes | No
+  Calm: "Then you already know." He leaves to find someone who does not.
+  Upset: "Let me tell you about it." He will. With a brochure, and his fists.
+
+The Covenant  [The HOA Dominion]
+  "What is the maximum permitted grass height, in inches?"
+  Typed answer. Accepted: 3 / three / 3 inches / three inches / 3in / 3 in
+  Calm: Compliant. The Covenant initials something and moves along.
+  Upset: Noncompliant. A notice has been generated. The notice is the Covenant.
+
+The Lingering Board Member  [The HOA Dominion]
+  "Do you have a minute?"
+  Yes/No: Yes | *No
+  Calm: Nobody has ever said no. He is so startled he leaves.
+  Upset: He has forty minutes. He spends them on you.

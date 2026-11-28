@@ -394,6 +394,13 @@
   /* Story popup after a Dad is chosen (single Continue button) */
   #cf-text.cf-story{text-align:left;}
   #cf-text .cf-title{display:block;text-align:center;color:var(--gold);letter-spacing:1px;margin-bottom:8px;}
+  /* MOB-74: question card (creature asks Dad a question) */
+  #cf-text .m74-q{display:block;font-size:15px;line-height:1.4;margin:0 0 12px;color:var(--ink,#e8e8e8);font-style:italic;}
+  #cf-text .m74-opt{display:block;width:100%;min-height:44px;margin:6px 0;box-sizing:border-box;}
+  #cf-text .m74-in{display:block;width:100%;box-sizing:border-box;min-height:44px;margin:0 0 4px;padding:8px 10px;font-size:16px;background:#0d0f16;color:#f2f2f2;border:2px solid var(--gold);border-radius:4px;outline:none;}
+  #cf-text .m74-in:focus{border-color:#fff2a8;box-shadow:0 0 0 2px rgba(255,214,90,.35);}
+  #cf-text .m74-go{background:var(--gold);color:#1a1a1a;font-weight:bold;}
+  body.m-compact #cf-text .m74-opt{min-height:44px;}
   /* ===== M8 ACTION BAR REDESIGN (compact layouts only; desktop keeps the full button row) =====
      Portrait: one row of 5 thumb buttons (BAG, SCAN, WAIT, THROW, MORE), each >=44x44 CSS px.
      Everything else moves to the MORE drawer (#moresheet), a bottom sheet over a dimmed backdrop. */

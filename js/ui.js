@@ -190,7 +190,25 @@ function _m56Then(th){if(!th)return;if(typeof mode!=="undefined"&&mode!==State.P
 /* ===== option menu (doors, etc.) ===== */
 // Options render as clickable rows (data-menu index) plus a cancel button (data-menu="-1"); keys 1-9/Esc still work.
 function openMenu(title,options){pendingMenu={options};cfT.innerHTML='<b>'+title+'</b><br>'+options.map((o,i)=>'<button type="button" class="cf-menu" data-menu="'+i+'">'+kbTxt('<span class="key">['+(i+1)+']</span> ','')+o.label+'</button>').join('');cfBtns.innerHTML=kbStrip('<button type="button" class="cf-btn" data-menu="-1">[Esc] Cancel</button>');if(typeof m16PaintStrips==="function")m16PaintStrips(cfT);syncOverlays();}
-function resolveMenu(i){if(!pendingMenu)return;const opts=pendingMenu.options,_th=pendingMenu.then;pendingMenu=null;syncOverlays();if(i>=0&&i<opts.length&&opts[i].fn)opts[i].fn();_m56Then(_th);}
+function resolveMenu(i){if(!pendingMenu)return;const opts=pendingMenu.options,_th=pendingMenu.then,_cx=pendingMenu.onCancel,_ask=!!pendingMenu.m74;if(_ask)_m74Blur();pendingMenu=null;syncOverlays();if(_ask)_m74Kb();/* MOB-74 */if(i>=0&&i<opts.length&&opts[i].fn)opts[i].fn();else if(_cx)_cx();_m56Then(_th);}
+/* MOB-74: the question card (shared; MOB-27's bridge keeper can reuse it). Uses the confirm sheet (#confirm) and the menu state, so every
+   "a card is open" check in the game already covers it. o={who,q,type:"yn"|"mc"|"typed",options:[{label,fn}],onCancel,yn:{y,n}}.
+   Typed: a text box (phone keyboard) + Answer; Enter answers. Say nothing / Esc / closing = onCancel. While the phone keyboard is up the
+   sheet is fitted to the visible area (visualViewport) so the question and the box stay above the keyboard. */
+function openAsk(o){pendingMenu={options:o.options,onCancel:o.onCancel||null,m74:true,yn:o.yn||null,typed:o.type==="typed"};
+ let h='<b class="cf-title">'+esc(o.who).toUpperCase()+'</b><span class="m74-q">“'+esc(o.q)+'”</span>';
+ if(o.type==="typed")h+='<input id="m74in" class="m74-in" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="40" aria-label="Your answer" placeholder="Your answer"><button type="button" class="cf-menu m74-opt m74-go" data-menu="0">'+esc(o.options[0].label)+'</button>';
+ else h+=o.options.map((x,i)=>'<button type="button" class="cf-menu m74-opt" data-menu="'+i+'">'+kbTxt('<span class="key">['+(o.type==="yn"?(i===0?"Y":"N"):(i+1))+']</span> ','')+esc(x.label)+'</button>').join('');
+ cfT.innerHTML=h;cfT.classList.remove("cf-story");cfBtns.innerHTML='<button type="button" class="cf-btn m74-hush" data-menu="-1">'+kbTxt('[Esc] ','')+'Say nothing</button>';
+ try{cfT.scrollTop=0;}catch(e){}syncOverlays();
+ if(o.type==="typed"){const i=document.getElementById("m74in");if(i&&i.focus){try{i.focus({preventScroll:true});}catch(e){}}}_m74Kb();}
+function m74Value(){const i=document.getElementById("m74in");return i&&typeof i.value==="string"?i.value:"";}
+var _m74KbOn=false;
+function _m74Kb(){if(typeof window==="undefined"||typeof document==="undefined")return;const vv=window.visualViewport,box=document.getElementById("confirm");if(!box||!box.style)return;
+ if(vv&&!_m74KbOn&&vv.addEventListener){_m74KbOn=true;vv.addEventListener("resize",_m74Kb);vv.addEventListener("scroll",_m74Kb);}
+ const up=!!(vv&&pendingMenu&&pendingMenu.typed&&document.body&&document.body.classList.contains("m-compact")&&document.activeElement&&document.activeElement.id==="m74in"&&vv.height<(document.documentElement.clientHeight||window.innerHeight)-40);
+ if(up){box.style.top=Math.round(vv.offsetTop)+"px";box.style.height=Math.round(vv.height)+"px";box.style.bottom="auto";}else if(box.style.height){box.style.top="";box.style.height="";box.style.bottom="";}}
+function _m74Blur(){try{const a=document.activeElement;if(a&&a.id==="m74in"&&a.blur)a.blur();}catch(e){}}
 /* MOB-44 (KBP 2026-11-11): on compact (phone) layouts the manual has touch instructions only; no keyboard shortcuts. Desktop text unchanged.
    MOB-43 (KBP 2026-11-12): "How to Play" is now THE DAD MANUAL: buildInstr() shows one comic page button per <h2> section of
    _m43Raw() (text unchanged), plus Save Backup, Share and Feedback; a page opens in the #m43man pop-up as a comic card. */
@@ -598,6 +616,9 @@ function invAction(k){const e=game.inv[invSel];const COLS=8;
 document.addEventListener("keydown",(e)=>{const k=e.key;
  if(_barCfgOpen){if(k==="Escape")openBarCfg(false);e.preventDefault();return;}// MOB-06: the Customize bar sheet takes the keys while open
  if(_m8More&&k==="Escape"){setMoreOpen(false);e.preventDefault();return;}// M8: Esc closes the More drawer first
+ if(pendingMenu&&pendingMenu.m74){/* MOB-74 question card: typing goes to the answer box; Y/N answer yes/no questions */if(e.target&&e.target.id==="m74in"){if(k==="Enter"){resolveMenu(0);e.preventDefault();}else if(k==="Escape"){resolveMenu(-1);e.preventDefault();}return;}
+  if(pendingMenu.yn&&(k==="y"||k==="Y")){resolveMenu(pendingMenu.yn.y);e.preventDefault();return;}if(pendingMenu.yn&&(k==="n"||k==="N")){resolveMenu(pendingMenu.yn.n);e.preventDefault();return;}
+  if(pendingMenu.typed&&k!=="Escape"){const _i=document.getElementById("m74in");if(_i&&_i.focus)_i.focus();return;}}
  if(pendingMenu){if(k==="Escape"||k==="n"||k==="N")resolveMenu(-1);else if(/^[1-9]$/.test(k))resolveMenu(parseInt(k,10)-1);e.preventDefault();return;}
  if(pendingConfirm){if(k==="y"||k==="Y"||k==="Enter")resolveConfirm(true);else if(k==="n"||k==="N"||k==="Escape")resolveConfirm(false);e.preventDefault();return;}
  if(aiming){if(["ArrowUp","w","W"].includes(k))doThrow(0,-1);else if(["ArrowDown","s","S"].includes(k))doThrow(0,1);else if(["ArrowLeft","a","A"].includes(k))doThrow(-1,0);else if(["ArrowRight","d","D"].includes(k))doThrow(1,0);else if(k==="7"||k==="Home")doThrow(-1,-1);else if(k==="9"||k==="PageUp")doThrow(1,-1);else if(k==="1"||k==="End")doThrow(-1,1);else if(k==="3"||k==="PageDown")doThrow(1,1);else if(k==="Escape"){aiming=false;throwRef=null;log("Throw cancelled.","dim");}e.preventDefault();return;}

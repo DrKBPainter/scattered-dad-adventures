@@ -3,7 +3,7 @@ const ORDER=["js/config.js","js/sprites.js","js/data.js","js/game.js","js/render
 for(const f of ORDER){if(!fs.existsSync(f)){console.log("MISSING FILE: "+f);process.exit(1);}}
 let js=ORDER.map(f=>fs.readFileSync(f,"utf8")).join("\n");
 try{new vm.Script(js);}catch(e){console.log("SYNTAX ERR:",e.message);process.exit(1);}
-js+=`;globalThis.__T={State,CLASSES,CREATURES,BOSSES,PAL,MAP_W,MAP_H,SPR:{a:SPR_FLOOR,b:SPR_WALL,c:SPR_STAIRS,d:SPR_DAD,e:SPR_GEAR_W,f:SPR_GEAR_A,g:SPR_POTION,h:SPR_OBJECT,i:SPR_TRAP,j:SPR_DOOR,k:SPR_DOOR_L,l:SPR_KEY,m:SPR_CHARM,n:SPR_VENDOR,o:SPR_FRIDGE_NOTE},newRun,tryMove,doDescend,getG:()=>game,getMode:()=>mode,setMode:m=>{mode=m;},setHP:h=>{game.maxhp=h;game.hp=h;},setPos:(x,y)=>{game.px=x;game.py=y;},getPend:()=>pendingConfirm,clearPend:()=>{pendingConfirm=null;},resolve:resolveConfirm,hasKey:()=>hasKey(),opaque,computeVis};`;
+js+=`;globalThis.__T={State,CLASSES,CREATURES,BOSSES,PAL,MAP_W,MAP_H,SPR:{a:SPR_FLOOR,b:SPR_WALL,c:SPR_STAIRS,d:SPR_DAD,e:SPR_GEAR_W,f:SPR_GEAR_A,g:SPR_POTION,h:SPR_OBJECT,i:SPR_TRAP,j:SPR_DOOR,k:SPR_DOOR_L,l:SPR_KEY,m:SPR_CHARM,n:SPR_VENDOR,o:SPR_FRIDGE_NOTE},newRun,tryMove,doDescend,getG:()=>game,getMode:()=>mode,setMode:m=>{mode=m;},setHP:h=>{game.maxhp=h;game.hp=h;},setPos:(x,y)=>{game.px=x;game.py=y;},getMenu:()=>pendingMenu,resolveMenu,clearMenu:()=>{pendingMenu=null;},m74S:()=>M74_STATS,getPend:()=>pendingConfirm,clearPend:()=>{pendingConfirm=null;},resolve:resolveConfirm,hasKey:()=>hasKey(),opaque,computeVis};`;
 const store={};const localStorage={getItem:k=>k in store?store[k]:null,setItem:(k,v)=>store[k]=String(v),removeItem:k=>{delete store[k];}};
 function fc(){return{getContext:()=>new Proxy({},{get:()=>()=>{}}),style:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelectorAll:()=>[],width:320,height:240};}
 const el=()=>({classList:{add(){},remove(){},toggle(){}},addEventListener(){},querySelectorAll:()=>[],style:{},set innerHTML(v){},textContent:"",getContext:()=>new Proxy({},{get:()=>()=>{}}),width:320,height:240});
@@ -41,6 +41,7 @@ let wins=0;
 for(let r=0;r<T.CLASSES.length;r++){T.newRun(T.CLASSES[r]);g=T.getG();let stuck=0,noMove=0,lp=-1;
  for(let i=0;i<50000&&T.getMode()===T.State.PLAY;i++){
   T.setHP(99999);g=T.getG();g.hunger=0;g.hydra=0;g.statuses={};
+  {const pm=T.getMenu();if(pm){if(pm.m74)T.resolveMenu(Math.floor(Math.random()*(pm.options.length+1))-1);else T.clearMenu();g=T.getG();}}/* MOB-74: question cards answered at random (incl. saying nothing); other menus dismissed */
   if(T.getPend()){T.resolve(true);g=T.getG();continue;}
   if(T.getMode()===T.State.DEAD){T.setMode(T.State.PLAY);T.setHP(99999);}
   let tgt=[g.stairs.x,g.stairs.y];
@@ -54,5 +55,6 @@ for(let r=0;r<T.CLASSES.length;r++){T.newRun(T.CLASSES[r]);g=T.getG();let stuck=
   if(g.px===px&&g.py===py&&g.depth===lp)stuck++;else stuck=0;lp=g.depth;
   if(stuck>300){console.log("STUCK",T.CLASSES[r].id,"depth",g.depth);F++;break;}}
  if(T.getMode()===T.State.WIN)wins++;else if(stuck<=300){console.log("class",T.CLASSES[r].id,"ended depth",g.depth,"mode",T.getMode());F++;}}
+{const S=T.m74S();console.log("talkers (MOB-74): asked "+S.ask+", calmed "+S.calm+", upset "+S.upset);}
 console.log(F?(F+" FAILURE(S)"):"ALL DIAGNOSTICS PASS (clears "+wins+"/"+T.CLASSES.length+", sprites+FOV OK)");
 process.exit(F?1:0);
